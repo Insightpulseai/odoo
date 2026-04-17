@@ -12,6 +12,7 @@
     "data": [
         "security/pulser_security.xml",
         "security/ir.model.access.csv",
+        "data/pulser_assistant_data.xml",
         "views/pulser_action_log_views.xml",
         "views/pulser_domain_agent_views.xml",
         "views/pulser_interaction_views.xml",

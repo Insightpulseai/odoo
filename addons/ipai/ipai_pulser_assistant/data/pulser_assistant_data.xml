@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Default Intents -->
+        <record id="intent_ask" model="pulser.intent">
+            <field name="name">Ask</field>
+            <field name="code">ask</field>
+            <field name="description">Information retrieval and general queries.</field>
+        </record>
+
+        <record id="intent_authoring" model="pulser.intent">
+            <field name="name">Authoring</field>
+            <field name="code">authoring</field>
+            <field name="description">Content generation, document drafting, and staging.</field>
+        </record>
+
+        <record id="intent_transaction" model="pulser.intent">
+            <field name="name">Transaction</field>
+            <field name="code">transaction</field>
+            <field name="description">Executable business actions (write/commit/confirm).</field>
+        </record>
+
+        <!-- Default Domain Agent: Pulser Assistant -->
+        <record id="agent_pulser_assistant" model="pulser.domain.agent">
+            <field name="name">Pulser Assistant</field>
+            <field name="domain">pulser_assistant</field>
+            <field name="description">Master orchestrator for Odoo and Foundry operations.</field>
+            <field name="supported_intent_ids" eval="[(6, 0, [ref('intent_ask'), ref('intent_authoring'), ref('intent_transaction')])]"/>
+        </record>
+    </data>
+</odoo>

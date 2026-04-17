@@ -1,0 +1,22 @@
+# Azure AI Foundry Workspace Metadata
+# Generated: 2026-04-18
+# Contract: https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/install-cli-sdk
+
+project:
+  name: "ipai-foundry-ph"
+  resourceGroup: "rg-insightpulse-ai-foundry"
+  subscriptionId: "insightpulseai-prod" # Placeholder for logical reference
+  endpoint: "https://ipai-foundry-ph.eastus2.inference.ai.azure.com"
+
+orchestration:
+  agentName: "pulser-assistant"
+  defaultModel: "gpt-4o"
+  defaultVersion: "1.0.0"
+
+environments:
+  dev:
+    endpoint: "https://ipai-foundry-ph.eastus2.inference.ai.azure.com"
+    acr: "acripaiprod.azurecr.io"
+  prod:
+    endpoint: "https://ipai-foundry-prod.eastus2.inference.ai.azure.com"
+    acr: "acripaiprod.azurecr.io"
