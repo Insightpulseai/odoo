@@ -1,0 +1,432 @@
+# SSOT — VMOKRAPI-SPATRES Strategic Framework
+# Framework: Dr. Eduardo A. Morato Jr.
+# Organization: InsightPulseAI / Dataverse IT Consultancy
+# Planning horizon: FY2026 (Apr 2026 – Mar 2027) = ISV Success Year 1
+# Last updated: 2026-04-18
+# Authority: this file locks financial targets and strategic commitments
+
+# ============================================================================
+# VMOKRAPI — Strategic Goals
+# ============================================================================
+
+vision: >
+  InsightPulseAI becomes the leading AI-assisted operational platform for
+  SMEs running Odoo on Azure in Southeast Asia — displacing D365 Finance
+  at a fraction of the cost.
+
+mission: >
+  Deliver Pulser for Odoo — a policy-gated AI copilot that automates
+  finance operations, BIR compliance, and project control for Philippine
+  SMEs and professional services firms on Odoo Community Edition + Azure.
+
+objectives:
+  O1:
+    statement: "Publish a transactable SaaS offer on Microsoft Marketplace by Q3 2026"
+    measure: "Offer live and purchasable on Azure Marketplace"
+    target_date: "2026-09-01"
+    sprint: R3-S09
+    status: not_started
+
+  O2:
+    statement: "Acquire 10 paying customers by end of ISV Success Year 1"
+    measure: "10 tenants with active subscriptions generating MBS"
+    target_date: "2027-03-31"
+    status: not_started
+
+  O3:
+    statement: "Achieve $47K ARR (Base scenario) by Mar 2027"
+    measure: "Marketplace Billed Sales TTM"
+    target_date: "2027-03-31"
+    status: not_started
+
+  O4:
+    statement: "Reach Solutions Partner Data & AI qualification (70+ points)"
+    measure: "Partner Center scoring dashboard"
+    target_date: "2027-06-30"
+    status: not_started
+
+  O5:
+    statement: "Achieve 80% D365 Finance functional parity on CE 18 + OCA + Pulser"
+    measure: "Capability matrix coverage vs D365 Finance feature set"
+    target_date: "2026-12-15"
+    sprint: R4-S16
+    status: "35-45% current"
+
+key_result_areas:
+  KRA1:
+    name: "Marketplace Revenue"
+    owner: Jake Tolentino
+    weight: 30
+    objectives: [O2, O3]
+
+  KRA2:
+    name: "Product Readiness"
+    owner: Jake Tolentino
+    weight: 25
+    objectives: [O1, O5]
+
+  KRA3:
+    name: "Customer Success"
+    owner: Jake Tolentino
+    weight: 20
+    objectives: [O2]
+
+  KRA4:
+    name: "Partner Maturity"
+    owner: Jake Tolentino
+    weight: 15
+    objectives: [O4]
+
+  KRA5:
+    name: "Team Capability"
+    owner: Jake Tolentino
+    weight: 10
+    objectives: [O4]
+
+performance_indicators:
+  # --- KRA1: Marketplace Revenue ---
+  PI-1.1:
+    name: "Monthly Recurring Revenue (MRR)"
+    kra: KRA1
+    unit: USD
+    baseline: 0
+    targets:
+      R1_end: 0           # Apr-May 2026 — building
+      R2_end: 0           # Jul 2026 — pre-publication
+      R3_end: 1470        # Sep 2026 — 3 customers × 5 users × $49 × 2 months
+      R4_end: 3920        # Dec 2026 — 10 customers × 8 users × $49
+      Y1_end: 3920        # Mar 2027 — sustained
+    frequency: monthly
+
+  PI-1.2:
+    name: "Annual Recurring Revenue (ARR)"
+    kra: KRA1
+    unit: USD
+    baseline: 0
+    targets:
+      Y1_end: 47040       # $3,920 MRR × 12
+    frequency: quarterly
+
+  PI-1.3:
+    name: "Marketplace Billed Sales (MBS) TTM"
+    kra: KRA1
+    unit: USD
+    baseline: 0
+    targets:
+      R3_end: 2940        # 2 months × $1,470
+      R4_end: 17640       # ~6 months billed
+      Y1_end: 47040       # Full year
+    frequency: monthly
+    note: "Evaluated by Microsoft on 10th of each month for Marketplace Rewards tier"
+
+  PI-1.4:
+    name: "Marketplace Rewards Tier"
+    kra: KRA1
+    unit: tier
+    baseline: "None"
+    targets:
+      R3_end: "Publish ($0)"
+      R4_end: "$500"
+      Y1_end: "$25K"
+    frequency: monthly
+
+  # --- KRA2: Product Readiness ---
+  PI-2.1:
+    name: "Capabilities shipped (of 52 total)"
+    kra: KRA2
+    unit: count
+    baseline: 2           # Genie spaces + gold marts live
+    targets:
+      R1_end: 5
+      R2_end: 35          # v1 must-haves
+      R3_end: 48          # v1 + v1.1
+      R4_end: 52          # all
+    frequency: per_sprint
+
+  PI-2.2:
+    name: "D365 Finance parity %"
+    kra: KRA2
+    unit: percent
+    baseline: 40
+    targets:
+      R2_end: 60
+      R3_end: 70
+      R4_end: 80
+    frequency: quarterly
+
+  PI-2.3:
+    name: "SaaS Fulfillment API integration"
+    kra: KRA2
+    unit: boolean
+    baseline: false
+    targets:
+      R3_S09: true
+    frequency: milestone
+
+  # --- KRA3: Customer Success ---
+  PI-3.1:
+    name: "Paying customers"
+    kra: KRA3
+    unit: count
+    baseline: 0
+    targets:
+      R3_end: 3           # TBWA + 2 others
+      R4_end: 7
+      Y1_end: 10
+    frequency: monthly
+
+  PI-3.2:
+    name: "Net Promoter Score (NPS)"
+    kra: KRA3
+    unit: score
+    baseline: null
+    targets:
+      R4_end: 40          # Good for B2B SaaS
+      Y1_end: 50
+    frequency: quarterly
+
+  PI-3.3:
+    name: "Monthly churn rate"
+    kra: KRA3
+    unit: percent
+    baseline: null
+    targets:
+      R4_end: "<5%"
+      Y1_end: "<3%"
+    frequency: monthly
+
+  # --- KRA4: Partner Maturity ---
+  PI-4.1:
+    name: "Solutions Partner Data & AI score"
+    kra: KRA4
+    unit: points
+    baseline: 0
+    targets:
+      R3_end: 24
+      R4_end: 65
+      Y1_end: 70          # Qualification threshold
+    frequency: monthly
+
+  PI-4.2:
+    name: "ISV Success benefits utilized"
+    kra: KRA4
+    unit: percent
+    baseline: 0
+    targets:
+      R1_end: 40          # Azure, GitHub, M365, VS activated
+      R2_end: 70          # Consultations scheduled
+      R3_end: 90          # Listing optimization done
+      Y1_end: 100
+    frequency: quarterly
+
+  # --- KRA5: Team Capability ---
+  PI-5.1:
+    name: "Certifications earned"
+    kra: KRA5
+    unit: count
+    baseline: 0
+    targets:
+      R2_end: 3           # Jake: AI-900 + AI-102 + DP-100
+      R3_end: 6           # +1 team member × 3 certs
+      Y1_end: 9           # +1 more team member
+    frequency: quarterly
+
+  PI-5.2:
+    name: "Team size"
+    kra: KRA5
+    unit: count
+    baseline: 5
+    targets:
+      R2_end: 5
+      R3_end: 6           # +1 developer
+      Y1_end: 7           # +1 customer success
+    frequency: quarterly
+
+# ============================================================================
+# SPATRES — Implementation Plan
+# ============================================================================
+
+strategies:
+  S1:
+    name: "Marketplace-First GTM"
+    description: >
+      Publish transactable SaaS on Azure Marketplace as the primary sales channel.
+      Lead with BIR compliance + month-end close as the wedge. Philippines first.
+    horizon: "12 months"
+    objectives: [O1, O2, O3]
+
+  S2:
+    name: "TBWA Pilot → Reference Customer"
+    description: >
+      Convert TBWA\SMP from internal pilot to first paying marketplace customer.
+      Use their success story for marketplace testimonial and co-sell pipeline.
+    horizon: "6 months"
+    objectives: [O2, O3]
+
+  S3:
+    name: "Certification-Driven Partner Maturity"
+    description: >
+      Use free ISV Success certifications to build team competency AND
+      accumulate Solutions Partner Skilling points simultaneously.
+    horizon: "12 months"
+    objectives: [O4]
+
+  S4:
+    name: "Open-Source ERP Cost Advantage"
+    description: >
+      Position against D365 Finance ($210-300/user/month) with Odoo CE (free) +
+      Pulser ($49/user/month). Target the 80% of PH SMEs who can't afford D365.
+    horizon: "12 months"
+    objectives: [O2, O3, O5]
+
+programs:
+  P1:
+    name: "Marketplace Publication"
+    strategy: S1
+    sprints: [R2-S03, R2-S04, R2-S05, R2-S06, R3-S07, R3-S08, R3-S09]
+    deliverables:
+      - "Draft offer in Partner Center"
+      - "SaaS Fulfillment API v2 integration"
+      - "Metered billing API integration"
+      - "Listing assets (logo, screenshots, video, PDFs)"
+      - "Listing optimization consultation"
+      - "Transactable offer published"
+
+  P2:
+    name: "TBWA Pilot Conversion"
+    strategy: S2
+    sprints: [R2-S03, R2-S04, R2-S05, R2-S06]
+    deliverables:
+      - "Odoo seed data imported (TBWA finance team)"
+      - "Finance Control Tower demo delivered"
+      - "TBWA subscription activated on marketplace"
+      - "Marketplace Rewards testimonial submitted"
+
+  P3:
+    name: "Team Certification Sprint"
+    strategy: S3
+    sprints: [R2-S03, R2-S04, R2-S05]
+    deliverables:
+      - "AI-900 passed (Jake)"
+      - "AI-102 passed (Jake)"
+      - "DP-100 passed (Jake)"
+
+  P4:
+    name: "Product Build (v1 Finance Control Tower)"
+    strategy: S4
+    sprints: [R1-S01, R1-S02, R2-S03, R2-S04, R2-S05, R2-S06]
+    deliverables:
+      - "23 must-have capabilities shipped"
+      - "ipai_doc_intel deployed"
+      - "Close cockpit operational"
+      - "BIR 2307 module functional"
+      - "Genie spaces certified"
+
+activities:
+  # Sprint-level activities are tracked in ADO Boards (ipai-platform project)
+  # and spec-kit task bundles (spec/*/tasks.md)
+  reference: "dev.azure.com/insightpulseai/ipai-platform/_sprints"
+
+# ============================================================================
+# Financial Model
+# ============================================================================
+
+financial_model:
+  pricing:
+    base_subscription:
+      price: 49
+      unit: "USD/user/month"
+      note: "Placeholder — validate against TBWA pilot willingness-to-pay"
+    metered_dimensions:
+      ai_queries:
+        included: 500
+        overage: 0.02
+        unit: "USD/call"
+      docai_pages:
+        included: 100
+        overage: 0.10
+        unit: "USD/page"
+      genie_minutes:
+        included: 60
+        overage: 0.05
+        unit: "USD/minute"
+
+  costs:
+    azure_monthly:
+      aca_runtime: 150        # 6 container apps, Basic tier
+      postgresql: 125         # D2s_v3 General Purpose
+      databricks: 200         # On-demand clusters (consumption)
+      ai_services: 50         # gpt-4.1-mini (low volume during build)
+      redis: 15               # Basic C0
+      signalr: 0              # Free tier
+      key_vault: 5            # Standard, low ops
+      storage: 10             # ADLS + blob
+      dns: 2                  # 2 zones
+      monitoring: 20          # Log Analytics + App Insights
+      total: 577
+      note: "Dev environment costs — production will be higher per customer"
+
+    isv_credits_offset:
+      azure_sponsorship: 5000  # $5K over 12 months = ~$417/month
+      net_azure_cost: 160      # $577 - $417 = ~$160/month out-of-pocket
+
+    team_monthly:
+      salaries: 0              # Founder-led, no payroll yet
+      contractors: 500         # Occasional dev support
+      tools: 100               # GitHub, domains, SaaS tools
+      total: 600
+
+    total_monthly_burn: 760    # $160 Azure + $600 team
+    total_annual_burn: 9120
+
+  revenue_targets:
+    # Locked targets (base scenario)
+    R3_monthly: 1470           # 3 customers × 5 users × $49 + metered
+    R4_monthly: 3920           # 10 customers × 8 users × $49 + metered
+    Y1_arr: 47040
+
+  unit_economics:
+    arpu_monthly: 392          # $49 × 8 users/customer
+    arpu_annual: 4704
+    cac_target: 500            # < 1 month ARPU
+    ltv_target: 14112          # ARPU × 36 months × 80% retention
+    ltv_cac_ratio: 28          # Target > 3x
+    payback_months: 1.3        # CAC / ARPU monthly
+
+  break_even:
+    monthly_burn: 760
+    arpu_monthly: 392
+    customers_to_break_even: 2 # $760 / $392 = 1.94 → 2 customers
+    target_date: "2026-10-01"  # R4-S13
+    note: "Break-even at 2 paying customers. TBWA + 1 more."
+
+  marketplace_economics:
+    store_fee: "3%"
+    publisher_payout: "97%"
+    net_per_user: 47.53        # $49 × 97%
+    renewal_discount: "50% agency fee on private offer renewals"
+
+  isv_success_roi:
+    benefits_value: 126000     # Core package
+    renewal_fee: 1550
+    roi_if_base: 3033          # ($47,040 ARR + $126K benefits) / $1,550 = 111x
+    note: "Even with 0 revenue, the Azure credits + tools alone are worth 81x the renewal fee"
+
+# ============================================================================
+# Quarterly Review Cadence
+# ============================================================================
+
+review_cadence:
+  monthly:
+    - "MRR and customer count review"
+    - "Azure consumption vs budget"
+    - "Sprint velocity and capability delivery"
+  quarterly:
+    - "VMOKRAPI scorecard review (all PIs)"
+    - "Solutions Partner score check"
+    - "Pricing validation (willingness-to-pay from active customers)"
+    - "Capability parity % update"
+  annual:
+    - "ISV Success renewal decision (Mar 2027)"
+    - "Solutions Partner designation application"
+    - "Financial model rebase for Year 2"

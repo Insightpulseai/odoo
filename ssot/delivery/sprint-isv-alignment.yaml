@@ -1,0 +1,329 @@
+# SSOT — Sprint ↔ ISV Success Alignment
+# Authority: maps ADO sprints to ISV Success milestones and marketplace gates
+# Last updated: 2026-04-18
+
+program:
+  name: Microsoft ISV Success
+  enrolled: "2026-03-31"
+  expires: "2027-03-31"
+  renewal_available: "2027-03-01"
+  benefit_value: "$126K USD"
+  em: So Yeong Choi (v-soychoi@microsoft.com)
+  team_lead: Krati Khandelwal (v-kratikh@microsoft.com)
+  marketplace_target: "Q3 2026 (Aug-Sep)"
+  offer_type: Transactable
+  offer_name: "Pulser for Odoo"
+
+  marketplace_offer:
+    type: SaaS
+    rationale: >
+      SaaS is the right fit: Pulser is hosted in our Azure infrastructure (ACA),
+      customers subscribe and use it online, we manage infra/app/data.
+      SaaS requires: multitenant, Entra ID auth, SaaS Fulfillment API integration.
+    pricing_model: per_user_plus_metered
+    options:
+      base: "Per user/month (flat rate for Odoo + Pulser access)"
+      metered_dimensions:
+        - "AI queries (Pulser inference calls beyond included quota)"
+        - "Document extractions (DocAI pages processed)"
+        - "Databricks compute (Genie/gold mart query minutes)"
+    billing:
+      frequencies: [monthly, annual]
+      contract_durations: [1-month, 1-year, 2-year, 3-year]
+      payment_options: [monthly, annual, upfront]
+    store_fee: "3% standard (Microsoft keeps 3%, publisher gets 97%)"
+    renewal_discount: "50% agency fee discount on private offer renewals"
+    free_trial: "30-day free trial (transact scenario)"
+    private_plans: true
+    requirements:
+      - "Multitenant SaaS application"
+      - "Microsoft Entra ID authentication"
+      - "SaaS Fulfillment API v2 integration"
+      - "Payout account + tax profile in Partner Center"
+      - "Publisher must bundle Azure infra costs into license fee"
+    customer_billing:
+      - "Enterprise Agreement (itemized, separate from Azure usage)"
+      - "Credit card + monthly invoice"
+      - "Azure monetary commitment (credits apply to Azure usage only, not license fees)"
+
+  stages:
+    get_started: completed
+    build: in_progress
+    publish: not_started
+    grow: in_progress
+
+  build_stage_actions:
+    - name: "Start draft offer"
+      status: in_progress
+      unlocks: "Marketplace listing optimization consultation"
+      action_url: "Partner Center → Marketplace offers → Create new offer"
+    - name: "Activate product benefits"
+      status: pending
+    - name: "Application Architecture Design (ADS) session"
+      status: not_scheduled
+      description: "Design a well-architected app with MS expert"
+    - name: "Application Design Review (ADR) session"
+      status: not_scheduled
+      description: "Refine application architecture with MS expert"
+    - name: "Marketplace listing optimization consultation"
+      status: locked
+      unlock_trigger: "Complete draft offer step"
+
+ado_project: ipai-platform
+ado_team: ipai-platform Team
+
+releases:
+  R1-Foundation:
+    dates: "2026-04-14 → 2026-05-14"
+    theme: "Platform foundation + ISV benefit activation"
+    sprints:
+      R1-S01:
+        dates: "Apr 14 – Apr 27"
+        status: current
+        isv_milestones:
+          - "ISV orientation call completed (Apr 13)"
+          - "Krati back from leave (Apr 21)"
+          - "Activate Azure Standard Support"
+          - "Redeem GitHub Enterprise coupon (20 seats)"
+          - "Activate M365 E5 sandbox"
+          - "Activate Visual Studio benefit"
+          - "Resolve Azure Sponsorship block (ticket 2604130030000838)"
+        delivery_gates:
+          - "Sub ID migration complete"
+          - "DNS propagated + custom domains bound"
+          - "Realtime resources provisioned (SignalR, ACS, Redis)"
+          - "Foundry project created"
+          - "RTFP support ticket filed"
+      R1-S02:
+        dates: "Apr 28 – May 11"
+        isv_milestones:
+          - "Schedule Technical Enablement Session 1: Design & Planning"
+          - "Submit application summary to EM (done Apr 18)"
+          - "Confirm GitHub Enterprise redemption"
+        delivery_gates:
+          - "Odoo seed data imported (spec/odoo-seed-import)"
+          - "ipai_doc_intel module deployed"
+          - "Databricks One Chat enabled"
+          - "3-stage infra-promote.yml pipeline created"
+
+  R2-Core-Execution:
+    dates: "2026-05-15 → 2026-07-14"
+    theme: "Core product build + marketplace packaging"
+    sprints:
+      R2-S03:
+        dates: "May 12 – May 25"
+        isv_milestones:
+          - "Technical Enablement Session 1: Design & Planning"
+        delivery_gates:
+          - "Split Odoo into web + worker + cron"
+          - "APIM GenAI gateway deployed"
+          - "VNet + private endpoints for production"
+      R2-S04:
+        dates: "May 26 – Jun 8"
+        isv_milestones:
+          - "Technical Enablement Session 2: Architecture Design"
+        delivery_gates:
+          - "DLT pipeline running (gold from federation)"
+          - "Pulser agent MVP on Foundry (post-RTFP)"
+      R2-S05:
+        dates: "Jun 9 – Jun 22"
+        delivery_gates:
+          - "BIR 2307 module functional"
+          - "Finance control tower demo recorded"
+      R2-S06:
+        dates: "Jun 23 – Jul 6"
+        isv_milestones:
+          - "Technical Enablement Session 3: Architecture Review"
+        delivery_gates:
+          - "Partner Center listing draft submitted for review"
+          - "Demo recording finalized (4-minute storyboard)"
+          - "SaaS Fulfillment API v2 integration started"
+          - "Entra ID multitenant auth configured"
+
+  R3-PH-Ops-Hardening:
+    dates: "2026-07-15 → 2026-10-14"
+    theme: "PH operations hardening + marketplace publication"
+    sprints:
+      R3-S07:
+        dates: "Jul 7 – Jul 20"
+        isv_milestones:
+          - "Technical Enablement Session 4: Marketplace Publish Consult"
+        delivery_gates:
+          - "Load testing (NFR-1: first-token ≤ 800ms p95)"
+          - "App Configuration (feature flags) deployed"
+      R3-S08:
+        dates: "Jul 21 – Aug 3"
+        delivery_gates:
+          - "NAT Gateway for partner allow-listing"
+          - "Chaos Studio testing (NFR-2: 99.9% availability)"
+      R3-S09:
+        dates: "Aug 4 – Aug 17"
+        isv_milestones:
+          - "MARKETPLACE PUBLICATION TARGET (early)"
+        delivery_gates:
+          - "SaaS Fulfillment API v2 integration complete"
+          - "Metered billing API integration (AI queries, DocAI pages, Genie minutes)"
+          - "Landing page with Entra ID SSO"
+          - "Transactable offer submitted to Partner Center"
+          - "Co-sell requirements met"
+      R3-S10:
+        dates: "Aug 18 – Aug 31"
+        isv_milestones:
+          - "MARKETPLACE PUBLICATION TARGET (late)"
+        delivery_gates:
+          - "Offer live on Azure Marketplace"
+          - "TBWA pilot feedback incorporated"
+      R3-S11:
+        dates: "Sep 1 – Sep 14"
+        delivery_gates:
+          - "Custom DocAI models trained (TBWA forms)"
+      R3-S12:
+        dates: "Sep 15 – Sep 28"
+        delivery_gates:
+          - "PH BIR compliance hardened"
+
+  R4-GA:
+    dates: "2026-10-15 → 2026-12-15"
+    theme: "General availability + scale"
+    sprints:
+      R4-S13:
+        dates: "Sep 29 – Oct 12"
+        delivery_gates:
+          - "AFD Premium upgrade (advanced WAF)"
+          - "Multi-tenant isolation validated"
+      R4-S14:
+        dates: "Oct 13 – Oct 26"
+        delivery_gates:
+          - "Second customer onboarded"
+      R4-S15:
+        dates: "Oct 27 – Nov 9"
+        delivery_gates:
+          - "Marketplace revenue tracking operational"
+      R4-S16:
+        dates: "Nov 10 – Nov 23"
+        delivery_gates:
+          - "GA readiness review"
+          - "ISV Success program renewal/exit assessment"
+
+package:
+  tier: Core
+  value: "$126,000 USD"
+  renewal_fee: "$1,550/year"
+  upgrade_path:
+    expanded:
+      value: "$151,000 USD"
+      extra: "$25K Azure credits, GitHub Copilot, 50hr consults"
+      trigger: "Prior performance + transact intent"
+    advanced:
+      value: "$176,000 USD"
+      extra: "$50K Azure credits, $150K cash incentives"
+      trigger: "Certified Software Designation (CSD)"
+
+pending_benefits:
+  - name: Azure Sponsorship
+    status: blocked
+    ticket: "2604130030000838"
+    action: "Resolve mobile number linked to another developer account"
+
+  - name: GitHub Enterprise
+    status: not_redeemed
+    coupon: "ISV-Success-Program-12months-570064f"
+    seats: 20
+    action: "Redeem in incognito browser, set up org account"
+
+  - name: M365 E5
+    status: not_activated
+    action: "Activate via developer.microsoft.com/en-us/microsoft-365/dev-program"
+
+  - name: Visual Studio
+    status: not_activated
+    action: "Activate via Partner Center benefits workspace"
+
+  - name: Azure Standard Support
+    status: not_activated
+    value: "$1,200"
+    action: "Activate via Partner Center, use for RTFP ticket escalation (1hr response SLA)"
+
+  - name: D365 Sandbox
+    status: not_activated
+    value: "$40,500"
+    action: "Activate via Partner Center — useful for D365 parity benchmarking"
+
+  - name: Visual Studio Enterprise
+    status: not_activated
+    value: "$75,000 (25 seats)"
+    action: "Activate via Partner Center"
+
+  - name: Limited Access AI Services
+    status: included
+    action: "Reference this benefit when filing RTFP unblock ticket — ISV Success grants Limited Access"
+
+  - name: Certifications
+    status: not_started
+    items:
+      - name: "GitHub Copilot Certification"
+        feeds: "ISV Success benefit only"
+      - name: "Azure AI Fundamentals (AI-900)"
+        feeds: "Solutions Partner Data & AI — Skilling metric"
+      - name: "Azure AI Engineer Associate (AI-102)"
+        feeds: "Solutions Partner Data & AI — Skilling metric"
+      - name: "Azure Data Scientist Associate (DP-100)"
+        feeds: "Solutions Partner Data & AI — Skilling metric"
+    action: "Start AI-900 in R2 — feeds both ISV Success and Solutions Partner scoring"
+
+solutions_partner:
+  designation: "Data & AI"
+  status: not_started
+  score: 0
+  target: 70
+  track: SMB
+  qualification_window: "rolling 6 months"
+  metrics:
+    performance:
+      current: 0
+      max: 30
+      requirement: "3 net new Azure customers with qualifying ACR"
+      target_sprint: R4-S14
+    skilling:
+      current: 0
+      max: 40
+      requirement: "10 certified individuals (AI-102, DP-100, DP-203, etc.)"
+      target_sprint: R3-S07
+    deployments:
+      current: 0
+      max: 10
+      requirement: "5 advanced Azure services in customer ACR"
+      target_sprint: R4-S14
+    usage_growth:
+      current: 0
+      max: 20
+      requirement: "20% YoY ACR growth"
+      target_sprint: post-R4
+  action: "Not an R1 priority. Certifications in R2 bank Skilling points early. Performance + Customer Success unlock after marketplace publication and first 3 customers."
+
+  - name: AI Technical Consultation
+    status: not_scheduled
+    description: "1:1 AI-specific technical consultation (new benefit for all ISV Success participants)"
+    action: "Schedule with EM — covers Foundry, AI Services, agent architecture"
+
+  - name: Technical Consultations
+    status: "0/6 sessions used"
+    sessions:
+      - name: "Go-to-Market session"
+        status: not_scheduled
+      - name: "Application Design Session (ADS)"
+        status: not_scheduled
+        description: "Design a well-architected app with MS expert"
+      - name: "Application Design Review (ADR)"
+        status: not_scheduled
+        description: "Refine application architecture with MS expert"
+      - name: "Application Publishing Consultation"
+        status: not_scheduled
+        description: "Marketplace publication guidance"
+      - name: "AI Technical Consultation"
+        status: not_scheduled
+        description: "AI architecture and Foundry integration review"
+      - name: "Marketplace Listing Optimization"
+        status: locked
+        unlock_trigger: "Start draft offer in Partner Center"
+    action: "Schedule GTM + ADS sessions with EM after Krati returns Apr 21"

@@ -1,0 +1,282 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/0.1.2-preview/CreateUIDefinition.MultiVm.json#",
+  "handler": "Microsoft.Azure.CreateUIDef",
+  "version": "0.1.2-preview",
+  "parameters": {
+    "config": {
+      "isWizard": true,
+      "basics": {
+        "description": "## Pulser for Odoo — Finance Operations Control Tower\n\nDeploys a complete **InsightPulse AI** platform stamp on Azure Container Apps: Odoo CE 18 ERP, Pulser AI copilot, PostgreSQL Flexible Server, Key Vault, Log Analytics, and Azure AI Services.\n\n**Prerequisites**: An Azure subscription with Contributor role, and an Azure AI Foundry project (`ipai-copilot-resource`) if enabling Pulser AI.\n\n**Estimated deployment time**: 15–25 minutes.",
+        "subscription": {
+          "resourceProviders": [
+            "Microsoft.App",
+            "Microsoft.CognitiveServices",
+            "Microsoft.ContainerRegistry",
+            "Microsoft.DBforPostgreSQL",
+            "Microsoft.Insights",
+            "Microsoft.KeyVault",
+            "Microsoft.Network",
+            "Microsoft.OperationalInsights",
+            "Microsoft.Storage"
+          ],
+          "constraints": {
+            "validations": [
+              {
+                "permission": "Microsoft.Authorization/roleAssignments/write",
+                "message": "The selected subscription does not have permission to create role assignments. Managed Identity federation requires this permission."
+              }
+            ]
+          }
+        },
+        "location": {
+          "label": "Region",
+          "toolTip": "Azure region for all platform resources. Southeast Asia is the recommended primary region.",
+          "resourceTypes": [
+            "Microsoft.App/containerApps",
+            "Microsoft.DBforPostgreSQL/flexibleServers"
+          ],
+          "allowedValues": [
+            "southeastasia",
+            "eastus2",
+            "westeurope",
+            "australiaeast"
+          ]
+        },
+        "resourceGroup": {
+          "constraints": {
+            "validations": [
+              {
+                "isValid": "[not(empty(resourceGroup().name))]",
+                "message": "A resource group is required."
+              }
+            ]
+          }
+        }
+      }
+    },
+    "basics": [],
+    "steps": [
+      {
+        "name": "odooConfig",
+        "label": "Odoo Configuration",
+        "elements": [
+          {
+            "name": "odooAdminEmail",
+            "type": "Microsoft.Common.TextBox",
+            "label": "Odoo Administrator Email",
+            "toolTip": "Email address for the initial Odoo administrator account. Must be a valid email address.",
+            "placeholder": "admin@contoso.com",
+            "constraints": {
+              "required": true,
+              "regex": "^[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}$",
+              "validationMessage": "Must be a valid email address."
+            }
+          },
+          {
+            "name": "odooDatabaseName",
+            "type": "Microsoft.Common.TextBox",
+            "label": "Odoo Database Name",
+            "defaultValue": "odoo",
+            "toolTip": "PostgreSQL database name for the Odoo instance. Use lowercase letters, digits, and underscores only.",
+            "constraints": {
+              "required": true,
+              "regex": "^[a-z][a-z0-9_]{0,62}$",
+              "validationMessage": "Must start with a lowercase letter and contain only lowercase letters, digits, and underscores (max 63 characters)."
+            }
+          },
+          {
+            "name": "postgresAdminPassword",
+            "type": "Microsoft.Common.PasswordBox",
+            "label": {
+              "password": "PostgreSQL Administrator Password",
+              "confirmPassword": "Confirm PostgreSQL Password"
+            },
+            "toolTip": "Password for the PostgreSQL administrator account. Must be at least 12 characters and include uppercase, lowercase, digits, and special characters. Stored in Azure Key Vault — never in config files.",
+            "constraints": {
+              "required": true,
+              "regex": "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{12,128}$",
+              "validationMessage": "Password must be 12–128 characters and include at least one uppercase letter, one lowercase letter, one digit, and one special character."
+            },
+            "options": {
+              "hideConfirmation": false
+            }
+          },
+          {
+            "name": "postgresSku",
+            "type": "Microsoft.Common.DropDown",
+            "label": "PostgreSQL Compute SKU",
+            "defaultValue": "D2s_v3 — 2 vCores / 8 GiB (recommended)",
+            "toolTip": "Compute SKU for PostgreSQL Flexible Server. D2s_v3 suits development and small production deployments. D4s_v3 is recommended for production workloads with 10+ concurrent users.",
+            "constraints": {
+              "required": true,
+              "allowedValues": [
+                {
+                  "label": "D2s_v3 — 2 vCores / 8 GiB (recommended)",
+                  "value": "Standard_D2s_v3"
+                },
+                {
+                  "label": "D4s_v3 — 4 vCores / 16 GiB (production)",
+                  "value": "Standard_D4s_v3"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "aiAnalytics",
+        "label": "AI & Analytics",
+        "elements": [
+          {
+            "name": "enablePulserAI",
+            "type": "Microsoft.Common.CheckBox",
+            "label": "Enable Pulser AI copilot",
+            "toolTip": "Deploy the Pulser AI copilot overlay for Odoo Finance Operations. Requires an Azure AI Foundry project. Additional inference costs apply based on token consumption.",
+            "defaultValue": true,
+            "constraints": {
+              "required": false
+            }
+          },
+          {
+            "name": "foundryResourceName",
+            "type": "Microsoft.Common.TextBox",
+            "label": "Azure AI Foundry Resource Name",
+            "defaultValue": "ipai-copilot-resource",
+            "toolTip": "Name of the existing Azure AI Foundry (AIServices) resource. This resource must already exist in your subscription — it is referenced, not created, by this deployment.",
+            "visible": "[equals(steps('aiAnalytics').enablePulserAI, true)]",
+            "constraints": {
+              "required": "[equals(steps('aiAnalytics').enablePulserAI, true)]",
+              "regex": "^[a-zA-Z0-9][a-zA-Z0-9\\-]{1,61}[a-zA-Z0-9]$",
+              "validationMessage": "Must be 3–63 characters: letters, digits, and hyphens only. Cannot start or end with a hyphen."
+            }
+          },
+          {
+            "name": "enableDatabricks",
+            "type": "Microsoft.Common.CheckBox",
+            "label": "Enable Azure Databricks (Unity Catalog)",
+            "toolTip": "Deploy an Azure Databricks workspace with Unity Catalog for the governed data transformation and serving plane. This adds significant cost — recommended for production environments only.",
+            "defaultValue": false,
+            "constraints": {
+              "required": false
+            }
+          },
+          {
+            "name": "databricksCostWarning",
+            "type": "Microsoft.Common.InfoBox",
+            "visible": "[equals(steps('aiAnalytics').enableDatabricks, true)]",
+            "options": {
+              "icon": "Warning",
+              "text": "Azure Databricks incurs significant compute and DBU costs. Ensure your subscription quota supports Databricks in the selected region before proceeding."
+            }
+          }
+        ]
+      },
+      {
+        "name": "networking",
+        "label": "Networking",
+        "elements": [
+          {
+            "name": "enablePrivateEndpoints",
+            "type": "Microsoft.Common.CheckBox",
+            "label": "Enable private endpoints",
+            "toolTip": "Create Azure Private Endpoints for PostgreSQL and Key Vault, placing them on a private VNet. Recommended for production. Requires additional VNet address space.",
+            "defaultValue": false,
+            "constraints": {
+              "required": false
+            }
+          },
+          {
+            "name": "privateEndpointInfo",
+            "type": "Microsoft.Common.InfoBox",
+            "visible": "[equals(steps('networking').enablePrivateEndpoints, true)]",
+            "options": {
+              "icon": "Info",
+              "text": "Private endpoints will be provisioned in a new VNet (10.0.0.0/16). The ACA environment, PostgreSQL, and Key Vault will only be reachable within the VNet or via VPN/ExpressRoute."
+            }
+          },
+          {
+            "name": "customDomain",
+            "type": "Microsoft.Common.TextBox",
+            "label": "Custom Domain (optional)",
+            "toolTip": "Fully-qualified custom domain to bind to the Odoo Container App (e.g. erp.contoso.com). Leave blank to use the default ACA FQDN. You must own the domain and add a CNAME record pointing to the ACA ingress after deployment.",
+            "placeholder": "erp.contoso.com",
+            "constraints": {
+              "required": false,
+              "regex": "^$|^([a-zA-Z0-9]([a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,}$",
+              "validationMessage": "Must be a valid fully-qualified domain name (e.g. erp.contoso.com) or left blank."
+            }
+          }
+        ]
+      },
+      {
+        "name": "tags",
+        "label": "Tags",
+        "elements": [
+          {
+            "name": "environmentTag",
+            "type": "Microsoft.Common.DropDown",
+            "label": "Environment",
+            "toolTip": "Deployment environment tier. Applied as the 'Environment' tag on all resource groups and resources, and controls default SKU and redundancy settings.",
+            "defaultValue": "dev",
+            "constraints": {
+              "required": true,
+              "allowedValues": [
+                {
+                  "label": "dev — Development",
+                  "value": "dev"
+                },
+                {
+                  "label": "staging — Staging / Pre-production",
+                  "value": "staging"
+                },
+                {
+                  "label": "prod — Production",
+                  "value": "prod"
+                }
+              ]
+            }
+          },
+          {
+            "name": "organizationName",
+            "type": "Microsoft.Common.TextBox",
+            "label": "Organization Name",
+            "toolTip": "Your organization or company name. Applied as the 'Organization' tag on all resources and used as the Odoo company name during initialization.",
+            "placeholder": "Contoso Inc.",
+            "constraints": {
+              "required": true,
+              "regex": "^.{2,100}$",
+              "validationMessage": "Organization name must be between 2 and 100 characters."
+            }
+          },
+          {
+            "name": "tagsSummary",
+            "type": "Microsoft.Common.InfoBox",
+            "options": {
+              "icon": "Info",
+              "text": "All resources will be tagged with: Environment, Organization, Platform=InsightPulseAI, ManagedBy=Bicep."
+            }
+          }
+        ]
+      }
+    ],
+    "outputs": {
+      "location": "[location()]",
+      "environment": "[steps('tags').environmentTag]",
+      "baseName": "ipai",
+      "stampId": "00",
+      "rolloutGroup": "general-availability",
+      "odooAdminEmail": "[steps('odooConfig').odooAdminEmail]",
+      "odooDatabaseName": "[steps('odooConfig').odooDatabaseName]",
+      "postgresAdminPassword": "[steps('odooConfig').postgresAdminPassword]",
+      "postgresSku": "[steps('odooConfig').postgresSku]",
+      "enablePulserAI": "[steps('aiAnalytics').enablePulserAI]",
+      "foundryResourceName": "[if(equals(steps('aiAnalytics').enablePulserAI, true), steps('aiAnalytics').foundryResourceName, 'ipai-copilot-resource')]",
+      "foundryResourceGroup": "rg-data-intel-ph",
+      "foundryProjectName": "ipai-copilot",
+      "enableDatabricks": "[steps('aiAnalytics').enableDatabricks]",
+      "enablePrivateEndpoints": "[steps('networking').enablePrivateEndpoints]",
+      "customDomain": "[steps('networking').customDomain]",
+      "organizationName": "[steps('tags').organizationName]"
+    }
+  }
+}

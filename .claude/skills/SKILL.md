@@ -7,8 +7,8 @@ description: >
   Load for any IPAI Azure, Odoo, Foundry, or agent work.
   Triggers on: IPAI, InsightPulseAI, Pulser, Odoo 18 CE, ipai_*, BIR compliance,
   ACA deployment, Foundry, rg-ipai, pg-ipai-odoo, ipai-copilot-resource.
-version: "0.7.0"
-updated: "2026-04-13"
+version: "0.8.0"
+updated: "2026-04-18"
 scope: repo
 parts:
   - index
@@ -2796,7 +2796,7 @@ from agent_framework.azure_ai import AzureAIAgentClient
 
 # In ACA — uses id-ipai-dev MI automatically
 client = AzureAIAgentClient(
-    endpoint="https://ipai-copilot-resource.services.ai.azure.com/api/projects/ipai-copilot",
+    endpoint="https://ipai-foundry-sea.services.ai.azure.com/api/projects/ipai-copilot",
     credential=DefaultAzureCredential(),
     model="claude-sonnet-4-6",
 )
@@ -3029,7 +3029,8 @@ Project name:     ipai-copilot
 Project type:     Microsoft.CognitiveServices/account/project
 Project label:    Foundry project
 Portal:           https://ai.azure.com (toggle "New Foundry" ON)
-Endpoint:         https://ipai-copilot-resource.services.ai.azure.com/api/projects/ipai-copilot
+Endpoint:         https://ipai-foundry-sea.services.ai.azure.com/api/projects/ipai-copilot
+Model inference:  https://ipai-foundry-sea.services.ai.azure.com/models
 ```
 
 ### Architecture: resource vs project separation
@@ -3079,7 +3080,7 @@ from azure.identity import DefaultAzureCredential, ManagedIdentityCredential
 credential = DefaultAzureCredential()
 
 client = AIProjectClient(
-    endpoint="https://ipai-copilot-resource.services.ai.azure.com/api/projects/ipai-copilot",
+    endpoint="https://ipai-foundry-sea.services.ai.azure.com/api/projects/ipai-copilot",
     credential=credential,
 )
 
@@ -3127,6 +3128,23 @@ once AI Search index is populated.
 directly to Teams channels (direct path for TBWA\SMP Finance team bots).
 Post-Agent 365 GA (May 1, 2026), each published agent gets an Entra Agent ID.
 
+**Memory** — agents retain and recall context across interactions without
+repeated input. IPAI impact: reduces prompt-stuffing in Pulser finance agents.
+Enable per-agent in project settings. Stored in agent state (cosmos-ipai-dev).
+
+**Multi-agent orchestration** — SDK-native workflow orchestration for
+collaborative agent behavior. Python and C# SDKs. IPAI impact: validates
+our supervisor-mediated pattern; evaluate native Foundry orchestration
+vs custom `agent-platform` dispatcher for simpler flows.
+
+**Foundry Control Plane** — centralized governance for AI resources, policies,
+and access across teams. IPAI impact: aligns with our `platform/` control plane;
+evaluate adoption for RBAC/policy enforcement layer.
+
+**MCP + A2A authentication** — enterprise controls with full auth support for
+MCP and A2A protocols. IPAI impact: validates our three-protocol model
+(A2A + MCP + Agent365). Native auth reduces custom middleware.
+
 **Real-time observability dashboard** — `appi-ipai-dev` + Foundry dashboard
 provides continuous agent evaluation metrics. Set up at:
 ```
@@ -3149,6 +3167,43 @@ Portal → ipai-copilot → Operate → Monitoring
    "Azure AI Foundry resource" → "Microsoft Foundry resource"
    "Azure AI Services endpoint" → "Foundry Tools endpoint"
 ```
+
+### Microsoft Foundry for VS Code Extension
+
+Source: https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/get-started-projects-vs-code
+Marketplace: `TeamsDevApp.vscode-ai-foundry`
+
+**Install:** Extensions → search "Foundry" → Install. Or: `code --install-extension TeamsDevApp.vscode-ai-foundry`
+
+**Connect to IPAI project:**
+1. Azure icon → Sign in → select subscription `eba824fb`
+2. Resources → Foundry → `ipai-copilot-resource` → right-click `ipai-copilot` → "Open in Foundry Extension"
+
+**Extension sections:**
+| Section | Contents | IPAI use |
+|---|---|---|
+| Resources | Deployed models, agents, connections, vector stores | View gpt-4.1-mini deployment, agent versions |
+| Tools | Model Catalog, Model Playground, Agent Playgrounds (remote+local), Local Visualizer, Deploy Hosted Agents | Test Pulser prompts, deploy new models post-RTFP |
+| Help | Docs, GitHub, feedback | — |
+
+**Key actions from VS Code:**
+- **Browse model catalog** — Cmd+Shift+P → `Foundry: Open Model Catalog` — filter by publisher, feature, fine-tuning support
+- **Deploy model** — right-click Models → "Deploy new AI model" → set name, type, version, TPM
+- **Generate sample code** — right-click deployed model → "Open code file" → choose SDK (Python/C#/JS/Java) + auth method → generates Responses API starter
+- **Model playground** — Tools → Model Playground → interactive chat with system prompt, view code
+- **Agent playground** — remote (cloud) or local agent testing
+
+**IPAI-specific setup:**
+```
+# After installing extension + signing in:
+# 1. Default project = ipai-copilot
+# 2. Right-click project → copy endpoint:
+#    https://ipai-copilot-resource.services.ai.azure.com/api/projects/ipai-copilot
+# 3. Models section shows: gpt-4.1-mini (only surviving deployment post-RTFP)
+# 4. Use Model Catalog to deploy additional models after RTFP unblock
+```
+
+**Relation to Claude Code:** Both are dev-time tools. Foundry extension manages Azure AI resources (models, agents, deployments). Claude Code manages repo execution (code, IaC, CI/CD). They coexist — different concerns, same workspace.
 
 ---
 

@@ -498,4 +498,65 @@ InsightPulseAI is bringing Pulser for Odoo — Finance Operations & Compliance C
 
 ---
 
-*Last updated: 2026-04-15. Maintained by Jake Tolentino. Partner Center submission target: Q2 2026.*
+---
+
+## GTM Best Practices Checklist (per MS Marketplace guide)
+
+> Source: https://learn.microsoft.com/en-us/partner-center/marketplace-offers/gtm-best-practices
+
+| Requirement | Status | Notes |
+|---|---|---|
+| **Offer name** includes search keywords | Done | "Pulser for Odoo", "Finance Operations", "Compliance Control Tower" |
+| **Description** leads with value proposition (first 2 sentences) | Done | "eliminates the manual coordination tax" |
+| **User persona** stated in description | Done | Finance Controllers, CFOs, IT Decision-Makers |
+| **Customer pain** stated in description | Done | Manual close, BIR audit risk, no cash visibility |
+| **Logo** PNG 216×216 to 350×350 | Pending | Need to create and upload |
+| **Logo** PNG 48×48 (search page) | Pending | Auto-generated from large logo |
+| **Learn more** documents (PDF) | Pending | Need: whitepaper, brochure, onboarding checklist |
+| **Video** 60-90 seconds, customer as hero | Pending | 4-minute demo storyboard exists; need shorter cut |
+| **Screenshots** 1280×720 (up to 5) | Pending | Need: dashboard, close cockpit, BIR 2307, collections, cash flow |
+| **Campaign tracking** (OCID + UTM params) | Not started | Add to all marketing URLs |
+| **Microsoft trademark compliance** | Review needed | Verify all MS product references follow brand guidelines |
+
+### Listing assets to produce (R2-S05 target)
+
+1. **Logo pack** — 350×350 PNG + 48×48 PNG (Pulser brand mark)
+2. **5 screenshots** at 1280×720:
+   - Finance Control Tower dashboard
+   - Month-end close checklist with exception triage
+   - BIR Form 2307 generation screen
+   - AR Collections recommendation feed
+   - Cash flow forecast with scenario override
+3. **60-second video** — customer-hero narrative (Finance Controller at PH SME)
+4. **Learn more PDFs**:
+   - Solution overview whitepaper (2 pages)
+   - Architecture diagram (1 page)
+   - Onboarding checklist (1 page)
+5. **Landing page** — insightpulseai.com/pulser with UTM tracking
+
+### Campaign tracking template
+
+```
+https://azuremarketplace.microsoft.com/en-us/marketplace/apps/insightpulseai.pulser-odoo-finance
+  ?ocid=pulser_launch
+  &utm_source={source}
+  &utm_medium={medium}
+  &utm_campaign={campaign}
+  &utm_content={content}
+```
+
+---
+
+### Metered billing dimensions (for SaaS Fulfillment API)
+
+| Dimension | Unit | Included in base | Overage rate |
+|---|---|---|---|
+| `ai_queries` | Pulser inference calls | 500/user/month | $0.02/call |
+| `docai_pages` | Document Intelligence pages | 100/user/month | $0.10/page |
+| `genie_minutes` | Databricks Genie query minutes | 60/user/month | $0.05/min |
+
+> Note: Dimensions and rates are placeholders. Final metering will be set after cost modeling against Azure consumption actuals from TBWA pilot.
+
+---
+
+*Last updated: 2026-04-18. Maintained by Jake Tolentino. Partner Center submission target: R3-S09 (Aug 2026).*
