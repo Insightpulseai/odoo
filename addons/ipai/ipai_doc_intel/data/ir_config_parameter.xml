@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Document Intelligence endpoint (Southeast Asia) -->
+    <record id="param_docai_endpoint" model="ir.config_parameter">
+        <field name="key">ipai_doc_intel.endpoint</field>
+        <field name="value">https://southeastasia.api.cognitive.microsoft.com/</field>
+    </record>
+
+    <!-- API key — placeholder, replace with actual key from Key Vault at runtime -->
+    <record id="param_docai_api_key" model="ir.config_parameter">
+        <field name="key">ipai_doc_intel.api_key</field>
+        <field name="value">REPLACE_WITH_KEY_FROM_KEYVAULT</field>
+    </record>
+</odoo>
