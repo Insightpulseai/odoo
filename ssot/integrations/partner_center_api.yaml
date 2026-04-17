@@ -1,0 +1,27 @@
+# Commercial Marketplace / Partner Center Ingestion Contract
+# Maps Odoo Entra ID hooks to the Partner Center Billing endpoints
+
+vendor: microsoft_partner_center
+tier: marketplace_transactable
+auth_method: entra_id_service_principal
+target_publication_date: "2026-08-01"
+
+interfaces:
+  - name: saas_fulfillment_api
+    version: "v2"
+    endpoint: "https://marketplaceapi.microsoft.com/api/saas/subscriptions"
+    purpose: "Handles provisioning, suspension, and reinstatement of Odoo tenants purchased via Azure Marketplace."
+    required_odoo_handlers:
+      - endpoint: "/api/marketplace/webhook"
+        action: "Receives resource updates (e.g. customer cancels subscription)."
+
+  - name: commercial_marketplace_ingestion_api
+    version: "v1"
+    endpoint: "https://graph.microsoft.com/rp/product-ingestion"
+    purpose: "Automated updates to pricing, plans, and technical configuration without manual Partner Center UI clicks."
+
+dependencies:
+  entra_app_registration:
+    name: "ipai-marketplace-fulfillment-bot"
+    permissions:
+      - "Publisher.ReadWrite.All" (Graph API / Partner Center)
