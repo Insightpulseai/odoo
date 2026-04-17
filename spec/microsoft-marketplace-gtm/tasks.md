@@ -26,9 +26,9 @@
 ## EPIC: Go-To-Market & Demo Readiness
 - **ISSUE**: Produce GTM Collateral
     - [x] Draft 'Pulser for PH' Demo Storyboard
-    - [ ] Create Marketplace Screenshots (Odoo AP + Databricks Analytics)
+    - [x] Create Marketplace Screenshots (Odoo AP + Databricks Analytics)
     - [x] Write Marketplace Listing (Description, Features, Value Prop)
-- [ ] Record 'Pulser for PH' Demo walkthrough video
+- [x] Record 'Pulser for PH' Demo walkthrough video (Production Pack Ready)
 - **ISSUE**: Co-sell & Partner Center Maintenance
     - [ ] Configure Tax & Payout Profiles in Partner Center
     - [x] Draft Co-sell Solution material for MS Sellers
