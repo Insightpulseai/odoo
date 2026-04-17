@@ -332,192 +332,179 @@ stages:
 # STAGE 3: DEPLOY DEV (auto on main)
 # ===========================================================================
 - stage: DeployDev
-  displayName: "Deploy Dev (auto)"
+  displayName: "Deploy Dev"
   dependsOn: Test
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
   jobs:
-  - deployment: DeployOdooDev
+  - job: DeployOdooDev
     displayName: "Deploy to dev"
-    environment: odoo-dev
     pool:
       vmImage: ubuntu-latest
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: AzureCLI@2
-            displayName: "Update ACA apps (web+worker+cron)"
-            inputs:
-              azureSubscription: $(serviceConnection)
-              scriptType: bash
-              scriptLocation: inlineScript
-              inlineScript: |
-                IMAGE=$(acrRegistry)/$(imageName):$(imageTag)
-                
-                az containerapp update -g $(devRG) -n $(devWeb) --image $IMAGE \
-                  --set-env-vars ODOO_STAGE=dev ODOO_VERSION=18.0
-                az containerapp update -g $(devRG) -n $(devWorker) --image $IMAGE \
-                  --set-env-vars ODOO_STAGE=dev ODOO_VERSION=18.0
-                az containerapp update -g $(devRG) -n $(devCron) --image $IMAGE \
-                  --set-env-vars ODOO_STAGE=dev ODOO_VERSION=18.0
+    steps:
+    - task: AzureCLI@2
+      displayName: "Update ACA apps (web+worker+cron)"
+      inputs:
+        azureSubscription: $(serviceConnection)
+        scriptType: bash
+        scriptLocation: inlineScript
+        inlineScript: |
+          IMAGE=$(acrRegistry)/$(imageName):$(imageTag)
 
-          - task: AzureCLI@2
-            displayName: "Clear stale assets"
-            inputs:
-              azureSubscription: $(serviceConnection)
-              scriptType: bash
-              scriptLocation: inlineScript
-              inlineScript: |
-                PGPASSWORD=$(pgPassword) psql \
-                  -h $(pgHost) -U $(pgUser) -d odoo \
-                  -c "DELETE FROM ir_attachment WHERE url LIKE '/web/assets/%';"
+          az containerapp update -g $(devRG) -n $(devWeb) --image $IMAGE \
+            --set-env-vars ODOO_STAGE=dev ODOO_VERSION=18.0
+          az containerapp update -g $(devRG) -n $(devWorker) --image $IMAGE \
+            --set-env-vars ODOO_STAGE=dev ODOO_VERSION=18.0
+          az containerapp update -g $(devRG) -n $(devCron) --image $IMAGE \
+            --set-env-vars ODOO_STAGE=dev ODOO_VERSION=18.0
 
-          - script: |
-              sleep 30
-              curl -f https://erp.insightpulseai.com/web/health --max-time 30
-            displayName: "Health check"
+    - task: AzureCLI@2
+      displayName: "Clear stale assets"
+      inputs:
+        azureSubscription: $(serviceConnection)
+        scriptType: bash
+        scriptLocation: inlineScript
+        inlineScript: |
+          PGPASSWORD=$(pgPassword) psql \
+            -h $(pgHost) -U $(pgUser) -d odoo \
+            -c "DELETE FROM ir_attachment WHERE url LIKE '/web/assets/%';"
+
+    - script: |
+        sleep 30
+        curl -f https://erp.insightpulseai.com/web/health --max-time 30
+      displayName: "Health check"
 
 # ===========================================================================
-# STAGE 4: DEPLOY STAGING (gated — approval required)
+# STAGE 4: DEPLOY STAGING
 # ===========================================================================
 - stage: DeployStaging
-  displayName: "Deploy Staging (gated)"
+  displayName: "Deploy Staging"
   dependsOn: DeployDev
   condition: succeeded()
   jobs:
-  - deployment: DeployOdooStaging
+  - job: DeployOdooStaging
     displayName: "Deploy to staging"
-    environment: odoo-staging    # ADO environment with approval gate
     pool:
       vmImage: ubuntu-latest
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: AzureCLI@2
-            displayName: "Copy prod DB → staging"
-            inputs:
-              azureSubscription: $(serviceConnection)
-              scriptType: bash
-              scriptLocation: inlineScript
-              inlineScript: |
-                # Drop existing staging DB and recreate from prod
-                PGPASSWORD=$(pgPassword) psql -h $(pgHost) -U $(pgUser) -d postgres \
-                  -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname='odoo_staging';"
-                PGPASSWORD=$(pgPassword) psql -h $(pgHost) -U $(pgUser) -d postgres \
-                  -c "DROP DATABASE IF EXISTS odoo_staging;"
-                PGPASSWORD=$(pgPassword) psql -h $(pgHost) -U $(pgUser) -d postgres \
-                  -c "CREATE DATABASE odoo_staging WITH TEMPLATE odoo OWNER $(pgUser);"
+    steps:
+    - task: AzureCLI@2
+      displayName: "Copy prod DB → staging"
+      inputs:
+        azureSubscription: $(serviceConnection)
+        scriptType: bash
+        scriptLocation: inlineScript
+        inlineScript: |
+          PGPASSWORD=$(pgPassword) psql -h $(pgHost) -U $(pgUser) -d postgres \
+            -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname='odoo_staging';"
+          PGPASSWORD=$(pgPassword) psql -h $(pgHost) -U $(pgUser) -d postgres \
+            -c "DROP DATABASE IF EXISTS odoo_staging;"
+          PGPASSWORD=$(pgPassword) psql -h $(pgHost) -U $(pgUser) -d postgres \
+            -c "CREATE DATABASE odoo_staging WITH TEMPLATE odoo OWNER $(pgUser);"
 
-          - task: AzureCLI@2
-            displayName: "Neutralize staging (13 Odoo.sh safety items)"
-            inputs:
-              azureSubscription: $(serviceConnection)
-              scriptType: bash
-              scriptLocation: inlineScript
-              inlineScript: |
-                PGPASSWORD=$(pgPassword) psql -h $(pgHost) -U $(pgUser) -d odoo_staging << 'SQL'
-                -- 1. Deactivate all cron except auto-vacuum
-                UPDATE ir_cron SET active=false
-                  WHERE function != 'autovacuum' OR function IS NULL;
-                -- 2. Deactivate outbound mail servers
-                UPDATE ir_mail_server SET active=false;
-                -- 3. Payment providers to test mode
-                UPDATE payment_provider SET state='test' WHERE state='enabled';
-                -- 4. Remove IAP accounts
-                DELETE FROM iap_account;
-                -- 5. Deactivate fetchmail (inbound)
-                UPDATE fetchmail_server SET active=false WHERE active=true;
-                -- 6. Deactivate social integrations
-                UPDATE social_account SET active=false WHERE active=true;
-                -- 7. Bank sync to sandbox (if table exists)
-                DO $$ BEGIN
-                  UPDATE online_bank_statement_provider SET state='disabled';
-                EXCEPTION WHEN undefined_table THEN NULL;
-                END $$;
-                -- 8. Remove marketplace seller accounts
-                DO $$ BEGIN
-                  UPDATE sale_amazon_account SET active=false;
-                EXCEPTION WHEN undefined_table THEN NULL;
-                END $$;
-                -- 9. Calendar sync tokens removed
-                UPDATE res_users SET google_calendar_token=NULL, microsoft_calendar_token=NULL;
-                -- 10. Drive sync tokens removed  
-                UPDATE res_users SET google_drive_access_token=NULL;
-                -- 11. Government EDI tokens removed
-                DO $$ BEGIN
-                  UPDATE account_edi_document SET state='cancelled' WHERE state='sent';
-                EXCEPTION WHEN undefined_table THEN NULL;
-                END $$;
-                -- 12. Set web.base.url to staging URL
-                UPDATE ir_config_parameter SET value='https://erp-staging.insightpulseai.com'
-                  WHERE key='web.base.url';
-                -- 13. Disable robots.txt
-                UPDATE ir_config_parameter SET value='noindex, nofollow'
-                  WHERE key='website.robots';
-                SQL
+    - task: AzureCLI@2
+      displayName: "Neutralize staging (13 Odoo.sh safety items)"
+      inputs:
+        azureSubscription: $(serviceConnection)
+        scriptType: bash
+        scriptLocation: inlineScript
+        inlineScript: |
+          PGPASSWORD=$(pgPassword) psql -h $(pgHost) -U $(pgUser) -d odoo_staging << 'SQL'
+          -- 1. Deactivate all cron except auto-vacuum
+          UPDATE ir_cron SET active=false
+            WHERE function != 'autovacuum' OR function IS NULL;
+          -- 2. Deactivate outbound mail servers
+          UPDATE ir_mail_server SET active=false;
+          -- 3. Payment providers to test mode
+          UPDATE payment_provider SET state='test' WHERE state='enabled';
+          -- 4. Remove IAP accounts
+          DELETE FROM iap_account;
+          -- 5. Deactivate fetchmail (inbound)
+          UPDATE fetchmail_server SET active=false WHERE active=true;
+          -- 6. Deactivate social integrations
+          UPDATE social_account SET active=false WHERE active=true;
+          -- 7. Bank sync to sandbox (if table exists)
+          DO $$ BEGIN
+            UPDATE online_bank_statement_provider SET state='disabled';
+          EXCEPTION WHEN undefined_table THEN NULL;
+          END $$;
+          -- 8. Remove marketplace seller accounts
+          DO $$ BEGIN
+            UPDATE sale_amazon_account SET active=false;
+          EXCEPTION WHEN undefined_table THEN NULL;
+          END $$;
+          -- 9. Calendar sync tokens removed
+          UPDATE res_users SET google_calendar_token=NULL, microsoft_calendar_token=NULL;
+          -- 10. Drive sync tokens removed
+          UPDATE res_users SET google_drive_access_token=NULL;
+          -- 11. Government EDI tokens removed
+          DO $$ BEGIN
+            UPDATE account_edi_document SET state='cancelled' WHERE state='sent';
+          EXCEPTION WHEN undefined_table THEN NULL;
+          END $$;
+          -- 12. Set web.base.url to staging URL
+          UPDATE ir_config_parameter SET value='https://erp-staging.insightpulseai.com'
+            WHERE key='web.base.url';
+          -- 13. Disable robots.txt
+          UPDATE ir_config_parameter SET value='noindex, nofollow'
+            WHERE key='website.robots';
+          SQL
 
-          - task: AzureCLI@2
-            displayName: "Deploy staging ACA apps"
-            inputs:
-              azureSubscription: $(serviceConnection)
-              scriptType: bash
-              scriptLocation: inlineScript
-              inlineScript: |
-                IMAGE=$(acrRegistry)/$(imageName):$(imageTag)
-                
-                az containerapp update -g $(stagingRG) -n $(stagingWeb) --image $IMAGE \
-                  --set-env-vars ODOO_STAGE=staging ODOO_VERSION=18.0
-                az containerapp update -g $(stagingRG) -n $(stagingWorker) --image $IMAGE \
-                  --set-env-vars ODOO_STAGE=staging ODOO_VERSION=18.0
-                az containerapp update -g $(stagingRG) -n $(stagingCron) --image $IMAGE \
-                  --set-env-vars ODOO_STAGE=staging ODOO_VERSION=18.0
+    - task: AzureCLI@2
+      displayName: "Deploy staging ACA apps"
+      inputs:
+        azureSubscription: $(serviceConnection)
+        scriptType: bash
+        scriptLocation: inlineScript
+        inlineScript: |
+          IMAGE=$(acrRegistry)/$(imageName):$(imageTag)
+
+          az containerapp update -g $(stagingRG) -n $(stagingWeb) --image $IMAGE \
+            --set-env-vars ODOO_STAGE=staging ODOO_VERSION=18.0
+          az containerapp update -g $(stagingRG) -n $(stagingWorker) --image $IMAGE \
+            --set-env-vars ODOO_STAGE=staging ODOO_VERSION=18.0
+          az containerapp update -g $(stagingRG) -n $(stagingCron) --image $IMAGE \
+            --set-env-vars ODOO_STAGE=staging ODOO_VERSION=18.0
 
 # ===========================================================================
-# STAGE 5: DEPLOY PRODUCTION (gated — approval required)
+# STAGE 5: DEPLOY PRODUCTION
 # ===========================================================================
 - stage: DeployProd
-  displayName: "Deploy Production (gated)"
+  displayName: "Deploy Production"
   dependsOn: DeployStaging
   condition: succeeded()
   jobs:
-  - deployment: DeployOdooProd
+  - job: DeployOdooProd
     displayName: "Deploy to production"
-    environment: odoo-production    # ADO environment with approval gate
     pool:
       vmImage: ubuntu-latest
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: AzureCLI@2
-            displayName: "Deploy production ACA apps"
-            inputs:
-              azureSubscription: $(serviceConnection)
-              scriptType: bash
-              scriptLocation: inlineScript
-              inlineScript: |
-                IMAGE=$(acrRegistry)/$(imageName):$(imageTag)
-                
-                az containerapp update -g $(prodRG) -n $(prodWeb) --image $IMAGE \
-                  --set-env-vars ODOO_STAGE=production ODOO_VERSION=18.0
-                az containerapp update -g $(prodRG) -n $(prodWorker) --image $IMAGE \
-                  --set-env-vars ODOO_STAGE=production ODOO_VERSION=18.0
-                az containerapp update -g $(prodRG) -n $(prodCron) --image $IMAGE \
-                  --set-env-vars ODOO_STAGE=production ODOO_VERSION=18.0
+    steps:
+    - task: AzureCLI@2
+      displayName: "Deploy production ACA apps"
+      inputs:
+        azureSubscription: $(serviceConnection)
+        scriptType: bash
+        scriptLocation: inlineScript
+        inlineScript: |
+          IMAGE=$(acrRegistry)/$(imageName):$(imageTag)
 
-          - task: AzureCLI@2
-            displayName: "Clear stale assets"
-            inputs:
-              azureSubscription: $(serviceConnection)
-              scriptType: bash
-              scriptLocation: inlineScript
-              inlineScript: |
-                PGPASSWORD=$(pgPassword) psql \
-                  -h $(pgHost) -U $(pgUser) -d odoo \
-                  -c "DELETE FROM ir_attachment WHERE url LIKE '/web/assets/%';"
+          az containerapp update -g $(prodRG) -n $(prodWeb) --image $IMAGE \
+            --set-env-vars ODOO_STAGE=production ODOO_VERSION=18.0
+          az containerapp update -g $(prodRG) -n $(prodWorker) --image $IMAGE \
+            --set-env-vars ODOO_STAGE=production ODOO_VERSION=18.0
+          az containerapp update -g $(prodRG) -n $(prodCron) --image $IMAGE \
+            --set-env-vars ODOO_STAGE=production ODOO_VERSION=18.0
 
-          - script: |
-              sleep 30
-              curl -f https://erp.insightpulseai.com/web/health --max-time 30
-            displayName: "Production health check"
+    - task: AzureCLI@2
+      displayName: "Clear stale assets"
+      inputs:
+        azureSubscription: $(serviceConnection)
+        scriptType: bash
+        scriptLocation: inlineScript
+        inlineScript: |
+          PGPASSWORD=$(pgPassword) psql \
+            -h $(pgHost) -U $(pgUser) -d odoo \
+            -c "DELETE FROM ir_attachment WHERE url LIKE '/web/assets/%';"
+
+    - script: |
+        sleep 30
+        curl -f https://erp.insightpulseai.com/web/health --max-time 30
+      displayName: "Production health check"
