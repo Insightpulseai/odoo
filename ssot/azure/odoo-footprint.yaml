@@ -1,0 +1,87 @@
+stack: odoo-only-azure-footprint
+scope:
+  workload: odoo
+  environment: dev
+
+tag_contract:
+  app: odoo
+  workload: odoo
+  platform: azure
+  managed-by: bicep
+  owner: insightpulseai
+  repo: odoo
+  service: erp
+  environment: dev
+  cost-center: ipai
+  data-classification: internal
+  lifecycle: active
+
+resource_groups:
+  runtime: rg-ipai-dev-odoo-runtime
+  data: rg-ipai-data-sea
+  platform: rg-ipai-dev-platform
+
+existing_resources:
+  postgres_server:
+    name: pg-ipai-odoo
+    resource_group: rg-ipai-data-sea
+    subscription: eba824fb-332d-4623-9dfb-2c9f7ee83f4e  # sponsored
+  aca_environment:
+    name: ipai-odoo-dev-env-v2
+    resource_group: rg-ipai-dev-odoo-runtime
+    subscription: 536d8cf6-89e1-4815-aef3-d5f2c5f4d070  # sub 1
+  key_vault:
+    name: kv-ipai-dev
+    resource_group: rg-ipai-dev-platform
+    subscription: 536d8cf6-89e1-4815-aef3-d5f2c5f4d070
+  managed_identity:
+    name: id-ipai-dev
+    resource_group: rg-ipai-dev-odoo-runtime
+    subscription: 536d8cf6-89e1-4815-aef3-d5f2c5f4d070
+  log_analytics:
+    name: la-ipai-odoo-dev
+    resource_group: rg-ipai-dev-odoo-runtime
+    subscription: 536d8cf6-89e1-4815-aef3-d5f2c5f4d070
+  container_registry:
+    name: acripaiodoo
+    resource_group: rg-ipai-shared
+    subscription: eba824fb-332d-4623-9dfb-2c9f7ee83f4e  # sponsored
+
+apps:
+  web:
+    name: ipai-odoo-dev-web
+    cpu: '2.0'
+    memory: 4Gi
+    ingress: external
+    port: 8069
+  worker:
+    name: ipai-odoo-dev-worker
+    cpu: '1.0'
+    memory: 2Gi
+    ingress: none
+  cron:
+    name: ipai-odoo-dev-cron
+    cpu: '0.5'
+    memory: 1Gi
+    ingress: none
+  staging_web:
+    name: ipai-odoo-staging-web
+    cpu: '1.0'
+    memory: 2Gi
+    ingress: external
+    port: 8069
+  staging_worker:
+    name: ipai-odoo-staging-worker
+    cpu: '0.5'
+    memory: 1Gi
+    ingress: none
+  staging_cron:
+    name: ipai-odoo-staging-cron
+    cpu: '0.25'
+    memory: 0.5Gi
+    ingress: none
+
+image:
+  registry: acripaiodoo.azurecr.io
+  repository: ipai-odoo
+  tag: 18.0-copilot
