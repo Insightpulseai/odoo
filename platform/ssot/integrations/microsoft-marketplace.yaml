@@ -30,6 +30,9 @@ integration:
 security:
   webhook_signature: true
   identity_provider: Entra ID
+  saas_fulfillment_v2:
+    client_id: "PLACEHOLDER_FOR_SAAS_APP_ID"
+    client_secret: "{{MICROSOFT_SAAS_FULFILLMENT_SECRET}}"
   secrets:
     - key: "microsoft_marketplace_api_key"
       purpose: "Authentication for fulfillment webhook calls."

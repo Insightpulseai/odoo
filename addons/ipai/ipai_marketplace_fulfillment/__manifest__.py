@@ -25,10 +25,12 @@ Ref: platform/ssot/integrations/microsoft-marketplace.yaml
         'base',
         'mail',
         'auth_oauth',
+        'website',
     ],
     'data': [
         'security/ir.model.access.csv',
         'data/marketplace_data.xml',
+        'views/marketplace_templates.xml',
     ],
     'installable': True,
     'application': False,

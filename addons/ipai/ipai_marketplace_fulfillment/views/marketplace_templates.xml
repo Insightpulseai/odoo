@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="marketplace_onboarding_page" name="Marketplace Onboarding">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure oe_empty">
+                <section class="s_text_image pt104 pb104" style="background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); color: white;">
+                    <div class="container text-center">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8">
+                                <h1 class="display-3 fw-bold mb-4" style="background: linear-gradient(to right, #60a5fa, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                                    Welcome to Pulser for PH
+                                </h1>
+                                <p class="lead mb-5 text-blue-100">
+                                    Your Microsoft Commercial Marketplace subscription has been initialized. 
+                                    Sign in with your Microsoft account to activate your tenant and begin your intelligent operational journey.
+                                </p>
+                                
+                                <div class="card bg-white/10 backdrop-blur-md border-white/20 p-5 rounded-3">
+                                    <h4 class="mb-4 text-white">Activate Your Account</h4>
+                                    <p class="mb-4 text-slate-300">
+                                        We will securely link your Microsoft identities to your new Odoo workplace.
+                                    </p>
+                                    <a t-attf-href="/auth_oauth/signin?provider={{microsoft_provider_id}}" 
+                                       class="btn btn-primary btn-lg px-5 py-3 fw-bold shadow-lg" 
+                                       style="background: #0078d4; border: none;">
+                                        <i class="fa fa-windows me-2"></i> Sign in with Microsoft
+                                    </a>
+                                </div>
+                                
+                                <p class="mt-5 text-slate-400 small">
+                                    Powered by Microsoft ISV Success &amp; InsightPulse AI
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="s_features pt64 pb64 bg-slate-900 border-top border-white/5">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-4 text-center">
+                                <div class="mb-3">
+                                    <i class="fa fa-bolt fa-3x text-blue-400"></i>
+                                </div>
+                                <h5 class="text-white">Instant Provisioning</h5>
+                                <p class="text-slate-400">Your Odoo environment is ready for configuration as soon as you sign in.</p>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <div class="mb-3">
+                                    <i class="fa fa-shield fa-3x text-purple-400"></i>
+                                </div>
+                                <h5 class="text-white">Entra ID Governance</h5>
+                                <p class="text-slate-400">Zero-trust security mapped directly to your enterprise identities.</p>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <div class="mb-3">
+                                    <i class="fa fa-magic fa-3x text-cyan-400"></i>
+                                </div>
+                                <h5 class="text-white">Pulse AI Ready</h5>
+                                <p class="text-slate-400">Gemini 3 and Azure OpenAI agents integrated from Day 1.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+</odoo>

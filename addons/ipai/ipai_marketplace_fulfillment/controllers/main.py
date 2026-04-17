@@ -7,6 +7,23 @@ _logger = logging.getLogger(__name__)
 
 class MarketplaceWebhookController(http.Controller):
 
+    @http.route('/marketplace/onboarding', type='http', auth='public', website=True)
+    def marketplace_onboarding(self, token=None, **kwargs):
+        """
+        SaaS Landing Page: Captures the token from Microsoft and renders the onboarding UI.
+        """
+        if token:
+            request.session['microsoft_marketplace_token'] = token
+            _logger.info("Marketplace Onboarding: Captured token %s", token)
+
+        # Get Microsoft OAuth provider ID for the 'Sign in' button
+        provider = request.env['auth.oauth.provider'].sudo().search([('name', 'ilike', 'Microsoft')], limit=1)
+        
+        return request.render('ipai_marketplace_fulfillment.marketplace_onboarding_page', {
+            'microsoft_provider_id': provider.id if provider else False,
+            'token': token
+        })
+
     @http.route('/api/marketplace/webhook', type='json', auth='none', methods=['POST'], csrf=False)
     def marketplace_webhook(self, **post):
         """
