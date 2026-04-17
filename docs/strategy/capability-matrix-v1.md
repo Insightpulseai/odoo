@@ -161,3 +161,73 @@ Analytics surface:
 ---
 
 *Generated: 2026-04-15 | Branch: docs/capability-matrix-v1 | SSOT: ssot/product/capability-matrix.yaml*
+
+---
+
+## Addendum: D365 Finance + Project Ops + Business Central capabilities for demo
+
+> Added 2026-04-17. Maps D365 feature marketing claims to demo-ready IPAI equivalents.
+
+### From D365 Finance ($210-300/user/month)
+
+| D365 Finance capability | IPAI demo equivalent | Show in module |
+|---|---|---|
+| Account Reconciliation Agent | Genie: "which accounts are unreconciled?" | Module 4 |
+| Invoice capture automation | `ipai_doc_intel` + DocAI prebuilt-invoice (tested) | Module 2 |
+| Customer payment prediction | gold_finance_ar_aging + deadline risk scoring | Module 3 |
+| Cash flow forecasting | gold_finance_cash_position (planned) | Module 4 |
+| Expedited financial close | Close cockpit with phase/milestone/dependency tracking | Module 1 |
+| Anomaly exposure in close | Evidence gap analysis + blocker detection | Module 2 |
+| Copilot summaries | Pulser: "generate close summary for FD" | Module 5 |
+| Tax compliance (multi-jurisdiction) | BIR compliance control tower (PH-first) | Module 3 |
+| Configurable tax formula | EWT 2%/10% + VAT 12% auto-classification | Module 2 |
+| Audit trail documentation | Odoo chatter + platform.ops.run_events | Module 2 |
+| ESG/sustainability tracking | Deferred | — |
+| Electronic invoicing | BIR .dat export readiness tracking | Module 3 |
+| Subscription billing / MRR | Deferred | — |
+
+### From D365 Project Operations
+
+| D365 Project Ops capability | IPAI demo equivalent | Show in module |
+|---|---|---|
+| Time Entry Agent | Pulser: task lookup by person + time tracking | Module 5 |
+| Expense Agent | DocAI extraction of CA form + Expense Report | Module 2 |
+| Activity Approvals Agent | Approval bottleneck dashboard + queue | Module 4 |
+| Budget tracking (labor/expense) | gold_ppm_project_health + budget variance | Module 1 |
+| Revenue recognition (IFRS) | Deferred (OCA account_asset_management) | — |
+| Real-time utilization KPIs | gold_ppm_task_workload + workload heatmap | Module 4 |
+| Copilot status reports | Pulser: "generate close-blocker summary" | Module 5 |
+| Copilot risk identification | Genie: "which iterations are at risk?" | Module 4 |
+| Resource skill matching | dim_finance_person + role-based assignment | Module 1 |
+| Fixed-price / T&M contracts | Odoo CE sale.order + project.project | Odoo native |
+| Forecasting snapshots | gold_ppm_milestone_status trend | Module 1 |
+
+### From D365 Business Central (SMB competitor)
+
+| D365 BC capability | IPAI demo equivalent | Show in module |
+|---|---|---|
+| Payables Agent | DocAI + Pulser: "draft evidence request for vendor" | Module 5 |
+| Sales Order Agent | Deferred (not finance wedge) | — |
+| Bank reconciliation automation | OCA account_reconcile_oca + Genie Q&A | Module 4 |
+| Cash flow AI projections | gold_finance_cash_position (planned) | Module 4 |
+| Project costing + timesheets | Odoo CE project + hr_timesheet | Odoo native |
+| Inventory forecasting | Deferred (not finance wedge) | — |
+| Copilot ad-hoc analysis | Genie: any NL question over gold marts | Module 4 |
+| Power BI integration | Databricks dashboards + Genie (equivalent) | Module 4 |
+
+### Updated demo KPIs (expanded from 8 to 12)
+
+| # | KPI | Source | D365 equivalent |
+|---|---|---|---|
+| 1 | Filings due in next 7 days | fact_bir_deadline_control | Tax compliance dashboard |
+| 2 | Filings with unresolved blockers | Tax exception cockpit | Anomaly exposure |
+| 3 | Close tasks overdue | fact_close_step_status | Close management |
+| 4 | Reviewer bottleneck score | fact_finance_workload_snapshot | Activity Approvals Agent |
+| 5 | Approval bottleneck score | fact_finance_workload_snapshot | Activity Approvals Agent |
+| 6 | Evidence completeness % | Evidence registry | Audit readiness |
+| 7 | Recurring task volume | fact_finance_task_schedule | Copilot planning |
+| 8 | Automation candidate score | fact_finance_task_schedule | Copilot automation |
+| 9 | **Unreconciled accounts** | gold_finance_ar_aging | Account Reconciliation Agent |
+| 10 | **Cash advance unliquidated > 30d** | fact_expense_liquidation | Expense Agent |
+| 11 | **Invoice extraction accuracy** | ipai_doc_intel confidence | Invoice capture automation |
+| 12 | **Budget variance by project** | gold_ppm_project_health | Budget tracking |
