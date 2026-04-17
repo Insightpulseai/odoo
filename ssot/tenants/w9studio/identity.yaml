@@ -1,7 +1,7 @@
 ---
 # Tenant identity: W9 Studio (portfolio venture under IPAI)
 # Parent SSOT: ssot/tenants/tenants-registry.yaml
-# Last updated: 2026-04-14
+# Last updated: 2026-04-18
 tenant_code: W9
 tenant_name: W9 Studio
 legal_name: W9 Studio
@@ -19,15 +19,15 @@ users_licensed:
   - email: accounts@w9studio.net
     name: accounting & admin
     role: accounting_admin
-    last_signin: "2025-12-14"  # ~4 months ago
+    last_signin: "2026-04-17"  # Active in Admin Console
   - email: finance@w9studio.net
     name: W9 Studio Fin
     role: finance_operator
-    last_signin: "2026-02-14"  # ~2 months ago
+    last_signin: "2026-04-17"  # Active in Admin Console
   - email: business@w9studio.net
     name: W9 Studio Main
     role: operator
-    last_signin: "2026-04-12"  # ~2 days ago
+    last_signin: "2026-04-17"  # Active in Admin Console
     # Likely Jake — cross-tenant principal
 
 odoo:

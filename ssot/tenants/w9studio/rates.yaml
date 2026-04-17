@@ -1,0 +1,84 @@
+# Studio W9 — Published Rates & Packages
+# Last updated: April 2026
+# Currency: PHP
+
+packages:
+  - id: photography_standard
+    name: "Photography Package"
+    description: "Ideal for fashion, product, and editorial shoots."
+    specs: "33 × 32 ft shooting area, 8 ft height"
+    rates:
+      - duration_hrs: 12
+        price: 44000
+      - duration_hrs: 16
+        price: 58000
+    setup_day_price: 48000
+    hourly_rate: 3500
+    includes: [caretaker_fee]
+
+  - id: content_production
+    name: "Content Production Package"
+    description: "Optimized for social media and branded content sprints."
+    specs: "26 × 30 ft mid-size studio"
+    rates:
+      - duration_hrs: 12
+        price: 20000
+      - duration_hrs: 16
+        price: 26000
+    setup_day_price: 24000
+    hourly_rate: 1500
+    includes: [caretaker_fee]
+
+  - id: full_studio_production
+    name: "Full Studio Package"
+    description: "The complete production canvas with all amenities."
+    rates:
+      - duration_hrs: 16
+        price: 93000
+    setup_day_price: 45000
+    overtime_hourly: 5500
+    includes: [studio_aircon, lounge, dressing_room, makeup_stations, production_wi_fi, airconditioned_restrooms, crew_mess_hall]
+
+  - id: commercial_tvc
+    name: "Commercial / TVC Package"
+    description: "Full-scale television commercial production."
+    specs: "23m × 18m × 7.5m"
+    rates:
+      - duration_hrs: 12
+        price: 78800
+    hourly_base: 6567
+    overtime_hourly: 2000
+    includes: [aircon, 3_person_studio_crew, set_up_no_overtime]
+
+  - id: large_format_config_a
+    name: "Large-Format Studio (Config A)"
+    specs: "362.95 sqm"
+    rates:
+      - duration_hrs: 16
+        price: 60000
+    hourly_base: 3750
+
+  - id: large_format_config_b
+    name: "Large-Format Studio (Config B)"
+    specs: "344.65 sqm"
+    rates:
+      - duration_hrs: 16
+        price: 54000
+    hourly_base: 3375
+
+add_ons:
+  electrical_tapping: 8000
+  production_wi_fi: true
+  water: true
+
+payment_methods:
+  - Cash
+  - GCash
+  - Maya
+  - PayPal
+  - Credit / Debit Card
+  - Bank Transfer (BPI / UnionBank)
+
+commercial_terms:
+  volume_discount_threshold: 3_bookings_per_month
+  response_target: within_studio_hours

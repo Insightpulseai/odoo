@@ -8,7 +8,7 @@
 # Relationship: IPAI manages this tenant as an operator/client relationship.
 #               Business authorization for W9 Studio is separate from IPAI's own Entra/Odoo RBAC.
 #
-# Last updated: 2026-04-16
+# Last updated: 2026-04-18
 contract_version: 1
 
 tenant:
@@ -34,7 +34,7 @@ users:
     email: accounts@w9studio.net
     ou: W9 Studio
     status: active
-    last_sign_in: ~4_months_ago
+    last_sign_in: "2026-04-17"  # 04:58 AM per Admin Console
     email_usage_gb: 0.001
     role: accounting_and_admin
 
@@ -42,7 +42,7 @@ users:
     email: finance@w9studio.net
     ou: W9 Studio
     status: active
-    last_sign_in: ~2_months_ago
+    last_sign_in: "2026-04-17"  # Per Admin Console Activity
     email_usage_gb: 0.001
     role: finance
 
@@ -50,7 +50,7 @@ users:
     email: business@w9studio.net
     ou: W9 Studio
     status: active
-    last_sign_in: ~4_days_ago
+    last_sign_in: "2026-04-17"  # 03:11 AM per Admin Console
     email_usage_gb: 0.003
     role: primary_business_contact
 

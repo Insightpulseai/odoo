@@ -276,6 +276,17 @@ documentation:
       - "Resource health monitoring"
     agent_use: "Primary reference for querying Azure resources at scale"
 
+  - id: w9_studio_specs
+    title: "Studio W9 Specifications & Operations"
+    path: "agents/knowledge/w9_studio_specs.md"
+    domain: finance_operations
+    type: reference
+    topics:
+      - "Studio rooms and floor plan"
+      - "April 2026 price list"
+      - "Matte black and acoustic specs"
+    agent_use: "Grounding for the W9 Studio Assistant"
+
 # ============================================================================
 # CODE PATTERNS
 # ============================================================================
