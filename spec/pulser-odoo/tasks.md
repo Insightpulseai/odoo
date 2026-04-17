@@ -29,10 +29,10 @@ Implementation roadmap for Pulser, tracking baseline ERP/AI work through SaaS pl
 ## Phase 29 — Microsoft 365 Declarative Agent packaging
 
 - [x] Align M365 distribution model with Custom-Engine identity
-- [ ] Create **Declarative Agent** manifest for Project-to-Profit (Teams/Outlook)
+- [x] Create **Declarative Agent** manifest for Project-to-Profit (Teams/Outlook)
 - [ ] Create **Declarative Agent** manifest for Record-to-Report (Teams/Outlook)
-- [ ] Define **API Plugin** definitions for canonical project and finance actions
-- [ ] Link M365 surfaces to `copilot_gateway.py` via authorized API Plugin bridges
+- [x] Define **API Plugin** definitions for canonical project and finance actions
+- [x] Link M365 surfaces to `copilot_gateway.py` via authorized API Plugin bridges
 
 ## Phase 30 — Canonical Identity Alignment
 
