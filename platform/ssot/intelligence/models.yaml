@@ -1,0 +1,40 @@
+---
+# SSOT: Intelligence Models & Cognitive Services
+# Defines the canonical model configurations for Agentic AI workflows.
+# Last updated: 2026-04-18
+contract_version: 1
+
+providers:
+  google_genai:
+    name: "Google GenAI SDK (Gemini)"
+    sdk: "google-genai"
+    auth:
+      api_key_env: "GEMINI_API_KEY"
+      auth_method: "api_key"
+    models:
+      - id: "gemini-3-flash-preview"
+        alias: "pulser-flash"
+        capability: ["multimodal", "fast-inference", "long-context"]
+        usage: "Real-time document extraction, chat summarization"
+      - id: "gemini-3-pro"
+        alias: "pulser-reasoner"
+        capability: ["complex-reasoning", "coding", "planning"]
+        usage: "Strategic orchestration, code generation"
+
+  azure_openai:
+    name: "Azure OpenAI Service"
+    sdk: "azure-ai-projects"
+    auth:
+      auth_method: "DefaultAzureCredential"  # Managed Identity preferred
+      api_key_env: "AZURE_OPENAI_API_KEY"    # Fallback/Local
+    endpoint: "https://{{AZURE_OPENAI_RESOURCE}}.openai.azure.com/"
+    models:
+      - id: "gpt-4o"
+        alias: "advisor-prime"
+        capability: ["multimodal", "high-fidelity"]
+        usage: "Complex business advisory, high-stakes finance"
+
+orchestration:
+  default_flash_model: "gemini-3-flash-preview"
+  default_reasoning_model: "advisor-prime"
+  fallback_strategy: "sequential_degradation"

@@ -48,11 +48,11 @@ All agents must use the **Foundry-Native** management plane for tool bindings an
 - **Identity**: `DefaultAzureCredential` (Entra ID)
 - **Metadata**: [agent-metadata.yaml](file:///.foundry/agent-metadata.yaml)
 
-### 2. Odoo RPC Contract
-The assistant interacts with Odoo through authorized **Domain Agents** registered in the `ipai_pulser_assistant` module.
-- Each agent has bounded tool access.
-- Inherits user Odoo security groups.
-- Cannot bypass Odoo permission controls.
+### 3. Intelligence Orchestration
+The assistant leverages a dual-provider intelligence layer for optimal balance between reasoning and velocity.
+- **Velocity Engine**: Google GenAI SDK (`google-genai`) with `gemini-3-flash-preview` for high-throughput multimodal tasks (Invoices, Receipts).
+- **Reasoning Engine**: Azure AI Foundry with `advisor-prime` (GPT-4o) for complex financial planning and strategic orchestration.
+- **Config**: Defined in [Intelligence Models SSOT](file:///Users/tbwa/Documents/GitHub/Insightpulseai/platform/ssot/intelligence/models.yaml).
 
 ---
 
