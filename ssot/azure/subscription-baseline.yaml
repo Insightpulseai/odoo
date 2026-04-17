@@ -1,0 +1,175 @@
+contract_version: 1
+observed: 2026-04-17
+
+subscriptions:
+  sponsored:
+    name: Microsoft Azure Sponsorship
+    subscription_id: eba824fb-332d-4623-9dfb-2c9f7ee83f4e
+    directory: insightpulseai.com
+    tenant_id: 402de71a-87ec-4302-a609-fb76098d1da7
+    offer: MS-AZR-0036P
+    status: active
+    role: canonical_landing_zone
+    owns:
+      - postgresql
+      - container_registry
+      - storage
+      - databricks
+      - networking
+      - monitoring
+      - security_identities
+      - ai_foundry
+
+    security:
+      defender_for_cloud: not_enabled
+      secure_score: not_available
+      action_required:
+        - decide_defender_posture
+        - enable_or_document_deferral
+
+    resource_groups:
+      rg-ipai-shared:
+        purpose: shared_container_registry
+        keep: true
+        resources:
+          - name: acripaiodoo
+            type: Microsoft.ContainerRegistry/registries
+            disposition: keep
+
+      rg-ipai-data-sea:
+        purpose: postgresql_and_data_storage
+        keep: true
+        resources:
+          - name: pg-ipai-odoo
+            type: Microsoft.DBforPostgreSQL/flexibleServers
+            disposition: keep
+
+      rg-ipai-dev-data-sea:
+        purpose: lakehouse_storage
+        keep: true
+        resources:
+          - { name: stdevipai, disposition: keep, role: general_dev_storage }
+          - { name: stipaidevagent, disposition: keep, role: agent_artifacts }
+          - { name: stipaidevbkp, disposition: keep, role: backups }
+          - { name: stipaidevlake, disposition: keep, role: data_lake }
+          - { name: stipaidevlogs, disposition: keep, role: log_archive }
+          - { name: stlkipaidev, disposition: review, role: unclear_duplicate_of_lake }
+
+      rg-ipai-dev-mon-sea:
+        purpose: observability
+        keep: true
+        resources:
+          - { name: log-ipai-dev-sea, type: workspace, disposition: keep, role: primary_workspace }
+          - { name: log-ipai-dev-data-sea, type: workspace, disposition: keep, role: data_workspace }
+          - { name: log-ipai-dev-agent-sea, type: workspace, disposition: keep, role: agent_workspace }
+          - { name: log-ipai-dev-runtime-sea, type: workspace, disposition: keep, role: runtime_workspace }
+          - { name: appi-ipai-dev, type: app_insights, disposition: keep, role: primary }
+          - { name: appi-ipai-dev-agent-sea, type: app_insights, disposition: keep, role: agent }
+          - { name: appi-ipai-dev-runtime-sea, type: app_insights, disposition: keep, role: runtime }
+
+      rg-ipai-dev-security-sea:
+        purpose: managed_identities
+        keep: true
+        resources:
+          - { name: id-ipai-dev, disposition: keep, role: primary_runtime_identity }
+          - { name: id-ipai-dev-agent, disposition: keep, role: agent_identity }
+          - { name: id-ipai-dev-data, disposition: keep, role: data_identity }
+          - { name: id-ipai-dev-runtime, disposition: keep, role: runtime_identity }
+          - { name: id-ipai-dev-pipeline, disposition: keep, role: pipeline_identity }
+
+      rg-ipai-dev-net-sea:
+        purpose: networking_and_private_dns
+        keep: true
+        private_dns_zones:
+          - privatelink.applicationinsights.azure.com
+          - privatelink.azurecr.io
+          - privatelink.blob.core.windows.net
+          - privatelink.cognitiveservices.azure.com
+          - privatelink.postgres.database.azure.com
+          - privatelink.search.windows.net
+          - privatelink.servicebus.windows.net
+          - privatelink.vaultcore.azure.net
+
+      rg-ipai-dev-ai-sea:
+        purpose: ai_search
+        keep: true
+        resources:
+          - { name: srch-ipai-dev-sea, type: search, disposition: keep }
+
+      rg-ipai-dev-dbw-managed:
+        purpose: databricks_managed
+        keep: true
+        note: managed_by_databricks_do_not_modify
+
+      rg-data-intel-ph:
+        purpose: ai_foundry
+        keep: true
+        resources:
+          - name: ipai-copilot-resource
+            type: Microsoft.CognitiveServices/accounts
+            kind: AIServices
+            disposition: keep
+            role: foundry_endpoint
+
+      managed-rg-pv-ipai-dev-sea:
+        purpose: purview_managed
+        keep: true
+        note: managed_by_purview_do_not_modify
+
+      NetworkWatcherRG:
+        purpose: system
+        keep: true
+
+  sub1:
+    name: Azure subscription 1
+    subscription_id: 536d8cf6-89e1-4815-aef3-d5f2c5f4d070
+    directory: insightpulseai.com
+    status: active
+    role: aca_runtime_host
+    owns:
+      - container_apps
+      - dns_zone
+      - key_vault
+      - aca_managed_environment
+
+    resource_groups:
+      rg-ipai-dev-odoo-runtime:
+        purpose: all_aca_apps_dns_staging
+        keep: true
+
+      rg-ipai-dev-platform:
+        purpose: key_vault_and_agent_identities
+        keep: true
+
+odoo_bom_binding:
+  subscription: eba824fb-332d-4623-9dfb-2c9f7ee83f4e
+  aca_subscription: 536d8cf6-89e1-4815-aef3-d5f2c5f4d070
+  postgres: pg-ipai-odoo
+  acr: acripaiodoo
+  aca_environment: ipai-odoo-dev-env-v2
+  key_vault: kv-ipai-dev
+  primary_identity: id-ipai-dev
+  primary_workspace: log-ipai-dev-sea
+  primary_app_insights: appi-ipai-dev
+  foundry_endpoint: ipai-copilot-resource
+
+action_items:
+  - id: 1
+    action: normalize_storage_accounts
+    detail: review stlkipaidev vs stipaidevlake — possible duplicate
+    priority: low
+
+  - id: 2
+    action: decide_defender_posture
+    detail: enable Defender for Cloud or document intentional deferral
+    priority: medium
+
+  - id: 3
+    action: bind_bicep_to_subscription
+    detail: infra/azure/odoo/main.dev.bicepparam already bound
+    status: done
+
+  - id: 4
+    action: verify_workspace_consolidation
+    detail: 4 LA workspaces + 3 App Insights — confirm each serves a distinct plane
+    priority: low
