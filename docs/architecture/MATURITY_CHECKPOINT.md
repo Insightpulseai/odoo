@@ -242,4 +242,10 @@ Fix DLT Gold path conflict → run pipeline → populate gold marts → create G
 
 ---
 
+### Odoo-only Azure codification
+
+The Azure footprint for Odoo is codified as a small Bicep stack (`infra/azure/odoo/`) that adopts existing canonical resource names and enforces a single shared tag contract across all runtime resources. Scope is Odoo-only: ACA web/worker/cron, PostgreSQL reference, Key Vault reference, managed identity, Log Analytics. Databricks, AI, and shared platform resources are out of scope. SSOT: `ssot/azure/odoo-footprint.yaml`.
+
+---
+
 *Last updated: 2026-04-17*
