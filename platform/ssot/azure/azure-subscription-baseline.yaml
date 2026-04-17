@@ -1,0 +1,164 @@
+contract_version: 1
+
+azure_subscription_baseline:
+  subscription:
+    name: Microsoft Azure Sponsorship
+    subscription_id: eba824fb-332d-4623-9dfb-2c9f7ee83f4e
+    directory: insightpulseai.com
+    offer: MS-AZR-0036P
+    status: active
+
+  target_architecture:
+    canonical_workload: odoo_erp_saas
+    canonical_repo_planes:
+      - odoo
+      - infra
+      - platform
+      - web
+      - data-intelligence
+      - agent-platform
+      - docs
+
+  canonical_resource_groups:
+    data: rg-ipai-data-sea
+    platform: rg-ipai-platform-sea
+    runtime: rg-ipai-odoo-runtime-sea
+    observability: rg-ipai-observability-sea
+    networking: rg-ipai-dev-net-sea
+    security: rg-ipai-dev-security-sea
+    analytics: rg-ipai-dev-ai-sea
+
+  observed_inventory:
+    total_resources: 48
+    by_type:
+      private_dns_zone: 8
+      storage_account: 8
+      managed_identity: 6
+      log_analytics_workspace: 4
+      application_insights: 3
+      network_interface: 2
+      action_group: 2
+      virtual_network: 2
+      private_endpoint: 2
+      container_registry: 1
+      event_hubs_namespace: 1
+      azure_databricks_service: 1
+      network_watcher: 1
+      key_vault: 1
+      backup_vault: 1
+      postgresql_flexible_server: 1
+      purview_account: 1
+      search_service: 1
+      databricks_access_connector: 1
+      network_security_group: 1
+
+  canonical_resources:
+    registry:
+      name: acripaiodoo
+      type: container_registry
+      resource_group: rg-ipai-shared
+      action: adopt_in_place
+
+    postgres:
+      name: pg-ipai-odoo
+      type: postgresql_flexible_server
+      resource_group: rg-ipai-data-sea
+      action: adopt_in_place
+
+    key_vault:
+      name: kv-ipai-dev-sea
+      type: key_vault
+      resource_group: rg-ipai-dev-security-sea
+      action: adopt_then_rename_later_if_needed
+
+    databricks:
+      name: dbw-ipai-dev
+      type: azure_databricks_service
+      resource_group: rg-ipai-dev-ai-sea
+      action: keep_for_analytics_plane
+
+    search:
+      name: srch-ipai-dev-sea
+      type: search_service
+      resource_group: rg-ipai-dev-ai-sea
+      action: keep_for_ai_plane
+
+    purview:
+      name: pv-ipai-dev-sea
+      type: purview_account
+      resource_group: rg-ipai-dev-security-sea
+      action: keep_for_governance_plane
+
+    backup_vault:
+      name: bvault-ipai-dev-sea
+      type: backup_vault
+      resource_group: rg-ipai-dev-security-sea
+      action: evaluate_keep_vs_native_pg_backup_overlap
+
+  normalization_targets:
+    observability:
+      preferred_log_workspace:
+        name: log-ipai-dev-runtime-sea
+        resource_group: rg-ipai-dev-mon-sea
+      preferred_app_insights:
+        name: appi-ipai-dev-runtime-sea
+        resource_group: rg-ipai-dev-mon-sea
+      keep:
+        - log-ipai-dev-runtime-sea
+        - appi-ipai-dev-runtime-sea
+        - ag-ipai-dev-sea
+      review:
+        - log-ipai-dev-sea
+        - log-ipai-dev-data-sea
+        - log-ipai-dev-agent-sea
+        - appi-ipai-dev
+        - appi-ipai-dev-agent-sea
+
+    identities:
+      keep:
+        - id-ipai-dev-runtime
+        - id-ipai-dev-data
+        - id-ipai-dev-pipeline
+      review:
+        - id-ipai-dev
+        - id-ipai-dev-agent
+        - dbmanagedidentity
+      rule: prefer_role_specific_identities_over_generic_duplicates
+
+    networking:
+      keep:
+        - vnet-ipai-dev-sea
+        - pe-ipai-dev-kv
+        - pe-ipai-dev-search
+        - privatelink.vaultcore.azure.net
+        - privatelink.search.windows.net
+        - privatelink.postgres.database.azure.com
+        - privatelink.azurecr.io
+      review:
+        - workers-vnet
+        - workers-sg
+      rule: consolidate_networking_around_single_runtime_vnet_unless_databricks_requires_separate_boundary
+
+    storage:
+      keep_for_data_plane_review:
+        - stipaidevlake
+        - stipaidevlogs
+        - stipaidevbkp
+      review:
+        - stdevipai
+        - stipaidevagent
+        - stlkipaidev
+        - scansoutheastasiadckrnut
+        - dbstorageqba5raeuajc6u
+      rule: classify_each_as_runtime_logs_backup_lakehouse_or_managed_service_artifact
+
+  tags_contract:
+    required:
+      app: odoo
+      workload: erp
+      plane: erp
+      managed-by: bicep
+      owner: insightpulseai
+      repo: odoo
+      service: odoo-saas
+    note: apply_incrementally_do_not_rebuild_data_plane_to_add_tags
