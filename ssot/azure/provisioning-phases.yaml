@@ -1,0 +1,78 @@
+contract_version: 1
+decided: 2026-04-17
+authority: founder
+
+provisioning_phases:
+  purpose: prevent_governance_sprawl_by_phasing_microsoft_cloud_surface
+  rule: provision_only_what_the_current_build_phase_requires
+
+  phase_1:
+    label: provision_now
+    gate: none
+    services:
+      - name: Azure
+        status: active
+        subscription: eba824fb-332d-4623-9dfb-2c9f7ee83f4e
+      - name: Entra ID
+        status: active
+        tenant: 402de71a-87ec-4302-a609-fb76098d1da7
+      - name: GitHub
+        status: active
+        org: Insightpulseai
+      - name: Azure DevOps
+        status: active
+        org: insightpulseai
+        project: ipai-platform
+      - name: Visual Studio Code
+        status: active
+        note: claude_code_extension_primary_execution_engine
+
+  phase_2:
+    label: harden_when_ready
+    gate: erp_runtime_stable
+    services:
+      - name: Defender for Cloud
+        status: not_enabled
+        action: decide_posture
+      - name: Purview
+        status: provisioned
+        note: managed_rg_exists_on_sponsored_sub
+
+  phase_3:
+    label: defer_until_erp_baseline_stable
+    gate: odoo_runtime_plus_sso_plus_iac_complete
+    services:
+      - name: Fabric
+        status: deferred
+        reason: analytics_plane_not_current_priority
+      - name: Data Explorer
+        status: deferred
+        reason: analytics_plane_not_current_priority
+      - name: AI Foundry
+        status: provisioned_but_blocked
+        note: ipai-copilot-resource exists, frontier models blocked by 715-123420
+        reason: agent_plane_deferred_until_erp_stable
+      - name: Copilot Studio
+        status: deferred
+        reason: agent_plane_not_current_priority
+      - name: Power Automate
+        status: deferred
+        reason: productivity_plane_not_current_priority
+      - name: Power Platform
+        status: deferred
+        reason: productivity_plane_not_current_priority
+      - name: Microsoft 365 Admin
+        status: deferred
+        reason: admin_plane_not_current_priority
+      - name: Intune
+        status: deferred
+        reason: endpoint_plane_not_current_priority
+
+current_priority:
+  - odoo_runtime_stability
+  - worker_and_cron_topology
+  - postgresql_backup_pitr
+  - sso_runtime_stability
+  - iac_normalization
+
+anti_pattern: do_not_provision_full_microsoft_cloud_catalog_as_checklist
