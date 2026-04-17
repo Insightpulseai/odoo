@@ -1,0 +1,51 @@
+# Microsoft ISV Success - External Benefit Resource Tracking
+# Executed based on EM (So Yeong Choi) orientation email
+# Last tracked: 2026-04-18
+
+resources:
+  # Program Administration
+  support:
+    partner_center_support: "https://learn.microsoft.com/en-us/partner-center/support/get-help"
+    onboarding_url: "https://partner.microsoft.com/en-us/dashboard"
+
+  # Core Technical Benefits & Activation States
+  benefits_12_month:
+    github_enterprise:
+      status: "pending_activation"
+      coupon_code: "ISV-Success-Program-12months-570064f"
+      allowance: "20 seats, 50k automation mins/month"
+      activation_rule: "Use incognito browser, apply to Insightpulseai organization, valid 12 months"
+    
+    azure_sponsorship:
+      status: "active"
+      ticket_reference: "2604130030000838"
+      rule: "Must not be combined with CSP/MCA"
+    
+    azure_standard_support:
+      status: "pending_activation"
+      rule: "Ticket selection priority route -> Partner ISV Success Azur Std"
+
+    m365_e5_developer:
+      status: "pending_activation"
+      url: "https://developer.microsoft.com/en-us/microsoft-365/dev-program"
+      rule: "Do not leave unused for > 6 months"
+
+    visual_studio:
+      status: "pending_activation"
+      url: "https://learn.microsoft.com/en-us/partner-center/mpn-benefits-visual-studio"
+
+  # GTM & Publishing Rules
+  publishing_guidance:
+    payout_schedules: "https://learn.microsoft.com/en-us/marketplace/payout-policy-details"
+    tax_details: "https://learn.microsoft.com/en-us/marketplace/tax-details"
+    azure_tax_payout_policy: "https://learn.microsoft.com/en-us/marketplace/tax-policy-details"
+    billing_profiles: "https://learn.microsoft.com/en-us/partner-center/billing/manage-billing-profiles"
+    cosell_requirements: "https://learn.microsoft.com/en-us/partner-center/commercial-marketplace/co-sell-requirements"
+
+  # Advisory Support Quotas
+  advisory_sessions_remaining: 4
+  advisory_session_types:
+    - "Design & Planning (D&P)"
+    - "Arch Design"
+    - "Arch Review"
+    - "Marketplace Publish Consult"
