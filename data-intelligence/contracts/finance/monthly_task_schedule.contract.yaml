@@ -1,0 +1,40 @@
+contract: monthly_task_schedule
+status: active
+description: Monthly finance close task schedule with prep/review/approval stages
+grain: one_row_per_task_per_activity_stage_per_period
+source: finance_workbook_monthly_schedule
+minimum_fields:
+  - period_key
+  - task_category
+  - task_name
+  - activity_stage
+  - assigned_person_code
+  - assigned_role
+  - target_date
+  - is_bir_related
+  - is_close_related
+quality_rules:
+  - task_name_not_null
+  - activity_stage_in_preparation_review_approval
+  - assigned_person_code_not_null
+task_categories:
+  - payroll_and_personnel
+  - tax_and_provisions
+  - vat_data_filing
+  - accruals
+  - amortization
+  - ca_liquidation
+  - wip_oop
+  - ap_aging
+  - final_adjustments_and_close
+activity_stages:
+  - preparation
+  - review
+  - approval
+role_chain:
+  - preparer
+  - reviewer
+  - approver
+  - finance_supervisor
+  - senior_finance_manager
+  - finance_director

@@ -1,0 +1,18 @@
+fact: fact_bir_deadline_control
+domain: finance_ops
+grain: one_bir_form_x_one_covered_period
+columns:
+  - {name: bir_form_key, type: string, fk: dim_bir_form}
+  - {name: period_key, type: string, fk: dim_reporting_period}
+  - {name: filing_deadline, type: date}
+  - {name: prep_due_date, type: date}
+  - {name: report_approval_due_date, type: date}
+  - {name: payment_approval_due_date, type: date}
+  - {name: days_from_prep_to_deadline, type: int}
+  - {name: days_from_approval_to_deadline, type: int}
+source_contract: contracts/finance/bir_deadlines.contract.yaml
+uc_target: ipai_dev.gold.fact_bir_deadline_control
+measures:
+  - forms_at_risk_count
+  - avg_days_to_deadline
+  - min_days_to_deadline
