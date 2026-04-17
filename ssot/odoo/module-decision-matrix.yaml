@@ -1,0 +1,120 @@
+contract_version: 1
+decided: 2026-04-17
+authority: founder
+
+module_decision_matrix:
+  rule: core_first_then_oca_then_thin_custom
+  doctrine: >
+    If Odoo 18 documents it as an official feature, start with core.
+    Use OCA when you need CE-first enhancement or self-hosted operational parity.
+    Use custom only for thin Azure/IPAI-specific bridges or hosting workarounds.
+
+  decisions:
+    azure_sign_in_auth:
+      capability: Microsoft Azure sign-in authentication
+      core: yes
+      oca: no
+      custom: only_if_proxy_callback_broken
+      note: >
+        Official Odoo 18 Azure sign-in page is the supported setup path.
+        Uses OAuth provider with openid profile email scope.
+        The ACA/Front Door HTTPS redirect issue is a hosting/proxy problem,
+        not a missing Odoo feature. ipai_auth_oauth_https is the thin fix.
+
+    integrations_page_items:
+      capability: Official integrations (Outlook, Gmail, Unsplash, Geolocation, etc.)
+      core: yes_first
+      oca: maybe_later
+      custom: rarely
+      items:
+        - outlook_plugin
+        - gmail_plugin
+        - unsplash
+        - geolocation
+        - google_translate
+        - azure_sign_in
+        - azure_cloud_storage
+
+    azure_cloud_storage:
+      capability: Azure cloud storage for attachments
+      core: yes_first
+      oca: likely_useful_for_self_hosted_attachment_durability
+      custom: only_if_needed
+      note: >
+        Core documents Azure under Cloud Storage as official integration.
+        Real problem is ir_attachment durability on ACA ephemeral containers.
+        Current fix: ir_attachment.location=db (DB-backed).
+        If file-backed needed: OCA storage backend or thin custom bridge.
+
+    odoosh_equivalent:
+      capability: Odoo.sh equivalent hosting on Azure
+      core: no_not_a_module
+      oca: no_mostly_not
+      custom: no_not_a_business_module
+      solution: platform_iac_runtime_contract
+      note: >
+        Solve with image build, ACA runtime, PostgreSQL, secrets,
+        persistent filestore strategy, worker/cron topology.
+        Do not invent a big custom Odoo module for this.
+      ssot:
+        - infra/azure/odoo/main.bicep
+        - infra/ci/azure-pipelines-odoo-deploy.yml
+        - docker/Dockerfile.unified
+        - ssot/azure/odoo-footprint.yaml
+
+    ai_pulser:
+      capability: AI / Pulser inside Odoo
+      core: no_not_enough
+      oca: yes_preferred_first
+      custom: thin_azure_foundry_bridge_only
+      oca_repo: OCA/ai
+      oca_addons_18:
+        - ai_oca_bridge
+        - ai_oca_bridge_chatter
+        - ai_oca_bridge_document_page
+        - ai_oca_bridge_extra_parameters
+        - ai_oca_native_generate_ollama
+      note: >
+        OCA provides the Odoo-side AI bridge surface.
+        Custom code only handles Azure/Foundry/provider-specific glue.
+        Do not build a large bespoke AI module stack from scratch.
+
+    ce_hardening:
+      capability: CE operational parity (accounting, sales, project, etc.)
+      core: baseline_only
+      oca: yes_strongly_recommended
+      custom: only_for_genuine_ipai_gaps
+      note: >
+        OCA is the preferred enhancement lane for serious CE deployment.
+        Custom should stay thin.
+
+  practical_rules:
+    use_core_only:
+      - azure_sign_in
+      - official_mail_plugins
+      - official_documented_integrations
+      - standard_admin_config_features
+
+    use_oca_first:
+      - ce_hardening
+      - operational_parity_enhancements
+      - ai_bridge_pattern
+      - storage_backend_helpers
+      - non_iap_alternatives
+
+    use_custom_only:
+      - azure_hosting_workarounds
+      - thin_provider_bridges
+      - ipai_specific_product_logic
+      - edge_cases_not_covered_by_core_or_oca
+
+  current_custom_modules_justified:
+    ipai_auth_oauth_https:
+      reason: ACA proxy strips TLS, Odoo generates http:// redirect_uri
+      type: hosting_workaround
+      retirement: when_ACA_supports_x_forwarded_proto_natively_or_odoo_fixes_upstream
+
+    ipai_odoo_copilot:
+      reason: Pulser REST shim + Document Intelligence bridge
+      type: thin_provider_bridge
+      retirement: when_OCA_ai_bridge_covers_foundry_endpoint_natively
