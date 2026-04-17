@@ -1,0 +1,13 @@
+contract: bir_deadlines
+status: planned
+grain: one_row_per_form_period_deadline
+minimum_fields:
+  - bir_form
+  - period_covered
+  - filing_deadline
+  - prep_due_date
+  - report_approval_due_date
+  - payment_approval_due_date
+quality_rules:
+  - bir_form_not_null
+  - filing_deadline_not_null

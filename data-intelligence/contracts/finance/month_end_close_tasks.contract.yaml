@@ -1,0 +1,15 @@
+contract: month_end_close_tasks
+status: planned
+grain: one_row_per_role_task_period
+minimum_fields:
+  - employee_or_owner_code
+  - task_category
+  - task_name
+  - reviewed_by
+  - approved_by
+  - preparation_days
+  - review_days
+  - approval_days
+quality_rules:
+  - task_category_not_null
+  - task_name_not_null
