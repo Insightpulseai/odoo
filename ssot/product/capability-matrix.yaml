@@ -1,0 +1,62 @@
+version: 1
+product: pulser_for_odoo_finance_control_tower
+
+v1:
+  must_have:
+    - {capability: close_calendar_phase_plan, owner: odoo_databricks, source: sap_afc_clarity}
+    - {capability: milestones_task_todo_model, owner: odoo, source: sap_afc_clarity_odoo}
+    - {capability: approval_queue, owner: odoo_pulser, source: sap_finance_workflow}
+    - {capability: approval_bottleneck_analytics, owner: databricks, source: databricks_control_tower}
+    - {capability: evidence_completeness_tracking, owner: odoo_databricks, source: sap_compliance}
+    - {capability: evidence_request_drafting, owner: pulser, source: joule_notion}
+    - {capability: blocker_explanation, owner: pulser, source: joule}
+    - {capability: close_readiness_summary, owner: pulser_databricks, source: sap_afc}
+    - {capability: filing_readiness_board, owner: databricks_pulser, source: odoo19_tax_return}
+    - {capability: tax_obligation_registry, owner: databricks, source: odoo19_tax_return}
+    - {capability: prep_review_approval_deadline_chain, owner: databricks, source: workbook_sap}
+    - {capability: deadline_risk_scoring, owner: databricks, source: control_tower}
+    - {capability: recurring_task_burden_analysis, owner: databricks, source: databricks_notion}
+    - {capability: automation_candidate_scoring, owner: databricks, source: notion_control_tower}
+    - {capability: pulser_manager_fd_summary, owner: pulser, source: joule}
+    - {capability: payment_approval_queue, owner: odoo_pulser, source: odoo19_payment}
+    - {capability: payment_readiness_state, owner: databricks_pulser, source: odoo19_payment}
+    - {capability: withholding_on_payment_review, owner: odoo_pulser, source: odoo19_ph_localization}
+    - {capability: payment_evidence_status, owner: odoo_databricks, source: compliance_pattern}
+    - {capability: payment_to_filing_dependency, owner: databricks, source: compliance_control_tower}
+    - {capability: bank_payment_reconciliation_visibility, owner: odoo_databricks, source: odoo_accounting}
+    - {capability: genie_domain_spaces, owner: databricks, source: notion_databricks}
+    - {capability: conversational_analytics_gold, owner: databricks, source: databricks_notion}
+
+  should_have:
+    - {capability: role_aware_next_best_action, owner: pulser, source: joule_notion}
+    - {capability: what_changed_since_last_review, owner: pulser, source: joule}
+    - {capability: return_validation_checks, owner: databricks_pulser, source: odoo19_tax_return}
+    - {capability: tax_exception_queue_triage, owner: databricks_pulser, source: sap_tax_compliance}
+    - {capability: official_format_export_readiness, owner: databricks, source: odoo19_ph_localization}
+    - {capability: pulser_action_handoff_to_odoo, owner: pulser_odoo, source: architecture_split}
+    - {capability: workspace_memory_cross_surface_context, owner: pulser_databricks, source: notion}
+
+  defer:
+    - {capability: dat_export_automation, owner: odoo_bridge, source: odoo19_ph}
+    - {capability: full_ph_statutory_pack_automation, owner: odoo_bridge_databricks, source: odoo19_ph}
+    - {capability: advanced_iso20022_breadth, owner: odoo_payment, source: odoo19_payment}
+    - {capability: broader_payment_provider_sophistication, owner: odoo_provider, source: odoo19_payment}
+    - {capability: native_ai_authoring_inside_erp, owner: odoo_pulser_bridge, source: odoo19_ai}
+    - {capability: multi_agent_workspace_orchestration, owner: pulser_databricks, source: notion_joule}
+
+key_principle: >
+  Do not compete with Odoo 19 on raw native feature count.
+  Compete on better workflow visibility, better control-tower intelligence,
+  better guided assistance, better finance/compliance operating experience.
+
+source_inspirations:
+  sap_afc: SAP Advanced Financial Closing — calendarized close orchestration
+  sap_tax_compliance: SAP Tax Compliance — rule/check cockpit
+  joule: SAP Joule — plain-language finance guidance
+  odoo19_tax_return: Odoo 19 tax return + PH localization
+  odoo19_payment: Odoo 19 payment flow enhancements
+  odoo19_ph_localization: Odoo 19 PH BIR format/export improvements
+  avatax: Avalara AvaTax — compliance/tax-control expectations
+  notion: Notion 3.0 — workspace/agent/search patterns
+  clarity: Broadcom Clarity PPM — phases/milestones/OKR
+  databricks_control_tower: Databricks operational intelligence pattern
