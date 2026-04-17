@@ -160,6 +160,11 @@ roles:
       superset:
         role: null
         description: No direct Superset access (reads via Databricks/PG)
+    azure_capabilities:
+      - id: sponsorship-monitor
+        role: "Billing Reader"
+        scope: "subscription"
+        purpose: "Monitor Azure Sponsorship credits/usage"
     governance:
       auth_method: Azure Managed Identity (system-assigned)
       key_vault: kv-ipai-dev

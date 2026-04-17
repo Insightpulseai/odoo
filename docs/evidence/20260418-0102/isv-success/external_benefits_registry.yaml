@@ -18,8 +18,10 @@ resources:
       activation_rule: "Use incognito browser, apply to Insightpulseai organization, valid 12 months"
     
     azure_sponsorship:
-      status: "active"
+      status: "governance_active"
       ticket_reference: "2604130030000838"
+      governed_by: "id-ipai-agent-pulser-dev"
+      rbac_role: "Billing Reader"
       rule: "Must not be combined with CSP/MCA"
     
     azure_standard_support:
