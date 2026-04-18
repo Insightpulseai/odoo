@@ -1,0 +1,244 @@
+# =============================================================================
+# Foundry Chat + Function Calling — Reference Pattern SSOT
+# =============================================================================
+# Authority: reference-only codification of Microsoft Foundry canonical
+#            chat topology (intro/POC) + function-calling loop. Informs
+#            agent-platform/ design; NOT the final production architecture.
+# Related:   ssot/agent-platform/agent_framework_adoption.yaml
+#            ssot/agent-platform/agent_delivery_stack.yaml
+#            docs/architecture/FOUNDRY_CHAT_BASELINE_MAPPING.md
+#            docs/architecture/agent-framework-adoption.md
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: canonical_reference_only
+
+# -----------------------------------------------------------------------------
+# Upstream references
+# -----------------------------------------------------------------------------
+upstream:
+  intro_chat:
+    name: Microsoft Foundry — Intro / POC chat architecture
+    classification: starter_topology_not_production
+    purpose: [learning, proof_of_concept, fast_end_to_end_experimentation]
+    production_successor: baseline_microsoft_foundry_chat_reference_architecture
+    url: https://learn.microsoft.com/azure/architecture/ai-ml/architecture/intro-microsoft-foundry-chat
+  function_calling:
+    name: Microsoft Foundry — Function calling for Azure OpenAI
+    classification: canonical_tool_execution_pattern
+    url: https://learn.microsoft.com/azure/ai-services/openai/how-to/function-calling
+
+# -----------------------------------------------------------------------------
+# POC chat topology (intro article)
+# -----------------------------------------------------------------------------
+poc_chat_topology:
+  flow:
+    - 1_user_hits_web_app_over_https
+    - 2_easy_auth_on_app_service_authenticates_with_entra_id
+    - 3_app_renders_chat_ui_and_calls_backend_apis_in_same_app_service
+    - 4_backend_uses_azure_ai_persistent_agents_sdk_to_call_agent_service
+    - 5_agent_service_retrieves_grounding_from_azure_ai_search_or_tools
+    - 6_agent_service_sends_grounded_context_to_azure_openai_model_in_foundry
+    - 7_application_insights_logs_request_and_agent_interactions
+  components:
+    - azure_app_service_for_chat_ui_and_api
+    - microsoft_entra_id_for_user_auth
+    - foundry_project_as_container_for_models_agents_connections
+    - agent_service_for_orchestration_chat_history_tool_calls_content_safety
+    - foundry_models_or_azure_openai_for_inference
+    - azure_ai_search_for_grounding
+    - application_insights_and_azure_monitor_for_telemetry
+
+  security_patterns_valid_to_reuse:
+    - app_service_managed_identity_to_agent_service
+    - separate_managed_identity_per_foundry_project
+    - rbac_least_privilege
+    - foundry_content_filtering_guardrails
+  example_rbac_shape:
+    app_service: Azure AI User on the Foundry account
+    foundry_project: Search Index Data Reader on AI Search
+    portal_users: Azure AI Developer on the Foundry account
+
+  limitations_why_not_production:
+    - no_production_grade_reliability
+    - no_autoscaling
+    - no_zone_redundancy
+    - no_serious_network_security
+    - no_azure_policy_governance
+    - limited_cost_controls
+    - limited_deterministic_control_over_agent_service_tool_invocation
+    - limited_production_operational_controls
+  determinism_warning: >
+    Agent Service behavior is effectively nondeterministic because the
+    system prompt, temperature/top_p, and configured tools/knowledge
+    sources shape behavior — not a deterministic flow.
+
+# -----------------------------------------------------------------------------
+# Function-calling loop (canonical)
+# -----------------------------------------------------------------------------
+function_calling_loop:
+  purpose: "Model requests tool calls; YOU execute them; YOU return results; model composes final answer."
+  steps:
+    - 1_call_chat_completions_with_user_messages_and_tools
+    - 2_inspect_model_response_for_tool_calls
+    - 3_execute_the_corresponding_function_yourself
+    - 4_append_tool_result_as_role_tool_message
+    - 5_call_chat_completions_again_for_final_assistant_answer
+  rule: "Tool execution is always outside the model. The model only REQUESTS tool invocations."
+
+# -----------------------------------------------------------------------------
+# Entra-auth secure pattern (Python / OpenAI SDK)
+# -----------------------------------------------------------------------------
+entra_auth_pattern:
+  prerequisites:
+    - azure_openai_model_deployed
+    - custom_subdomain_configured
+    - python_packages: [openai, azure-identity]
+  canonical_snippet: |
+    from openai import OpenAI
+    from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+    token_provider = get_bearer_token_provider(
+        DefaultAzureCredential(),
+        "https://ai.azure.com/.default"
+    )
+    client = OpenAI(
+        base_url="https://YOUR-RESOURCE-NAME.openai.azure.com/openai/v1/",
+        api_key=token_provider,
+    )
+  ipai_binding:
+    placement: agent-platform/src/agent_platform/providers/foundry/auth.py
+    managed_identity_rule: >
+      Use DefaultAzureCredential() chaining Managed Identity first.
+      Never inline secrets. Scope: https://ai.azure.com/.default
+
+# -----------------------------------------------------------------------------
+# Tool declaration shape
+# -----------------------------------------------------------------------------
+tool_declaration_shape:
+  schema:
+    type: function
+    function:
+      name: string
+      description: string
+      parameters: json_schema_like_structure
+      required: list[string]
+  ipai_binding:
+    placement: agent-platform/src/agent_platform/tools/
+    contract: "Every IPAI tool declares this shape via agent_platform.tools.base.Tool"
+
+# -----------------------------------------------------------------------------
+# Tool choice modes
+# -----------------------------------------------------------------------------
+tool_choice_modes:
+  auto:
+    meaning: model_decides_whether_to_call_a_tool
+    default_for_ipai: true
+  force_specific:
+    shape: '{"type":"function","function":{"name":"..."}}'
+    use_when: deterministic_flow_required
+  none:
+    meaning: force_normal_assistant_response_no_tool_call
+    use_when: post_tool_synthesis_step
+
+# -----------------------------------------------------------------------------
+# Parallel function calling
+# -----------------------------------------------------------------------------
+parallel_function_calling:
+  supported: when_model_supports_it
+  mechanism: tool_calls_array_returned_in_single_model_response
+  response_handling: match_each_result_to_tool_call_id
+  benefit: reduces_api_round_trips_and_can_improve_performance
+  safe_use_rule: >
+    Enable only when tool calls are INDEPENDENT and ORDER-INSENSITIVE.
+    For sequential/dependent flows (e.g., finance workflows where each
+    step's output gates the next), force sequential via orchestration.
+
+# -----------------------------------------------------------------------------
+# IPAI binding — where these patterns land in agent-platform/
+# -----------------------------------------------------------------------------
+ipai_binding:
+  providers_foundry:
+    path: agent-platform/src/agent_platform/providers/foundry/
+    files:
+      auth.py: entra_auth_pattern (token_provider, scope)
+      client.py: openai_client_with_foundry_base_url
+      models.py: deployment_mapping_and_model_selection
+      embeddings.py: retrieval_embeddings
+
+  tools:
+    path: agent-platform/src/agent_platform/tools/
+    files:
+      base.py: tool_declaration_shape
+      registry.py: available_tools_per_pack
+      contracts.py: request_response_schema
+      validators.py: policy_plus_payload_validation
+
+  runtime_loop:
+    path: agent-platform/src/agent_platform/runtime/engine.py
+    implements:
+      - function_calling_loop (5 steps)
+      - tool_choice_mode_selection
+      - parallel_tool_call_handling_when_independent
+      - tool_execution_via_pre_and_post_tool_use_hooks (see pulser-hook-lifecycle.yaml)
+
+  observability:
+    path: agent-platform/src/agent_platform/observability/
+    requirements:
+      - log_every_tool_call_with_correlation_id
+      - log_model_request_and_response
+      - export_to_application_insights
+
+# -----------------------------------------------------------------------------
+# Reuse / do not copy
+# -----------------------------------------------------------------------------
+reuse_from_poc:
+  - clean_minimal_reference_for_foundry_backed_chat_path
+  - app_service_managed_identity_to_agent_service_pattern
+  - foundry_project_search_model_separation
+  - application_insights_integration
+  - initial_surface_specific_chat_implementations
+
+do_not_copy_from_poc:
+  - as_final_architecture_for_production_erp_assistance
+  - as_final_architecture_for_branch_tenant_aware_pulser
+  - as_final_architecture_for_governed_release_identity_finance_assistants
+  - as_substitute_for_strong_network_isolation
+  - as_substitute_for_deterministic_guardrails
+  - as_substitute_for_multi_surface_domain_pack_routing
+
+# -----------------------------------------------------------------------------
+# Target production state (baseline reference, not POC)
+# -----------------------------------------------------------------------------
+target_production_state:
+  canonical_reference: baseline_microsoft_foundry_chat_reference_architecture
+  ipai_adaptation: >
+    The POC pattern is a SUBSET of our target. IPAI production adds:
+    - supervisor-mediated orchestration (per CLAUDE.md #10a)
+    - context envelope + domain packs (pulser-context-awareness/packs)
+    - judge pipeline (grounding, policy, domain, responsible_ai)
+    - PIM-gated privileged tools
+    - private endpoints + Azure Front Door network perimeter
+    - evidence + audit retention
+    - go-live readiness gate (ssot/release/go-live-readiness.yaml)
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not replacing agent_framework_adoption.yaml (that's the runtime substrate decision)
+  - not a deployment manifest (infra/ owns that)
+  - not a permissions matrix (ssot/identity/ owns that)
+  - not a persona or task definition (agents/ owns those)
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  agent_framework_adoption: ssot/agent-platform/agent_framework_adoption.yaml
+  agent_delivery_stack: ssot/agent-platform/agent_delivery_stack.yaml
+  foundry_chat_baseline_mapping: docs/architecture/FOUNDRY_CHAT_BASELINE_MAPPING.md
+  pulser_hook_lifecycle: platform/ssot/agents/pulser-hook-lifecycle.yaml
+  pulser_pack_matrix: platform/ssot/agents/pulser-pack-matrix.yaml
+  responsible_ai_policy: platform/ssot/policy/azure-ai-governance-baseline.yaml
