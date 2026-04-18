@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!--
+        OAuth providers for Odoo sign-in.
+        Azure primary, Google secondary, local break-glass always allowed.
+
+        TENANT_ID and CLIENT_IDs are seeded here as empty placeholders;
+        scripts/odoo/quickstart_sso_and_foundry.sh populates them at runtime
+        from Azure Key Vault so they never land in git.
+    -->
+
+    <!-- Azure Entra ID — primary SSO for InsightPulseAI internal users -->
+    <record id="oauth_provider_azure" model="auth.oauth.provider">
+        <field name="name">Microsoft Entra (InsightPulseAI)</field>
+        <field name="client_id"></field>
+        <field name="auth_endpoint">https://login.microsoftonline.com/TENANT_ID_PLACEHOLDER/oauth2/v2.0/authorize</field>
+        <field name="validation_endpoint">https://graph.microsoft.com/oidc/userinfo</field>
+        <field name="scope">openid email profile User.Read</field>
+        <field name="enabled" eval="False"/>
+        <field name="sequence">10</field>
+        <field name="css_class">fa fa-windows</field>
+        <field name="body">Sign in with Microsoft</field>
+    </record>
+
+    <!-- Google Workspace — secondary SSO for W9 Studio users -->
+    <record id="oauth_provider_google_w9" model="auth.oauth.provider">
+        <field name="name">Google Workspace (W9 Studio)</field>
+        <field name="client_id"></field>
+        <field name="auth_endpoint">https://accounts.google.com/o/oauth2/v2/auth</field>
+        <field name="validation_endpoint">https://openidconnect.googleapis.com/v1/userinfo</field>
+        <field name="scope">openid email profile</field>
+        <field name="enabled" eval="False"/>
+        <field name="sequence">20</field>
+        <field name="css_class">fa fa-google</field>
+        <field name="body">Sign in with Google</field>
+    </record>
+</odoo>

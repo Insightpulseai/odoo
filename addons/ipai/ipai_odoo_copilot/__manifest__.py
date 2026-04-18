@@ -7,7 +7,7 @@
     'license': 'LGPL-3',
     'author': 'InsightPulse AI',
     'website': 'https://insightpulseai.com',
-    'depends': ['base', 'web', 'mail', 'bus', 'ipai_knowledge_bridge'],
+    'depends': ['base', 'web', 'mail', 'bus', 'auth_oauth', 'ipai_knowledge_bridge'],
     'external_dependencies': {
         'python': [
             'requests',
@@ -17,6 +17,7 @@
         'security/copilot_groups.xml',
         'security/ir.model.access.csv',
         'data/ir_config_parameter.xml',
+        'data/oauth_providers.xml',
         'data/copilot_partner_data.xml',
         'views/copilot_audit_views.xml',
     ],
