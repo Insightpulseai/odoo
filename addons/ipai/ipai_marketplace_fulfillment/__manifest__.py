@@ -19,7 +19,7 @@ Key Features:
 Ref: platform/ssot/integrations/microsoft-marketplace.yaml
     """,
     'author': 'InsightPulse AI',
-    'website': 'https://insightpulseai.com',
+    'website': 'https://w9studio.net',
     'license': 'LGPL-3',
     'depends': [
         'base',

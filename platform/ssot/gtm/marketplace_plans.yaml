@@ -11,7 +11,7 @@ plans:
     price_usd_monthly: 49.00
     description: "Core Odoo ERP + Pulser Project-to-Profit Assistant."
     entitlements:
-      agents: ["pulser-project-to-profit"]
+      agents: ["pulser-p2p"]
       layers: ["odoo_on_cloud", "ai_wrapper"]
       support: "Community/Standard"
 
@@ -21,7 +21,7 @@ plans:
     price_usd_monthly: 199.00
     description: "Full platform + Record-to-Report & Media Ops Specialist Agents."
     entitlements:
-      agents: ["pulser-project-to-profit", "pulser-record-to-report", "pulser-media-ops"]
+      agents: ["pulser-p2p", "pulser-r2r", "media-ops", "marketplace-fulfillment"]
       layers: ["odoo_on_cloud", "ai_wrapper", "analytics_plane", "media_ops_pipeline"]
       support: "Priority (Business Day)"
 
