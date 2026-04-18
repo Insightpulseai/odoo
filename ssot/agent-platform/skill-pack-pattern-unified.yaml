@@ -1,0 +1,218 @@
+# =============================================================================
+# Unified Skill/Pack Pattern — SSOT
+# =============================================================================
+# Authority: canonical mapping of Genie Code skills vs Pulser packs vs
+#            VS Code custom agents/skills/hooks into one unified pattern.
+#            Same concept, different platforms: context-loaded, scoped,
+#            versioned, focused workflow packs.
+# Related:   platform/ssot/agents/pulser-pack-matrix.yaml
+#            platform/ssot/agents/pulser-domain-packs.yaml
+#            platform/ssot/agents/pulser-hook-lifecycle.yaml
+#            ssot/agent-platform/runtime-sdk-decision-matrix.yaml
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: canonical
+
+doctrine: >
+  Three platforms express the same idea: focused, versioned, scoped
+  workflow packs loaded on demand, separate from global behavior. IPAI's
+  canonical term is "pack"; external upstream equivalents are
+  "skill" (Genie Code) and "custom agent/skill" (VS Code). All share the
+  same shape: manifest + scoped content + optional scripts, under
+  version control.
+
+# -----------------------------------------------------------------------------
+# Platform comparison
+# -----------------------------------------------------------------------------
+platforms:
+
+  genie_code_skills:
+    vendor: databricks
+    classification: domain_skill_pack
+    primary_purpose: extend_genie_code_with_domain_specific_workflows
+    manifest_file: SKILL.md
+    manifest_frontmatter_required:
+      - name
+      - description
+    directory_layout: .assistant/skills/<skill-name>/
+    scopes:
+      workspace: Workspace/.assistant/skills/
+      user: /Users/{username}/.assistant/skills/
+    loading: context_matched_or_explicit_mention
+    optional_assets:
+      - extra_markdown_docs
+      - scripts
+      - templates
+      - reusable_code_files
+    standard: open_agent_skills_standard
+    upstream_article_url: https://docs.databricks.com/aws/en/genie-code/custom-skills
+
+  pulser_packs:
+    vendor: insightpulseai
+    classification: domain_pack_or_shared_role_pack
+    primary_purpose: scope_personas_tasks_judges_tools_per_domain_or_surface
+    manifest_file: pack.manifest.yaml
+    manifest_frontmatter_required:
+      - pack_id
+      - kind (shared_role | domain)
+      - personas
+      - tasks
+      - judges
+      - tools
+      - surfaces
+    directory_layout:
+      shared: agents/shared/<category>/
+      domain: agents/domain/<domain>/
+      judges: agents/judges/<category>/
+    scopes:
+      shared_across_surfaces: agents/shared/
+      domain_bounded: agents/domain/
+    loading: surface_binding_context_envelope_resolution (per surface-bindings.yaml)
+    optional_assets:
+      - extra_markdown_prompts
+      - task_specific_templates
+      - judge_rubrics
+    standard: ipai_canonical
+    governance_layer: platform/ssot/agents/ + platform/ssot/policy/
+
+  vs_code_custom_agents:
+    vendor: microsoft_vs_code
+    classification: agent_skill_or_hook
+    primary_purpose: extend_agent_mode_in_editor
+    manifest_form: varies (agent config + hook registration + slash commands)
+    directory_layout: user_config_or_workspace_config
+    scopes:
+      user: user_config
+      workspace: workspace_config
+    loading: registered_hook_triggers + explicit_invocation
+    lifecycle_hooks:
+      - SessionStart
+      - UserPromptSubmit
+      - PreToolUse
+      - PostToolUse
+      - PreCompact
+      - SubagentStart
+      - SubagentStop
+      - Stop
+    standard: vs_code_ecosystem
+    ipai_note: IPAI adopts the HOOK LIFECYCLE pattern (see pulser-hook-lifecycle.yaml), not the full VS Code packaging surface.
+
+# -----------------------------------------------------------------------------
+# Shape equivalence (same idea, different platforms)
+# -----------------------------------------------------------------------------
+shape_equivalence:
+  rule: "Conceptually isomorphic. Differ in manifest syntax + runtime loader."
+
+  common_dimensions:
+    manifest:
+      genie: SKILL.md + YAML frontmatter
+      pulser: pack.manifest.yaml
+      vs_code: config entry + optional markdown descriptor
+    scope_levels:
+      shared_vs_personal:
+        genie: workspace | user
+        pulser: shared_role | domain
+        vs_code: workspace | user
+    loading_mechanism:
+      genie: context-matched OR @mention
+      pulser: surface binding + context envelope resolution
+      vs_code: hook trigger + explicit invocation
+    version_control:
+      genie: databricks git folders
+      pulser: git (monorepo)
+      vs_code: git
+    optional_assets:
+      all: [markdown_docs, scripts, templates, reusable_code_files]
+    best_practices_all_share:
+      - choose_right_scope
+      - keep_focused_on_one_workflow
+      - clear_names_and_descriptions
+      - example_driven
+      - avoid_extra_context_that_reduces_reliability
+      - iterate_and_refine
+      - separate_written_guidance_from_automation_scripts
+      - version_control_skills_packs
+
+# -----------------------------------------------------------------------------
+# IPAI canonical terminology
+# -----------------------------------------------------------------------------
+ipai_canonical_terms:
+  rule: "Use IPAI terms in code and docs. Reference external terms only when citing upstream."
+  canonical: pack
+  synonyms_for_cross_reference_only:
+    - skill (Genie Code context)
+    - custom_agent_skill (VS Code context)
+  manifest_canonical_filename: pack.manifest.yaml
+  judge_canonical_filename: judge.manifest.yaml
+  forbidden_in_ipai_paths:
+    - SKILL.md (that's Genie Code's convention; do not use in agents/)
+    - .assistant/skills/ (that's Genie Code's layout; do not create in IPAI repos)
+
+# -----------------------------------------------------------------------------
+# When IPAI should adopt each convention
+# -----------------------------------------------------------------------------
+adoption_by_context:
+
+  inside_ipai_repo:
+    use: pulser_packs (pack.manifest.yaml under agents/shared/ or agents/domain/)
+    manifest_format: yaml
+    loading: context envelope + surface binding
+
+  inside_databricks_workspace:
+    if_genie_code_adopted_operationally:
+      use: genie_code_skill_format (SKILL.md + .assistant/skills/)
+      scope: workspace or user
+      rule: keep_databricks_operational_skills_separate_from_pulser_packs
+      do_not: duplicate_pulser_pack_content_as_genie_skill_without_intentional_mapping
+
+  inside_vs_code_editor:
+    if_used_for_ipai_development:
+      use: vs_code_custom_agents_for_ide_tasks_only
+      scope: user or workspace config
+      rule: ide_skills_do_not_replace_pulser_pack_runtime
+      ipai_hook_adoption: mirror lifecycle pattern (see pulser-hook-lifecycle.yaml)
+
+# -----------------------------------------------------------------------------
+# Bridges — when to cross-publish
+# -----------------------------------------------------------------------------
+cross_publishing:
+  pulser_pack_to_genie_skill:
+    allowed_when:
+      - databricks_workspace_user_needs_the_same_workflow_as_a_pulser_domain_pack
+      - content_is_truly_shareable_without_ipai_specific_policy
+    required_translation:
+      - convert pack.manifest.yaml → SKILL.md + YAML frontmatter
+      - remove ipai_tool_registry references (not available in Genie)
+      - remove ipai_policy_engine references (enforce differently in Genie)
+    bidirectional: false (IPAI pack is authoritative; Genie skill is a derived published copy)
+
+  pulser_pack_to_vs_code_agent:
+    allowed_when:
+      - developer_needs_in_editor_mirror_of_a_pulser_workflow
+    required_translation:
+      - adapt to VS Code agent config surface
+      - hook events map 1:1 to pulser_hook_lifecycle events
+    bidirectional: false (IPAI pack is authoritative)
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not adopting SKILL.md inside agents/ (pulser uses pack.manifest.yaml)
+  - not creating .assistant/skills/ inside IPAI monorepo
+  - not treating external skill formats as canonical over pulser packs
+  - not hand-syncing pulser packs to genie skills without a clear operational reason
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  pulser_pack_matrix: platform/ssot/agents/pulser-pack-matrix.yaml
+  pulser_domain_packs: platform/ssot/agents/pulser-domain-packs.yaml
+  pulser_hook_lifecycle: platform/ssot/agents/pulser-hook-lifecycle.yaml
+  runtime_sdk_decision_matrix: ssot/agent-platform/runtime-sdk-decision-matrix.yaml
+  databricks_plane_charter: ssot/data-intelligence/databricks-plane-charter.yaml
+  upstream_genie_skills: https://docs.databricks.com/aws/en/genie-code/custom-skills
