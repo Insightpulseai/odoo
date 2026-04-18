@@ -242,6 +242,158 @@ governance:
     no_pii_in_odata_unless_consumer_class_permits: true
 
 # -----------------------------------------------------------------------------
+# 3-layer target architecture (canonical target)
+# -----------------------------------------------------------------------------
+three_layer_target:
+
+  layer_a_transactional:
+    name: "Odoo CE 18 + OCA"
+    role: erp_source_of_record
+    responsibilities:
+      - transactional_sor
+      - operational_workflows
+      - branch_legal_commercial_dimensions
+
+  layer_b_analytical_semantic:
+    name: "Databricks + Unity Catalog"
+    role: governed_consumption_model_not_source_of_record
+    responsibilities:
+      - curated_bronze_silver_gold_models
+      - governed_semantic_serving_prep
+      - bi_ai_agent_consumption
+    medallion:
+      bronze:
+        purpose: raw_replication_from_odoo_and_adjacent_sources
+      silver:
+        purpose: conformed_business_entities_and_cleaned_facts
+      gold:
+        purpose: semantic_subject_areas_and_consumption_ready_marts
+
+  layer_c_consumption_interchange:
+    name: "Power BI / agent-platform / optional OData+CDM"
+    role: business_facing_semantic_and_interop
+    primary_consumers:
+      - power_bi_semantic_models
+      - agent_platform_tools
+    optional_consumers:
+      - odata_feeds_for_external_systems
+      - cdm_manifest_exports_for_lake_interop
+
+# -----------------------------------------------------------------------------
+# Semantic subject areas (gold layer)
+# -----------------------------------------------------------------------------
+semantic_subject_areas:
+  finance:
+    facts: [gl_entry, ar_invoice, ap_invoice, payment, tax]
+    dimensions: [date, legal_entity, branch, trade_name, customer, vendor, account]
+  sales:
+    facts: [sales_order, sales_order_line, invoice_line]
+    dimensions: [date, product, customer, salesperson, branch, client_tenant]
+  purchasing:
+    facts: [purchase_order, purchase_order_line, vendor_bill]
+    dimensions: [date, vendor, product, branch, legal_entity]
+  projects:
+    facts: [task, timesheet, milestone, cost]
+    dimensions: [project, employee, department, branch]
+  documents:
+    facts: [document_event, extraction_result, approval_event]
+    dimensions: [document_type, source_system, branch, client_tenant]
+
+# -----------------------------------------------------------------------------
+# Toggle model — functional / projection / consumer
+# -----------------------------------------------------------------------------
+toggle_model:
+
+  functional_toggles:
+    base_core: true
+    accounting_core: true
+    sales_core: true
+    purchases_core: true
+    projects_core: true
+    crm_core: true
+    stock_core: true
+    document_controls: true
+    multicompany: true
+    multibranch: true
+    trade_name_dimension: true
+    client_tenant_dimension: true
+    semantic_export: true
+    odata_export: optional
+    cdm_export: optional
+
+  projection_toggles:
+    transactional_odoo_views: true
+    databricks_bronze_replication: true
+    databricks_silver_conformed: true
+    databricks_gold_marts: true
+    powerbi_semantic_models: true
+    odata_external_feeds: optional
+    cdm_manifest_exports: optional
+
+  consumer_toggles:
+    erp_users: true
+    finance_reporting: true
+    ai_agents: true
+    external_partners_via_odata: optional
+    lake_interop_via_cdm: optional
+
+  oca_bucket_toggles:
+    base: enabled
+    accounting: enabled
+    sales: enabled
+    purchases: enabled
+    projects: enabled
+
+# -----------------------------------------------------------------------------
+# OData role (explicit)
+# -----------------------------------------------------------------------------
+odata_role:
+  correct_use: integration_and_export_surface_not_canonical_semantic_authority
+  recommended_use_cases:
+    - lightweight_downstream_system_sync
+    - external_reporting_tools_that_demand_odata
+    - constrained_partner_feeds
+    - narrow_read_models
+  never_use_for:
+    - core_erp_write_path
+    - large_scale_analytical_backbone
+    - richest_semantic_representation
+    - primary_agent_grounding_store
+  rule: >
+    If OData is needed, expose gold/silver projections — NEVER raw Odoo
+    tables. Power Query and Fabric Dataflow Gen2 both ingest OData; that
+    is the supported consumption shape.
+
+# -----------------------------------------------------------------------------
+# CDM role (explicit)
+# -----------------------------------------------------------------------------
+cdm_role:
+  correct_use: metadata_and_interchange_contract_only_if_needed
+  format_policy:
+    preferred: manifest.cdm.json
+    legacy_supported_via_sdk: model.json
+  recommended_use_cases:
+    - exported_data_lake_contracts
+    - interoperability_with_microsoft_style_lake_metadata_tooling
+    - optional_schema_exchange_for_downstream_analytics
+  never_use_as:
+    - primary_odoo_internal_model
+    - live_transactional_contract
+    - replacement_for_unity_catalog_governance
+  rule: >
+    CDM is optional metadata on top of gold/silver projections. It is
+    never the operational or analytical source of truth.
+
+# -----------------------------------------------------------------------------
+# Layer truth summary (one-liner for quick reference)
+# -----------------------------------------------------------------------------
+layer_truth_summary:
+  odoo_model: operational_truth
+  unity_catalog: governed_analytical_truth
+  power_bi_semantic_model: business_consumption_truth
+  odata_and_cdm: interoperability_surfaces_only
+
+# -----------------------------------------------------------------------------
 # Non-goals
 # -----------------------------------------------------------------------------
 non_goals:
@@ -249,6 +401,8 @@ non_goals:
   - not an ETL DAG (that lives in data-intelligence)
   - not a metric definition (semantic-layer.yaml owns that)
   - not a RBAC matrix (identity SSOT owns that)
+  - Odoo MUST NOT be forced to serve as the semantic layer
+  - Unity Catalog tables MUST NOT be the final executive-facing model without a semantic projection
 
 # -----------------------------------------------------------------------------
 # Anchors
@@ -256,6 +410,7 @@ non_goals:
 anchors:
   odoo_orm_registry: ssot/odoo/orm-registry.yaml
   settings_catalog: ssot/odoo/settings_catalog.yaml
+  business_dimensions: ssot/odoo/business_dimensions.yaml
   package_classification: ssot/odoo/package-classification.yaml
   oca_base: infra/ssot/oca/must_have_base.yaml
   oca_accounting: infra/ssot/oca/must_have_accounting.yaml

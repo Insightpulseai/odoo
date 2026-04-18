@@ -1,0 +1,152 @@
+# =============================================================================
+# Odoo CE 18 + OCA — Canonical Business Dimensions SSOT
+# =============================================================================
+# Authority: canonical master-data dimensions that cut across transactional
+#            (Odoo), analytical (UC/medallion), and consumption (Power BI
+#            semantic models) layers.
+# Status:    partial — entity model section was truncated in source input.
+#            Master dimensions captured; master entity_model keys PENDING.
+# Related:   ssot/odoo/ce18_oca_uc_semantic_odata_binding.yaml
+#            ssot/odoo/settings_catalog.yaml
+#            ssot/lakehouse/unity-catalog-map.yaml
+#            ssot/semantic/semantic-layer.yaml
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: partial_pending_entity_model_completion
+truncation_note: >
+  Source input was truncated mid-definition of master.trade_name keys.
+  Entity model master section is a STUB — needs completion from source
+  before being used as authoritative input to medallion/semantic layers.
+
+# -----------------------------------------------------------------------------
+# Business dimensions (must appear across all domains)
+# -----------------------------------------------------------------------------
+business_dimensions:
+
+  legal_entity:
+    role: proprietor_or_registered_business_authority
+    applied_in:
+      odoo: res.company + ir.property extensions
+      uc: dim_legal_entity
+      semantic: dim.legal_entity
+    examples: [InsightPulseAI, W9 Studio, other_registered_entities]
+
+  branch_code:
+    role: bir_branch_or_operating_branch
+    applied_in:
+      odoo: res.branch (custom) or analytic tag
+      uc: dim_branch
+      semantic: dim.branch
+    required_for: ph_bir_compliance
+
+  trade_name:
+    role: consumer_or_commercial_brand
+    applied_in:
+      odoo: res.partner.trade_name (custom field)
+      uc: dim_trade_name
+      semantic: dim.trade_name
+    canonical_values:
+      - dataverse
+      - w9
+      - prismalab
+      - other
+    note: "Trade names are NOT legal entities. One legal entity may trade under multiple names."
+
+  client_tenant:
+    role: external_customer_or_engagement_tenant
+    applied_in:
+      odoo: res.partner.client_tenant (custom field or parent_id resolution)
+      uc: dim_client_tenant
+      semantic: dim.client_tenant
+    canonical_values:
+      - tbwa_smp
+      - other_customer
+    drives: [security_row_level_filters, billing_segmentation, reporting_scope]
+
+  cost_center:
+    role: internal_accountability_unit
+    applied_in:
+      odoo: account.analytic.account (cost_center flag)
+      uc: dim_cost_center
+      semantic: dim.cost_center
+
+  business_line:
+    role: internal_revenue_or_service_line
+    applied_in:
+      odoo: account.analytic.tag or product.category
+      uc: dim_business_line
+      semantic: dim.business_line
+    canonical_values:
+      - consulting
+      - content
+      - research
+      - other
+
+  document_series:
+    role: legal_or_accounting_document_numbering_context
+    applied_in:
+      odoo: ir.sequence (per legal_entity + branch + document type)
+      uc: dim_document_series
+      semantic: dim.document_series
+
+  tax_registration_context:
+    role: tax_authority_and_reg_status_pairing
+    applied_in:
+      odoo: account.tax + res.company.l10n_ph_* extensions
+      uc: dim_tax_registration
+      semantic: dim.tax_registration
+
+# -----------------------------------------------------------------------------
+# Dimension propagation rule
+# -----------------------------------------------------------------------------
+propagation_rule:
+  statement: >
+    Every gold-layer fact table MUST carry all applicable business
+    dimensions from this SSOT. Missing dimensions in gold → re-model
+    silver; do not add to gold ad hoc.
+  exceptions_require: ssot_amendment
+
+# -----------------------------------------------------------------------------
+# Master entity model (TRUNCATED — pending completion)
+# -----------------------------------------------------------------------------
+master_entity_model:
+  status: STUB_pending_source_completion
+  legal_entity:
+    keys: [legal_entity_id, legal_name, tax_id]
+    notes: "Complete."
+  branch:
+    keys: [branch_id, legal_entity_id, branch_code, bir_branch_code]
+    notes: "Complete."
+  trade_name:
+    keys: [trade_name_id, "TODO: keys truncated in source input"]
+    status: stub
+    completion_needed:
+      - confirm remaining keys (parent reference, canonical_value, active flag, effective dates)
+      - confirm whether trade_name is FK to legal_entity or to branch
+  client_tenant:
+    keys: [TODO]
+    status: not_yet_defined
+  cost_center:
+    keys: [TODO]
+    status: not_yet_defined
+  business_line:
+    keys: [TODO]
+    status: not_yet_defined
+  document_series:
+    keys: [TODO]
+    status: not_yet_defined
+  tax_registration_context:
+    keys: [TODO]
+    status: not_yet_defined
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  cross_layer_binding: ssot/odoo/ce18_oca_uc_semantic_odata_binding.yaml
+  settings_catalog: ssot/odoo/settings_catalog.yaml
+  unity_catalog: ssot/lakehouse/unity-catalog-map.yaml
+  semantic_layer: ssot/semantic/semantic-layer.yaml
