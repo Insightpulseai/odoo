@@ -16,10 +16,16 @@ interfaces:
         action: "ipai_marketplace_fulfillment.marketplace_webhook"
         description: "Receives resource updates (e.g. customer cancels subscription)."
 
+  - name: saas_landing_page
+    purpose: "Entra ID SSO onboarding for final license activation."
+    view_path: "/onboarding/marketplace"
+    canonical_url: "https://w9studio.net/onboarding/marketplace"
+
   - name: commercial_marketplace_ingestion_api
     version: "v1"
     endpoint: "https://graph.microsoft.com/rp/product-ingestion"
     purpose: "Automated updates to pricing, plans, and technical configuration."
+    plans_ssot: "platform/ssot/gtm/marketplace_plans.yaml"
 
 dependencies:
   entra_app_registration:
