@@ -1,0 +1,163 @@
+# =============================================================================
+# Pulser Hook Lifecycle — SSOT
+# =============================================================================
+# Authority: canonical lifecycle hooks for Pulser execution. Adapted from
+#            VS Code's agent hook model (SessionStart, PreToolUse, etc.)
+#            for operator-grade agent surface discipline.
+# Related:   platform/ssot/agents/pulser-context-awareness.yaml
+#            platform/ssot/agents/pulser-pack-matrix.yaml
+#            ssot/agent-platform/agent_framework_adoption.yaml
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: canonical
+
+doctrine: >
+  Adapt VS Code's hook lifecycle pattern, not its product surface. Hooks
+  are the operational substrate for context injection, tool policy
+  enforcement, subagent lineage, evidence capture, and compaction-aware
+  state export. Each hook is deterministic where possible and audited.
+
+# -----------------------------------------------------------------------------
+# Hook events (lifecycle, VS Code-pattern adapted)
+# -----------------------------------------------------------------------------
+hook_events:
+
+  SessionStart:
+    fired_when: a new Pulser session or request begins
+    responsibilities:
+      - inject branch/tenant/contact context
+      - bind surface binding (from surface-bindings.yaml)
+      - seed session memory
+      - start audit trace
+    implementation_hint: agent-platform/src/agent_platform/runtime/lifecycle.py:on_session_start
+
+  UserPromptSubmit:
+    fired_when: the user has submitted a prompt but before planning
+    responsibilities:
+      - classify task intent
+      - check data classification
+      - apply input safety filter
+      - tag correlation id
+    implementation_hint: agent-platform/src/agent_platform/runtime/lifecycle.py:on_user_prompt_submit
+
+  PreToolUse:
+    fired_when: a tool invocation is about to be executed
+    responsibilities:
+      - enforce allowed/blocked tool list per pack
+      - check environment mutation policy
+      - evaluate approval requirement
+      - deny unsafe tools BEFORE execution
+    implementation_hint: agent-platform/src/agent_platform/policy/pre_tool_use.py
+    deny_behavior: return structured denial event + audit record; no side effects
+
+  PostToolUse:
+    fired_when: a tool invocation has returned (success or error)
+    responsibilities:
+      - enrich conversation with tool result
+      - apply redaction / PII masking
+      - emit telemetry + audit event
+      - trigger grounding judge if retrieval tool returned
+    implementation_hint: agent-platform/src/agent_platform/policy/post_tool_use.py
+
+  PreCompact:
+    fired_when: session memory is about to be compacted to fit context window
+    responsibilities:
+      - export compacted state snapshot to session store
+      - preserve required evidence citations
+      - record compaction lineage
+    implementation_hint: agent-platform/src/agent_platform/sessions/compaction.py
+
+  SubagentStart:
+    fired_when: a subagent is being dispatched from supervisor
+    responsibilities:
+      - record subagent lineage (parent correlation id)
+      - pass down resolved context envelope (no re-resolution)
+      - bind subagent-specific judges if different from parent
+    implementation_hint: agent-platform/src/agent_platform/orchestration/dispatcher.py:on_subagent_start
+
+  SubagentStop:
+    fired_when: a subagent has completed or errored
+    responsibilities:
+      - capture subagent output + judge verdicts
+      - propagate completion/error up to supervisor
+      - emit audit event with lineage
+    implementation_hint: agent-platform/src/agent_platform/orchestration/dispatcher.py:on_subagent_stop
+
+  Stop:
+    fired_when: the session / request is about to complete
+    responsibilities:
+      - prevent completion if required evidence is missing
+      - emit final audit event
+      - flush telemetry
+      - write session handoff for future requests
+    implementation_hint: agent-platform/src/agent_platform/runtime/lifecycle.py:on_stop
+    guard_behavior: block completion on missing evidence when policy.citation_required=true
+
+# -----------------------------------------------------------------------------
+# Hook registration policy
+# -----------------------------------------------------------------------------
+registration_policy:
+  source: platform/ssot/agents/
+  binding_location: agent-platform/src/agent_platform/runtime/hooks/
+  override_rule: >
+    Domain packs may register ADDITIONAL handlers for a hook, but may NOT
+    remove core handlers. Core handlers include policy enforcement
+    (PreToolUse), audit emission (PostToolUse, Stop), and lineage
+    recording (SubagentStart/Stop).
+
+  deterministic_where_possible: true
+  auditable: true
+
+# -----------------------------------------------------------------------------
+# Google production-discipline mapping → hooks
+# -----------------------------------------------------------------------------
+google_production_mapping:
+  tools_discipline:
+    implemented_via: [PreToolUse, PostToolUse]
+  memory_discipline:
+    implemented_via: [SessionStart, PreCompact, Stop]
+  evaluation_discipline:
+    implemented_via: [PostToolUse (trigger judges), Stop (evidence gate)]
+  productionization_discipline:
+    implemented_via: [SessionStart (audit start), Stop (audit end + flush), SubagentStart/Stop (lineage)]
+
+# -----------------------------------------------------------------------------
+# Hook example — finance approver (PreToolUse deny path)
+# -----------------------------------------------------------------------------
+example_pre_tool_use_deny:
+  scenario: "Actor=Khalil (external_approver), tool_invocation=post_payment"
+  resolved_policy:
+    allowed_tools: [read_invoice, read_attachment, draft_response]
+    blocked_tools: [post_payment, alter_journal]
+  hook_behavior:
+    1_evaluate: tool_name in blocked_tools → DENY
+    2_emit_event:
+      type: tool_denied
+      tool: post_payment
+      reason: blocked_by_policy
+      pack: pulser_finance
+      actor_id: <khalil_oid>
+      correlation_id: <session_correlation>
+    3_no_side_effects: true
+    4_surface_denial_to_user_with_reason: true
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not a replacement for the policy engine (hooks consume policy; policy_engine owns rules)
+  - not a replacement for judges (judges run at PostToolUse / Stop; not themselves hooks)
+  - not a place for business logic (business logic lives in tools and domain packs)
+  - not adopting VS Code's product surface; only its lifecycle pattern
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  pack_matrix: platform/ssot/agents/pulser-pack-matrix.yaml
+  context_awareness: platform/ssot/agents/pulser-context-awareness.yaml
+  surface_bindings: platform/ssot/agents/surface-bindings.yaml
+  agent_framework: ssot/agent-platform/agent_framework_adoption.yaml
