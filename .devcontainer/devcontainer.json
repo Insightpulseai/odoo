@@ -1,10 +1,10 @@
 {
   "$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.schema.json",
-  "name": "InsightPulseAI Odoo 18 CE Dev",
+  "name": "InsightPulseAI Odoo 19 CE Dev",
   "dockerComposeFile": "docker-compose.devcontainer.yml",
   "service": "devcontainer",
   "workspaceFolder": "/workspaces/odoo",
-  "initializeCommand": "bash -lc 'ctx=$(docker context show 2>/dev/null || true); test \"$ctx\" = \"colima-odoo\" || { echo \"Expected docker context colima-odoo, got: ${ctx:-<none>}\"; exit 1; }'",
+  "initializeCommand": "bash -lc 'ctx=$(docker context show 2>/dev/null || true); if [ \"$ctx\" != \"colima-odoo\" ] && [ \"$ctx\" != \"default\" ]; then echo \"Docker context: ${ctx:-<none>}. Expected colima-odoo or default. See docs/GETTING_STARTED.md Step 2.\"; exit 1; fi'",
   "features": {
     "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {}
   },

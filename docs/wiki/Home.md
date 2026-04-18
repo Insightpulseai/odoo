@@ -14,8 +14,7 @@ This project is the canonical control surface for planning, release governance, 
 - **Azure PostgreSQL** is the primary Odoo database layer
 - **Databricks** is the governed intelligence and lakehouse layer
 - **Microsoft Foundry / Azure AI** is the agent, copilot, and evaluation runtime
-- **Supabase** is the platform/control-plane and app-backend layer for auth, metadata, workflow state, vector memory, and bounded backend services
-- **n8n** is the automation and workflow orchestration layer for event-driven integration and operational flows
+- **Azure Functions / Logic Apps** provide workflow automation and orchestration (n8n deprecated 2026-04-07)
 - **Azure DevOps** provides planning and release governance
 - **GitHub** provides source control and pull request truth
 - **SSOT files and runtime evidence** provide intended-state and live-state authority
@@ -54,7 +53,7 @@ InsightPulse AI follows a **six-plane Azure-first architecture**.
 | **Business Systems** | Odoo CE 19, PostgreSQL, operational workflows, finance, projects, approvals |
 | **Data Intelligence** | Databricks, ADLS/Delta, Unity Catalog, governed analytics, ML features, context products |
 | **Agent / AI Runtime** | Foundry, copilot runtime, evaluations, tracing, bounded agent actions |
-| **Experience / Domain Applications** | Public web, ops/admin surfaces, copilots, portals, dashboards, Supabase-backed app services, n8n-driven automation surfaces |
+| **Experience / Domain Applications** | Public web, ops/admin surfaces, copilots, portals, dashboards, Azure-native app services |
 
 ---
 
@@ -82,9 +81,8 @@ InsightPulse AI follows a **six-plane Azure-first architecture**.
 - **Databricks + ADLS/Delta + Unity Catalog** -- lakehouse, analytics, and governed intelligence
 - **Microsoft Foundry / Azure AI** -- agent runtime, copilots, tracing, and evaluation
 - **Power BI** -- semantic consumption and reporting layer (Fabric optional)
-- **Supabase** -- platform/control-plane backend for auth, metadata, workflow state, vector memory, and bounded app services
-- **n8n** -- workflow automation and orchestration
-- **Azure Front Door + Cloudflare DNS** -- public edge and DNS authority
+- **Azure Functions / Logic Apps** -- workflow automation and orchestration
+- **Azure Front Door + Azure DNS** -- public edge and DNS authority
 - **Azure DevOps + GitHub** -- planning, code, and release governance
 - **Fluent UI (React v9 default, Web Components selectively)** -- canonical design system foundation for web, platform, and agent-facing surfaces
 - **`design` repo** -- shared tokens, wrappers, shell primitives, and Fluent-aligned UI contracts
@@ -95,8 +93,7 @@ InsightPulse AI follows a **six-plane Azure-first architecture**.
 - **Odoo** remains the transactional system of record
 - **Databricks** remains the system of intelligence
 - **Foundry** remains the agent/runtime and evaluation plane
-- **Supabase** is not the transactional SoR and not the lakehouse; it is the platform/control-plane and app-backend layer
-- **n8n** is orchestration and automation only; it is not a system of record
+- **Azure Functions / Logic Apps** handle orchestration and automation; they are not a system of record
 - **Power BI** is the semantic consumption layer; Fabric is optional expansion, not the data-intelligence core
 - **Fluent UI** is the design system foundation; the `design` repo owns tokens and shared components; application repos consume, not redefine
 - **Odoo** stays native for ERP surfaces; Fluent is used selectively for embedded widgets or brand alignment, not full UI replacement
@@ -252,3 +249,5 @@ Where Odoo Projects syncs to Azure Boards:
 **ipai-platform** is the canonical Azure DevOps project for InsightPulse AI. It provides the planning and release spine for an Azure-first platform where Odoo is the business system of record, Databricks is the governed intelligence layer, Foundry is the agent/runtime layer, Supabase provides platform/control-plane backend capabilities, and n8n provides workflow automation and orchestration.
 
 The goal is a clean, evidence-backed, production-ready delivery model — not a placeholder project, and not a duplicate of runtime truth elsewhere.
+
+> **Deprecation note (2026-04-07):** Supabase, n8n, and Cloudflare are fully deprecated. All services are Azure-native. See repo CLAUDE.md for the full deprecation table.

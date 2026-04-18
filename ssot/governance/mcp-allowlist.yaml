@@ -1,0 +1,247 @@
+---
+# SSOT: Canonical MCP Server Allowlist
+# Authority: this file defines which MCP servers are approved for use.
+# Doctrine: one MCP per capability, official-first, no plugin zoo.
+# Frozen: 2026-04-18
+version: 1
+status: canonical
+
+doctrine: >
+  The MCP Registry should resolve to a small official-first control set,
+  not a giant plugin zoo. One MCP per capability unless there is a clear
+  reason for overlap. Prefer official Microsoft/GitHub MCPs for Microsoft
+  stack surfaces. Prefer project-local skills for BOM and boundaries,
+  not more MCPs.
+
+  MCP = connector (gives agent access to tools/systems)
+  Skill = decision/governance layer (teaches agent how platform works)
+
+# ─────────────────────────────────────────────────────────────────────
+# Tier 1 — Core (installed, canonical)
+# ─────────────────────────────────────────────────────────────────────
+tier1_core:
+
+  azure:
+    purpose: Azure resource operations, service discovery, execution context
+    config_key: azure  # matches .mcp.json key
+    status: installed
+    used_by: [infra/, platform/, agent-platform/, data-intelligence/]
+
+  azure-devops:
+    purpose: Boards, work items, builds, releases, repos
+    config_key: azure-devops
+    status: installed
+    used_by: [all lanes — planning/governance spine]
+
+  github:
+    purpose: repos, PRs, issues, workflows
+    config_key: github
+    status: installed
+    used_by: [all lanes — code truth]
+
+  microsoft-learn:
+    purpose: trusted current Microsoft docs grounding
+    config_key: microsoft-learn
+    status: installed
+    used_by: [all lanes — reference]
+
+  foundry:
+    purpose: Foundry-native tools, models, eval/deploy context
+    config_key: foundry
+    status: installed
+    note: experimental — endpoint bound to ipai-copilot-resource
+    used_by: [agent-platform/, platform/]
+
+  playwright:
+    purpose: web automation, smoke tests, browser validation
+    config_key: playwright
+    status: installed
+    used_by: [web/, docs/, QA workflows]
+
+  figma:
+    purpose: design-to-dev context, token/component extraction
+    config_key: figma
+    status: installed
+    used_by: [web/, design/]
+
+# ─────────────────────────────────────────────────────────────────────
+# Tier 1 — Core (not yet installed, should be)
+# ─────────────────────────────────────────────────────────────────────
+tier1_pending:
+
+  dbhub:
+    purpose: database inspection and query context
+    status: not_installed
+    install_when: next DB-heavy development session
+    used_by: [odoo/, platform/, data-intelligence/]
+    note: prefer over pgEdge — pick one, not both
+
+  desktop-commander:
+    purpose: local shell/files/processes for agent workflows
+    status: not_installed
+    install_when: next local agent execution session
+    used_by: [odoo/, platform/]
+
+  markitdown:
+    purpose: convert PDFs/Word/Excel/images to markdown for agent context
+    status: not_installed
+    install_when: next document processing workflow
+    used_by: [odoo/, docs/]
+
+# ─────────────────────────────────────────────────────────────────────
+# Tier 2 — Useful (add when task needs them)
+# ─────────────────────────────────────────────────────────────────────
+tier2_useful:
+
+  databricks-genie:
+    purpose: Databricks workspace SQL and Genie space queries
+    config_key: databricks-genie
+    status: configured_not_installed  # Genie Space must exist first
+    used_by: [data-intelligence/]
+    note: requires pip install + Genie Space creation in workspace UI
+
+  chrome-devtools:
+    purpose: frontend debugging and page inspection
+    status: not_installed
+    install_when: frontend debugging workflow
+    used_by: [web/]
+    note: Playwright + Chrome DevTools together is acceptable
+
+  code-retrieval:
+    purpose: semantic code navigation in large repos
+    candidates: [serena, sourcegraph]
+    rule: pick one primary, not both
+    status: not_installed
+    install_when: codebase grows beyond comfortable grep/glob range
+
+  observability:
+    purpose: runtime debugging
+    candidates: [sentry, netdata, dynatrace]
+    rule: pick one based on actual monitoring stack
+    status: not_installed
+    install_when: production incident response workflow
+
+# ─────────────────────────────────────────────────────────────────────
+# Tier 3 — Optional (only if workload explicitly needs them)
+# ─────────────────────────────────────────────────────────────────────
+tier3_optional:
+
+  fabric-rti:
+    purpose: Fabric Real-Time Intelligence / KQL / Eventhouse
+    adopt_when: RTI/KQL workload becomes real
+    status: not_adopted
+
+  microsoft-enterprise:
+    purpose: Entra natural-language querying
+    adopt_when: identity governance automation needed
+    status: not_adopted
+
+  terraform:
+    purpose: Terraform IaC operations
+    adopt_when: infra shifts to Terraform-heavy (currently Bicep-primary)
+    status: not_adopted
+
+  stripe:
+    purpose: billing/payment flows
+    adopt_when: SaaS billing productized
+    status: not_adopted
+
+# ─────────────────────────────────────────────────────────────────────
+# Explicitly avoided / deprecated
+# ─────────────────────────────────────────────────────────────────────
+avoided:
+
+  - name: vercel
+    reason: Vercel fully deprecated (2026-04-07)
+
+  - name: notion
+    reason: not an SSOT source; removed from Databricks bundle
+
+  - name: supabase
+    reason: Supabase fully deprecated (2026-03-26)
+
+  - name: cloudflare
+    reason: Cloudflare fully deprecated (2026-04-07)
+
+  - name: multiple-overlapping-db-mcps
+    reason: "pick one DB MCP (DBHub), not DBHub + pgEdge + Neon"
+
+  - name: multiple-overlapping-observability-mcps
+    reason: "pick one (Sentry OR Netdata OR Dynatrace), not all"
+
+  - name: multiple-overlapping-code-retrieval-mcps
+    reason: "pick one (Serena OR Sourcegraph), not both"
+
+# ─────────────────────────────────────────────────────────────────────
+# Repo-by-repo MCP allowlist
+# ─────────────────────────────────────────────────────────────────────
+repo_allowlist:
+
+  odoo/:
+    required: [github, azure-devops, microsoft-learn, dbhub, desktop-commander, markitdown]
+    optional: [playwright, chrome-devtools, figma]
+    avoid: [fabric-rti, terraform, vercel, stripe, supabase, notion]
+
+  agent-platform/:
+    required: [foundry, azure, github, azure-devops, microsoft-learn, desktop-commander]
+    optional: [dbhub, markitdown, serena-or-sourcegraph]
+    avoid: [vercel, stripe, notion, fabric-rti]
+
+  platform/:
+    required: [azure, github, azure-devops, dbhub, microsoft-learn, desktop-commander]
+    optional: [playwright, markitdown, serena-or-sourcegraph]
+    avoid: [figma, vercel, stripe, fabric-rti]
+
+  data-intelligence/:
+    required: [azure, github, azure-devops, microsoft-learn, dbhub]
+    optional: [fabric-rti, desktop-commander, databricks-genie, serena-or-sourcegraph]
+    avoid: [playwright, figma, vercel, stripe, notion, supabase]
+
+  web/:
+    required: [github, azure-devops, playwright, chrome-devtools, figma, microsoft-learn]
+    optional: [azure, vercel, desktop-commander, serena-or-sourcegraph]
+    avoid: [dbhub]
+    note: "dbhub only if frontend directly needs DB inspection"
+
+  infra/:
+    required: [azure, azure-devops, github, microsoft-learn, desktop-commander]
+    optional: [terraform, microsoft-enterprise, serena-or-sourcegraph]
+    avoid: [figma, playwright, markitdown, stripe, supabase, notion]
+
+  docs/:
+    required: [github, microsoft-learn, markitdown]
+    optional: [azure-devops, figma]
+    avoid: [dbhub, fabric-rti, terraform, supabase, notion]
+
+# ─────────────────────────────────────────────────────────────────────
+# Task routing rules (which MCP for which task type)
+# ─────────────────────────────────────────────────────────────────────
+task_routing:
+  azure_resource_runtime_infra: azure
+  work_item_backlog_release: azure-devops
+  repo_pr_issue_workflow: github
+  trusted_microsoft_docs: microsoft-learn
+  foundry_agent_runtime: foundry
+  db_inspection: dbhub
+  local_shell_files_processes: desktop-commander
+  browser_ui_validation: [playwright, chrome-devtools]
+  design_to_dev: figma
+  document_pdf_conversion: markitdown
+
+# ─────────────────────────────────────────────────────────────────────
+# Operating rules
+# ─────────────────────────────────────────────────────────────────────
+rules:
+  - one_mcp_per_capability: true
+  - official_microsoft_preferred: true
+  - no_wholesale_registry_install: true
+  - new_mcp_requires_justification: true
+  - skills_and_mcps_stay_separate: true
+
+# ─────────────────────────────────────────────────────────────────────
+# Anchors
+# ─────────────────────────────────────────────────────────────────────
+anchors:
+  mcp_json: .mcp.json
+  cloud_plane_map: ssot/azure/cloud-plane-map.yaml
+  platform_architecture: docs/architecture/canonical-platform-architecture.md

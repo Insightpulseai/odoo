@@ -1,14 +1,39 @@
 # Azure-Native Odoo.sh Equivalent — Machine-Readable Target State
 # Human doc: docs/architecture/azure/AZURE_ODOOSH_EQUIVALENT.md
 
-version: "1.0"
+version: "1.1"
 schema: ssot.governance.azure-odoosh-equivalent.v1
-updated_at: "2026-03-15"
+updated_at: "2026-04-18"
 
 platform_goal: azure_native_odoosh_equivalent
 doctrine: >
   Odoo.sh is the capability benchmark, not the implementation target.
   Azure is the deployment surface. Codify behavior on top of primitives.
+  Azure Pipelines is the canonical CI/CD engine.
+  Odoo.sh concepts (branch lanes, build-per-revision, containerized isolation,
+  Odoo-aware dependency handling, branch promotion) are borrowed as patterns,
+  not as platform dependency.
+
+# ---------------------------------------------------------------------------
+# Platform Split Doctrine (2026-04-18)
+# ---------------------------------------------------------------------------
+# Azure Pipelines and Odoo.sh are related but not substitutes.
+#
+# Azure Pipelines = general-purpose CI/CD orchestrator (any app, any language)
+# Odoo.sh = managed Odoo application platform (Odoo-specific hosting/build/deploy)
+#
+# Because IPAI is Azure-first, repo-first, and not Odoo.sh-dependent:
+#   Azure Pipelines = canonical deployment/governance engine
+#   Odoo.sh = useful deployment reference pattern, not the primary platform
+#
+# Azure Pipelines handles: repo CI, contract tests, image build/publish,
+#   infra deployment, release gates, non-Odoo services (Pulser, bridges,
+#   agent runtime, web surfaces)
+#
+# Odoo.sh patterns borrowed: production/staging/dev branch lanes,
+#   build-per-revision, containerized isolation, Odoo-aware dependency
+#   handling via submodules/requirements, branch promotion discipline
+# ---------------------------------------------------------------------------
 
 # ---------------------------------------------------------------------------
 # Canonical Naming
@@ -34,8 +59,8 @@ canonical_naming:
 control_plane:
   source_control: github
   ci_cd:
-    primary: github_actions
-    selective: azure_devops_pipelines
+    primary: azure_devops_pipelines
+    scoped_exception: github_actions  # pre-merge validation only, per gha-scoped-exception.yaml
   identity:
     provider: microsoft_entra_id
     managed_identity: true
@@ -96,7 +121,7 @@ runtime:
 # Edge / Routing
 # ---------------------------------------------------------------------------
 network_edge:
-  dns: cloudflare
+  dns: azure_dns  # Cloudflare deprecated 2026-04-07
   public_edge: azure_front_door
   tls: managed_certificates
   waf: true
@@ -229,23 +254,43 @@ parity_status:
 # Repo Ownership
 # ---------------------------------------------------------------------------
 repo_ownership:
-  odoo:
-    - "config/environments/"
-    - "addons/ipai/"
-    - "docker/Dockerfile.*"
-    - ".github/workflows/ci-*"
-  infra:
-    - "infra/terraform/"
-    - "infra/dns/"
-    - "infra/keyvault/"
-    - "infra/monitoring/"
-    - "infra/frontdoor/"
-  ops-platform:
-    - "ops-platform/backup/"
-    - "ops-platform/staging/"
-    - "ops-platform/supabase/"
-  agents:
-    - "agents/foundry/"
+  odoo/:
+    ci_engine: azure_pipelines
+    pattern_reference: odoosh_branch_build_model
+    paths:
+      - "config/environments/"
+      - "addons/ipai/"
+      - "docker/Dockerfile.*"
+      - "azure-pipelines/"
+  agent-platform/:
+    ci_engine: azure_pipelines
+    pattern_reference: none  # not Odoo workload
+    paths:
+      - "agent-platform/"
+  platform/:
+    ci_engine: azure_pipelines
+    pattern_reference: none
+    paths:
+      - "platform/"
+  web/:
+    ci_engine: azure_pipelines
+    pattern_reference: none
+    paths:
+      - "web/"
+  infra/:
+    ci_engine: azure_pipelines
+    pattern_reference: none
+    paths:
+      - "infra/"
+  data-intelligence/:
+    ci_engine: azure_pipelines
+    pattern_reference: none
+    paths:
+      - "data-intelligence/"
+
+# Odoo.sh is only the right primary platform if you decide to adopt
+# Odoo's managed hosting product as the runtime authority.
+# Current decision: Azure-first, Odoo.sh as reference only.
 
 # ---------------------------------------------------------------------------
 # Implementation Phases
@@ -258,7 +303,7 @@ phases:
       - "ACA runtime deployed ✓"
       - "PostgreSQL connectivity ✓"
       - "Key Vault secrets ✓"
-      - "Cloudflare → Front Door ✓"
+      - "Azure DNS + Front Door ✓"
       - "CI workflows (partial) ✓"
       - "ACR with automated builds — pending"
       - "Per-env config files — pending"

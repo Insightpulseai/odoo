@@ -1,0 +1,222 @@
+---
+# SSOT: Canonical Cloud Plane Map
+# Authority: this file defines which Microsoft cloud surfaces are first-class,
+#            secondary, or out-of-scope for the IPAI platform.
+# Frozen: 2026-04-18
+# Context: derived from subscription governance review + 63-resource estate audit
+version: 1
+status: canonical
+
+# ─────────────────────────────────────────────────────────────────────
+# First-class cloud surfaces (mandatory, actively governed)
+# ─────────────────────────────────────────────────────────────────────
+first_class:
+
+  entra:
+    role: identity backbone
+    owns:
+      - workforce identity
+      - app registrations
+      - managed identities
+      - RBAC / PIM
+      - conditional access
+    repo_owner: infra/
+    status: active
+
+  azure:
+    role: infrastructure and runtime substrate
+    owns:
+      - ACA (Container Apps)
+      - ACR (Container Registry)
+      - PostgreSQL Flexible Server
+      - Redis
+      - Key Vault
+      - VNet / Private Endpoints / NSGs
+      - Azure DNS
+      - Front Door (when deployed)
+      - Monitor / Log Analytics / App Insights
+      - Storage Accounts
+      - Backup Vault
+    repo_owner: infra/
+    status: active
+
+  ai_foundry:
+    role: agent runtime and model access
+    owns:
+      - Pulser agent runtime
+      - model deployments (GPT-4.1, etc.)
+      - agent evaluation / tracing
+      - AI Search
+      - Document Intelligence
+    repo_owner: agent-platform/
+    status: active
+    resource: ipai-copilot-resource (East US 2)
+
+  devops:
+    role: planning, governance, and release control
+    owns:
+      - Azure Boards (portfolio / backlog)
+      - Azure Pipelines (deploy authority)
+      - Azure Repos (not used — GitHub is code truth)
+      - Azure Test Plans (optional)
+    repo_owner: docs/ + infra/
+    status: active
+
+  github:
+    role: engineering execution truth
+    owns:
+      - source control
+      - pull requests
+      - issues (engineering backlog)
+      - CI validation (scoped exception only)
+      - Copilot Coding Agent (when adopted)
+    repo_owner: all repos
+    status: active
+
+  fabric:
+    role: semantic and BI consumption layer
+    owns:
+      - Power BI semantic models
+      - OneLake mirroring (optional)
+      - Direct Lake mode
+    constraint: never replaces Databricks engineering
+    repo_owner: data-intelligence/
+    status: active
+
+  purview:
+    role: data governance and catalog
+    owns:
+      - data catalog
+      - classification
+      - lineage tracking
+      - sensitivity labels
+    repo_owner: data-intelligence/
+    status: active
+    resource: pv-ipai-dev-sea
+
+  defender:
+    role: security posture and cloud protection
+    owns:
+      - cloud security posture management (CSPM)
+      - threat detection
+      - GHAS / code scanning (if Defender for DevOps adopted)
+    repo_owner: infra/
+    status: not_enabled
+    action_required: decide_defender_posture
+
+# ─────────────────────────────────────────────────────────────────────
+# Databricks (first-class, separate plane)
+# ─────────────────────────────────────────────────────────────────────
+  databricks:
+    role: governed intelligence and lakehouse
+    owns:
+      - data engineering (DLT, Spark)
+      - Unity Catalog
+      - ML features and model serving
+      - gold mart / analytics products
+    constraint: canonical engineering plane — Fabric is consumption only
+    repo_owner: data-intelligence/
+    status: active
+    resource: dbw-ipai-dev
+
+# ─────────────────────────────────────────────────────────────────────
+# Secondary surfaces (use when needed, not actively governed)
+# ─────────────────────────────────────────────────────────────────────
+secondary:
+
+  power_platform:
+    role: low-code apps and automation
+    use_when: internal tooling, quick admin UIs
+    constraint: never becomes canonical application platform
+    status: optional
+
+  power_automate:
+    role: workflow automation
+    use_when: simple event-driven flows not worth Azure Functions
+    constraint: Azure Logic Apps / Functions preferred for governed flows
+    status: optional
+
+  m365_admin:
+    role: tenant management
+    use_when: managing M365 licenses, user provisioning
+    status: optional
+
+  intune:
+    role: device management
+    use_when: device management becomes in-scope
+    status: not_applicable
+
+# ─────────────────────────────────────────────────────────────────────
+# Not primary (do not adopt unless explicit decision)
+# ─────────────────────────────────────────────────────────────────────
+not_primary:
+
+  copilot_studio:
+    role: low-code agent builder
+    adopt_when: building Copilot Studio-facing agent experience
+    note: Pulser uses custom-engine orchestration, not Copilot Studio
+    status: not_adopted
+
+  data_explorer:
+    role: telemetry-heavy Kusto workloads
+    adopt_when: high-volume telemetry / log analytics at scale
+    note: Log Analytics + App Insights sufficient for current scale
+    status: not_adopted
+
+# ─────────────────────────────────────────────────────────────────────
+# Deprecated (never use)
+# ─────────────────────────────────────────────────────────────────────
+deprecated:
+  - { surface: supabase, date: 2026-04-07, replacement: azure_native }
+  - { surface: n8n, date: 2026-04-07, replacement: azure_functions_logic_apps }
+  - { surface: cloudflare, date: 2026-04-07, replacement: azure_dns_front_door }
+  - { surface: vercel, date: 2026-04-07, replacement: azure_container_apps }
+  - { surface: digitalocean, date: 2026-03-15, replacement: azure_native }
+  - { surface: mailgun, date: 2026-03-11, replacement: zoho_smtp }
+
+# ─────────────────────────────────────────────────────────────────────
+# Responsibility matrix: surface → repo lane
+# ─────────────────────────────────────────────────────────────────────
+repo_ownership:
+  infra/:
+    - azure substrate
+    - networking
+    - Defender posture
+    - Entra / RBAC infrastructure policy
+    - Key Vault / Monitor / Front Door / WAF baseline
+    - subscription IAM / policies / locks / tags
+
+  agent-platform/:
+    - AI Foundry runtime
+    - Pulser agents
+    - evals
+    - telemetry integration
+
+  data-intelligence/:
+    - Databricks (primary)
+    - Fabric / Power BI consumption handoff
+    - Purview integration
+
+  platform/:
+    - application bridges and service contracts
+    - cross-plane Azure / Foundry / Odoo integration
+
+  web/:
+    - app surfaces consuming Entra auth
+    - Azure-hosted backend apps
+
+  docs/:
+    - cloud plane boundaries
+    - governance and control model
+    - subscription hardening evidence
+
+# ─────────────────────────────────────────────────────────────────────
+# Anchors
+# ─────────────────────────────────────────────────────────────────────
+anchors:
+  subscription_baseline: ssot/azure/subscription-baseline.yaml
+  resource_inventory: docs/architecture/azure-resource-inventory.md
+  bom_target_state: docs/architecture/azure-bom-target-state.md
+  naming_convention: ssot/azure/naming-convention.yaml
+  tag_policy: ssot/azure/tag-policy.yaml
+  platform_architecture: docs/architecture/canonical-platform-architecture.md
