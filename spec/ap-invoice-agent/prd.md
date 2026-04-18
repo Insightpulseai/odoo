@@ -22,5 +22,5 @@ Implement an autonomous AP Invoice Agent that utilizes **TaxPulse** for Philippi
 5. **Operational Soak Window**.
 
 ## Documentation Reference
-- [TaxPulse Acceptance](file:///Users/tbwa/.gemini/antigravity/brain/706fb290-55e8-41c0-82d6-358506acd2c3/tax-pulse-acceptance.md)
+- [TaxPulse Acceptance](file:///Users/tbwa/Documents/GitHub/Insightpulseai/addons/ipai/ipai_bir_tax_compliance/tests/test_tax_pulse_acceptance.py)
 - [Agent Platform Constitution](file:///Users/tbwa/Documents/GitHub/Insightpulseai/spec/agent-factory/constitution.md)
