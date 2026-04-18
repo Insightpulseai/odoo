@@ -221,6 +221,7 @@ scope_clarification:
 # Anchors
 # -----------------------------------------------------------------------------
 anchors:
+  go_live_scope_matrix: ssot/release/go-live-scope-matrix.yaml
   feature_ship_gates: ssot/release/feature-ship-readiness-gates.yaml
   release_contract: ssot/release/release_contract.yaml
   release_gates: ssot/release/release_gates.yaml

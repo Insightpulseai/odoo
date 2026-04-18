@@ -1,0 +1,208 @@
+# =============================================================================
+# Go-Live Scope Matrix — SSOT
+# =============================================================================
+# Authority: separates PRODUCT scope (what's part of the solution surface)
+#            from GO-LIVE GATE scope (what must pass the first formal
+#            readiness gate). Two distinct decisions.
+# Related:   ssot/release/go-live-readiness.yaml
+#            ssot/web/site-template-adoption.yaml
+#            ssot/data-intelligence/databricks-plane-charter.yaml
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: canonical
+
+doctrine: >
+  Product scope ≠ go-live gate scope. A surface may be part of the
+  product (shipped, demoable, valid) WITHOUT being part of the first
+  formal cutover readiness gate. Conflating the two leads to either
+  under-promising (hiding real product capability) or over-promising
+  (blocking go-live on surfaces that aren't ready).
+
+commercial_product_statement: |
+  Pulser for Odoo includes:
+  - Odoo CE 18 + OCA ERP runtime (erp.insightpulseai.com)
+  - Pulser chat copilot (ipai_odoo_copilot in ERP + future multi-surface)
+  - Azure Foundry-backed model + agent runtime
+  - Databricks PPM Control Tower dashboards + governed analytics
+  - Genie Code embedded assistant for data teams
+  - Azure-native identity, network, and observability plane
+
+release_governance_statement: |
+  The FIRST formal production readiness gate is assessed per surface
+  and per dependency path. Not every product surface enters the first
+  cutover boundary simultaneously. A surface can be:
+    - product_valid (shipped and functional)
+    - demo_valid (shown to stakeholders)
+    - architecture_valid (in SSOT + code)
+    WITHOUT being part of the first formal sign-off boundary.
+
+# -----------------------------------------------------------------------------
+# Surface scope matrix
+# -----------------------------------------------------------------------------
+# Two orthogonal flags:
+#   product_in_scope: is this surface part of the product narrative / demo?
+#   go_live_gate_scope: must it pass the FIRST formal readiness gate?
+# Values: true | false | decide_now
+# -----------------------------------------------------------------------------
+
+surfaces:
+
+  erp:
+    name: Odoo ERP
+    domain: erp.insightpulseai.com
+    repo: addons/
+    product_in_scope: true
+    go_live_gate_scope: true
+    rationale: >
+      ERP is the transactional SoR and canonical ERP entrypoint. Must
+      pass readiness gate before first go-live. Highest cutover priority.
+    readiness_status:
+      sso_verified: false
+      configured_not_verified: true
+      runtime_support_plan: pending
+      cutover_plan: not_drafted
+      hypercare_plan: not_drafted
+    blockers_for_gate:
+      - odoo_sso_end_to_end_test_pending
+      - cutover_plan_unsigned
+      - hypercare_rota_undefined
+
+  pulser_chat_on_erp:
+    name: Pulser chat copilot (ipai_odoo_copilot)
+    surface_location: embedded_in_erp_systray
+    repo: addons/ipai/ipai_odoo_copilot/
+    version: 18.0.4.0.0
+    product_in_scope: true
+    go_live_gate_scope: decide_now
+    rationale: >
+      Technically ready (v18.0.4.0.0 with systray chat, audit, rate
+      limiting, action dispatch, file upload, Foundry wiring). Whether
+      it enters the first formal gate depends on operator readiness
+      for AI-assisted ERP workflows.
+    readiness_status:
+      code_shipped: true
+      foundry_wired: true
+      dual_sso_prototype: true
+      eval_gate_defined: pending
+      user_training: pending
+
+  databricks_control_tower:
+    name: PPM Control Tower dashboards + governed analytics
+    repo: data-intelligence/
+    product_in_scope: true
+    go_live_gate_scope: decide_now
+    rationale: >
+      Databricks is ALREADY part of the product surface (executive
+      metrics, approvals lane, Genie Code embedded). Demoable today.
+      Whether dashboards are part of the FIRST formal go-live gate is
+      a release-boundary decision, not a product decision.
+    readiness_status:
+      dashboard_defined: true
+      genie_code_embedded: true
+      unity_catalog_governance: configured
+      eval_regression_loop: pending
+      executive_access_entitlements: pending
+
+  www_insightpulseai_com:
+    name: Flagship platform front door
+    domain: www.insightpulseai.com
+    repo: web/apps/ipai-landing/
+    product_in_scope: true
+    go_live_gate_scope: false
+    rationale: >
+      Marketing/platform surface. Not a cutover-blocking surface.
+      Can go live on a separate cadence from ERP.
+    readiness_status:
+      scaffold_exists: true
+      target_template: "Get started with AI agents"
+      adoption_pending: true
+
+  prismalab_insightpulseai_com:
+    name: PrismaLab research workspace
+    domain: prismalab.insightpulseai.com
+    repo: web/apps/prismalab-gateway/
+    product_in_scope: true
+    go_live_gate_scope: false
+    rationale: >
+      Specialized research workspace. Different ontology + judges.
+      Splits earlier per pulser-domain-packs.yaml but is NOT in the
+      first cutover gate.
+    readiness_status:
+      gateway_scaffold_exists: true
+      pulser_prismalab_packs_defined: true
+      evidence_pipeline_pending: true
+
+  www_w9studio_net:
+    name: W9 Studio commercial site
+    domain: www.w9studio.net
+    repo: web/apps/w9studio-site/ (not yet scaffolded)
+    product_in_scope: true
+    go_live_gate_scope: false
+    rationale: >
+      Commercial branch site. Lightest runtime complexity. Not in
+      first cutover gate. Independent release cadence.
+    readiness_status:
+      design_tokens_exist: true
+      app_scaffold: not_yet
+
+# -----------------------------------------------------------------------------
+# First go-live gate scope (proposed)
+# -----------------------------------------------------------------------------
+first_go_live_gate_proposed:
+  must_pass:
+    - erp (erp.insightpulseai.com)
+  decide_now:
+    - pulser_chat_on_erp
+    - databricks_control_tower
+  excluded_from_first_gate:
+    - www.insightpulseai.com
+    - prismalab.insightpulseai.com
+    - www.w9studio.net
+
+# -----------------------------------------------------------------------------
+# Decision questions (for you)
+# -----------------------------------------------------------------------------
+open_decisions:
+  - question: "Is pulser_chat_on_erp part of the first go-live gate or a follow-on release?"
+    implications:
+      if_in_gate: requires_user_training + eval_gate_acceptance + Foundry SLA + cost cap
+      if_not_in_gate: ERP goes live without AI copilot surface; copilot enabled post-cutover
+  - question: "Is databricks_control_tower part of the first go-live gate or a parallel release track?"
+    implications:
+      if_in_gate: requires_executive_access_entitlements + eval_regression_loop + dashboard_signoff
+      if_not_in_gate: ERP goes live without dashboard; control tower releases on its own cadence
+  - question: "Define hypercare window length for ERP cutover (48h / 72h / 96h)?"
+  - question: "Define rollback criteria and tested rollback drill date?"
+
+# -----------------------------------------------------------------------------
+# Validity classifications (distinct from gate scope)
+# -----------------------------------------------------------------------------
+validity_classifications:
+  product_valid: "shipped, functional, included in product narrative"
+  demo_valid: "shown to stakeholders; production-ready not required"
+  architecture_valid: "in SSOT + code; may not yet be deployed"
+  cutover_ready: "passes formal readiness gate and is in first-go-live scope"
+  rule: "A surface can be product_valid + demo_valid + architecture_valid WITHOUT being cutover_ready."
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not removing Databricks from product scope (it IS in scope)
+  - not forcing every product surface into the first gate
+  - not making go-live decisions implicit
+  - not conflating "demo-ready" with "cutover-ready"
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  go_live_readiness: ssot/release/go-live-readiness.yaml
+  feature_ship_gates: ssot/release/feature-ship-readiness-gates.yaml
+  site_templates: ssot/web/site-template-adoption.yaml
+  databricks_charter: ssot/data-intelligence/databricks-plane-charter.yaml
+  odoo_sso_runtime: ssot/odoo/odoo-sso-runtime-state.yaml
+  pulser_pack_matrix: platform/ssot/agents/pulser-pack-matrix.yaml
