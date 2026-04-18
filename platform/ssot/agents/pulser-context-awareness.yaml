@@ -1,0 +1,397 @@
+# =============================================================================
+# Pulser Context Awareness — SSOT
+# =============================================================================
+# Authority: canonical model for Pulser's context envelope, resolution
+#            pipeline, and separation of persona / task / judge / role /
+#            expertise. Pulser resolves every request against this
+#            envelope BEFORE planning or tool use.
+#
+# Doctrine: "Pulser Core should resolve actor, tenant, domain, branch,
+#            environment, and contact into a typed context envelope, then
+#            select persona, task plan, tools, and judges from governed
+#            domain packs. Keep orchestration, policy, audit, and
+#            resolution centralized; split personas, tasks, and judges by
+#            domain only when authority, risk, ontology, or tenancy
+#            meaningfully diverge."
+#
+# Related: platform/ssot/agents/pulser-domain-packs.yaml
+#          platform/ssot/agents/context-boundary.yaml
+#          ssot/agent-platform/agent_framework_adoption.yaml
+#          ssot/identity/entra_target_state.yaml
+#          docs/architecture/pulser-context-awareness.md
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: canonical
+
+# -----------------------------------------------------------------------------
+# Canonical request context envelope (typed schema)
+# -----------------------------------------------------------------------------
+request_context_envelope:
+
+  actor:
+    actor_id: string                  # user or service principal id
+    actor_type: human|guest|service|agent
+    display_name: string
+    role_assignments: list[string]
+    expertise_level: novice|operator|manager|specialist|admin
+    auth_context:
+      entra_user_type: member|guest|workload
+      groups: list[string]
+      privileges: list[string]
+
+  tenant:
+    tenant_id: string
+    tenant_type: platform|client|internal|workspace
+    tenant_code: string
+    tenant_brand: insightpulseai|tbwa_smp|w9|prismalab|other
+    legal_entity_id: string|null
+    client_id: string|null
+    isolation_mode: shared|logical_isolation|hard_isolation
+
+  organization:
+    company_id: string|null
+    branch_id: string|null
+    trade_name_id: string|null
+    cost_center_id: string|null
+    department_id: string|null
+
+  domain:
+    domain_code: erp|finance|sales|projects|analytics|website|prismalab|identity
+    subdomain_code: ar|ap|gl|crm|delivery|retrieval|identity|release
+
+  environment:
+    environment: dev|staging|prod
+    runtime_surface: web|erp|agent_api|ops_console|teams|email
+    deployment_ring: local|sandbox|shared_dev|preprod|prod
+    data_mode: synthetic|masked|live
+    mutation_policy: read_only|guarded_write|full_write
+    evidence_required: bool
+    approval_required_for_side_effects: bool
+
+  contact:
+    contact_id: string|null
+    partner_id: string|null
+    account_id: string|null
+    relationship_type: customer|vendor|employee|guest|prospect|internal
+    conversation_scope: case|deal|invoice|project|ticket|general
+
+  policy:
+    data_classification: public|internal|confidential|restricted
+    allowed_tools: list[string]
+    blocked_tools: list[string]
+    approval_mode: none|required|dual_control
+    citation_required: bool
+
+  task:
+    intent: answer|draft|analyze|execute|approve|triage|route|monitor|review
+    object_type: invoice|order|lead|task|report|document|identity|deployment
+    object_ids: list[string]
+    success_contract: string
+
+# -----------------------------------------------------------------------------
+# Awareness dimensions (what "aware" means, per dimension)
+# -----------------------------------------------------------------------------
+awareness_dimensions:
+
+  contact_aware:
+    definition: "Pulser knows WHO the interaction is about, not just who is asking."
+    resolution_sources:
+      - odoo_partners_customers_vendors
+      - crm_accounts_contacts
+      - mailbox_contact_systems
+      - prior_conversation_object_links
+    drives:
+      - retrieval_scope
+      - tone_and_drafting_style
+      - object_filtering
+      - approval_routing
+      - allowed_disclosure
+
+  environment_aware:
+    definition: "Pulser knows whether it is operating in dev, staging, or prod and whether actions are read-only or execution-capable."
+    drives:
+      - tool_endpoints
+      - auth_targets
+      - mutation_permissions
+      - logging_detail
+      - safety_thresholds
+      - feature_flags
+      - model_provider_bindings
+    policy_examples:
+      dev: broad_debug_visibility_safe_fake_data_allowed
+      staging: prod_like_behavior_restricted_external_side_effects
+      prod: no_unsafe_writes_without_policy_and_audit_trail
+
+  branch_aware:
+    definition: "Pulser knows legal entity, branch, trade name, invoice series/tax context, warehouse/project/team scope."
+    drives:
+      - journal_selection
+      - document_numbering
+      - bir_tax_context
+      - branding
+      - partner_filtering
+      - dashboard_defaults
+    example_prompts_that_require_it:
+      - "Show Makati branch receivables"
+      - "Use the W9 trade name"
+      - "Draft using Dataverse invoice context"
+      - "Filter only PrismaLab projects"
+
+  domain_aware:
+    definition: "Pulser knows which business domain it is acting in."
+    drives:
+      - planner_choice
+      - vocabulary
+      - retrieval_sources
+      - toolset
+      - answer_format
+      - escalation_path
+    domains:
+      - erp
+      - finance
+      - sales
+      - purchases
+      - projects
+      - analytics
+      - identity_security
+      - web_content
+      - prismalab
+
+  tenant_aware:
+    definition: "Pulser knows whether operating for platform internal, a client, a workspace, or a guest/cross-tenant context. Distinct from branch-aware."
+    drives:
+      - visible_data_partitions
+      - tool_tenancy
+      - branding
+      - cross_tenant_access_rules
+      - residency_compliance_policy
+      - agent_persona
+
+# -----------------------------------------------------------------------------
+# Separation of concerns — persona / task / judge / role / expertise
+# -----------------------------------------------------------------------------
+# These are SEPARATE objects. Do not collapse.
+# -----------------------------------------------------------------------------
+separation_model:
+
+  persona:
+    meaning: "How the assistant behaves and communicates."
+    examples:
+      - Pulser Executive Briefing
+      - Pulser Finance Ops
+      - Pulser ERP Copilot
+      - Pulser PrismaLab Research
+      - Pulser Release Ops
+    affects: [voice, framing, defaults, output_shape, user_interaction_style]
+    does_not_decide: authority
+
+  task:
+    meaning: "What job is being done right now."
+    examples:
+      - summarize
+      - reconcile
+      - classify
+      - route_for_approval
+      - generate_response
+      - draft_invoice_explanation
+      - diagnose_deployment_issue
+    affects: [planner, tool_chain, success_criteria, required_evidence]
+    lifetime: short_lived_request_bound
+
+  judge:
+    meaning: "Who evaluates quality, safety, policy compliance, or fit."
+    examples:
+      - grounding_judge
+      - finance_safety_judge
+      - identity_security_judge
+      - customer_value_judge
+      - tbwa_fit_judge
+      - release_readiness_judge
+    affects: [acceptance, action_permission, escalation]
+    preferred_implementation: deterministic_where_possible
+    deterministic_checks:
+      - schema_checks
+      - citation_checks
+      - policy_checks
+      - allowed_tool_checks
+      - threshold_scoring
+
+  role:
+    meaning: "What permissions and business authority the actor has."
+    examples:
+      - finance_analyst
+      - approver
+      - admin
+      - project_manager
+      - guest_reviewer
+      - customer_contact
+    affects: [data_visibility, approval_authority, write_permissions, accessible_personas_tasks]
+
+  expertise:
+    meaning: "How much domain compression/explanation is needed."
+    examples: [novice, operator, manager, specialist, admin]
+    affects: [jargon_level, assumption_depth, ui_simplification, action_explanation_verbosity, fallback_guardrails]
+
+# -----------------------------------------------------------------------------
+# Resolution pipeline (Pulser must NOT start with a model call)
+# -----------------------------------------------------------------------------
+resolution_pipeline:
+  rule: "Pulser ALWAYS starts with context resolution, never with a model call."
+  steps:
+    - 1_identify_actor
+    - 2_resolve_tenant_domain_branch_environment
+    - 3_resolve_contact_or_object_context
+    - 4_resolve_requested_task
+    - 5_select_persona
+    - 6_build_allowed_toolset
+    - 7_apply_policy_and_judges
+    - 8_plan
+    - 9_execute_or_answer
+    - 10_audit_and_store_context_evidence
+
+# -----------------------------------------------------------------------------
+# Minimal runtime decomposition
+# -----------------------------------------------------------------------------
+runtime_components:
+
+  context_resolver:
+    responsibilities:
+      - actor_resolution
+      - tenant_domain_branch_environment_inference
+      - object_linking
+      - contact_linking
+    placement: agent-platform/src/agent_platform/orchestration/context_resolver.py
+
+  persona_router:
+    responsibilities:
+      - choose_default_persona
+      - apply_tone_output_profile
+    placement: agent-platform/src/agent_platform/orchestration/persona_router.py
+
+  task_router:
+    responsibilities:
+      - identify_task_type
+      - bind_planner_and_tool_chain
+    placement: agent-platform/src/agent_platform/orchestration/task_router.py
+
+  policy_engine:
+    responsibilities:
+      - allowed_tools
+      - environment_restrictions
+      - approval_gates
+      - data_classification_enforcement
+    placement: agent-platform/src/agent_platform/policy/
+
+  judge_pipeline:
+    responsibilities:
+      - grounding_validation
+      - policy_compliance
+      - domain_specific_acceptance
+    placement: agent-platform/src/agent_platform/orchestration/judges/
+
+  execution_engine:
+    responsibilities:
+      - tool_invocation
+      - retrieval
+      - side_effect_handling
+      - audit_event_emission
+    placement: agent-platform/src/agent_platform/runtime/
+
+# -----------------------------------------------------------------------------
+# Inference priority — how context is discovered
+# -----------------------------------------------------------------------------
+inference_priority:
+  rule: "Never rely on prompt text alone if better sources exist."
+  order:
+    - 1_explicit_user_selection      # selected workspace / branch / current object / current app surface
+    - 2_route_or_domain              # erp.insightpulseai.com → ERP; prismalab.insightpulseai.com → research
+    - 3_object_references            # invoice number, customer name, project code, branch code, approver email
+    - 4_session_memory               # current account / current project / current tenant/workspace
+    - 5_defaults                     # actor home branch / allowed domains / environment defaults
+
+# -----------------------------------------------------------------------------
+# Context inheritance model
+# -----------------------------------------------------------------------------
+# Global → Workspace/session → Request. Prevents over-prompting.
+# -----------------------------------------------------------------------------
+inheritance_model:
+  global:
+    - actor
+    - environment
+    - tenant
+  workspace_session:
+    - domain
+    - branch
+    - trade_name
+    - selected_contact_or_account_or_project
+  request:
+    - task
+    - object
+    - approval_mode
+    - persona_override
+  rule: "Request-level fields override session, session overrides global. Never the reverse."
+
+# -----------------------------------------------------------------------------
+# Example resolved context — finance approver (Khalil Vera Cruz, TBWA\SMP)
+# -----------------------------------------------------------------------------
+example_finance_approver:
+  actor:
+    display_name: Khalil Vera Cruz
+    actor_type: human
+    role_assignments: [external_approver]
+    expertise_level: manager
+  tenant:
+    tenant_code: tbwa_smp
+    tenant_type: client
+  organization:
+    company_id: tbwa_smp_main
+    branch_id: null
+  domain:
+    domain_code: finance
+    subdomain_code: ap
+  environment:
+    environment: prod
+    runtime_surface: web
+  contact:
+    partner_id: vendor_dataverse_0001
+    relationship_type: vendor
+    conversation_scope: invoice
+  policy:
+    data_classification: confidential
+    allowed_tools: [read_invoice, read_attachment, draft_response]
+    blocked_tools: [post_payment, alter_journal]
+    approval_mode: none
+    citation_required: true
+  task:
+    intent: review
+    object_type: invoice
+    object_ids: [INV-2026-0002]
+  derived_selection:
+    persona: pulser_finance_ap_reviewer
+    task_plan: ap_invoice_review
+    judges: [grounding_judge, finance_safety_judge]
+    tools_granted: [read_invoice, read_attachment, draft_response]
+    tools_blocked: [post_payment, alter_journal]
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not a single prompt with lots of instructions (the envelope + policy engine + scoped skills replace that)
+  - not a place for persona content (definitions live in agents/)
+  - not a RBAC matrix (ssot/identity/entra_target_state.yaml owns that)
+  - not a tool registry (agent-platform/src/agent_platform/tools/registry.py owns that)
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  domain_packs: platform/ssot/agents/pulser-domain-packs.yaml
+  context_boundary: platform/ssot/agents/context-boundary.yaml
+  agent_framework_adoption: ssot/agent-platform/agent_framework_adoption.yaml
+  identity_target: ssot/identity/entra_target_state.yaml
+  business_dimensions: ssot/odoo/business_dimensions.yaml
+  architecture_doc: docs/architecture/pulser-context-awareness.md

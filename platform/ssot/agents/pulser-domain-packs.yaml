@@ -1,0 +1,456 @@
+# =============================================================================
+# Pulser Domain Packs — SSOT
+# =============================================================================
+# Authority: canonical domain-pack model for Pulser. One core + multiple
+#            governed domain packs. Split personas/tasks/judges by domain
+#            only when authority, risk, ontology, or tenancy meaningfully
+#            diverge.
+# Related:   platform/ssot/agents/pulser-context-awareness.yaml
+#            ssot/agent-platform/agent_framework_adoption.yaml
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: canonical
+
+doctrine: >
+  Keep one Pulser core. Split experiences by domain package only when the
+  split criteria (authority / risk / ontology / tenancy / latency /
+  evaluation contract) are genuinely met. Do not split just because
+  prompts get longer.
+
+# -----------------------------------------------------------------------------
+# Core vs shared vs split
+# -----------------------------------------------------------------------------
+layering:
+
+  core:
+    rationale: "Every Pulser experience needs these. Do not fragment."
+    capabilities:
+      - identity_and_actor_resolution
+      - context_envelope_builder
+      - policy_engine
+      - tool_registry
+      - environment_resolution
+      - audit_event_model
+      - session_memory_primitives
+      - citation_grounding_framework
+      - judge_orchestration_framework
+      - telemetry_eval_scaffolding
+    placement:
+      runtime: agent-platform/
+      metadata_and_bindings: platform/
+
+  shared:
+    rationale: "Reusable but not universal."
+    capabilities:
+      - odoo_tool_adapters
+      - databricks_analytical_tools
+      - document_extraction_pipeline
+      - email_notification_adapters
+      - shared_personas
+      - shared_judges
+      - shared_retrieval_pipelines
+      - shared_ui_components
+    placement:
+      runtime_tool_code: agent-platform/
+      behavior_config: agents/
+      ui: web/
+      bindings: platform/
+
+  split:
+    criteria:
+      - different_authority_surface        # ERP vs website vs PrismaLab vs identity admin
+      - different_risk_profile             # public content vs finance posting vs privileged identity
+      - different_domain_ontology          # finance vocabulary vs research vs marketing
+      - different_tenant_isolation         # internal platform vs client workspace
+      - different_latency_runtime_profile  # sync chat vs long-running orch vs scheduled
+      - different_evaluation_contract      # finance accuracy/auditability vs content tone/brand
+    rule: >
+      Split a domain pack only when CEST retrieval sources, judges, or risk
+      profile diverge. Split a runtime surface only when long-running,
+      compliance, dedicated scaling, or hard tenant isolation demands it.
+      Split a tenant only when client data isolation, branding, or
+      compliance requires it.
+
+# -----------------------------------------------------------------------------
+# Canonical domain packs (6)
+# -----------------------------------------------------------------------------
+pulser_packages:
+
+  pulser_core:
+    role: orchestration_substrate
+    owns:
+      - context_envelope
+      - policy_engine
+      - session_runtime
+      - judge_framework
+      - tool_registry
+      - telemetry
+    repo_placement:
+      runtime: agent-platform/src/agent_platform/
+      bindings: platform/ssot/agents/
+    non_optional: true
+
+  pulser_finance:
+    role: finance_ops_domain_pack
+    owns:
+      - finance_personas
+      - finance_tasks
+      - finance_judges
+      - finance_tool_policies
+    example_personas:
+      - pulser_finance_ap_reviewer
+      - pulser_finance_ar_operator
+      - pulser_finance_gl_controller
+    example_tasks:
+      - ap_invoice_review
+      - ar_collection_outreach
+      - gl_reconciliation_summary
+      - vat_filing_prep
+    example_judges:
+      - finance_safety_judge
+      - grounding_judge
+      - citation_judge
+    tool_policy:
+      allowed: [read_invoice, read_attachment, draft_response, query_gl, summarize_ap, summarize_ar]
+      blocked_default: [post_payment, alter_journal, force_close_period]
+    repo_placement:
+      definitions: agents/personas/finance/ + agents/judges/finance/ + agents/evals/finance/
+      bindings: platform/ssot/agents/
+      tools: agent-platform/src/agent_platform/tools/odoo/
+
+  pulser_erp:
+    role: erp_operator_domain_pack
+    owns:
+      - odoo_operator_personas
+      - transactional_tasks
+      - branch_aware_defaults
+    example_personas:
+      - pulser_erp_copilot
+      - pulser_erp_branch_operator
+    example_tasks:
+      - create_sale_order
+      - search_customer
+      - reconcile_delivery
+      - route_approval
+    example_judges:
+      - grounding_judge
+      - erp_action_safety_judge
+    repo_placement:
+      definitions: agents/personas/erp/
+      bindings: platform/ssot/agents/
+      tools: agent-platform/src/agent_platform/tools/odoo/
+
+  pulser_prismalab:
+    role: research_domain_pack
+    owns:
+      - research_personas
+      - document_tasks
+      - evidence_judges
+      - domain_retrieval_profiles
+    example_personas:
+      - pulser_prismalab_researcher
+      - pulser_prismalab_evidence_synthesizer
+    example_tasks:
+      - extract_evidence_from_document
+      - synthesize_citation_grounded_answer
+      - prisma_compliant_report_generation
+    example_judges:
+      - evidence_judge
+      - prisma_compliance_judge
+      - grounding_judge
+    repo_placement:
+      definitions: agents/personas/prismalab/
+      bindings: platform/ssot/agents/
+      tools: agent-platform/src/agent_platform/tools/docintel/ + tools/databricks/
+
+  pulser_web:
+    role: website_content_domain_pack
+    owns:
+      - website_content_personas
+      - public_safe_tasks
+      - brand_judges
+    example_personas:
+      - pulser_web_content_writer
+      - pulser_studio_creative
+    example_tasks:
+      - draft_landing_copy
+      - restyle_marketing_page
+      - produce_case_study_outline
+    example_judges:
+      - brand_judge
+      - tbwa_fit_judge
+      - safety_judge
+    tool_policy:
+      blocked_default: [any_erp_write_path]
+    repo_placement:
+      definitions: agents/personas/web/
+      bindings: platform/ssot/agents/
+      tools: agent-platform/src/agent_platform/tools/storage/ + tools/communications/
+
+  pulser_identity_ops:
+    role: identity_and_security_domain_pack
+    owns:
+      - entra_personas
+      - identity_tasks
+      - privileged_action_gates
+    example_personas:
+      - pulser_identity_operator
+      - pulser_guest_onboarding_advisor
+    example_tasks:
+      - list_guest_users
+      - propose_role_reduction
+      - draft_ca_policy_change
+    example_judges:
+      - privileged_action_judge
+      - pim_eligibility_judge
+      - grounding_judge
+    tool_policy:
+      rule: privileged_tools_require_dual_control_and_pim_active
+      blocked_default_in_normal_mode:
+        - create_user
+        - assign_role
+        - modify_ca_policy
+    repo_placement:
+      definitions: agents/personas/identity/
+      bindings: platform/ssot/agents/
+      tools: agent-platform/src/agent_platform/tools/azure/ (future)
+
+# -----------------------------------------------------------------------------
+# Repo placement summary
+# -----------------------------------------------------------------------------
+repo_placement_summary:
+  agent_platform:
+    owns:
+      - context_resolution_runtime
+      - policy_engine
+      - planner_router
+      - judge_execution
+      - tool_execution
+      - sessions
+      - audit_trail
+  agents:
+    owns:
+      - persona_definitions
+      - task_definitions
+      - judge_configs
+      - expertise_profiles
+      - domain_packs
+  platform:
+    owns:
+      - tenant_domain_branch_environment_bindings
+      - allowed_tool_matrices
+      - feature_flags
+      - identity_to_role_mappings
+      - context_defaults
+  web:
+    owns:
+      - current_workspace_selection
+      - branch_contact_picker_ux
+      - domain_surface_hints
+      - session_state_handoff_to_runtime
+  odoo_addons:
+    owns:
+      - canonical_business_objects
+      - branch_legal_trade_name_truth
+      - transactional_permissions
+      - business_safe_tool_endpoints
+
+# -----------------------------------------------------------------------------
+# When to split (concrete triggers)
+# -----------------------------------------------------------------------------
+split_triggers:
+
+  split_a_domain_pack_when:
+    - prismalab_erp_and_website_no_longer_share_same_retrieval_sources
+    - prismalab_erp_and_website_no_longer_share_same_judges
+    - prismalab_erp_and_website_no_longer_share_same_risk_profile
+
+  split_a_runtime_surface_when:
+    - surface_needs_long_running_jobs
+    - surface_needs_different_compliance_boundary
+    - surface_needs_dedicated_scaling
+    - surface_needs_hard_tenant_isolation
+
+  split_a_tenant_when:
+    - client_data_isolation_requires_it
+    - branding_requires_it
+    - compliance_requires_it
+
+# -----------------------------------------------------------------------------
+# Upstream reference — msitarzewski/agency-agents
+# -----------------------------------------------------------------------------
+upstream_reference_agency_agents:
+  repo: msitarzewski/agency-agents
+  classification: persona_library_reference_only
+  not_classified_as:
+    - runtime_engine
+    - multi_tenant_control_plane
+    - production_security_model
+    - tool_execution_framework
+    - governed_eval_framework
+  what_to_adopt:
+    - role_decomposition
+    - deliverable_oriented_persona_design
+    - specialist_team_mental_model
+    - category_based_agent_packaging
+  category_taxonomy_borrowed:
+    - design
+    - engineering
+    - finance
+    - marketing
+    - product
+    - project_management
+    - sales
+    - strategy
+    - support
+    - testing
+  where_it_lands:
+    agents_repo: persona_text_role_cards_communication_styles_success_criteria_task_framing
+    agent_platform: do_not_absorb_as_runtime_architecture
+    web: only_indirectly_through_assistant_behavior
+
+# -----------------------------------------------------------------------------
+# Shared role packs (influenced by agency-agents taxonomy)
+# -----------------------------------------------------------------------------
+shared_role_packs:
+  rule: "Share these across the three public surfaces. Source personas from agency-agents as inspiration, but authored locally."
+  packs:
+    - pulser_marketing
+    - pulser_sales
+    - pulser_support
+    - pulser_strategy
+    - pulser_product
+    - pulser_engineering
+    - pulser_project_management
+  placement:
+    definitions: agents/shared/<category>/
+    bindings: platform/ssot/agents/
+
+# -----------------------------------------------------------------------------
+# Domain-specific packs (IPAI-owned, not imported mechanically)
+# -----------------------------------------------------------------------------
+domain_specific_packs:
+  rule: "Authored by IPAI. Not mechanically derived from external taxonomies."
+  packs:
+    - pulser_prismalab
+    - pulser_odoo_finance
+    - pulser_odoo_erp
+    - pulser_identity_ops
+    - pulser_analytics
+    - pulser_release_ops
+  placement:
+    definitions: agents/domain/<domain>/
+    bindings: platform/ssot/agents/
+
+# -----------------------------------------------------------------------------
+# Per-site Pulser pack mapping (3 public surfaces)
+# -----------------------------------------------------------------------------
+site_pack_mapping:
+  rule: "Three distinct operating surfaces. Not one product with three skins."
+
+  "www.insightpulseai.com":
+    public_positioning: "AI-native operations for marketing, media, retail, and financial services."
+    surface_role: flagship_platform_and_capability_front_door
+    shared_packs:
+      - pulser_strategy
+      - pulser_product
+      - pulser_web
+      - pulser_support
+      - pulser_release_ops
+    optional_packs:
+      - pulser_finance
+      - pulser_identity_ops
+    domain_packs:
+      - pulser_platform_overview
+    do:
+      - present_a_platform_operating_model
+    do_not:
+      - turn_the_site_into_an_agency_roster_UI
+
+  "www.w9studio.net":
+    public_positioning: "Production Studio Rental in Makati | Studio W9."
+    surface_role: commercial_branch_site_not_main_ai_runtime_showcase
+    shared_packs:
+      - pulser_marketing
+      - pulser_sales
+      - pulser_support
+    optional_packs:
+      - pulser_project_management
+    domain_packs:
+      - pulser_studio_commerce
+    do_not:
+      - overfit_into_deep_agent_orchestration
+      - overfit_into_research_workflows
+      - overfit_into_enterprise_copilot_governance
+      - overfit_into_multi_agent_heavy_runtime
+
+  "prismalab.insightpulseai.com":
+    public_positioning: "PRISMA-Aligned Systematic Reviews & Meta-Analysis."
+    surface_role: specialized_domain_ai_workspace
+    shared_packs:
+      - pulser_support
+    domain_packs:
+      - pulser_prismalab_research
+      - pulser_prismalab_screening
+      - pulser_prismalab_extraction
+      - pulser_prismalab_synthesis
+      - pulser_prismalab_quality_judges
+    split_rationale_prismalab_earlier:
+      - distinct_ontology
+      - distinct_evidence_requirements
+      - distinct_judges
+      - distinct_task_graph
+      - higher_grounding_audit_expectations
+    rule: "PrismaLab is exactly where a domain pack SHOULD become its own bounded package."
+
+# -----------------------------------------------------------------------------
+# Target agents/ repo folder structure
+# -----------------------------------------------------------------------------
+target_agents_repo_structure:
+  agents:
+    shared:
+      - marketing/
+      - sales/
+      - support/
+      - strategy/
+      - product/
+      - engineering/
+      - project_management/
+    domain:
+      - prismalab/
+      - odoo_finance/
+      - odoo_erp/
+      - identity_ops/
+      - analytics/
+      - release_ops/
+    judges:
+      - grounding/
+      - policy/
+      - finance/
+      - research/
+      - brand/
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not fragmenting into many unrelated assistants before authority/risk/ontology/tenancy diverges
+  - not letting personas decide authority (role + policy own that)
+  - not placing domain-specific tool code in the domain pack (tools live in agent-platform)
+  - not duplicating judges across packs (share from core + ssot/agents/judges/)
+  - not treating agency-agents as runtime architecture (persona library only)
+  - not making the three public surfaces share one identical pack set (they differ by surface role)
+  - not turning insightpulseai.com into an "agency roster UI"
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  context_awareness: platform/ssot/agents/pulser-context-awareness.yaml
+  context_boundary: platform/ssot/agents/context-boundary.yaml
+  agent_framework: ssot/agent-platform/agent_framework_adoption.yaml
+  agent_delivery_stack: ssot/agent-platform/agent_delivery_stack.yaml
+  architecture_doc: docs/architecture/pulser-context-awareness.md
