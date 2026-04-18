@@ -17,15 +17,21 @@ modules:
   - technical_name: purchase_order_approval_block
     repo: purchase-workflow
     rationale: "Hard block on PO approval until conditions are met."
-    verified_on_18_0: pending
+    verified_on_18_0: true
+    verified_at: "2026-04-18"
+    verification_evidence: "https://api.github.com/repos/OCA/purchase-workflow/contents/purchase_order_approval_block?ref=18.0 → HTTP 200 (2026-04-18)"
   - technical_name: purchase_request
     repo: purchase-workflow
     rationale: "Formal purchase request workflow preceding PO creation."
-    verified_on_18_0: pending
+    verified_on_18_0: true
+    verified_at: "2026-04-18"
+    verification_evidence: "https://api.github.com/repos/OCA/purchase-workflow/contents/purchase_request?ref=18.0 → HTTP 200 (2026-04-18)"
   - technical_name: purchase_delivery_split_date
     repo: purchase-workflow
     rationale: "Split deliveries by requested date when different lines differ."
-    verified_on_18_0: pending
+    verified_on_18_0: true
+    verified_at: "2026-04-18"
+    verification_evidence: "https://api.github.com/repos/OCA/purchase-workflow/contents/purchase_delivery_split_date?ref=18.0 → HTTP 200 (2026-04-18)"
 notes:
   - "Scaffold only — full population requires reconciling against OCA 18.0 branches."
   - "See infra/ssot/oca/must_have_base.yaml for the pattern."

@@ -18,15 +18,22 @@ modules:
   - technical_name: sale_order_line_menu
     repo: sale-workflow
     rationale: "Menu-level access to sale order lines for bulk operations."
-    verified_on_18_0: pending
+    verified_on_18_0: true
+    verified_at: "2026-04-18"
+    verification_evidence: "https://api.github.com/repos/OCA/sale-workflow/contents/sale_order_line_menu?ref=18.0 → HTTP 200 (2026-04-18)"
   - technical_name: sale_exception
     repo: sale-workflow
     rationale: "Exception framework for preventing invalid sale order confirmation."
-    verified_on_18_0: pending
+    verified_on_18_0: true
+    verified_at: "2026-04-18"
+    verification_evidence: "https://api.github.com/repos/OCA/sale-workflow/contents/sale_exception?ref=18.0 → HTTP 200 (2026-04-18)"
   - technical_name: sale_commission
     repo: commission
     rationale: "Commission management for sales reps and agents."
-    verified_on_18_0: pending
+    verified_on_18_0: false
+    verified_at: "2026-04-18"
+    verification_evidence: "https://api.github.com/repos/OCA/commission/contents/sale_commission?ref=18.0 → HTTP 404 (2026-04-18); module renamed to sale_commission_oca on 18.0 branch"
+    note: "Module renamed — use sale_commission_oca (present in OCA/commission 18.0). Do not auto-substitute; requires explicit re-evaluation."
 notes:
   - "Scaffold only — full population requires reconciling against OCA 18.0 branches."
   - "See infra/ssot/oca/must_have_base.yaml for the pattern."

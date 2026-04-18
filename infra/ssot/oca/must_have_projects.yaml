@@ -18,15 +18,22 @@ modules:
   - technical_name: project_task_default_stage
     repo: project
     rationale: "Default stage per project for new tasks."
-    verified_on_18_0: pending
+    verified_on_18_0: true
+    verified_at: "2026-04-18"
+    verification_evidence: "https://api.github.com/repos/OCA/project/contents/project_task_default_stage?ref=18.0 → HTTP 200 (2026-04-18)"
   - technical_name: project_timeline
     repo: project
     rationale: "Gantt-style timeline view for project tasks."
-    verified_on_18_0: pending
+    verified_on_18_0: true
+    verified_at: "2026-04-18"
+    verification_evidence: "https://api.github.com/repos/OCA/project/contents/project_timeline?ref=18.0 → HTTP 200 (2026-04-18)"
   - technical_name: project_category
     repo: project
     rationale: "Project classification via category tags."
-    verified_on_18_0: pending
+    verified_on_18_0: false
+    verified_at: "2026-04-18"
+    verification_evidence: "https://api.github.com/repos/OCA/project/contents/project_category?ref=18.0 → HTTP 404 (2026-04-18); no matching module found in OCA/project 18.0 tree"
+    note: "Not present on 18.0 branch — no direct rename found. Requires re-evaluation before adoption."
 notes:
   - "Scaffold only — full population requires reconciling against OCA 18.0 branches."
   - "See infra/ssot/oca/must_have_base.yaml for the pattern."
