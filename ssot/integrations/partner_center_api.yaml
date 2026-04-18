@@ -13,15 +13,19 @@ interfaces:
     purpose: "Handles provisioning, suspension, and reinstatement of Odoo tenants purchased via Azure Marketplace."
     required_odoo_handlers:
       - endpoint: "/api/marketplace/webhook"
-        action: "Receives resource updates (e.g. customer cancels subscription)."
+        action: "ipai_marketplace_fulfillment.marketplace_webhook"
+        description: "Receives resource updates (e.g. customer cancels subscription)."
 
   - name: commercial_marketplace_ingestion_api
     version: "v1"
     endpoint: "https://graph.microsoft.com/rp/product-ingestion"
-    purpose: "Automated updates to pricing, plans, and technical configuration without manual Partner Center UI clicks."
+    purpose: "Automated updates to pricing, plans, and technical configuration."
 
 dependencies:
   entra_app_registration:
     name: "ipai-marketplace-fulfillment-bot"
+    app_id_env: "MICROSOFT_MARKETPLACE_APP_ID"
+    client_secret_env: "MICROSOFT_MARKETPLACE_SECRET"
     permissions:
-      - "Publisher.ReadWrite.All" (Graph API / Partner Center)
+      - "Publisher.ReadWrite.All"
+      - "Application.Read.All"
