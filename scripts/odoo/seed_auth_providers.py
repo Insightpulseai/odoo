@@ -36,7 +36,9 @@ except ImportError:
     sys.exit(2)
 
 
-SSOT_IDENTITY_DIR = Path(__file__).resolve().parents[2] / "ssot" / "identity"
+# SSOT dirs — prefers platform/ssot/identity (canonical) with fallback to root ssot/identity
+PLATFORM_SSOT_IDENTITY_DIR = Path(__file__).resolve().parents[2] / "platform" / "ssot" / "identity"
+ROOT_SSOT_IDENTITY_DIR = Path(__file__).resolve().parents[2] / "ssot" / "identity"
 
 
 # Static fallback providers (Keycloak, Google) — Microsoft comes from SSOT YAML.
@@ -69,11 +71,51 @@ STATIC_PROVIDERS = [
 ]
 
 
-def load_microsoft_provider_from_ssot() -> dict:
-    """Pull Microsoft/Entra provider config from ssot/identity/odoo-azure-oauth.yaml."""
-    path = SSOT_IDENTITY_DIR / "odoo-azure-oauth.yaml"
+def load_google_provider_from_ssot() -> dict:
+    """Pull Google provider config from platform/ssot/identity/google-oauth.yaml."""
+    path = PLATFORM_SSOT_IDENTITY_DIR / "google-oauth.yaml"
     if not path.exists():
-        print(f"WARN: SSOT missing at {path}; skipping Microsoft provider seed")
+        print(f"WARN: Google SSOT missing at {path}; skipping")
+        return {}
+
+    with path.open() as f:
+        ssot = yaml.safe_load(f)
+
+    prov = ssot["provider"]
+    
+    # Securely inject secret from environment
+    secret_env = prov.get("client_secret_env", "GOOGLE_CLIENT_SECRET")
+    client_secret = os.environ.get(secret_env)
+    
+    if not client_secret:
+        print(f"WARN: {secret_env} not set; Google provider will be disabled")
+        enabled = False
+    else:
+        enabled = prov["enabled"]
+
+    return {
+        "xmlrpc_xml_id": "auth_provider_google_oidc",
+        "name": prov["name"],
+        "enabled": enabled,
+        "client_id": prov["client_id"],
+        "client_secret": client_secret,
+        "auth_endpoint": prov["auth_endpoint"],
+        "validation_endpoint": prov["validation_endpoint"],
+        "scope": " ".join(prov["scopes"]),
+        "css_class": prov["css_class"],
+        "body": prov["display_label"],
+        "sequence": prov["sequence"],
+    }
+
+
+def load_microsoft_provider_from_ssot() -> dict:
+    """Pull Microsoft/Entra provider config from canonical SSOT identity path."""
+    path = PLATFORM_SSOT_IDENTITY_DIR / "odoo-azure-oauth.yaml"
+    if not path.exists():
+        path = ROOT_SSOT_IDENTITY_DIR / "odoo-azure-oauth.yaml"
+
+    if not path.exists():
+        print(f"WARN: SSOT missing; skipping Microsoft provider seed")
         return {}
 
     with path.open() as f:
@@ -162,10 +204,15 @@ def main() -> int:
         )
         return 2
 
-    providers = list(STATIC_PROVIDERS)
+    providers = [p for p in STATIC_PROVIDERS if p["name"] == "InsightPulse AI SSO (Keycloak)"]
+    
     ms = load_microsoft_provider_from_ssot()
     if ms:
         providers.append(ms)
+
+    google = load_google_provider_from_ssot()
+    if google:
+        providers.append(google)
 
     print(
         f"Seeding {len(providers)} providers to {args.odoo_url} "
