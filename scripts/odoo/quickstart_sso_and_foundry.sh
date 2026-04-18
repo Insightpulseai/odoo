@@ -25,6 +25,21 @@
 #   - Push secrets to any commit
 set -euo pipefail
 
+# Optional flag: --client-json=<path>
+#   Extracts google_client_id + google_client_secret from a Google Cloud
+#   Console download (the JSON you get when you click "Download JSON" on an
+#   OAuth 2.0 Client ID), stores both in Key Vault, then securely deletes
+#   the source file.
+CLIENT_JSON=""
+for arg in "$@"; do
+  case "$arg" in
+    --client-json=*) CLIENT_JSON="${arg#*=}" ;;
+    --help|-h)
+      echo "Usage: bash $0 [--client-json=<path-to-google-oauth-json>]"
+      exit 0 ;;
+  esac
+done
+
 # Configuration
 ACA_APP="${ACA_APP:-ipai-odoo-dev}"
 ACA_RG="${ACA_RG:-rg-ipai-dev-odoo-sea}"
@@ -34,6 +49,67 @@ ENTRA_APP_ID="${ENTRA_APP_ID:-3446e178-3eba-48c9-b5bd-4283ff729eb1}"
 ODOO_BASE_URL="${ODOO_BASE_URL:-https://erp.insightpulseai.com}"
 FOUNDRY_ENDPOINT="${FOUNDRY_ENDPOINT:-https://ipai-copilot-resource.services.ai.azure.com}"
 FOUNDRY_PROJECT="${FOUNDRY_PROJECT:-ipai-copilot}"
+
+# --- Step 0: extract + store Google OAuth creds from downloaded JSON ---
+if [[ -n "${CLIENT_JSON}" ]]; then
+  if [[ ! -f "${CLIENT_JSON}" ]]; then
+    echo "ERROR: --client-json path does not exist: ${CLIENT_JSON}" >&2
+    exit 2
+  fi
+  if ! command -v jq >/dev/null 2>&1; then
+    echo "ERROR: jq is required for --client-json extraction (brew install jq)" >&2
+    exit 2
+  fi
+
+  echo "=== Step 0: Extract Google OAuth client credentials from JSON ==="
+  GC_CLIENT_ID=$(jq -r '.web.client_id // .installed.client_id // empty' "${CLIENT_JSON}")
+  GC_CLIENT_SECRET=$(jq -r '.web.client_secret // .installed.client_secret // empty' "${CLIENT_JSON}")
+  GC_PROJECT_ID=$(jq -r '.web.project_id // .installed.project_id // empty' "${CLIENT_JSON}")
+
+  if [[ -z "${GC_CLIENT_ID}" || -z "${GC_CLIENT_SECRET}" ]]; then
+    echo "ERROR: JSON missing .web.client_id or .web.client_secret" >&2
+    exit 2
+  fi
+
+  echo "  project: ${GC_PROJECT_ID:-<unknown>}"
+  echo "  client_id: ${GC_CLIENT_ID:0:30}...${GC_CLIENT_ID: -30}"
+  echo "  secret tail: ****${GC_CLIENT_SECRET: -6}"
+  echo "  storing in KV: ${KV}"
+
+  az keyvault secret set \
+    --vault-name "${KV}" \
+    --name google-oauth-client-id \
+    --value "${GC_CLIENT_ID}" \
+    --description "Google OAuth Client ID — Odoo SSO web client (auto-ingested $(date -u +%Y-%m-%dT%H:%M:%SZ))" \
+    >/dev/null
+
+  az keyvault secret set \
+    --vault-name "${KV}" \
+    --name google-oauth-client-secret \
+    --value "${GC_CLIENT_SECRET}" \
+    --description "Google OAuth Client Secret — matches google-oauth-client-id (auto-ingested $(date -u +%Y-%m-%dT%H:%M:%SZ); rotate annually)" \
+    >/dev/null
+
+  # Store the full JSON as reference (the raw values, for bridging tools that
+  # prefer the Google-native format).
+  az keyvault secret set \
+    --vault-name "${KV}" \
+    --name google-oauth-client-json \
+    --file "${CLIENT_JSON}" \
+    --description "Google OAuth full client JSON (for ERP web client)" \
+    >/dev/null
+
+  echo "  [ok] google-oauth-client-id, google-oauth-client-secret, google-oauth-client-json written to ${KV}"
+
+  # Secure-delete the local file — shred on Linux, rm -P on macOS
+  if command -v shred >/dev/null 2>&1; then
+    shred -u "${CLIENT_JSON}"
+  else
+    rm -P "${CLIENT_JSON}" 2>/dev/null || rm -f "${CLIENT_JSON}"
+  fi
+  echo "  [ok] local JSON file securely deleted: ${CLIENT_JSON}"
+  echo ""
+fi
 
 echo "=== Step 1: Wire Foundry env vars on ACA ==="
 echo "Target: ${ACA_APP} / ${ACA_RG}"
