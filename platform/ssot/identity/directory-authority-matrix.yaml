@@ -1,0 +1,206 @@
+version: 1
+ssot: directory_authority_matrix
+status: canonical
+directories:
+  insightpulseai_mail:
+    authority_type: mailbox
+    provider: zoho_mail
+    domain: insightpulseai.com
+    purpose:
+      - business_email_delivery
+      - functional_alias_routing
+      - mailbox_operations
+    primary_mailboxes:
+      - business@insightpulseai.com
+      - finance@insightpulseai.com
+    known_aliases_under_business:
+      - admin@insightpulseai.com
+      - billing@insightpulseai.com
+      - ceo@insightpulseai.com
+      - devops@insightpulseai.com
+      - expenses@insightpulseai.com
+      - info@insightpulseai.com
+      - jake.tolentino@insightpulseai.com
+      - jgtolentino.rn@gmail.com
+    not_for:
+      - workforce_identity_authority
+      - guest_governance
+      - application_identity
+      - agent_identity
+  w9studio_mail:
+    authority_type: mailbox
+    provider: google_workspace
+    domain: w9studio.net
+    purpose:
+      - business_email_delivery
+      - branch_mailbox_operations
+      - lightweight_workspace_mail
+    primary_mailboxes:
+      - accounts@w9studio.net
+      - finance@w9studio.net
+      - business@w9studio.net
+    organizational_units:
+      - W9 Studio
+      - Workspace Guests
+    not_for:
+      - workforce_identity_authority
+      - guest_governance
+      - application_identity
+      - agent_identity
+  entra_workforce:
+    authority_type: identity
+    provider: microsoft_entra_id
+    tenant_domain: insightpulseai.com
+    tenant_id: 402de71a-87ec-4302-a609-fb76098d1da7
+    purpose:
+      - workforce_identity
+      - admin_identity
+      - guest_identity
+      - enterprise_applications
+      - app_registrations
+      - managed_identities
+      - agent_identities
+    owns:
+      - internal_members
+      - guest_users
+      - app_service_principals
+      - managed_identities
+      - agent_identities
+    not_for:
+      - mailbox_delivery
+      - branch_shared_mailbox_authority
+  tbwa_smp_contacts:
+    authority_type: contact_directory
+    provider: external_partner_directory
+    purpose:
+      - business_contacts
+      - approver_contacts
+      - finance_contacts
+      - guest_identity_candidates
+    source_artifacts:
+      - finance_framework_unified_workbook
+    email_domain_patterns:
+      - "@omc.com"
+    not_for:
+      - internal_member_authority
+      - mailbox_authority
+      - app_identity
+      - agent_identity
+principal_classes:
+  internal_human_member:
+    system_of_record: entra_workforce
+    allowed_examples:
+      - Jake Tolentino
+      - Jake Tolentino (Admin)
+      - Emergency Access 01
+      - Emergency Access 02
+    default_user_type: member
+  external_human_guest:
+    system_of_record: entra_workforce
+    source_directory: tbwa_smp_contacts
+    default_user_type: guest
+    display_name_pattern: "<Full Name> (TBWA\\SMP)"
+    examples:
+      - Khalil Vera Cruz (TBWA\SMP)
+      - Rey Meran (TBWA\SMP)
+      - Joana Maravillas (TBWA\SMP)
+  functional_mailbox:
+    system_of_record: insightpulseai_mail_or_w9studio_mail
+    examples:
+      - business@insightpulseai.com
+      - finance@insightpulseai.com
+      - accounts@w9studio.net
+      - finance@w9studio.net
+      - business@w9studio.net
+    rules:
+      - not_a_primary_human_identity
+      - not_default_for_entra_member_creation
+      - not_default_for_odoo_internal_user_creation
+  workload_nonhuman:
+    system_of_record: entra_workforce
+    allowed_forms:
+      - managed_identity
+      - service_principal
+      - agent_identity
+    examples:
+      - id-ipai-dev
+      - id-ipai-dev-agent
+      - id-ipai-dev-data
+      - id-ipai-dev-pipeline
+      - id-ipai-dev-runtime
+application_access_patterns:
+  erp_insightpulseai_com:
+    primary_identity_authority: entra_workforce
+    preferred_login_mode: entra_single_tenant_oauth
+    internal_users:
+      principal_class: internal_human_member
+    external_users:
+      principal_class: external_human_guest
+      default_access: none
+      enable_only_when: explicit_business_need
+    mailbox_accounts:
+      principal_class: functional_mailbox
+      default_access: none
+  www_insightpulseai_com:
+    primary_identity_authority: none_by_default
+    future_authenticated_mode:
+      internal: entra_workforce
+      external: entra_external_id_or_guest_pattern_if_needed
+  www_w9studio_net:
+    primary_identity_authority: none_by_default
+    mailbox_authority: w9studio_mail
+    future_authenticated_mode:
+      external: external_id_if_customer_self_service_is_needed
+  prismalab_insightpulseai_com:
+    primary_identity_authority:
+      internal: entra_workforce
+      external_collaboration: entra_guest
+    future_customer_scale_mode:
+      external: external_id_if_public_or_customer_identity_is_needed
+odoo_mapping:
+  identity_authority: entra_workforce
+  mailbox_authority: external_to_odoo
+  authorization_authority: odoo
+  company_context_authority: odoo_multi_company
+  rules:
+    - entra_decides_who_the_principal_is
+    - odoo_decides_what_the_principal_can_do_in_erp
+    - odoo_multi_company_decides_company_branch_trade_name_context
+    - mailbox_accounts_are_not_default_odoo_internal_users
+promotion_rules:
+  tbwa_contact_to_entra_guest:
+    allowed: true
+    conditions:
+      - explicit_collaboration_requirement
+      - sponsor_exists
+      - minimum_role_defined
+      - access_scope_defined
+  entra_guest_to_odoo_user:
+    allowed: true
+    conditions:
+      - explicit_erp_access_requirement
+      - least_privilege_role_defined
+      - company_or_branch_scope_defined
+      - business_owner_approval
+  functional_mailbox_to_entra_member:
+    allowed: false
+    exceptions:
+      - documented_exception_with_business_justification
+  functional_mailbox_to_agent_identity:
+    allowed: false
+naming_conventions:
+  internal_members:
+    pattern: "<Full Name>"
+  admin_members:
+    pattern: "<Full Name> (Admin)"
+  guest_members:
+    pattern: "<Full Name> (TBWA\\SMP)"
+  workload_identities:
+    pattern: "id-ipai-<env>-<purpose>"
+governance_rules:
+  - Keep mailbox directories separate from identity authority.
+  - Use Entra as the canonical workforce, guest, app, managed identity, and agent identity plane.
+  - Treat TBWA/SMP workbook entries as external contacts first, not internal members.
+  - Only create Entra guest identities when access or collaboration is actually required.
+  - Only create Odoo users for external parties when ERP access is explicitly needed.
+  - Do not model functional mailboxes as primary human identities.
