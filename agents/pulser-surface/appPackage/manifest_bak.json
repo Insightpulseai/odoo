@@ -1,0 +1,51 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.17/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.17",
+  "version": "1.0.0",
+  "id": "4b6c16f2-87ec-4302-a609-fb76098d1da7",
+  "packageName": "com.insightpulseai.pulser",
+  "developer": {
+    "name": "InsightPulse AI",
+    "websiteUrl": "https://insightpulseai.com",
+    "privacyUrl": "https://insightpulseai.com/privacy",
+    "termsOfUseUrl": "https://insightpulseai.com/terms"
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "name": {
+    "short": "Pulser for Odoo",
+    "full": "Pulser for Odoo - Strategic Operational Control"
+  },
+  "description": {
+    "short": "AI operating copilot for Odoo workflows.",
+    "full": "Pulser is a custom-engine AI assistant for Odoo 18. It automates finance, project management, and compliance tasks within the M365 ecosystem."
+  },
+  "accentColor": "#0078D4",
+  "configurableTabs": [],
+  "staticTabs": [],
+  "bots": [],
+  "connectors": [],
+  "composeExtensions": [],
+  "permissions": [
+    "identity",
+    "messageTeamMembers"
+  ],
+  "validDomains": [
+    "insightpulseai.com",
+    "erp.insightpulseai.com"
+  ],
+  "copilotAgents": {
+    "declarativeAgents": [
+      {
+        "id": "pulser-project-to-profit",
+        "file": "declarativeAgent.json"
+      },
+      {
+        "id": "pulser-record-to-report",
+        "file": "declarativeAgent_r2r.json"
+      }
+    ]
+  }
+}
