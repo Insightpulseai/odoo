@@ -148,6 +148,76 @@ surfaces:
       design_tokens_exist: true
       app_scaffold: not_yet
 
+  expense_mobile_companion:
+    name: Expense + Approvals Mobile Companion
+    surface_location: mobile_companion (iOS + Android wrapper; not a full mobile ERP)
+    repo: web/mobile/ + agent-platform/src/agent_platform/tools/ + addons/ipai/ipai_expense_mobile/ (planned)
+    pulser_pack: pulser_expense_mobile_companion
+    product_in_scope: true
+    go_live_gate_scope: decide_now
+    rationale: >
+      Mobile is naturally native for expense capture + OCR + cash
+      advance monitoring + approval nudges. Narrow scope: receipt
+      capture, OCR submission, expense draft review, cash advance
+      status, approval actions, push notifications. NOT a full mobile
+      ERP, NOT a broad Pulser mobile shell.
+    includes:
+      - receipt_capture
+      - ocr_submission (via Foundry Document Intelligence)
+      - expense_draft_review
+      - cash_advance_status
+      - approval_actions
+      - push_notifications
+    excludes:
+      - full_backoffice_erp
+      - full_databricks_authoring
+      - broad_multi_domain_workflows
+    mobile_specific_readiness_gates:
+      - authenticated_mobile_sign_in_flow_verified
+      - receipt_upload_path_verified
+      - ocr_extraction_path_verified
+      - expense_draft_submit_path_verified
+      - approval_action_path_verified
+      - push_notification_strategy_defined
+      - mobile_support_matrix_defined
+      - rollback_path_for_mobile_companion_defined
+
+  asset_ops:
+    name: Production Asset Ops (barcode + booking + loaning)
+    surface_location: erp.insightpulseai.com + mobile_companion (scan)
+    repo: addons/ipai/ipai_asset_ops/ (planned) + pulser_asset_ops pack
+    pulser_pack: pulser_asset_ops
+    product_in_scope: true
+    go_live_gate_scope: decide_now
+    rationale: >
+      Production asset ops domain: equipment inventory, kits,
+      reservations, check-out/check-in, room/studio booking, custody
+      tracking, damage/maintenance flags. Independent bounded domain —
+      NOT mixed into finance/expense/release ops. Similar scope to
+      Cheqroom production solution.
+    mvp_includes:
+      - asset_master
+      - barcode_qr_labels
+      - scan_based_checkout_checkin
+      - reservations_calendar
+      - room_studio_booking
+      - loaning_borrower_tracking
+      - damage_in_repair_flag
+      - mobile_scan_return_companion
+    deferred:
+      - rfid
+      - complex_warehouse_routing
+      - advanced_predictive_maintenance
+      - global_multi_site_optimization
+      - deep_utilization_analytics
+    asset_ops_specific_readiness_gates:
+      - scan_flow_verified
+      - mobile_camera_scan_ux_verified
+      - booking_conflict_logic_verified
+      - custody_audit_trail_verified
+      - room_resource_permissions_verified
+      - return_damage_workflow_verified
+
 # -----------------------------------------------------------------------------
 # First go-live gate scope (proposed)
 # -----------------------------------------------------------------------------
@@ -157,6 +227,8 @@ first_go_live_gate_proposed:
   decide_now:
     - pulser_chat_on_erp
     - databricks_control_tower
+    - expense_mobile_companion
+    - asset_ops
   excluded_from_first_gate:
     - www.insightpulseai.com
     - prismalab.insightpulseai.com
@@ -174,6 +246,14 @@ open_decisions:
     implications:
       if_in_gate: requires_executive_access_entitlements + eval_regression_loop + dashboard_signoff
       if_not_in_gate: ERP goes live without dashboard; control tower releases on its own cadence
+  - question: "Is expense_mobile_companion part of the first go-live gate or Phase 1b?"
+    implications:
+      if_in_gate: requires 8 mobile-specific readiness gates (see surface matrix) + mobile support matrix + rollback path
+      if_not_in_gate: ERP goes live with desktop expense only; mobile companion ships Phase 1b
+  - question: "Is asset_ops part of the first go-live gate or Phase 2?"
+    implications:
+      if_in_gate: requires 6 asset-ops-specific gates (scan / booking / custody / room / return-damage)
+      if_not_in_gate: studio/production ops defer to Phase 2; first cutover limited to ERP + finance
   - question: "Define hypercare window length for ERP cutover (48h / 72h / 96h)?"
   - question: "Define rollback criteria and tested rollback drill date?"
 

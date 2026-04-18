@@ -292,6 +292,107 @@ domain_packs:
       - identity_audit_read
     mutation_policy: read_only
     split_reason: privileged_identity_domain
+  - pack_id: pulser_asset_ops
+    kind: domain
+    repo: agents
+    surfaces:
+      - erp.insightpulseai.com
+      - mobile_companion (future)
+    personas:
+      - asset_operator
+      - kit_coordinator
+      - booking_coordinator
+      - custodian
+    tasks:
+      - register_asset
+      - compose_kit
+      - reserve_resource
+      - checkout_kit
+      - checkin_kit
+      - record_custody_event
+      - flag_damage_or_maintenance
+      - produce_utilization_summary
+    judges:
+      - policy_judge
+      - branch_context_judge
+      - grounding_judge
+    tools:
+      - odoo_read
+      - guarded_odoo_write
+      - barcode_scan_ingest
+      - mobile_scan_companion_bridge
+    mutation_policy: guarded_write
+    split_reason: production_asset_operations_distinct_ontology_and_mobile_surface
+    entities:
+      - asset
+      - asset_kit
+      - booking
+      - checkout
+      - checkin
+      - custody_event
+      - room_resource
+      - maintenance_event
+      - scan_event
+    mvp_includes:
+      - asset_master
+      - barcode_qr_labels
+      - scan_based_checkout_checkin
+      - reservations_calendar
+      - room_studio_booking
+      - loaning_borrower_tracking
+      - damage_in_repair_flag
+      - mobile_scan_return_companion
+    deferred:
+      - rfid
+      - complex_warehouse_routing
+      - advanced_predictive_maintenance
+      - global_multi_site_optimization
+      - deep_utilization_analytics_beyond_basic_dashboards
+  - pack_id: pulser_expense_mobile_companion
+    kind: domain
+    repo: agents
+    surfaces:
+      - mobile_companion
+    personas:
+      - expense_submitter
+      - cash_advance_requester
+      - approval_manager
+    tasks:
+      - capture_receipt_photo
+      - upload_supporting_docs
+      - run_ocr_extraction
+      - review_extracted_fields
+      - submit_expense_or_cash_advance
+      - monitor_reimbursement_or_advance_status
+      - manager_approve_reject_request_changes
+      - receive_overdue_or_missing_evidence_alerts
+    judges:
+      - finance_correctness_judge
+      - grounding_judge
+      - policy_judge
+      - responsible_ai_judge
+    tools:
+      - mobile_camera_capture
+      - ocr_foundry_pipeline
+      - accounting_read
+      - guarded_finance_actions
+      - push_notifications
+    mutation_policy: guarded_write
+    split_reason: mobile_native_workflow_narrow_companion
+    scope_rule: >
+      Narrow mobile companion ONLY. Not a full mobile ERP. Not a
+      broad multi-domain mobile launch. Not a broad Pulser mobile shell.
+    includes:
+      - receipt_capture
+      - ocr_submission
+      - expense_draft_review
+      - cash_advance_status
+      - approval_actions
+      - push_notifications
+    excludes:
+      - full_backoffice_erp
+      - full_databricks_authoring
+      - broad_multi_domain_workflows
 judges:
   - judge_id: grounding_judge
     kind: shared
