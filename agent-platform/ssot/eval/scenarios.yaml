@@ -1,0 +1,14 @@
+---
+# ssot/eval/scenarios.yaml — stub
+schema_version: "1.0"
+scenarios:
+  - id: finance_query_basic
+    domain: finance
+    input: "What is the outstanding balance for customer X?"
+    expected_tool: odoo_accounting
+    mutation: false
+  - id: project_status
+    domain: project
+    input: "Show all open tasks for project Y"
+    expected_tool: odoo_sales
+    mutation: false

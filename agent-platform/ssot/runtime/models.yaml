@@ -1,0 +1,12 @@
+---
+# ssot/runtime/models.yaml — stub
+schema_version: "1.0"
+models:
+  team_mode:
+    provider: foundry_cloud
+    deployment: gpt-4.1
+    endpoint_env: AZURE_AI_FOUNDRY_ENDPOINT
+  solo_mode:
+    provider: foundry_local
+    deployment: phi-4
+    endpoint_env: FOUNDRY_LOCAL_ENDPOINT

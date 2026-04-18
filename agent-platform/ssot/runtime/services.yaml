@@ -1,0 +1,13 @@
+---
+# ssot/runtime/services.yaml — stub
+# Canonical: ssot/agent-platform/agent_framework_adoption.yaml
+schema_version: "1.0"
+services:
+  agent_gateway:
+    type: fastapi
+    port: 8000
+    health_path: /health
+  foundry_client:
+    type: azure_ai_agents
+    endpoint_env: AZURE_AI_FOUNDRY_ENDPOINT
+    auth: DefaultAzureCredential

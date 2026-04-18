@@ -1,0 +1,16 @@
+---
+# ssot/runtime/environments.yaml — stub
+schema_version: "1.0"
+environments:
+  development:
+    mode: solo
+    model: phi-4
+    approval_override: false
+  staging:
+    mode: team
+    model: gpt-4.1
+    approval_override: false
+  production:
+    mode: team
+    model: gpt-4.1
+    approval_override: false

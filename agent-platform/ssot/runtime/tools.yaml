@@ -1,0 +1,12 @@
+---
+# ssot/runtime/tools.yaml — stub
+schema_version: "1.0"
+tools:
+  odoo_sales:
+    adapter: agent_platform.tools.odoo.sales
+    mutation: false
+    approval_required: false
+  odoo_accounting:
+    adapter: agent_platform.tools.odoo.accounting
+    mutation: true
+    approval_required: true

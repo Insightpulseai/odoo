@@ -1,0 +1,19 @@
+---
+# ssot/runtime/agents.yaml — stub
+schema_version: "1.0"
+agents:
+  supervisor:
+    type: planner_router
+    model_env: AZURE_AI_FOUNDRY_ENDPOINT
+    workers:
+      - finance_specialist
+      - project_specialist
+      - research_specialist
+  finance_specialist:
+    type: specialist
+    domain: finance
+    tools: [odoo_accounting, odoo_sales]
+  project_specialist:
+    type: specialist
+    domain: project
+    tools: [odoo_sales]

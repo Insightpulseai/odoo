@@ -1,0 +1,14 @@
+---
+# ssot/security/auth_policy.yaml — stub
+schema_version: "1.0"
+auth:
+  credential_type: DefaultAzureCredential
+  token_scope: "https://ai.azure.com/.default"
+  secret_storage: azure_key_vault
+  agents_hold_credentials: false
+  api_proxy: aca_app
+rules:
+  - id: no_hardcoded_secrets
+    enforcement: build_gate
+  - id: maf_token_provider_only
+    enforcement: code_review

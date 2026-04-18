@@ -1,0 +1,44 @@
+---
+# azure-pipelines-contract-checks.yml
+# PR validation: import boundary enforcement + SSOT lint
+# Canonical deploy lane: Azure Pipelines (GHA not permitted for deploy)
+trigger: none
+pr:
+  branches:
+    include:
+      - main
+      - "feat/*"
+      - "fix/*"
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  PYTHON_VERSION: "3.12"
+
+steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: $(PYTHON_VERSION)
+    displayName: "Set Python $(PYTHON_VERSION)"
+
+  - script: |
+      pip install uv
+      uv pip install --system ".[dev]" --extra-index-url https://pkgs.dev.azure.com/insightpulseai/_packaging/ipai/pypi/simple/
+    workingDirectory: $(Build.SourcesDirectory)/agent-platform
+    displayName: "Install dependencies"
+
+  - script: |
+      python -m ruff check src/agent_platform tests
+    workingDirectory: $(Build.SourcesDirectory)/agent-platform
+    displayName: "Ruff lint"
+
+  - script: |
+      python -m pytest tests/contract -v --tb=short
+    workingDirectory: $(Build.SourcesDirectory)/agent-platform
+    displayName: "SSOT contract tests"
+
+  - script: |
+      python -m pytest tests/unit -v --tb=short
+    workingDirectory: $(Build.SourcesDirectory)/agent-platform
+    displayName: "Unit smoke tests"

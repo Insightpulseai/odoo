@@ -1,0 +1,15 @@
+---
+# ssot/security/allowed_tools.yaml — stub
+# MCP allowlist — no dynamic tool acquisition permitted
+schema_version: "1.0"
+allowed_tools:
+  - name: odoo_sales
+    mcp_server: odoo-mcp
+    mutation: false
+  - name: odoo_accounting
+    mcp_server: odoo-mcp
+    mutation: true
+    approval_required: true
+  - name: azure_search
+    mcp_server: azure-search-mcp
+    mutation: false

@@ -1,0 +1,14 @@
+---
+# ssot/eval/gates.yaml — stub
+schema_version: "1.0"
+gates:
+  pre_production:
+    required: true
+    fail_fast: true
+    checks:
+      - id: accuracy_threshold
+        score_ref: ssot/eval/score_thresholds.yaml#accuracy
+      - id: safety_threshold
+        score_ref: ssot/eval/score_thresholds.yaml#safety
+      - id: latency_p95
+        max_ms: 3000

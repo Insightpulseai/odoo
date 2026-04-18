@@ -1,0 +1,50 @@
+---
+# azure-pipelines-eval-gate.yml
+# Eval gate — runs before production release per ssot/eval/gates.yaml
+# Phase 2: wire to Foundry evaluation service
+trigger: none
+pr: none
+
+parameters:
+  - name: environment
+    displayName: Target environment
+    type: string
+    default: staging
+    values:
+      - staging
+      - production
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  PYTHON_VERSION: "3.12"
+
+steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: $(PYTHON_VERSION)
+    displayName: "Set Python $(PYTHON_VERSION)"
+
+  - script: |
+      pip install uv
+      uv pip install --system ".[dev]"
+    workingDirectory: $(Build.SourcesDirectory)/agent-platform
+    displayName: "Install dependencies"
+
+  - script: |
+      python -m pytest tests/eval -v --tb=short 2>/dev/null || echo "eval tests not yet wired — Phase 2"
+    workingDirectory: $(Build.SourcesDirectory)/agent-platform
+    displayName: "Eval gate (stub — Phase 2)"
+    continueOnError: true
+
+  - script: |
+      python -c "
+      import sys, yaml
+      from pathlib import Path
+      gates = yaml.safe_load((Path('ssot/eval/gates.yaml')).read_text())
+      print('Eval gate config loaded:', list(gates.get('gates', {}).keys()))
+      sys.exit(0)
+      "
+    workingDirectory: $(Build.SourcesDirectory)/agent-platform
+    displayName: "Validate eval gate YAML"

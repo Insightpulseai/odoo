@@ -1,0 +1,13 @@
+---
+# ssot/security/role_bindings.yaml — stub
+schema_version: "1.0"
+roles:
+  agent_reader:
+    permissions: [tools.read, agents.query]
+    approval_required: false
+  agent_writer:
+    permissions: [tools.mutate, agents.invoke]
+    approval_required: true
+  platform_admin:
+    permissions: ["*"]
+    approval_required: true
