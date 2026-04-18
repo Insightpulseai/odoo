@@ -1,0 +1,223 @@
+# =============================================================================
+# Agent Delivery Stack — SSOT
+# =============================================================================
+# Authority: canonical mapping of the three Microsoft agent-layer
+#            concerns. Do NOT collapse them into one.
+# Related:   ssot/agent-platform/agent_framework_adoption.yaml
+#            ssot/identity/entra_target_state.yaml
+#            ssot/agents/agent_factory.yaml
+#            CLAUDE.md invariant #10a
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: canonical
+
+doctrine: >
+  Three distinct Microsoft layers, each with its own purpose. Do not merge
+  them. Runtime/orchestration is ONE concern, M365-surface packaging is a
+  SECOND concern, identity/governance is a THIRD concern.
+
+# -----------------------------------------------------------------------------
+# The three layers
+# -----------------------------------------------------------------------------
+layers:
+
+  runtime_and_orchestration:
+    name: Microsoft Agent Framework + Foundry
+    purpose: runtime and orchestration
+    concerns:
+      - agent runtime
+      - workflow graphs
+      - providers and model invocation
+      - retrieval and grounding
+      - tool execution
+      - session state
+      - telemetry and checkpointing
+    placement_repo: agent-platform/
+    placement_ssot: ssot/agent-platform/agent_framework_adoption.yaml
+    owned_by: platform-architecture
+    upstream:
+      - https://github.com/microsoft/agent-framework
+      - Azure AI Foundry (ipai-copilot-resource)
+    mental_model: "the engine"
+
+  m365_channel_packaging:
+    name: Microsoft 365 Agents Toolkit
+    purpose: M365-surface packaging, local dev, deploy
+    concerns:
+      - project scaffolding
+      - local development and testing (via Microsoft 365 Agents Playground)
+      - deployment workflows
+      - simplified SSO authentication for M365 surfaces
+      - data storage and serverless integration
+      - CI/CD integration (GitHub Actions, Azure DevOps)
+      - TypeSpec for Copilot
+      - Microsoft 365 channel publishing (Copilot, Teams, Outlook, Office, web, email, SMS, other messaging)
+    placement_repo: m365-agents/
+    placement_status: not_yet_scaffolded
+    owned_by: platform-engineering
+    supported_formats:
+      - vs_code_extension_ts_js
+      - visual_studio_workload_dotnet
+      - cli_for_terminal_and_cicd
+    build_outputs:
+      - m365_copilot_extensibility
+      - teams_apps
+      - outlook_apps
+      - m365_copilot_apps
+      - office_addins
+    agent_types_supported:
+      - custom_engine_agents     # our MAF-backed agents
+      - declarative_agents       # for M365 Copilot AI stack reliance
+    mental_model: "the channel adapter / packaging layer"
+    relationship_to_maf: >
+      M365 Agents Toolkit packages and publishes agents whose RUNTIME lives
+      in agent-platform/ (MAF). Toolkit does NOT replace MAF — it wraps
+      MAF-backed agents for delivery into M365 surfaces.
+
+  identity_and_governance:
+    name: Microsoft Entra ID + Entra Agent ID
+    purpose: identity, authorization, governance, audit
+    concerns:
+      - workforce identity
+      - workload identity (service principals, managed identities)
+      - agent identity (Entra Agent ID)
+      - Conditional Access
+      - PIM / privileged access
+      - token issuance and validation
+      - audit trails
+    placement_ssot: ssot/identity/entra_target_state.yaml
+    owned_by: platform-architecture
+    mental_model: "the trust plane"
+    relationship_to_runtime: >
+      MAF-backed agents in agent-platform/ authenticate to Foundry using
+      Managed Identity (workload identity) and publish an Entra Agent ID
+      per agent for lineage/audit. The runtime does not own identity;
+      Entra does.
+
+# -----------------------------------------------------------------------------
+# Layer boundaries — do not merge
+# -----------------------------------------------------------------------------
+boundaries:
+  rule_1: >
+    M365 Agents Toolkit is NOT the runtime. It is the build + dev + package
+    + publish toolchain for M365 channels. The runtime remains MAF in
+    agent-platform/.
+  rule_2: >
+    Entra Agent ID is NOT the agent framework. It is the identity/audit
+    surface for agents. Agent behavior is defined in agents/ and executed
+    in agent-platform/.
+  rule_3: >
+    Azure AI Foundry is NOT the same as the M365 Agents Toolkit. Foundry
+    is the model/provider/hosted-agent plane. Toolkit is the M365-channel
+    delivery plane. Both can coexist in the same architecture.
+
+# -----------------------------------------------------------------------------
+# Channel routing decision matrix
+# -----------------------------------------------------------------------------
+channel_routing:
+  m365_copilot:
+    uses_toolkit: true
+    agent_type: declarative_or_custom_engine
+    surface_protocol: Agent365 SDK
+    runtime: agent-platform/ (MAF) for custom engine
+
+  teams:
+    uses_toolkit: true
+    agent_type: custom_engine
+    surface_protocol: Agent365 SDK
+    runtime: agent-platform/ (MAF)
+
+  outlook:
+    uses_toolkit: true
+    agent_type: custom_engine_or_addin
+    surface_protocol: Agent365 SDK
+    runtime: agent-platform/ (MAF) for custom engine
+
+  web_chat_on_ipai_domains:
+    uses_toolkit: false
+    surface_protocol: A2A (direct to orchestrator)
+    runtime: agent-platform/ (MAF)
+    front_end: web/apps/* (ipai-landing, prismalab)
+
+  odoo_chatter:
+    uses_toolkit: false
+    surface_protocol: A2A
+    runtime: agent-platform/ (MAF)
+    front_end: addons/ipai_*_copilot/
+
+  slack:
+    uses_toolkit: false
+    surface_protocol: A2A
+    runtime: agent-platform/ (MAF)
+    front_end: agent-platform/services/slack_adapter/ (future)
+
+  claude_code_or_ado_extension:
+    uses_toolkit: false
+    surface_protocol: A2A
+    runtime: agent-platform/ (MAF)
+
+# -----------------------------------------------------------------------------
+# Adoption decision for InsightPulseAI
+# -----------------------------------------------------------------------------
+ipai_adoption:
+
+  m365_agents_toolkit:
+    decision: adopt_when_M365_surface_becomes_real
+    current_status: deferred_reference_only
+    prerequisites_before_adoption:
+      - at least one custom engine agent running in agent-platform/
+      - Entra app registration for M365 surface
+      - business requirement for Copilot/Teams/Outlook delivery
+    when_adopted:
+      repo_path: m365-agents/
+      ci_lane: azure-pipelines.yml (per CLAUDE.md deploy authority)
+      language: typescript_primary_dotnet_allowed_for_dotnet_surfaces
+      relationship_to_agent_platform: >
+        m365-agents/ consumes agent-platform/ HTTP APIs; it does not
+        re-implement the runtime. It packages and publishes the agent
+        for M365 channel delivery.
+
+  agent365_sdk_direct_use:
+    decision: adopted_in_agent-platform_for_surface_integration
+    current_status: planned_not_implemented
+    placement: agent-platform/src/agent_platform/providers/m365/ (future)
+
+  microsoft_agent_framework:
+    decision: already_adopted
+    status: runtime_substrate_of_agent-platform
+    ssot: ssot/agent-platform/agent_framework_adoption.yaml
+
+  entra_agent_id:
+    decision: already_adopted
+    status: identity_layer_for_agents
+    ssot: ssot/identity/entra_target_state.yaml
+    current_observed:
+      active_agents: 2
+      unmanaged_agents: 1
+      blueprint_agents: 1
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not using M365 Agents Toolkit as the agent runtime
+  - not using Entra Agent ID as the agent execution framework
+  - not using Azure AI Foundry as a channel packaging tool
+  - not adopting M365 Agents Toolkit until at least one M365 channel target
+    has a real business requirement
+  - not scaffolding m365-agents/ repo until adoption is approved
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  agent_framework_adoption: ssot/agent-platform/agent_framework_adoption.yaml
+  identity_target: ssot/identity/entra_target_state.yaml
+  three_protocol_model: docs/architecture/three-protocol-model.md
+  orchestration_model: docs/architecture/agent-orchestration-model.md
+  upstream_maf: https://github.com/microsoft/agent-framework
+  upstream_m365_agents_toolkit: https://learn.microsoft.com/microsoft-365/agents-toolkit/
+  upstream_m365_agents_sdk: https://learn.microsoft.com/microsoft-365/agents-sdk/
