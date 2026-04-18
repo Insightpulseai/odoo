@@ -16,6 +16,7 @@
         <field name="auth_endpoint">https://login.microsoftonline.com/TENANT_ID_PLACEHOLDER/oauth2/v2.0/authorize</field>
         <field name="validation_endpoint">https://graph.microsoft.com/oidc/userinfo</field>
         <field name="scope">openid email profile User.Read</field>
+        <field name="flow">id_token_code</field>
         <field name="enabled" eval="False"/>
         <field name="sequence">10</field>
         <field name="css_class">fa fa-windows</field>
@@ -29,6 +30,7 @@
         <field name="auth_endpoint">https://accounts.google.com/o/oauth2/v2/auth</field>
         <field name="validation_endpoint">https://openidconnect.googleapis.com/v1/userinfo</field>
         <field name="scope">openid email profile</field>
+        <field name="flow">id_token_code</field>
         <field name="enabled" eval="False"/>
         <field name="sequence">20</field>
         <field name="css_class">fa fa-google</field>
