@@ -47,10 +47,11 @@
         "DATABRICKS_WORKSPACE_NAME": "dbw-ipai-dev",
         "DATABRICKS_RESOURCE_GROUP": "rg-ipai-dev-ai-sea",
         "DATABRICKS_SQL_WAREHOUSE_ID": "e7d89eabce4c330c",
-        "DATABRICKS_GENIE_SPACE_ID": "TBD_CREATE_GENIE_SPACE_FIRST",
-        "_NOTE": "Requires manual install: pip install -r requirements.txt from alexxx-db/databricks-genie-mcp; auth via DefaultAzureCredential (Entra MI) or DATABRICKS_TOKEN env var. Genie Space must exist in workspace UI before MCP can connect.",
+        "DATABRICKS_GENIE_SPACE_ID": "PENDING_SPACE_ID_FROM_URL",
+        "_NOTE": "Two Genie Spaces exist: 'Finance Operations' and 'Compliance & Tax' (created Apr 17). Get space ID from URL when opening a space. Alternative: use Genie Code native MCP (Workspace Settings → MCP Servers → Add → Genie space) instead of this external MCP.",
         "_REPO": "https://github.com/alexxx-db/databricks-genie-mcp",
-        "_STATUS": "configured-but-not-yet-installed"
+        "_STATUS": "genie-spaces-created-awaiting-id",
+        "_NATIVE_ALTERNATIVE": "Genie Code now supports Genie-as-MCP natively inside the workspace (Apr 2026). Consider using that instead of this external server."
       }
     }
   }
