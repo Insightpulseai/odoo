@@ -1,0 +1,343 @@
+# =============================================================================
+# Azure Architecture Center — IPAI Stack Full-Map SSOT
+# =============================================================================
+# Authority: canonical crosswalk from IPAI layers to Azure Architecture
+#            Center lanes. This is the top-level "what maps to what" matrix
+#            that ties together identity, runtime, site, delivery, and
+#            production-foundation doctrine.
+# Related:   ssot/identity/entra_target_state.yaml
+#            ssot/agent-platform/agent_framework_adoption.yaml
+#            ssot/agent-platform/agent_delivery_stack.yaml
+#            ssot/web/site-template-adoption.yaml
+#            ssot/governance/production-ai-foundation-adoption.yaml
+#            docs/architecture/FOUNDRY_CHAT_BASELINE_MAPPING.md (subset)
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: canonical
+
+canonical_summary: >
+  IPAI stack maps to Azure Architecture Center as a landing-zone-based,
+  Entra-secured, Azure Container Apps-hosted enterprise web + ERP + agentic
+  AI architecture, with Foundry chat/agent baselines for the AI runtime and
+  a Databricks/Fabric lakehouse + BI plane for analytics.
+
+# -----------------------------------------------------------------------------
+# The 12 architecture lanes
+# -----------------------------------------------------------------------------
+lanes:
+
+  "01_platform_foundation":
+    aac_category: Landing zone / Workload design / Well-Architected
+    ipai_repos: [infra, platform]
+    components:
+      - azure_sponsorship_subscription
+      - resource_group_layout
+      - shared_identity_rbac_managed_identities
+      - monitoring_diagnostic_settings_tagging_policies
+      - environment_separation_dev_staging_prod
+    aac_references:
+      - https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/
+      - https://learn.microsoft.com/azure/well-architected/
+    owns_decisions:
+      - naming_and_subscription_structure
+      - policy_and_rbac
+      - private_networking_stance
+      - workload_isolation_level
+      - cost_and_operational_guardrails
+    ipai_ssot_anchor: ssot/governance/production-ai-foundation-adoption.yaml
+
+  "02_identity_and_access":
+    aac_category: Identity architecture design
+    ipai_repos: [entra_config_in_ssot_identity]
+    components:
+      - entra_workforce_admin_guest_app_identity
+      - tbwa_smp_omnicom_guests
+      - app_registrations_enterprise_applications
+      - managed_identities
+      - conditional_access_mfa_pim
+      - entra_agent_identities
+    aac_references:
+      - https://learn.microsoft.com/azure/architecture/identity/
+    authority_split:
+      mailbox_authority: zoho + google_workspace
+      workforce_authority: microsoft_entra_id
+      external_collaboration_authority: entra_b2b_guest
+    ipai_ssot_anchor: ssot/identity/entra_target_state.yaml
+
+  "03_public_edge_and_web_security":
+    aac_category: Enterprise web app patterns / Secure web apps
+    ipai_repos: [web, infra]
+    surfaces:
+      - www.insightpulseai.com
+      - erp.insightpulseai.com
+      - prismalab.insightpulseai.com
+      - www.w9studio.net
+    components:
+      - azure_front_door_edge_routing
+      - api_exposure_patterns
+      - waf_protected_web_entry
+      - frontend_backend_boundary
+    aac_references:
+      - https://learn.microsoft.com/azure/architecture/web-apps/
+      - https://learn.microsoft.com/azure/architecture/patterns/backends-for-frontends
+      - https://learn.microsoft.com/azure/architecture/reference-architectures/apis/protect-apis
+    decisions:
+      - domain_role_per_site
+      - api_management_in_front_of_shared_apis
+      - backends_for_frontends_per_site
+    ipai_ssot_anchor: ssot/web/site-template-adoption.yaml
+
+  "04_compute_runtime":
+    aac_category: Choose a container service / Azure Container Apps
+    ipai_repos: [infra, agent-platform, addons]
+    components:
+      - odoo_runtime
+      - agent_runtime
+      - web_api_backends
+      - worker_processes
+      - job_scheduler_processes
+    target_substrate: azure_container_apps
+    avoid: aks_unless_genuine_kubernetes_need
+    aac_references:
+      - https://learn.microsoft.com/azure/architecture/guide/technology-choices/compute-decision-tree
+      - https://learn.microsoft.com/azure/architecture/guide/container/choose-a-container-service
+      - https://learn.microsoft.com/azure/architecture/microservices/aca/
+    ipai_ssot_anchor: ssot/infra/compute-target.yaml (future)
+
+  "05_erp_transactional":
+    aac_category: Enterprise web app + database workload
+    ipai_repos: [addons]
+    surface: erp.insightpulseai.com
+    components:
+      - odoo_ce_18_plus_oca
+      - postgresql_transactional_sor
+      - business_operations_finance_crm_documents_workflows
+    aac_references:
+      - https://learn.microsoft.com/azure/architecture/web-apps/
+      - https://learn.microsoft.com/azure/architecture/data-guide/
+    role_clarity:
+      is: transactional_business_workload
+      is_not: [agent_runtime, analytics_platform, public_marketing_frontend]
+    ipai_ssot_anchor: ssot/web/site-template-adoption.yaml (sites.erp_insightpulseai_com)
+
+  "06_ai_runtime_and_copilots":
+    aac_category: AI architecture design / Foundry chat baseline / AI agent orchestration
+    ipai_repos: [agent-platform]
+    components:
+      - agent_platform_runtime
+      - foundry_resource_model_endpoint
+      - agent_runtime_orchestration
+      - tool_adapters_odoo_databricks_doc
+      - retrieval_and_grounded_responses
+      - evaluations_monitoring_safety
+    aac_references:
+      - https://learn.microsoft.com/azure/architecture/ai-ml/
+      - https://learn.microsoft.com/azure/architecture/ai-ml/architecture/baseline-microsoft-foundry-chat
+      - https://learn.microsoft.com/azure/architecture/ai-ml/guide/rag/rag-solution-design-and-evaluation-guide
+    framework: microsoft_agent_framework
+    provider_default: foundry
+    role_clarity:
+      is: runtime_orchestration_plane
+      is_not: [public_web_plane, transactional_erp_plane]
+    ipai_ssot_anchor: ssot/agent-platform/agent_framework_adoption.yaml
+
+  "07_retrieval_grounding_knowledge":
+    aac_category: RAG implementation
+    ipai_repos: [agent-platform]
+    components:
+      - uploaded_document_workflows
+      - document_grounding_for_copilots
+      - retrieval_services
+      - citations_evidence
+      - prismalab_document_heavy_workflows
+    aac_references:
+      - https://learn.microsoft.com/azure/architecture/ai-ml/guide/rag/rag-solution-design-and-evaluation-guide
+    target_modules:
+      - agent-platform/src/agent_platform/retrieval/
+      - agent-platform/src/agent_platform/attachments/
+      - agent-platform/src/agent_platform/tools/docintel/
+    ipai_ssot_anchor: ssot/agent-platform/agent_framework_adoption.yaml
+
+  "08_data_intelligence_lakehouse_bi":
+    aac_category: Analytics architecture design
+    ipai_repos: [data-intelligence]
+    components:
+      - databricks
+      - medallion_lakehouse
+      - fabric_and_bi_semantic_serving
+      - governed_analytics_and_reporting
+    doctrine_invariant:
+      primary_engineering_plane: databricks_plus_unity_catalog
+      complement_plane: fabric_mirroring_only
+      bi_surface: power_bi_primary
+    aac_references:
+      - https://learn.microsoft.com/azure/architecture/data-guide/
+      - https://learn.microsoft.com/azure/architecture/example-scenario/data/modern-analytics-data-lake
+    role_clarity:
+      is: analytics_and_semantic_plane
+      is_not: [transactional_plane, ai_runtime_plane]
+    ipai_ssot_anchor: ssot/data-intelligence/ (existing)
+
+  "09_realtime_and_evented_ops":
+    aac_category: Event and stream architecture
+    ipai_repos: [data-intelligence, agent-platform]
+    status: deferred_until_clear_use_case
+    components:
+      - runtime_logs_and_metrics
+      - future_event_streams
+      - monitoring_and_operational_intelligence
+      - agent_session_telemetry_pipelines
+    aac_references:
+      - https://learn.microsoft.com/azure/architecture/example-scenario/data/stream-processing-databricks
+    rule: route_runtime_exhaust_to_analytics_plane_not_transactional_repos
+
+  "10_multitenancy_client_isolation":
+    aac_category: SaaS and multitenant applications
+    ipai_repos: [platform, agent-platform, addons]
+    components:
+      - insightpulseai_as_platform_operator
+      - external_client_collaborators
+      - tbwa_smp_partner_access
+      - w9_prismalab_other_domain_surfaces
+    current_posture:
+      mode: single_operator_tenant
+      guests: selected_external_b2b_only
+      product_surfaces: multiple_domains
+      not_yet: fully_generalized_saas_multitenant
+    aac_references:
+      - https://learn.microsoft.com/azure/architecture/guide/multitenant/
+      - https://learn.microsoft.com/azure/architecture/guide/multitenant/considerations/identity
+
+  "11_security_zero_trust":
+    aac_category: Security architecture design
+    ipai_repos: [all]
+    components:
+      - entra_conditional_access_mfa_pim
+      - waf_edge_security
+      - api_protection
+      - secrets_and_managed_identity
+      - content_safety_ai_guardrails
+      - foundry_and_app_access_governance
+    aac_references:
+      - https://learn.microsoft.com/azure/architecture/framework/security/
+      - https://learn.microsoft.com/security/zero-trust/
+    decisions_owned:
+      - public_site_protection
+      - erp_isolation_from_public_ai
+      - agent_backend_auth_to_models_and_data
+      - admin_access_constraints
+
+  "12_application_design_patterns":
+    aac_category: Architecture fundamentals / Cloud design patterns
+    ipai_repos: [all]
+    most_relevant_patterns:
+      - backends_for_frontends
+      - ai_workload_application_design
+      - agent_chat_baseline
+      - standard_cloud_design_patterns_resiliency_decomposition_async
+    aac_references:
+      - https://learn.microsoft.com/azure/architecture/patterns/
+      - https://learn.microsoft.com/azure/architecture/patterns/backends-for-frontends
+      - https://learn.microsoft.com/azure/architecture/ai-ml/
+
+# -----------------------------------------------------------------------------
+# Target operating model — control planes + user-facing + system-of-record
+# -----------------------------------------------------------------------------
+operating_model:
+
+  control_planes:
+    identity: entra_id
+    infrastructure: azure_landing_zone + infra/
+    application: platform/
+    ai_runtime: agent-platform/
+    analytics: data-intelligence/
+
+  user_facing_planes:
+    corporate_platform_front_door: www.insightpulseai.com
+    erp_front_door: erp.insightpulseai.com
+    domain_ai_workspace: prismalab.insightpulseai.com
+    studio_creative_front_door: www.w9studio.net
+
+  system_of_record_planes:
+    transactional: odoo_postgresql (addons/)
+    analytics_lakehouse_semantic: databricks + fabric + power_bi (data-intelligence/)
+    agent_runtime_retrieval: foundry_backed_ai_runtime (agent-platform/)
+
+# -----------------------------------------------------------------------------
+# Stack-to-architecture matrix (condensed)
+# -----------------------------------------------------------------------------
+matrix:
+  - layer: platform_foundation
+    canonical_path: infra/ + platform/
+    aac_lane: landing_zone_well_architected
+    best_fit_reference: architecture_center_caf
+  - layer: identity
+    canonical_path: entra_config_in_ssot_identity/
+    aac_lane: identity_architecture_design
+    best_fit_reference: identity_in_multitenant_architectures
+  - layer: public_sites
+    canonical_path: web/
+    aac_lane: enterprise_web_app_patterns
+    best_fit_reference: securely_managed_web_apps
+  - layer: erp
+    canonical_path: addons/
+    aac_lane: web_app_plus_database_workload
+    best_fit_reference: choose_container_service_plus_db_guidance
+  - layer: agent_runtime
+    canonical_path: agent-platform/
+    aac_lane: ai_architecture_design
+    best_fit_reference: foundry_chat_baseline + agent_orchestration
+  - layer: agent_definitions
+    canonical_path: agents/
+    aac_lane: ai_workload_app_design_support
+    best_fit_reference: agent_orchestration_eval_support
+  - layer: retrieval
+    canonical_path: agent-platform/src/agent_platform/retrieval/
+    aac_lane: rag_architecture
+    best_fit_reference: develop_and_optimize_a_rag_implementation
+  - layer: data_intelligence
+    canonical_path: data-intelligence/
+    aac_lane: analytics_architecture_design
+    best_fit_reference: databricks_modern_analytics_fabric_analytics
+  - layer: bi_semantic
+    canonical_path: data-intelligence/fabric_outputs/
+    aac_lane: enterprise_bi_with_fabric
+    best_fit_reference: analytics_end_to_end_with_fabric
+  - layer: domain_ai_workspace
+    canonical_path: web/apps/prismalab/
+    aac_lane: ai_app_rag_document_workflows
+    best_fit_reference: foundry_chat_baseline + multimodal_document_patterns
+  - layer: edge_api_protection
+    canonical_path: infra/ + platform/
+    aac_lane: secure_web_apps_api_protection
+    best_fit_reference: app_gateway_plus_api_management
+  - layer: security_posture
+    canonical_path: all
+    aac_lane: security_architecture_design
+    best_fit_reference: zero_trust_secure_managed_apps
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not merging transactional (Odoo) with analytics (Databricks/Fabric)
+  - not placing agent runtime inside web/ or addons/
+  - not starting from streaming/event architecture without a clear use case
+  - not adopting generalized multitenant SaaS model before a real tenant-per-customer requirement
+  - not escalating compute substrate to AKS without a genuine Kubernetes need
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  architecture_doc: docs/architecture/azure-architecture-center-map.md
+  foundry_chat_subset: docs/architecture/FOUNDRY_CHAT_BASELINE_MAPPING.md
+  identity_target: ssot/identity/entra_target_state.yaml
+  agent_framework_adoption: ssot/agent-platform/agent_framework_adoption.yaml
+  agent_delivery_stack: ssot/agent-platform/agent_delivery_stack.yaml
+  site_template_adoption: ssot/web/site-template-adoption.yaml
+  production_foundation_adoption: ssot/governance/production-ai-foundation-adoption.yaml
+  aac_root: https://learn.microsoft.com/azure/architecture/
