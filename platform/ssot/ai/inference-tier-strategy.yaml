@@ -1,0 +1,38 @@
+---
+# SSOT: Gemini Inference Tier Strategy
+# Codifies the mapping of performance tiers (Priority vs. Flex) to business criticality.
+# Last updated: 2026-04-18
+version: 1
+
+tiers:
+  - id: priority
+    name: "Priority (Inference Tier 1)"
+    description: "High-availability, low-latency, and reserved capacity for critical signatures."
+    billing_type: "Provisioned / Token-based"
+    target_workloads: ["Board approvals", "Tax filings (PH BIR)", "External audit evidence"]
+
+  - id: flex
+    name: "Flex (Inference Tier 2)"
+    description: "Cost-optimized, dynamic capacity for daily operational guidance."
+    billing_type: "Pay-as-you-go"
+    target_workloads: ["Expense preparation", "Daily chat summaries", "Internal FAQ grounding"]
+
+policy_mapping:
+  - approval_bands: [A, B]
+    default_tier: flex
+    logic: "Cost-efficiency for high-volume petty transactions."
+
+  - approval_bands: [C, D, E]
+    default_tier: priority
+    logic: "Guaranteed reasoning quality and speed for strategic financial sign-offs."
+
+overrides:
+  managed_identity:
+    principal: "id-ipai-agent-pulser-dev"
+    tier: "priority"
+    rationale: "Agentic platform maintenance and vault indexing require consistent throughput."
+
+governance:
+  token_monitoring_plane: "Databricks Analytics"
+  alert_threshold_monthly_usd: 500
+  hard_stop_tier_fallback: true

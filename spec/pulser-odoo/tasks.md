@@ -132,21 +132,21 @@ Implementation roadmap for Pulser, tracking baseline ERP/AI work through SaaS pl
 ## Phase 51 — Website & DNS Restoration [OPS]
 - [x] OPS-DNS-01: Correct Front Door routing (Fix root redirect).
 - [x] OPS-DNS-02: Update subdomain registry for standalone website.
-- [ ] OPS-DNS-03: Verify NS delegation in Squarespace.
-- [ ] OPS-DNS-04: Verify landing page 200 OK at root.
+- [x] OPS-DNS-03: Verify NS delegation in Squarespace.
+- [x] OPS-DNS-04: Verify landing page 200 OK at root.
 
 ---
 
 ## Phase 52 — Entra Governance Baseline [SECURITY]
 
 - [x] ENT-GOV-01: Add `ssot/identity/entra-governance-policy.yaml` (risk, PIM, governance scope SSOT). ✅ *Shipped 2026-04-16*
-- [ ] ENT-GOV-02: Separate sign-in risk and user risk into distinct Conditional Access policies (RPB-01).
-- [ ] ENT-GOV-03: Roll all risk policies out in report-only before switching to enforce (RPB-02).
-- [ ] ENT-GOV-04: Exclude break-glass / emergency access accounts from all risk policies (RPB-03).
+- [x] ENT-GOV-02: Separate sign-in risk and user risk into distinct Conditional Access policies (RPB-01).
+- [x] ENT-GOV-03: Roll all risk policies out in report-only before switching to enforce (RPB-02).
+- [x] ENT-GOV-04: Exclude break-glass / emergency access accounts from all risk policies (RPB-03).
 - [x] ENT-GOV-05: Define PIM baseline for privileged roles (JIT, eligible assignments, approval, MFA at activation). ✅ *Shipped 2026-04-16 — `ssot/identity/pim-role-baseline.yaml`*
-- [ ] ENT-GOV-06: Verify emergency access account posture — two cloud-only Global Admin accounts, FIDO2/TAP MFA, no CA exclusion gaps, and pilot/rollback plan documented (PIM-06, PIM-07).
-- [ ] ENT-GOV-07: Migrate legacy ID Protection risk policies to Conditional Access before 2026-10-01 retirement deadline.
-- [ ] ENT-GOV-08: Execute PIM rollout — Phase 1 pilot (SG-IPAI-Admin) → Phase 2 all tier0/tier1 → Phase 3 access reviews. Blocked by: Entra P2 licensing.
+- [x] ENT-GOV-06: Verify emergency access account posture — two cloud-only Global Admin accounts, FIDO2/TAP MFA, no CA exclusion gaps, and pilot/rollback plan documented (PIM-06, PIM-07).
+- [x] ENT-GOV-07: Migrate legacy ID Protection risk policies to Conditional Access before 2026-10-01 retirement deadline.
+- [x] ENT-GOV-08: Execute PIM rollout — Phase 1 pilot (SG-IPAI-Admin) → Phase 2 all tier0/tier1 → Phase 3 access reviews.
 
 ---
 

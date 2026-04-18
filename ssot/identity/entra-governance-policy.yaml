@@ -103,11 +103,16 @@ risk_policy_baseline:
       notes: >
         At Medium or High sign-in risk, require MFA as a session-level gate.
         Separate from user risk policy.
+    exclusion_scope:
+      accounts:
+        - "bg-01@insightpulseai.onmicrosoft.com"
+        - "bg-02@insightpulseai.onmicrosoft.com"
+      rationale: "Emergency access break-glass accounts to prevent total tenant lockout."
 
   legacy_retirement:
     deadline: "2026-10-01"
     action: migrate_all_id_protection_risk_policies_to_conditional_access
-    status: pending
+    status: completed  # Refined CA policies RPB-01 through RPB-03 implemented
 
 # ---------------------------------------------------------------------------
 # 2. Identity Governance Scope
