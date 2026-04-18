@@ -198,6 +198,71 @@ cross_publishing:
     bidirectional: false (IPAI pack is authoritative)
 
 # -----------------------------------------------------------------------------
+# MCP equivalence — Genie Code MCP vs Pulser tool registry
+# -----------------------------------------------------------------------------
+mcp_equivalence:
+  rule: >
+    Same pattern: both use MCP (Model Context Protocol) for live
+    tools/data/context. Genie Code exposes MCP servers through its
+    Agent mode; Pulser exposes MCP servers through its tool registry
+    in agent-platform/src/agent_platform/tools/mcp/.
+
+  genie_code_mcp:
+    connects_to:
+      - unity_catalog_functions
+      - vector_search
+      - genie_spaces
+      - external_mcp_servers
+      - custom_mcp_servers_hosted_in_databricks_apps
+      - third_party_connectors (google_drive, sharepoint)
+    availability: agent_mode_only
+    upstream_article_url: https://docs.databricks.com/aws/en/genie-code/mcp
+
+  pulser_mcp_tool_registry:
+    governance_ssot: ssot/governance/mcp-allowlist.yaml
+    runtime_state: ssot/tooling/mcp-runtime-state.yaml
+    adopted_mcps:
+      - azure
+      - azure-devops
+      - microsoft-learn
+      - foundry
+      - playwright
+    placement: agent-platform/src/agent_platform/tools/mcp/ (when implemented)
+
+  shared_pattern:
+    - scoped_tool_and_context_surface
+    - discovered_via_manifest_or_allowlist
+    - versioned_and_governed
+    - activated_on_context_need
+
+# -----------------------------------------------------------------------------
+# GitHub MCP pattern (enterprise code search)
+# -----------------------------------------------------------------------------
+github_mcp_pattern:
+  purpose: enterprise_code_search_across_repos
+  setup_in_genie_code:
+    - create_github_app
+    - create_unity_catalog_connection
+    - authenticate_connection
+    - enable_tools: [get_file_contents, search_code]
+    - add_custom_instructions_listing_relevant_repositories
+  ipai_parallel:
+    current_state: "github MCP was removed from .mcp.json (HTTP Copilot endpoint unauthenticated — see commit 43397d44b)"
+    reactivation_path: >
+      When GH Copilot MCP license is wired OR when Genie-Code-style
+      custom GitHub App MCP is adopted, revisit. The Genie Code pattern
+      (GitHub App + UC connection + authenticated tools) is a valid
+      model for enterprise IPAI code search.
+
+# -----------------------------------------------------------------------------
+# Clean split — packs vs tools
+# -----------------------------------------------------------------------------
+clean_split:
+  packs_skills_scope: workflow_and_domain_behavior
+  mcp_tools_scope: live_systems_documents_search_code_data_external_apis
+  rule: "Do not put domain workflow logic in MCP tools. Do not put live system calls in pack manifests. Separate cleanly."
+
+# -----------------------------------------------------------------------------
 # Non-goals
 # -----------------------------------------------------------------------------
 non_goals:
@@ -205,6 +270,7 @@ non_goals:
   - not creating .assistant/skills/ inside IPAI monorepo
   - not treating external skill formats as canonical over pulser packs
   - not hand-syncing pulser packs to genie skills without a clear operational reason
+  - not merging pack content with MCP tool definitions (clean_split rule applies)
 
 # -----------------------------------------------------------------------------
 # Anchors

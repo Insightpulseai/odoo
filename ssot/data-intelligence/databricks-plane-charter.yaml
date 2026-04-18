@@ -182,6 +182,120 @@ model_serving:
   never: distribute_api_keys_to_services_that_can_use_managed_identity
 
 # -----------------------------------------------------------------------------
+# Genie Code — Databricks-native assistant
+# -----------------------------------------------------------------------------
+genie_code:
+  classification: databricks_native_unity_catalog_aware_assistant_for_data_teams
+  surface_aware_modes:
+    notebooks: data_science_ml_workflows_exploratory_analysis_model_dev
+    lakeflow: data_engineering_etl_pipeline_authoring
+    dashboards: analysis_and_dashboard_generation
+    mlflow_genai: observability_debugging_evaluation_improvement
+  agent_mode_capabilities:
+    - exploratory_data_analysis
+    - model_training
+    - etl_pipeline_development
+    - dashboard_planning_and_creation
+    - debugging_and_improving_genai_applications
+  user_features:
+    - chat
+    - inline_suggestions_autocomplete
+    - quick_fix
+    - diagnose_error
+    - slash_commands
+    - command_shortcuts
+    - natural_language_filtering
+    - sample_data_exploration
+  persistence: chat_threads_persist_across_pages
+  cost_model: no_additional_cost_pay_only_for_underlying_compute
+  residency_note: designated_service_strict_workspace_geography_enforcement_may_disable_it
+
+  ipai_role: embedded_data_team_assistant_inside_databricks
+  strong_fit_for:
+    - data_intelligence_repo_workflows
+    - analyst_data_engineer_productivity
+    - notebook_pipeline_productivity
+    - governed_data_exploration_with_unity_catalog_context
+    - mlflow_evaluation_debugging
+
+  not_a_replacement_for:
+    - pulser_core
+    - foundry_hosted_cross_surface_assistants
+    - odoo_erp_copilot (ipai_odoo_copilot)
+    - entra_identity_aware_enterprise_control_plane
+
+  relationship_to_pulser:
+    rule: keep_separate_do_not_merge
+    genie_code: native_in_databricks_for_data_team_workflows
+    pulser_data_intelligence: cross_platform_orchestrated_assistant_for_data_analytics_surfaces
+    cross_publishing: see ssot/agent-platform/skill-pack-pattern-unified.yaml (one-way pulser → genie skill translation allowed)
+
+# -----------------------------------------------------------------------------
+# Databricks developer tooling ecosystem
+# -----------------------------------------------------------------------------
+developer_tooling:
+  modes:
+    - workspace_native_coding
+    - local_ide_development
+    - external_tool_and_environment_connection
+    - infrastructure_and_cicd_automation
+
+  in_workspace_development:
+    languages: [python, sql, scala, r]
+    assets: [notebooks, spark_apis, sdks_in_notebooks, dbutils]
+    best_for: [quick_exploration, learning_apis, small_scripts_transformations, platform_native_development]
+
+  local_development:
+    best_for:
+      - richer_ide_workflows
+      - debugging
+      - test_frameworks
+      - larger_codebases
+      - broader_language_support
+      - direct_source_control
+    tools:
+      - databricks_apps
+      - vs_code_extension
+      - pycharm_plugin
+      - databricks_sdks (python, go, java, r)
+
+  connectivity:
+    options:
+      - databricks_connect
+      - vs_code_extension
+      - remote_development
+      - sql_drivers_and_tools
+    use_cases:
+      - ide_integration
+      - remote_compute_access
+      - programmatic_sql_access
+      - app_integration
+
+  infrastructure_automation:
+    tools:
+      - databricks_cli
+      - declarative_automation_bundles
+      - databricks_terraform_provider
+    cicd_integrations:
+      - github_actions (scoped exception only per CLAUDE.md)
+      - azure_pipelines (canonical for IPAI deploy)
+      - jenkins
+      - airflow
+    ipai_canonical_cicd: azure_pipelines (per ssot/governance/platform-authority-split.yaml)
+
+  collaboration:
+    - udfs_for_reusable_shared_logic
+    - git_folders_for_version_control_and_workspace_collaboration
+
+  ipai_adoption:
+    primary_language_for_ipai_databricks_code: python (aligns with MAF Python-first adoption)
+    ide_of_record: vs_code (with databricks extension; Codespaces in team mode)
+    cli_authority: databricks_cli (profile ipai-dev)
+    iac_authority: terraform_or_bicep (see infra/ for current state)
+    cicd_lane: azure_pipelines (never GHA for deploy)
+    sdk_choice: databricks_sdk_python
+
+# -----------------------------------------------------------------------------
 # Non-goals
 # -----------------------------------------------------------------------------
 non_goals:
@@ -190,6 +304,8 @@ non_goals:
   - not using Foundry as data engineering plane
   - not fine-tuning as a first response to any quality gap
   - not running Databricks Model Serving in parallel with Foundry for the same model (pick one per model)
+  - not merging Genie Code into Pulser (keep separate; native vs cross-platform)
+  - not using GitHub Actions for Databricks deploy (use Azure Pipelines per CLAUDE.md)
 
 # -----------------------------------------------------------------------------
 # Anchors
