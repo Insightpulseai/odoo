@@ -1,110 +1,119 @@
 ---
-# MCP Runtime State — observed 2026-04-16
+# MCP Runtime State — observed 2026-04-19
 # Source: .mcp.json + Claude.ai integrations + session evidence
 # Classification: runtime evidence (refresh on each audit)
 contract_version: 1
-captured_on: 2026-04-16
+captured_on: 2026-04-19
+supersedes: "2026-04-16 snapshot"
 
 summary:
-  total_servers: 21
-  repo_configured: 8
-  active_usable: 8
-  deprecated_to_remove: 4
-  needs_config: 2
-  total_tools_approximate: 250
+  total_repo_configured: 5
+  active_usable: 5
+  deprecated_removed_from_repo: 3
+  notes: "Removed github, figma, databricks-genie from .mcp.json (2026-04-19) — see _removed section in .mcp.json"
 
 repo_configured_servers:
   azure:
     package: "@azure/mcp@latest"
     transport: npx
     status: active
-    used_this_session: true
-    tools_used: [containerapp, postgres, network_dns, account]
-    notes: heavy-lifting for ACA, PG, DNS, infra ops
+    tools_used: [containerapp, postgres, network_dns, account, ad]
 
   azure-devops:
     package: "@azure-devops/mcp"
     transport: npx
     status: active
-    used_this_session: true
     tools_used: [wit, work, pipelines, repo, search]
-    notes: boards, pipelines, repos, work items
-
-  databricks-genie:
-    package: databricks_genie_mcp.server
-    transport: python3
-    status: needs_config
-    env_gaps:
-      - DATABRICKS_HOST          # set to adb-7405608559466577.17.azuredatabricks.net
-      - DATABRICKS_SQL_WAREHOUSE_ID  # set to e7d89eabce4c330c
-    notes: SQL/Genie queries. Wire env vars to activate.
-
-  figma:
-    transport: remote_http
-    status: active
-    used_this_session: false
-
-  foundry:
-    package: mcp-foundry (git)
-    transport: uvx
-    status: needs_config
-    env_gaps:
-      - AZURE_AI_FOUNDRY_ENDPOINT  # set to https://ipai-copilot-resource.services.ai.azure.com
-    notes: Foundry agent/model management. Wire endpoint to activate.
-
-  github:
-    transport: remote_http
-    status: active
-    used_this_session: false
-    notes: auth flow available, gh CLI used directly instead
 
   microsoft-learn:
     transport: remote_http
     status: active
-    used_this_session: true
     tools_used: [microsoft_docs_search, microsoft_docs_fetch]
+
+  foundry:
+    package: mcp-foundry (git)
+    transport: uvx
+    status: active
+    env:
+      AZURE_AI_FOUNDRY_ENDPOINT: "https://ipai-copilot-resource.services.ai.azure.com/api/projects/proj-ipai-copilot"
 
   playwright:
     package: "@playwright/mcp@latest"
     transport: npx
     status: active
-    used_this_session: false
     notes: browser automation + testing
+
+removed_from_repo_2026_04_19:
+  github:
+    reason: "HTTP Copilot endpoint unauthenticated"
+    readd_condition: "wire GH Copilot MCP license + auth"
+  figma:
+    reason: "Local HTTP MCP fails; claude.ai Figma remote connector covers role"
+    readd_condition: "only if local stdio figma-mcp becomes needed"
+  databricks-genie:
+    reason: "Stale warehouse ID (e7d89eabce4c330c → actual fdcdd6b50cd7ce99), module databricks_genie_mcp not installed, placeholder DATABRICKS_GENIE_SPACE_ID"
+    readd_condition: "adopt Databricks native Genie-as-MCP (Workspace Settings → MCP Servers) instead"
+    correct_warehouse_id_if_needed: fdcdd6b50cd7ce99
+    correct_workspace: dbw-ipai-dev
 
 cloud_remote_servers:
   active:
     - slack
-  available:
-    - canva
+    - microsoft-learn
     - gmail
     - google_calendar
+    - figma (claude.ai remote — covers the figma role)
     - hugging_face
-    - paypal
     - pubmed
+    - cloudflare_developer_platform (✓ connected, but FORBIDDEN per CLAUDE.md — remove from claude.ai UI)
+  needs_auth:
+    - google_drive
     - sentry
+    - netlify
     - stripe
-  deprecated:
-    - cloudflare_1: { reason: "FORBIDDEN per CLAUDE.md 2026-04-07", action: remove }
-    - cloudflare_2: { reason: "FORBIDDEN per CLAUDE.md 2026-04-07", action: remove }
-    - supabase: { reason: "FORBIDDEN per CLAUDE.md 2026-03-26", action: remove }
-    - vercel: { reason: "FORBIDDEN per CLAUDE.md 2026-04-07", action: remove }
-    - netlify: { reason: "never used for IPAI", action: remove }
+    - canva
+    - paypal
+  deprecated_requires_user_action_in_claude_ai_ui:
+    supabase:
+      ipai_doctrine: FORBIDDEN per CLAUDE.md 2026-03-26
+      action: remove_from_claude_ai_integrations
+    vercel:
+      ipai_doctrine: FORBIDDEN per CLAUDE.md 2026-04-07
+      action: remove_from_claude_ai_integrations
+    cloudflare_developer_platform:
+      ipai_doctrine: FORBIDDEN per CLAUDE.md 2026-04-07
+      action: remove_from_claude_ai_integrations
+    cloudflare_developer_platform_2:
+      ipai_doctrine: FORBIDDEN per CLAUDE.md 2026-04-07 (duplicate)
+      action: remove_from_claude_ai_integrations
+    n8n:
+      ipai_doctrine: FORBIDDEN per CLAUDE.md 2026-04-07
+      action: remove_from_claude_ai_integrations
+      current_status: failing
+    netlify:
+      ipai_doctrine: never used for IPAI
+      action: remove_from_claude_ai_integrations
 
 gap_analysis:
   covered:
-    core_baseline: "github ✓ azure ✓ azure-devops ✓ microsoft-learn ✓"
-    browser_ops: "playwright ✓"
-    identity: "azure (az ad commands) ✓"
+    azure_ops: azure ✓
+    ado_planning: azure-devops ✓
+    foundry: foundry ✓
+    docs: microsoft-learn ✓
+    browser: playwright ✓
   needs_wiring:
-    - databricks-genie (env vars)
-    - foundry (endpoint)
+    - none (all repo-configured servers active)
+  needs_user_action_in_claude_ai_ui:
+    - remove 5 deprecated connectors per CLAUDE.md (Supabase/Vercel/Cloudflare×2/n8n/Netlify)
   missing_add_on_demand:
-    - chrome-devtools (browser debugging, separate from playwright automation)
+    - dbhub (tier1_pending per ssot/governance/mcp-allowlist.yaml)
+    - desktop-commander (tier1_pending)
+    - markitdown (tier1_pending)
+    - chrome-devtools (browser debugging)
   optional_future:
+    - databricks-genie via workspace native MCP (Genie-as-MCP)
     - azure-managed-grafana (monitoring)
     - fabric-data-agent (BI consumption)
-    - google-workspace-ops (collaboration, third-party)
-    - entra-enterprise (dedicated identity MCP, R3)
 
 rules:
   - runtime_state_is_observed_evidence_not_policy
