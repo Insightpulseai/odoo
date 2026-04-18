@@ -3,10 +3,10 @@
 # Contract: https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/install-cli-sdk
 
 project:
-  name: "ipai-foundry-ph"
-  resourceGroup: "rg-insightpulse-ai-foundry"
-  subscriptionId: "insightpulseai-prod" # Placeholder for logical reference
-  endpoint: "https://ipai-foundry-ph.eastus2.inference.ai.azure.com"
+  name: "ipai-copilot"
+  resourceGroup: "rg-ipai-dev-ai-sea"
+  subscriptionId: "Microsoft Azure Sponsorship"
+  endpoint: "https://ipai-copilot.eastus2.inference.ai.azure.com"
 
 orchestration:
   agentName: "pulser-assistant"
@@ -34,8 +34,8 @@ specialists:
 
 environments:
   dev:
-    endpoint: "https://ipai-foundry-ph.eastus2.inference.ai.azure.com"
-    acr: "acripaiprod.azurecr.io"
+    endpoint: "https://ipai-copilot.eastus2.inference.ai.azure.com"
+    acr: "acripaiodoo.azurecr.io"
   prod:
-    endpoint: "https://ipai-foundry-prod.eastus2.inference.ai.azure.com"
-    acr: "acripaiprod.azurecr.io"
+    endpoint: "https://ipai-copilot.eastus2.inference.ai.azure.com"
+    acr: "acripaiodoo.azurecr.io"

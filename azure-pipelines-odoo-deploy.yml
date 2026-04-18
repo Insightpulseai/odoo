@@ -62,7 +62,7 @@ variables:
   - name: serviceConnection
     value: ipai-dev-wif
   - name: keyVaultName
-    value: kv-ipai-dev
+    value: kv-ipai-dev-sea
   - name: pgServer
     value: pg-ipai-odoo
   - name: pgHost
@@ -70,17 +70,17 @@ variables:
   - name: pgAdminUser
     value: odoo_admin
   - name: devResourceGroup
-    value: rg-ipai-dev-odoo-runtime
+    value: rg-ipai-dev-odoo-sea
   - name: stagingResourceGroup
-    value: rg-ipai-dev-odoo-runtime
+    value: rg-ipai-dev-odoo-sea
   - name: prodResourceGroup
     value: rg-ipai-shared-prod
   - name: devContainerApp
-    value: ipai-odoo-dev-web
+    value: ipai-odoo-dev
   - name: stagingContainerApp
-    value: ipai-odoo-staging-web
+    value: ipai-prismalab
   - name: prodContainerApp
-    value: ipai-odoo-prod-web
+    value: ipai-w9studio
   - name: pythonVersion
     value: '3.11'
 
