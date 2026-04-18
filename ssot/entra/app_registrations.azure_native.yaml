@@ -184,6 +184,59 @@ registrations:
       - keep isolated from interactive login apps
       - prefer federated identity for pipeline scenarios where supported
 
+  - key: ipai_marketplace_fulfillment_bot
+    canonical_name: ipai-marketplace-fulfillment-bot-prod
+    current_display_name: InsightPulseAI Marketplace Fulfillment
+    client_id: "PLACEHOLDER-FROM-AZURE-PORTAL"
+    created_on: "2026-04-18"
+    status: current
+    lifecycle: active
+    azure_native: true
+    workload_class: commercial_operations
+    primary_boundary: marketplace_fulfillment_api
+    app_type: confidential_client
+    intended_use:
+      - saas_fulfillment_api_v2
+      - marketplace_webhook_resolution
+    credential_policy:
+      allowed:
+        - client_secret
+      current_risk: none
+    auth_policy:
+      preferred_library: msal
+      resource_api_policy:
+        use_microsoft_graph: true
+    governance:
+      least_privilege_required: true
+      periodic_review_required: true
+
+  - key: ipai_agent_pulser_specialist
+    canonical_name: ipai-agent-pulser-specialist-prod
+    current_display_name: InsightPulseAI Pulser Agent Specialist
+    client_id: "PLACEHOLDER-FROM-AZURE-PORTAL"
+    created_on: "2026-04-18"
+    status: current
+    lifecycle: active
+    azure_native: true
+    workload_class: specialized_agent_runtime
+    primary_boundary: agent_orchestration
+    app_type: confidential_client
+    intended_use:
+      - foundry_agent_runtime
+      - multidimensional_skill_execution
+    credential_policy:
+      preferred:
+        - managed_identity
+      allowed:
+        - client_secret
+    auth_policy:
+      preferred_library: msal
+      resource_api_policy:
+        use_microsoft_graph: true
+    governance:
+      least_privilege_required: true
+      periodic_review_required: true
+
 policy:
   naming:
     required_pattern: "<platform>-<service>-<purpose>-<env>"
@@ -192,6 +245,8 @@ policy:
       - ipai-odoo-api-prod
       - ipai-platform-admin-cli-prod
       - ipai-azure-devops-automation-prod
+      - ipai-marketplace-fulfillment-bot-prod
+      - ipai-agent-pulser-specialist-prod
 
   authentication:
     preferred_library: msal
