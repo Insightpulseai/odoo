@@ -1,0 +1,301 @@
+# =============================================================================
+# Public Site → Azure AI Template Adoption — SSOT
+# =============================================================================
+# Authority: canonical mapping from public/public-domain web surfaces to
+#            Azure AI template baselines. Not a 1:1 clone — templates are
+#            reference inputs that land adapted into web/apps/ with runtime
+#            in agent-platform/ and definitions in agents/.
+# Related:   docs/architecture/site-template-adoption.md
+#            ssot/agent-platform/agent_framework_adoption.yaml
+#            ssot/identity/entra_target_state.yaml
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: canonical
+
+doctrine: >
+  Portfolio mapping — one template per site, matched to its role. Do NOT
+  clone template repos wholesale. Land user-facing code under web/apps/,
+  agent runtime in agent-platform/, and definitions (prompts/personas/judges)
+  in agents/. Azure AI templates are REFERENCE inputs, not the production
+  repo topology.
+
+# -----------------------------------------------------------------------------
+# Canonical site portfolio
+# -----------------------------------------------------------------------------
+sites:
+
+  erp_insightpulseai_com:
+    domain: erp.insightpulseai.com
+    role: production_odoo_erp_entrypoint
+    app_path: addons/
+    owning_repo: odoo
+    existing: true
+    authentication: odoo_session + optional_entra_oidc
+    classification: runtime_entrypoint_not_template_adoption
+    template_adoption: none
+
+    purpose:
+      - canonical user-facing ERP hostname
+      - transactional system-of-record UI
+      - primary Odoo production URL
+      - canonical auth/session surface for business users
+      - public entrypoint that other shells redirect to
+
+    ownership:
+      runtime: odoo (addons/)
+      ui: odoo web client + ipai_* theming
+      auth: Odoo session primary; optional Entra OIDC via ipai_auth_oidc
+      session: Odoo cookie-based
+
+    must_not_be:
+      - corporate landing site
+      - Prismalab workspace
+      - general-purpose agent chat domain
+      - catch-all app shell for unrelated products
+      - agent runtime root
+
+    routing_rule: >
+      When user intent references "ERP", "Odoo", "back office", or
+      "transactional system", the canonical URL is https://erp.insightpulseai.com/.
+      Other shells link to it, integrate with it, or call into it — never
+      replace its role.
+
+    integration_contracts:
+      - web/apps/ipai-landing may redirect users to erp.insightpulseai.com
+      - agent-platform tools call Odoo APIs (XML-RPC/REST) for ERP actions
+      - prismalab does not own ERP state; writes back via Odoo API if needed
+
+  insightpulseai_com:
+    domain: www.insightpulseai.com
+    role: flagship_platform_and_product_front_door
+    app_path: web/apps/ipai-landing
+    existing: true
+    authentication: entra_oidc_optional_for_demo_workspace
+
+    primary_template: azure-ai-templates/get-started-with-ai-agents
+    secondary_reference: microsoft-foundry/foundry-agent-webapp
+    adaptation_target:
+      - branded marketing + platform entry
+      - product entry points: Odoo Copilot, data intelligence, AI operations, industry accelerators
+      - optional authenticated demo/workspace backed by agent-platform
+    do_not:
+      - leave as generic "upload docs and chat" demo
+      - hardwire sample knowledge/index logic into the site repo itself
+      - run agent runtime inside the web app (call agent-platform APIs instead)
+
+  prismalab_insightpulseai_com:
+    domain: prismalab.insightpulseai.com
+    role: domain_specific_ai_workspace
+    app_path: web/apps/prismalab
+    existing_related: web/apps/prismalab-gateway
+    authentication: entra_oidc_required
+
+    primary_template: azure-ai-templates/get-started-with-ai-agents
+    secondary_references:
+      - azure-ai-templates/multi-modal-content-processing
+      - azure-ai-templates/document-generation-and-summarization
+    workflow_references_only:
+      - azure-ai-templates/healthcare-agent-orchestrator
+      - azure-ai-templates/prior-authorization-multi-agent
+    adaptation_target:
+      - document-heavy research/evidence workflows
+      - grounded answers with citations
+      - attachment ingestion (PDF, Word, Excel, images)
+      - structured extraction via Azure Document Intelligence
+      - PRISMA-compliant systematic review outputs (per .claude/skills/prismalab-*)
+    do_not:
+      - start as generic brochure site
+      - copy healthcare-agent-orchestrator UI patterns wholesale (use as workflow inspiration only)
+
+  w9studio_net:
+    domain: www.w9studio.net
+    role: studio_creative_commercial_site
+    app_path: web/apps/w9studio-site
+    existing: false
+    existing_related:
+      - design/w9studio
+      - design/tokens/w9studio.tokens.json
+      - spec/w9-studio-copilot
+    authentication: public_no_auth_primary
+
+    primary_template: azure-ai-templates/get-started-with-chat
+    optional_inspiration:
+      - azure-ai-templates/creative-writing-assistant-python
+      - azure-ai-templates/genai-chat-frontend-debug-restyle-revisit
+    adaptation_target:
+      - marketing site
+      - services showcase
+      - optional lead intake + creative assistant demo
+    do_not:
+      - adopt agent-heavy orchestration templates
+      - match the runtime complexity of ipai-landing or prismalab
+
+# -----------------------------------------------------------------------------
+# Templates explicitly deferred (inappropriate as first-base)
+# -----------------------------------------------------------------------------
+deferred_templates:
+  - name: multi-agent-custom-automation-engine-solution-accelerator
+    reason: too opinionated for public surface
+    revisit_when: internal orchestration surface needs reference
+  - name: container-migration-solution-accelerator
+    reason: wrong domain for any public site
+    revisit_when: infra tooling reference needed
+  - name: release-manager-assistant
+    reason: internal dev-ops surface, not public
+    revisit_when: already used internally in agent-platform/agents/release-manager/
+  - name: real-time-intelligence-for-operations
+    reason: specialized ops dashboard, not public
+  - name: home-banking-assistant
+    reason: domain-specific, irrelevant
+  - name: prior-authorization-multi-agent
+    reason: healthcare-specific workflow reference only
+
+# -----------------------------------------------------------------------------
+# Repo boundary contract (mirrors agent_framework_adoption.yaml)
+# -----------------------------------------------------------------------------
+boundary_contract:
+
+  web:
+    path: web/apps/<site>/
+    owns:
+      - site_ui
+      - routing
+      - public_pages
+      - frontend_session_ui
+      - auth_ux
+      - attachment_upload_ux
+    does_not_own:
+      - agent_runtime
+      - orchestration_logic
+      - model_provider_auth
+      - retrieval_pipeline
+
+  agent_platform:
+    path: agent-platform/
+    owns:
+      - agent_runtime
+      - orchestration_supervisor_router
+      - retrieval_execution
+      - session_state_backend
+      - provider_auth_to_foundry
+      - tool_adapter_execution
+    does_not_own:
+      - site_ui
+      - public_page_routing
+
+  agents:
+    path: agents/
+    owns:
+      - prompts
+      - personas
+      - judges
+      - eval_scenarios
+      - tool_metadata
+      - policy_metadata
+
+  design:
+    path: design/
+    owns:
+      - design_tokens
+      - brand_assets
+      - component_library
+      - site_specific_tokens (design/tokens/<site>.tokens.json)
+
+# -----------------------------------------------------------------------------
+# Upstream template → internal target crosswalk
+# -----------------------------------------------------------------------------
+template_crosswalk:
+  - upstream: azure-ai-templates/get-started-with-ai-agents
+    role_in_upstream: agent-first chat shell with RAG + citations
+    adopts_into:
+      - web/apps/ipai-landing (primary base)
+      - web/apps/prismalab (primary base)
+    adapts_for:
+      - branded chrome + navigation
+      - InsightPulseAI Entra tenant + SSO
+      - agent-platform backend API rather than embedded runtime
+      - design/tokens/<site>.tokens.json
+
+  - upstream: azure-ai-templates/get-started-with-chat
+    role_in_upstream: minimal branded chat shell
+    adopts_into:
+      - web/apps/w9studio-site (primary base)
+    adapts_for:
+      - studio/creative branding
+      - optional lead intake widget
+      - no agent orchestration surface
+
+  - upstream: microsoft-foundry/foundry-agent-webapp
+    role_in_upstream: starter web app with Entra + Foundry agent
+    adopts_into:
+      - web/apps/ipai-landing (frontend/auth reference)
+    adapts_for:
+      - session UI patterns
+      - attachment upload patterns
+      - hosted-agent frontend idioms
+
+  - upstream: azure-ai-templates/multi-modal-content-processing
+    role_in_upstream: image + document ingestion pipeline
+    adopts_into:
+      - web/apps/prismalab (ingestion reference)
+    adapts_for:
+      - attachment pipeline wiring (web → agent-platform adapter)
+      - document intelligence extraction
+
+  - upstream: azure-ai-templates/document-generation-and-summarization
+    role_in_upstream: doc synthesis and summarization
+    adopts_into:
+      - web/apps/prismalab (output pattern reference)
+    adapts_for:
+      - PRISMA-compliant report generation
+      - citation-grounded synthesis
+
+  - upstream: azure-ai-templates/creative-writing-assistant-python
+    role_in_upstream: creative writing copilot
+    adopts_into:
+      - web/apps/w9studio-site (optional UX polish only)
+    adapts_for:
+      - tone/style controls
+      - restyle/revisit flow
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not forking Azure AI template repos
+  - not mirroring microsoft-foundry repo layout
+  - not running agent runtime inside web/apps/
+  - not duplicating prompts or personas across web/apps/ (definitions live in agents/)
+  - not hardcoding sample knowledge or index fixtures into site repos
+
+# -----------------------------------------------------------------------------
+# Adoption order
+# -----------------------------------------------------------------------------
+adoption_order:
+  phase_1:
+    - evolve web/apps/ipai-landing toward "Get started with AI agents" shape
+    - call into agent-platform HTTP API (no direct agent_framework imports)
+    - wire Entra OIDC for optional demo workspace
+  phase_2:
+    - build out web/apps/prismalab on "Get started with AI agents" base
+    - add attachment ingestion pipeline (web → agent-platform adapter)
+    - ship PRISMA-compliant output flow
+  phase_3:
+    - scaffold web/apps/w9studio-site on "Get Started with Chat" base
+    - import tokens from design/tokens/w9studio.tokens.json
+    - optional lead intake widget
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  architecture_doc: docs/architecture/site-template-adoption.md
+  agent_framework_adoption: ssot/agent-platform/agent_framework_adoption.yaml
+  identity_target: ssot/identity/entra_target_state.yaml
+  design_tokens_w9studio: design/tokens/w9studio.tokens.json
+  prismalab_skills: .claude/skills/prismalab-*
+  existing_ipai_landing: web/apps/ipai-landing
+  existing_prismalab_gateway: web/apps/prismalab-gateway
