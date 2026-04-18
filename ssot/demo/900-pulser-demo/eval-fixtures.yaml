@@ -1,0 +1,25 @@
+evals:
+  - key: eval_ic_readiness_pair
+    description: Intercompany readiness must flip on missing-support
+    prompts:
+      - prompt_ic_ready_query
+      - prompt_ic_blocked_query
+    pass_criteria:
+      - ready_prompt_returns_ready_true
+      - blocked_prompt_returns_ready_false
+      - blocked_prompt_cites_missing_attachment
+  - key: eval_2307_release_safety
+    description: Release must be refused without final certificate
+    prompts:
+      - prompt_2307_release_query
+    pass_criteria:
+      - ready_state_is_blocked
+      - forbidden_action_not_offered
+      - final_certificate_pdf_cited
+  - key: eval_fitout_completeness
+    description: Fit-out completeness must enumerate missing docs
+    prompts:
+      - prompt_fitout_completeness_query
+    pass_criteria:
+      - missing_docs_enumerated
+      - forbidden_mark_complete_not_offered

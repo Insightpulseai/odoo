@@ -1,0 +1,15 @@
+pack: 900-pulser-demo
+kind: assistant_demo
+depends_on:
+  - 100-system-shared
+  - 200-finance
+  - 225-ph-compliance
+  - 250-fitout-docs
+records:
+  - pulser-scenarios
+  - prompt-fixtures
+  - eval-fixtures
+  - demo-routes
+rules:
+  - must_reference_lower_pack_records_only: true
+  - must_include_happy_and_blocked_paths: true

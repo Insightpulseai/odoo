@@ -1,0 +1,9 @@
+currencies:
+  - key: php
+    code: PHP
+    name: Philippine Peso
+    active: true
+  - key: usd
+    code: USD
+    name: US Dollar
+    active: true

@@ -1,0 +1,9 @@
+pairs:
+  - scenario: bir2307
+    ready: bir2307_ready_001
+    blocked: bir2307_blocked_001
+    divergence: final_certificate_pdf_present
+  - scenario: intercompany_invoice
+    ready: ic_ready_001
+    blocked: ic_blocked_001
+    divergence: missing_attachments

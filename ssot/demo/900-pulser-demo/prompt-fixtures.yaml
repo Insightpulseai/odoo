@@ -1,0 +1,25 @@
+prompts:
+  - key: prompt_ic_ready_query
+    scenario_key: pulser_ic_ready
+    user_prompt: "Is the intercompany invoice for March ready to draft?"
+    expected_ready: true
+  - key: prompt_ic_blocked_query
+    scenario_key: pulser_ic_blocked
+    user_prompt: "Can I draft the intercompany invoice for March?"
+    expected_ready: false
+    expected_mention:
+      - missing_attachments
+      - approved_cost_allocation
+  - key: prompt_2307_release_query
+    scenario_key: pulser_2307_blocked
+    user_prompt: "Can we release the March 2307?"
+    expected_ready: false
+    expected_mention:
+      - final_certificate_pdf
+  - key: prompt_fitout_completeness_query
+    scenario_key: pulser_fitout_blocked
+    user_prompt: "What's missing for the Makati HQ fit-out request?"
+    expected_ready: false
+    expected_mention:
+      - authorized_signatory_id
+      - authority_letter

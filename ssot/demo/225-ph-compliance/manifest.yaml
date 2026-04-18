@@ -1,0 +1,13 @@
+pack: 225-ph-compliance
+kind: scenario
+depends_on:
+  - 100-system-shared
+  - 200-finance
+records:
+  - withholding-partners
+  - bir2307-scenarios
+  - tin-atc-fixtures
+  - blocked-vs-ready
+rules:
+  - must_use_ph_specific_fixture_keys: true
+  - must_pair_releaseable_and_non_releaseable_cases: true

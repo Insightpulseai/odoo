@@ -1,0 +1,11 @@
+companies:
+  - key: demo_oprg_ph
+    name: OPRG PH Demo
+    code: OPRG-DEMO
+    country_code: PH
+    currency: PHP
+  - key: demo_shared_services
+    name: Shared Services Demo
+    code: SSD-DEMO
+    country_code: PH
+    currency: PHP

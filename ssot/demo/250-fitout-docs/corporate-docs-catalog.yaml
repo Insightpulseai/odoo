@@ -1,0 +1,17 @@
+docs:
+  - key: dti_cert
+    name: DTI Certificate
+    required_for:
+      - fitout_default_ph
+  - key: cor
+    name: BIR Certificate of Registration
+    required_for:
+      - fitout_default_ph
+  - key: authorized_signatory_id
+    name: Authorized Signatory ID
+    required_for:
+      - fitout_default_ph
+  - key: authority_letter
+    name: Authority Letter
+    required_for:
+      - fitout_default_ph

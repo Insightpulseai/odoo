@@ -1,0 +1,12 @@
+pack: 250-fitout-docs
+kind: scenario
+depends_on:
+  - 100-system-shared
+records:
+  - fitout-requests
+  - checklist-templates
+  - corporate-docs-catalog
+  - submission-states
+rules:
+  - must_seed_request_and_checklist_together: true
+  - must_include_missing_doc_cases: true

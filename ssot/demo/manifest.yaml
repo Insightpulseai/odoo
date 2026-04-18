@@ -1,0 +1,37 @@
+version: 1
+name: odoo_demo_seed_packs
+description: Layered deterministic demo/showroom seed packs for Odoo CE + OCA 18
+load_order:
+  - 100-system-shared
+  - 200-finance
+  - 225-ph-compliance
+  - 250-fitout-docs
+  - 900-pulser-demo
+packs:
+  100-system-shared:
+    required: true
+    description: Base shared entities, accounting defaults, DMS taxonomy, workflow templates
+  200-finance:
+    required: false
+    depends_on:
+      - 100-system-shared
+    description: Finance/AP/AR/intercompany demo fixtures
+  225-ph-compliance:
+    required: false
+    depends_on:
+      - 100-system-shared
+      - 200-finance
+    description: PH compliance and 2307-specific fixtures
+  250-fitout-docs:
+    required: false
+    depends_on:
+      - 100-system-shared
+    description: Fit-out and corporate-document workflow fixtures
+  900-pulser-demo:
+    required: false
+    depends_on:
+      - 100-system-shared
+      - 200-finance
+      - 225-ph-compliance
+      - 250-fitout-docs
+    description: Pulser assistant demo and eval-ready records

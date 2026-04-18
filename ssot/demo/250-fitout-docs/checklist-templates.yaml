@@ -1,0 +1,7 @@
+templates:
+  - key: fitout_default_ph
+    required_docs:
+      - dti_cert
+      - cor
+      - authorized_signatory_id
+      - authority_letter

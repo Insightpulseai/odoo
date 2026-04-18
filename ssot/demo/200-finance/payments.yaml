@@ -1,0 +1,17 @@
+payments:
+  - key: PAY-DEMO-001
+    company: demo_oprg_ph
+    partner: landlord_makati_demo
+    linked_bill: BILL-DEMO-001
+    journal: demo_oprg_ph_bank
+    amount: 150000.00
+    state: posted
+    payment_date: 2026-02-28
+  - key: PAY-DEMO-002
+    company: demo_oprg_ph
+    partner: landlord_makati_demo
+    linked_bill: BILL-DEMO-002
+    journal: demo_oprg_ph_bank
+    amount: 150000.00
+    state: posted
+    payment_date: 2026-03-31

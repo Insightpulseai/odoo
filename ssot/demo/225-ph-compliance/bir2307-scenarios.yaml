@@ -1,0 +1,20 @@
+scenarios:
+  - key: bir2307_ready_001
+    type: bir2307
+    company: demo_oprg_ph
+    landlord_partner: landlord_makati_demo
+    linked_vendor_bill: BILL-DEMO-001
+    linked_payment: PAY-DEMO-001
+    withholding_computation_present: true
+    final_certificate_pdf_present: true
+    expected_state: releasable
+  - key: bir2307_blocked_001
+    type: bir2307
+    company: demo_oprg_ph
+    landlord_partner: landlord_makati_demo
+    linked_vendor_bill: BILL-DEMO-002
+    linked_payment: PAY-DEMO-002
+    withholding_computation_present: true
+    final_certificate_pdf_present: false
+    expected_state: blocked
+    blocker_reason: missing_final_certificate_pdf

@@ -1,0 +1,24 @@
+requests:
+  - key: fitout_ready_001
+    company: demo_oprg_ph
+    site: makati_hq_demo
+    requesting_party: la_fuerza_admin_demo
+    template: fitout_default_ph
+    docs_present:
+      - dti_cert
+      - cor
+      - authorized_signatory_id
+      - authority_letter
+    expected_state: ready_for_submission
+  - key: fitout_blocked_001
+    company: demo_oprg_ph
+    site: makati_hq_demo
+    requesting_party: la_fuerza_admin_demo
+    template: fitout_default_ph
+    docs_present:
+      - dti_cert
+      - cor
+    missing_docs:
+      - authorized_signatory_id
+      - authority_letter
+    expected_state: collecting

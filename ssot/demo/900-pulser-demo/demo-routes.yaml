@@ -1,0 +1,16 @@
+routes:
+  - key: demo_finance_entry
+    label: Finance Demo
+    scenarios:
+      - pulser_ic_ready
+      - pulser_ic_blocked
+  - key: demo_compliance_entry
+    label: PH Compliance Demo
+    scenarios:
+      - pulser_2307_ready
+      - pulser_2307_blocked
+  - key: demo_admin_entry
+    label: Admin / Fit-out Demo
+    scenarios:
+      - pulser_fitout_ready
+      - pulser_fitout_blocked

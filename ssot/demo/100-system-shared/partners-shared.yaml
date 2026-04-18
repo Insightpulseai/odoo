@@ -1,0 +1,15 @@
+partners:
+  - key: landlord_makati_demo
+    name: La Fuerza Makati Demo Landlord
+    country_code: PH
+    is_company: true
+    tin: "123-456-789-000"
+  - key: la_fuerza_admin_demo
+    name: La Fuerza Admin Office
+    country_code: PH
+    is_company: true
+  - key: makati_hq_demo
+    name: Makati HQ Demo Site
+    country_code: PH
+    is_company: false
+    type: address

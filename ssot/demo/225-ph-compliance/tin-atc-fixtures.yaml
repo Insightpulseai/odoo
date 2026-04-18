@@ -1,0 +1,9 @@
+fixtures:
+  - key: ph_partner_valid_001
+    tin: "123-456-789-000"
+    atc: "WI158"
+    expected_valid: true
+  - key: ph_partner_invalid_001
+    tin: ""
+    atc: "UNKNOWN"
+    expected_valid: false

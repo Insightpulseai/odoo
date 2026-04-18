@@ -1,0 +1,55 @@
+scenarios:
+  - key: pulser_ic_ready
+    scenario: intercompany_invoice
+    source_record: ic_ready_001
+    expected_ready_state: ready
+    allowed_actions:
+      - draft_intercompany_invoice
+      - route_review_activity
+    forbidden_actions:
+      - post_invoice
+  - key: pulser_ic_blocked
+    scenario: intercompany_invoice
+    source_record: ic_blocked_001
+    expected_ready_state: blocked
+    allowed_actions:
+      - request_missing_attachments
+      - route_review_activity
+    forbidden_actions:
+      - draft_intercompany_invoice
+      - post_invoice
+  - key: pulser_2307_ready
+    scenario: bir2307
+    source_record: bir2307_ready_001
+    expected_ready_state: ready
+    allowed_actions:
+      - create_or_update_2307_packet
+      - route_release_review
+    forbidden_actions:
+      - release_2307_without_validation
+  - key: pulser_2307_blocked
+    scenario: bir2307
+    source_record: bir2307_blocked_001
+    expected_ready_state: blocked
+    allowed_actions:
+      - create_or_update_2307_packet
+    forbidden_actions:
+      - release_2307_without_validation
+  - key: pulser_fitout_ready
+    scenario: fitout_docs
+    source_record: fitout_ready_001
+    expected_ready_state: ready
+    allowed_actions:
+      - mark_fitout_ready_for_submission
+      - route_review_activity
+    forbidden_actions:
+      - mark_fitout_complete_without_documents
+  - key: pulser_fitout_blocked
+    scenario: fitout_docs
+    source_record: fitout_blocked_001
+    expected_ready_state: blocked
+    allowed_actions:
+      - create_or_update_fitout_request
+      - route_review_activity
+    forbidden_actions:
+      - mark_fitout_complete_without_documents

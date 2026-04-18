@@ -1,0 +1,12 @@
+partners:
+  - key: landlord_makati_demo
+    partner_ref: landlord_makati_demo
+    default_atc: WI158
+    tin_valid: true
+  - key: supplier_expired_tin_demo
+    name: Supplier Expired TIN Demo
+    country_code: PH
+    is_company: true
+    tin: ""
+    default_atc: UNKNOWN
+    tin_valid: false

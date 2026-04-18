@@ -1,0 +1,22 @@
+scenarios:
+  - key: ic_ready_001
+    type: intercompany_invoice
+    company: demo_oprg_ph
+    counterparty: demo_shared_services
+    service_period_start: 2026-03-01
+    service_period_end: 2026-03-31
+    expected_state: ready_for_draft
+    attachments:
+      - service_memo
+      - billing_computation
+      - approved_cost_allocation
+  - key: ic_blocked_001
+    type: intercompany_invoice
+    company: demo_oprg_ph
+    counterparty: demo_shared_services
+    service_period_start: 2026-03-01
+    service_period_end: 2026-03-31
+    expected_state: blocked
+    missing_attachments:
+      - approved_cost_allocation
+    blocker_reason: missing_required_support

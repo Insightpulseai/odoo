@@ -1,0 +1,13 @@
+pack: 100-system-shared
+kind: base
+records:
+  - companies
+  - currencies
+  - journals
+  - taxes
+  - partners-shared
+  - dms-taxonomy
+  - project-templates
+rules:
+  - must_seed_before_all_other_packs: true
+  - no_business_scenario_records: true

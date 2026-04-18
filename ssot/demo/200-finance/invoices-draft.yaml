@@ -1,0 +1,19 @@
+invoices:
+  - key: INV-DEMO-001
+    company: demo_oprg_ph
+    customer: customer_demo_001
+    journal: demo_oprg_ph_sales
+    state: draft
+    lines:
+      - product: svc_shared_services_management
+        quantity: 1
+        price_unit: 100000.00
+  - key: INV-DEMO-002
+    company: demo_oprg_ph
+    customer: customer_demo_002
+    journal: demo_oprg_ph_sales
+    state: draft
+    lines:
+      - product: svc_shared_services_management
+        quantity: 2
+        price_unit: 100000.00

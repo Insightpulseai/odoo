@@ -1,0 +1,13 @@
+states:
+  - key: collecting
+    order: 1
+    description: Still collecting required docs
+  - key: ready_for_submission
+    order: 2
+    description: All docs present, ready to submit
+  - key: submitted
+    order: 3
+    description: Submitted to receiving party
+  - key: acknowledged
+    order: 4
+    description: Receiving party acknowledged

@@ -1,0 +1,21 @@
+journals:
+  - key: demo_oprg_ph_sales
+    company: demo_oprg_ph
+    name: Customer Invoices
+    type: sale
+    code: INV
+  - key: demo_oprg_ph_purchase
+    company: demo_oprg_ph
+    name: Vendor Bills
+    type: purchase
+    code: BILL
+  - key: demo_oprg_ph_bank
+    company: demo_oprg_ph
+    name: Bank
+    type: bank
+    code: BNK
+  - key: demo_shared_services_sales
+    company: demo_shared_services
+    name: Customer Invoices
+    type: sale
+    code: INV-SSD

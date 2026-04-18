@@ -1,0 +1,10 @@
+vendors:
+  - key: vendor_landlord_demo
+    partner_ref: landlord_makati_demo
+    company: demo_oprg_ph
+    default_purchase_tax: ph_ewt_rent_wi158
+  - key: vendor_supplies_demo
+    name: Office Supplies Demo Co
+    country_code: PH
+    is_company: true
+    company: demo_oprg_ph

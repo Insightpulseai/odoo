@@ -1,0 +1,11 @@
+customers:
+  - key: customer_demo_001
+    name: Demo Customer One Corp
+    country_code: PH
+    is_company: true
+    company: demo_oprg_ph
+  - key: customer_demo_002
+    name: Demo Customer Two Inc
+    country_code: PH
+    is_company: true
+    company: demo_oprg_ph

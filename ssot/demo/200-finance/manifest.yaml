@@ -1,0 +1,15 @@
+pack: 200-finance
+kind: scenario
+depends_on:
+  - 100-system-shared
+records:
+  - customers
+  - vendors
+  - products-services
+  - invoices-draft
+  - vendor-bills
+  - payments
+  - intercompany-scenarios
+rules:
+  - must_not_post_records_automatically: true
+  - must_seed_ready_and_blocked_pairs: true

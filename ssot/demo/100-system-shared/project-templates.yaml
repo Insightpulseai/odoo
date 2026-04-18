@@ -1,0 +1,15 @@
+templates:
+  - key: fitout_ph_workflow
+    name: Fit-out PH Workflow
+    stages:
+      - Collecting
+      - Ready
+      - Submitted
+      - Completed
+  - key: intercompany_review_workflow
+    name: Intercompany Review Workflow
+    stages:
+      - Draft
+      - UnderReview
+      - Approved
+      - Posted

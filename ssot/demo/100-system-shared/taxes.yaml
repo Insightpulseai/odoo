@@ -1,0 +1,19 @@
+taxes:
+  - key: ph_vat_12_sale
+    company: demo_oprg_ph
+    name: VAT 12% (Sale)
+    type: sale
+    amount: 12.0
+    atc: ""
+  - key: ph_vat_12_purchase
+    company: demo_oprg_ph
+    name: VAT 12% (Purchase)
+    type: purchase
+    amount: 12.0
+    atc: ""
+  - key: ph_ewt_rent_wi158
+    company: demo_oprg_ph
+    name: EWT Rent (WI158) 5%
+    type: purchase
+    amount: -5.0
+    atc: WI158

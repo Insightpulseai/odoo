@@ -1,0 +1,29 @@
+bills:
+  - key: BILL-DEMO-001
+    company: demo_oprg_ph
+    vendor: vendor_landlord_demo
+    journal: demo_oprg_ph_purchase
+    state: draft
+    service_period_start: 2026-02-01
+    service_period_end: 2026-02-28
+    lines:
+      - product: svc_office_rent_monthly
+        quantity: 1
+        price_unit: 150000.00
+        taxes:
+          - ph_vat_12_purchase
+          - ph_ewt_rent_wi158
+  - key: BILL-DEMO-002
+    company: demo_oprg_ph
+    vendor: vendor_landlord_demo
+    journal: demo_oprg_ph_purchase
+    state: draft
+    service_period_start: 2026-03-01
+    service_period_end: 2026-03-31
+    lines:
+      - product: svc_office_rent_monthly
+        quantity: 1
+        price_unit: 150000.00
+        taxes:
+          - ph_vat_12_purchase
+          - ph_ewt_rent_wi158

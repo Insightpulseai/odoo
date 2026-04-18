@@ -1,0 +1,11 @@
+products:
+  - key: svc_shared_services_management
+    name: Shared Services Management Fee
+    type: service
+    default_sale_tax: ph_vat_12_sale
+    price: 100000.00
+  - key: svc_office_rent_monthly
+    name: Office Rent (Monthly)
+    type: service
+    default_purchase_tax: ph_vat_12_purchase
+    price: 150000.00
