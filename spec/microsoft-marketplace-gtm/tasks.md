@@ -12,16 +12,17 @@
 
 ## EPIC: Transactable SaaS Offer Engineering
 - **ISSUE**: Marketplace Fulfillment Integration
-    - [ ] Develop `/api/marketplace/webhook` endpoint in Odoo
-    - [ ] Implement SaaS Fulfillment API v2 (Provisioning / Cancellation)
-    - [ ] Configure Entra ID Application for Marketplace Bot
+    - [x] Develop `/api/marketplace/webhook` endpoint in Odoo
+    - [x] Implement SaaS Fulfillment API v2 (Provisioning / Cancellation)
+    - [x] Configure Entra ID Application for Marketplace Bot
 - **ISSUE**: Fulfillment API Verification
     - [ ] Validate SaaS Fulfillment API v2 Webhook locally (Mock responses)
     - [ ] Test Landing Page redirect flow with Azure CLI sandbox
 - **ISSUE**: SaaS Landing Page Implementation
-    - [ ] Design Odoo Tenant Provisioning workflow from Marketplace redirect
-    - [ ] Implement Entra ID SSO for automated user onboarding
-    - [ ] Host Landing Page on Azure Container Apps (ACA)
+    - [x] Design Odoo Tenant Provisioning workflow from Marketplace redirect
+    - [x] Implement Entra ID SSO for automated user onboarding
+    - [x] Host Landing Page on Azure Container Apps (ACA)
+    - [x] Finalize Gmail & GWS Ignition (Google OAuth)
 
 ## EPIC: Go-To-Market & Demo Readiness
 - **ISSUE**: Produce GTM Collateral
