@@ -30,7 +30,7 @@ Implementation roadmap for Pulser, tracking baseline ERP/AI work through SaaS pl
 
 - [x] Align M365 distribution model with Custom-Engine identity
 - [x] Create **Declarative Agent** manifest for Project-to-Profit (Teams/Outlook)
-- [ ] Create **Declarative Agent** manifest for Record-to-Report (Teams/Outlook)
+- [x] Create **Declarative Agent** manifest for Record-to-Report (Teams/Outlook)
 - [x] Define **API Plugin** definitions for canonical project and finance actions
 - [x] Link M365 surfaces to `copilot_gateway.py` via authorized API Plugin bridges
 
@@ -152,9 +152,9 @@ Implementation roadmap for Pulser, tracking baseline ERP/AI work through SaaS pl
 
 ## Phase 53 — Go-To-Market & ISV Success [GTM]
 
-- [ ] GTM-01: Reconcile and track Azure Boards for ISV Success activation (See: `spec/microsoft-marketplace-gtm/tasks.md`).
-- [ ] GTM-02: Package Transactable Azure Marketplace offer for Q3 2026 publish target.
-- [ ] GTM-03: Resolve MS Benefit Entitlement Blockers (Sponsorship / GitHub).
+- [x] GTM-01: Reconcile and track Azure Boards for ISV Success activation (See: `spec/microsoft-marketplace-gtm/tasks.md`).
+- [x] GTM-02: Package Transactable Azure Marketplace offer for Q3 2026 publish target.
+- [x] GTM-03: Resolve MS Benefit Entitlement Blockers (Sponsorship / GitHub).
 
 ---
 
