@@ -1,0 +1,431 @@
+# =============================================================================
+# Microsoft Agent Framework (MAF) Adoption — SSOT
+# =============================================================================
+# Authority: canonical decision that Microsoft Agent Framework is the runtime
+#            substrate of agent-platform/. Python-first src-layout package.
+#            Foundry is the default model/provider lane. Odoo, Databricks,
+#            Document Intelligence, storage, and communications are tool
+#            adapters under src/agent_platform/tools/.
+# Related:   docs/architecture/agent-framework-adoption.md
+#            agent-platform/spec/agent-platform-runtime/
+#            agent-platform/ssot/runtime/
+#            CLAUDE.md invariant #10a
+# =============================================================================
+
+schema_version: "2.0"
+last_updated: "2026-04-19"
+supersedes: "1.0 (same day — superseded by canonical target tree)"
+owner: "platform-architecture"
+status: canonical
+
+# -----------------------------------------------------------------------------
+# Decision
+# -----------------------------------------------------------------------------
+decision:
+  framework: microsoft/agent-framework
+  placement_repo: agent-platform/
+  package_layout: src_layout
+  package_import_name: agent_platform
+  language_primary: python
+  language_secondary_allowed: dotnet
+  build_tool: uv
+  dependency_manifest: pyproject.toml + uv.lock
+
+  placement_rule: >
+    MAF runtime code lives ONLY in agent-platform/. It MUST NOT be imported by
+    agents/, odoo/, platform/, infra/, or data-intelligence/. Those repos
+    consume orchestrated capability via A2A envelopes or HTTP contracts.
+
+# -----------------------------------------------------------------------------
+# Canonical repo responsibility model
+# -----------------------------------------------------------------------------
+responsibility_model:
+
+  agent_platform_repo:
+    path: agent-platform/
+    owns:
+      - runtime_engine
+      - orchestration_supervisor_router_planner_handoffs
+      - session_state
+      - retrieval_execution
+      - model_provider_integration_foundry_first
+      - tool_adapters_odoo_databricks_docintel_storage_comms
+      - eval_runtime
+      - telemetry_metrics_audit
+      - security_authz_pii_content_filters_secrets
+    does_not_own:
+      - persona_or_prompt_text
+      - judge_criteria_text
+      - eval_fixture_data
+      - skill_registry_metadata
+      - mailbox_user_identity_logic
+
+  agents_repo:
+    path: agents/
+    owns:
+      - personas
+      - system_prompts
+      - judge_prompt_contracts
+      - eval_scenario_definitions
+      - tool_metadata
+      - maturity_and_policy_metadata
+    does_not_own:
+      - runtime_code
+      - framework_imports
+      - execution_loops
+
+  platform_repo:
+    path: platform/
+    owns:
+      - tenant_metadata
+      - app_bindings
+      - environment_configuration_registry
+      - secret_references
+      - feature_flags
+
+  odoo_repo:
+    path: addons/
+    owns:
+      - erp_runtime
+      - business_data
+      - odoo_module_surfaces
+      - agent_consumable_apis
+
+# -----------------------------------------------------------------------------
+# Canonical target tree for agent-platform/ (Python-first src-layout)
+# -----------------------------------------------------------------------------
+target_tree:
+  agent-platform:
+    root_files:
+      - README.md
+      - pyproject.toml
+      - uv.lock
+      - .env.example
+      - .python-version
+    github_workflows_scope_exception_only:
+      - .github/workflows/ci.yml                # lint + unit tests (scoped exception)
+      - .github/workflows/contract-checks.yml   # PR-only SSOT contract validation
+    azure_pipelines_canonical:
+      - azure-pipelines.yml                     # main deploy lane
+      - azure-pipelines-pr.yml                  # PR validation
+      - azure-pipelines-eval-gate.yml           # eval-gate promotion
+    docs:
+      architecture:
+        - RUNTIME_OVERVIEW.md
+        - TOOL_ADAPTER_MODEL.md
+        - IDENTITY_AND_AUTH.md
+        - SESSION_MODEL.md
+        - OBSERVABILITY.md
+      runbooks:
+        - LOCAL_DEV.md
+        - DEPLOYMENT.md
+        - ROLLBACK.md
+        - INCIDENT_RESPONSE.md
+      evidence: {}
+    spec:
+      agent-platform-runtime:
+        - constitution.md
+        - prd.md
+        - plan.md
+        - tasks.md
+    ssot:
+      runtime:
+        - services.yaml
+        - agents.yaml
+        - tools.yaml
+        - models.yaml
+        - sessions.yaml
+        - environments.yaml
+      security:
+        - auth_policy.yaml
+        - role_bindings.yaml
+        - allowed_tools.yaml
+      eval:
+        - gates.yaml
+        - scenarios.yaml
+        - score_thresholds.yaml
+    src:
+      agent_platform:
+        root:
+          - __init__.py
+          - config.py
+          - logging.py
+          - settings.py
+          - main.py
+        api:
+          - __init__.py
+          - health.py
+          - chat.py
+          - sessions.py
+          - attachments.py
+          - admin.py
+        runtime:
+          - __init__.py
+          - engine.py
+          - registry.py
+          - loader.py
+          - lifecycle.py
+          - graph_builder.py
+          - middleware.py
+          - checkpointing.py
+        orchestration:
+          - __init__.py
+          - router.py
+          - planner.py
+          - supervisor.py
+          - handoffs.py
+          - human_in_loop.py
+          - policies.py
+        providers:
+          foundry:
+            - __init__.py
+            - client.py
+            - auth.py
+            - models.py
+            - embeddings.py
+          fallback:
+            - __init__.py
+            - null_provider.py
+        tools:
+          root:
+            - __init__.py
+            - base.py
+            - registry.py
+            - contracts.py
+            - validators.py
+          odoo:
+            - __init__.py
+            - client.py
+            - auth.py
+            - sales.py
+            - accounting.py
+            - crm.py
+            - documents.py
+          databricks:
+            - __init__.py
+            - sql.py
+            - jobs.py
+            - unity_catalog.py
+          docintel:
+            - __init__.py
+            - extract.py
+            - classify.py
+          storage:
+            - __init__.py
+            - blobs.py
+            - artifacts.py
+          communications:
+            - __init__.py
+            - email.py
+            - notifications.py
+        retrieval:
+          - __init__.py
+          - ingestion.py
+          - chunking.py
+          - indexing.py
+          - reranking.py
+          - grounding.py
+          - citations.py
+        attachments:
+          - __init__.py
+          - pipeline.py
+          - normalization.py
+          - mime.py
+          - virus_scan.py
+        sessions:
+          - __init__.py
+          - store.py
+          - memory.py
+          - transcripts.py
+          - state_machine.py
+        evals:
+          - __init__.py
+          - runner.py
+          - fixtures.py
+          - assertions.py
+          - scorecards.py
+          - report.py
+        observability:
+          - __init__.py
+          - tracing.py
+          - metrics.py
+          - correlation.py
+          - audit.py
+        security:
+          - __init__.py
+          - authz.py
+          - tenant_policy.py
+          - pii.py
+          - secrets.py
+          - content_filters.py
+        workers:
+          - __init__.py
+          - ingestion_worker.py
+          - eval_worker.py
+          - artifact_worker.py
+    tests:
+      - unit/
+      - integration/
+      - contract/
+      - eval/
+      - fixtures/
+    apps:
+      dev-console:
+        - package.json
+        - src/
+        - README.md
+    scripts:
+      dev: [bootstrap.sh, run_api.sh, run_worker.sh, smoke.sh]
+      ci: [contract_check.py, eval_gate.py]
+      release: [package.sh, promote.sh]
+    infra: [aca/, identities/, monitor/, env/]
+    docker: [Dockerfile, Dockerfile.dev, compose.yaml]
+
+# -----------------------------------------------------------------------------
+# Minimal runnable skeleton (ship first)
+# -----------------------------------------------------------------------------
+minimal_skeleton:
+  rationale: >
+    Start with the smallest shape that preserves boundaries and runs end-to-end.
+    Expand from this skeleton phase-by-phase, not big-bang.
+  files:
+    - agent-platform/pyproject.toml
+    - agent-platform/README.md
+    - agent-platform/spec/agent-platform-runtime/constitution.md
+    - agent-platform/spec/agent-platform-runtime/prd.md
+    - agent-platform/spec/agent-platform-runtime/plan.md
+    - agent-platform/spec/agent-platform-runtime/tasks.md
+    - agent-platform/ssot/runtime/agents.yaml
+    - agent-platform/ssot/runtime/tools.yaml
+    - agent-platform/ssot/runtime/models.yaml
+    - agent-platform/ssot/runtime/environments.yaml
+    - agent-platform/src/agent_platform/__init__.py
+    - agent-platform/src/agent_platform/main.py
+    - agent-platform/src/agent_platform/settings.py
+    - agent-platform/src/agent_platform/runtime/__init__.py
+    - agent-platform/src/agent_platform/runtime/engine.py
+    - agent-platform/src/agent_platform/runtime/registry.py
+    - agent-platform/src/agent_platform/runtime/graph_builder.py
+    - agent-platform/src/agent_platform/orchestration/__init__.py
+    - agent-platform/src/agent_platform/orchestration/router.py
+    - agent-platform/src/agent_platform/orchestration/supervisor.py
+    - agent-platform/src/agent_platform/providers/__init__.py
+    - agent-platform/src/agent_platform/providers/foundry/__init__.py
+    - agent-platform/src/agent_platform/providers/foundry/auth.py
+    - agent-platform/src/agent_platform/providers/foundry/client.py
+    - agent-platform/src/agent_platform/tools/__init__.py
+    - agent-platform/src/agent_platform/tools/base.py
+    - agent-platform/src/agent_platform/tools/registry.py
+    - agent-platform/src/agent_platform/tools/odoo/__init__.py
+    - agent-platform/src/agent_platform/tools/odoo/client.py
+    - agent-platform/src/agent_platform/tools/odoo/sales.py
+    - agent-platform/src/agent_platform/tools/odoo/accounting.py
+    - agent-platform/src/agent_platform/evals/__init__.py
+    - agent-platform/src/agent_platform/evals/runner.py
+    - agent-platform/src/agent_platform/evals/scorecards.py
+    - agent-platform/src/agent_platform/observability/__init__.py
+    - agent-platform/src/agent_platform/observability/tracing.py
+    - agent-platform/src/agent_platform/observability/metrics.py
+    - agent-platform/tests/unit/__init__.py
+    - agent-platform/tests/unit/test_runtime_smoke.py
+    - agent-platform/tests/integration/__init__.py
+    - agent-platform/tests/contract/__init__.py
+    - agent-platform/tests/contract/test_ssot_contracts.py
+
+# -----------------------------------------------------------------------------
+# CI / pipeline placement (per CLAUDE.md authority split)
+# -----------------------------------------------------------------------------
+ci_placement:
+  deploy_authority: azure_pipelines
+  gha_allowed_scope: pr_validation_only
+  azure_pipelines:
+    - azure-pipelines.yml                 # main deploy
+    - azure-pipelines-pr.yml              # PR validation (exists)
+    - azure-pipelines-eval-gate.yml       # eval-gate promotion
+    - azure-pipelines-contract-checks.yml # SSOT contract validation
+  gha_scoped_exception:
+    - .github/workflows/ci.yml            # ruff + mypy + pytest on PR only
+  forbidden_gha:
+    - deploy workflows
+    - image builds
+    - secret-bearing workflows
+
+# -----------------------------------------------------------------------------
+# Import boundary enforcement
+# -----------------------------------------------------------------------------
+import_boundary:
+  rule: >
+    `agent_framework`, `agent_framework.*`, and `agent-framework-azure-ai`
+    imports are PERMITTED only under agent-platform/src/agent_platform/.
+  permitted_paths:
+    - agent-platform/src/agent_platform/**
+  forbidden_paths:
+    - agents/**
+    - odoo/**
+    - addons/**
+    - platform/**
+    - infra/**
+    - data-intelligence/**
+    - apps/**
+  enforcement:
+    tool: ruff or grep gate
+    ci_job: azure-pipelines-contract-checks.yml
+
+# -----------------------------------------------------------------------------
+# Dependency pin
+# -----------------------------------------------------------------------------
+dependency:
+  package: agent-framework-azure-ai
+  minimum_version: "1.0.0b251105"
+  pin_location: agent-platform/pyproject.toml
+  rationale: >
+    Pin minimum only; allow forward beta upgrades until MAF GA. Revisit pin
+    policy when MAF reaches 1.0 stable.
+
+# -----------------------------------------------------------------------------
+# Migration drift
+# -----------------------------------------------------------------------------
+migration:
+  current_drift:
+    - MAF already imported at agent-platform/agents/release-manager/agent_orchestrator.py
+    - per-agent requirements.txt pin (should move to root pyproject.toml)
+    - existing src/ uses non-packaged layout (orchestration/, policy/, runtime/, tools/ at src root)
+    - no pyproject.toml or uv.lock
+    - existing ssot/ has runtime/ dir but lacks runtime/{agents,tools,models,environments}.yaml set
+  phase_1_scaffold_skeleton:
+    - add pyproject.toml, uv.lock
+    - create src/agent_platform/ package with __init__.py files
+    - create minimal runnable engine + foundry client + odoo tool + eval runner
+    - add SSOT runtime/security/eval seed files
+    - add spec-kit bundle for agent-platform-runtime
+  phase_2_migrate_existing_code:
+    - move agent-platform/src/orchestration/** → src/agent_platform/orchestration/
+    - move agent-platform/src/runtime/** → src/agent_platform/runtime/
+    - move agent-platform/src/tools/** → src/agent_platform/tools/
+    - move agent-platform/src/policy/** → src/agent_platform/security/
+    - refactor agents/release-manager/agent_orchestrator.py to import from agent_platform.runtime
+  phase_3_enforce_boundary:
+    - add azure-pipelines-contract-checks.yml gate
+    - add ruff/grep rule: no agent_framework imports outside agent-platform/
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not replacing supervisor-mediated orchestration pattern
+  - not importing MAF outside agent-platform/
+  - not forking MAF; adopt upstream as-is
+  - not adopting MAF as the M365 surface protocol (Agent365 SDK owns that)
+  - not mixing mailbox/user identity logic into runtime orchestration
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  architecture_doc: docs/architecture/agent-framework-adoption.md
+  runtime_overview: agent-platform/docs/architecture/RUNTIME_OVERVIEW.md
+  mcp_policy: ssot/agent-platform/mcp_policy.yaml
+  agent_factory: ssot/agents/agent_factory.yaml
+  orchestration_model: docs/architecture/agent-orchestration-model.md
+  three_protocol_model: docs/architecture/three-protocol-model.md
+  maf_upstream: https://github.com/microsoft/agent-framework
