@@ -1,0 +1,190 @@
+# =============================================================================
+# Checklist Completion — Go-Live Readiness
+# =============================================================================
+# Mirrors: ssot/release/go-live-readiness.yaml#core_readiness_checklist
+# Assessment date: 2026-04-19
+# =============================================================================
+
+schema_version: "1.0"
+assessed_on: "2026-04-19"
+assessed_by: "platform-architecture"
+overall_status: FAIL
+
+core_readiness_checklist:
+
+  testing:
+    items:
+
+      - id: testing.sit
+        description: system_integration_testing_completed_and_signed_off
+        status: failed
+        evidence_anchor: "No SIT evidence found in any SSOT or evidence bundle"
+        owner: platform-architecture
+        target_date: TBD
+
+      - id: testing.uat
+        description: user_acceptance_testing_completed_and_signed_off
+        status: failed
+        evidence_anchor: "No UAT evidence found"
+        owner: platform-architecture
+        target_date: TBD
+
+      - id: testing.performance
+        description: performance_testing_completed_and_signed_off
+        status: failed
+        evidence_anchor: "No performance test results found"
+        owner: platform-architecture
+        target_date: TBD
+
+  deployable_artifacts:
+    items:
+
+      - id: artifacts.code_finished
+        description: code_finished
+        status: partial
+        evidence_anchor: >
+          Odoo CE 18 + ipai_odoo_copilot v18.0.4.0.0 shipped.
+          MAF agent-platform phase 1 skeleton pending (ssot/agent-platform/agent_framework_adoption.yaml#migration.current_drift).
+          business_dimensions.yaml entity model is a stub (ssot/odoo/business_dimensions.yaml#master_entity_model.status).
+        owner: platform-architecture
+        target_date: TBD
+
+      - id: artifacts.packages_built
+        description: deployable_packages_built
+        status: partial
+        evidence_anchor: >
+          Odoo container running on ipai-odoo-dev (ACA, ssot/architecture/azure-resource-inventory.yaml#public_surfaces.erp_insightpulseai_com).
+          agent-platform pyproject.toml + uv.lock not yet created (ssot/agent-platform/agent_framework_adoption.yaml#migration.phase_1_scaffold_skeleton).
+        owner: platform-architecture
+        target_date: TBD
+
+  data:
+    items:
+
+      - id: data.migration_plan
+        description: data_migration_plan_documented
+        status: not_assessed
+        evidence_anchor: >
+          No data migration plan found in any SSOT.
+          business_dimensions entity model has TODO keys for 6 of 8 entities
+          (ssot/odoo/business_dimensions.yaml#master_entity_model).
+        owner: platform-architecture
+        target_date: TBD
+
+  cutover:
+    items:
+
+      - id: cutover.plan_signed_off
+        description: cutover_plan_signed_off
+        status: failed
+        evidence_anchor: "ssot/release/go-live-scope-matrix.yaml#erp.readiness_status.cutover_plan: not_drafted"
+        owner: platform-architecture
+        target_date: TBD
+
+      - id: cutover.window_defined
+        description: cutover_window_defined
+        status: failed
+        evidence_anchor: "No cutover window defined in any SSOT"
+        owner: platform-architecture
+        target_date: TBD
+
+      - id: cutover.rollback_window_defined
+        description: rollback_window_defined
+        status: failed
+        evidence_anchor: >
+          No rollback plan found. Open decision #4 unresolved
+          (ssot/release/go-live-scope-matrix.yaml#open_decisions).
+        owner: platform-architecture
+        target_date: TBD
+
+  people:
+    items:
+
+      - id: people.user_training
+        description: user_training_completed
+        status: failed
+        evidence_anchor: "ssot/release/go-live-scope-matrix.yaml#pulser_chat_on_erp.readiness_status.user_training: pending"
+        owner: platform-architecture
+        target_date: TBD
+
+      - id: people.security_roles
+        description: security_role_assignments_correct
+        status: failed
+        evidence_anchor: >
+          Identity drift: 7 GAs (target 3), 9 members (target 4), 0 guests (target 11),
+          0 of 378 SPs canonically named.
+          docs/evidence/20260419/entra-identity-audit/drift-report.md.
+          Secure Score: 43.77% (target: 65%).
+        owner: platform-architecture
+        target_date: TBD
+
+      - id: people.license_allocation
+        description: license_allocation_sufficient
+        status: not_assessed
+        evidence_anchor: "Entra ID P2 licensed. No documented license sufficiency check."
+        owner: platform-architecture
+        target_date: TBD
+
+  support:
+    items:
+
+      - id: support.production_plan
+        description: production_support_plan_signed_off
+        status: failed
+        evidence_anchor: "ssot/release/go-live-scope-matrix.yaml#erp.readiness_status.runtime_support_plan: pending"
+        owner: platform-architecture
+        target_date: TBD
+
+      - id: support.on_call_confirmed
+        description: on_call_coverage_confirmed_for_cutover_window
+        status: failed
+        evidence_anchor: "No cutover window defined; no on-call rota found in any SSOT"
+        owner: platform-architecture
+        target_date: TBD
+
+      - id: support.escalation_contacts
+        description: escalation_contacts_documented
+        status: not_assessed
+        evidence_anchor: "No escalation contact list found in any SSOT"
+        owner: platform-architecture
+        target_date: TBD
+
+  risk:
+    items:
+
+      - id: risk.prior_issues_mitigated
+        description: critical_open_issues_from_prior_reviews_mitigated
+        status: failed
+        evidence_anchor: >
+          Unmitigated issues:
+          (1) Identity drift — 7 GAs, AADSTS500117 Odoo SSO hotfix still in place
+              (ssot/odoo/odoo-sso-runtime-state.yaml#odoo_sso_https_hotfix).
+          (2) MAF migration phase 2 pending
+              (ssot/agent-platform/agent_framework_adoption.yaml#migration.phase_2_migrate_existing_code).
+          (3) 5 deprecated MCP connectors still active in claude.ai UI
+              (ssot/tooling/mcp-runtime-state.yaml#deprecated_requires_user_action_in_claude_ai_ui).
+          (4) Databricks Genie MCP stale (stale warehouse ID)
+              (ssot/tooling/mcp-runtime-state.yaml#removed_from_repo_2026_04_19.databricks-genie).
+        owner: platform-architecture
+        target_date: TBD
+
+# -----------------------------------------------------------------------------
+# Summary tallies
+# -----------------------------------------------------------------------------
+summary:
+  total_items: 14
+  passed: 0
+  partial: 2
+  failed: 9
+  not_assessed: 3
+  first_gate_critical_failures:
+    - testing.sit
+    - testing.uat
+    - testing.performance
+    - cutover.plan_signed_off
+    - cutover.window_defined
+    - cutover.rollback_window_defined
+    - people.security_roles
+    - support.production_plan
+    - support.on_call_confirmed
+    - risk.prior_issues_mitigated

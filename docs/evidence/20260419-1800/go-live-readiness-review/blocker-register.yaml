@@ -1,0 +1,367 @@
+# =============================================================================
+# Blocker Register — Go-Live Readiness
+# =============================================================================
+# Assessment date: 2026-04-19
+# Authority: ssot/release/go-live-readiness.yaml
+# =============================================================================
+
+schema_version: "1.0"
+assessed_on: "2026-04-19"
+gate_classification_rule: >
+  FIRST-GATE: must be resolved before cutover window is opened.
+  POST-GATE: does not block cutover; must be tracked and resolved post-launch.
+
+blockers:
+
+  # ---------------------------------------------------------------------------
+  # FIRST-GATE — Critical
+  # ---------------------------------------------------------------------------
+
+  - id: BLOCKER-01
+    severity: critical
+    gate_classification: FIRST-GATE
+    category: testing
+    description: >
+      No SIT (system integration testing), UAT (user acceptance testing), or
+      performance testing has been completed or signed off for any surface.
+    surface_affected: erp
+    evidence_anchor: "ssot/release/go-live-readiness.yaml#core_readiness_checklist.testing — no evidence bundle found"
+    mitigation_plan: >
+      1. Define test scope and test environment (erp.insightpulseai.com + pg-ipai-odoo).
+      2. Execute SIT covering core ERP flows (AR, AP, project, payroll BIR compliance).
+      3. Execute UAT with at least one internal user and one TBWA\SMP finance user (pending guest invite completion).
+      4. Execute load test against ACA (ipai-odoo-dev) to confirm sizing.
+      5. Obtain sign-offs in docs/evidence/<date>/testing/.
+    owner: platform-architecture
+    target_resolution_date: TBD
+    depends_on: [BLOCKER-04, BLOCKER-08]
+
+  - id: BLOCKER-02
+    severity: critical
+    gate_classification: FIRST-GATE
+    category: cutover
+    description: >
+      ERP cutover plan has not been drafted. No cutover window, runbook, roles,
+      or go/no-go signoff checkpoint exists.
+    surface_affected: erp
+    evidence_anchor: "ssot/release/go-live-scope-matrix.yaml#erp.readiness_status.cutover_plan: not_drafted"
+    mitigation_plan: >
+      1. Draft cutover plan document (docs/evidence/<date>/cutover/cutover-plan.md).
+      2. Define cutover window (date/time + duration + freeze start).
+      3. Define roles (cutover lead, DB owner, ACA ops, on-call).
+      4. Obtain stakeholder sign-off.
+      Required content per ssot/release/go-live-readiness.yaml#cutover_discipline.
+    owner: platform-architecture
+    target_resolution_date: TBD
+    depends_on: []
+
+  - id: BLOCKER-03
+    severity: critical
+    gate_classification: FIRST-GATE
+    category: identity
+    description: >
+      7 Global Administrators active against a target of 3.
+      Identity Secure Score 43.77% against near-term target of 65%.
+      Conditional Access policies CA-001 through CA-006 not confirmed implemented.
+    surface_affected: platform
+    evidence_anchor: "docs/evidence/20260419/entra-identity-audit/drift-report.md — Section 2 (7 GAs), Section 7 (CA gaps); ssot/identity/entra_target_state.yaml#secure_score"
+    mitigation_plan: >
+      Follow remediation order in drift-report.md Section 9:
+      1. Create jake.admin@insightpulseai.com with PIM-eligible GA.
+      2. Verify PIM on breakglass01/02; test break-glass recovery.
+      3. Remove 3 duplicate break-glass accounts.
+      4. Remove mailbox-UPN members (ceo@, admin@ post-migration, finance@, devops@ after SP conversion).
+      5. Reduce GAs to target 3.
+      6. Implement CA-001 (require MFA all users) and CA-003 (block legacy auth) as minimum.
+      7. Capture Secure Score delta as evidence.
+    owner: platform-architecture
+    target_resolution_date: TBD
+    depends_on: []
+
+  - id: BLOCKER-04
+    severity: critical
+    gate_classification: FIRST-GATE
+    category: identity
+    description: >
+      Odoo SSO end-to-end test is pending. Status is configured_not_verified.
+      AADSTS500117 hotfix (image-level sed patch for X-Forwarded-Proto) is a
+      temporary workaround still in place.
+    surface_affected: erp
+    evidence_anchor: >
+      ssot/odoo/odoo-sso-runtime-state.yaml#verification.status: pending;
+      ssot/odoo/odoo-sso-runtime-state.yaml#odoo_sso_https_hotfix.status: temporary
+    mitigation_plan: >
+      1. User tests Microsoft sign-in at https://erp.insightpulseai.com/web/login.
+      2. Verify all four success criteria in ssot/odoo/odoo-sso-runtime-state.yaml#verification.success_criteria.
+      3. On success: update status to verified_and_live; document evidence.
+      4. Separate: resolve X-Forwarded-Proto canonicalization via Azure Front Door to remove the image-level hotfix.
+    owner: platform-architecture
+    target_resolution_date: TBD
+    depends_on: []
+
+  - id: BLOCKER-05
+    severity: critical
+    gate_classification: FIRST-GATE
+    category: support
+    description: >
+      Production support plan has not been drafted. No on-call rota, no escalation
+      contacts, and no hypercare window defined.
+    surface_affected: erp
+    evidence_anchor: >
+      ssot/release/go-live-scope-matrix.yaml#erp.readiness_status.runtime_support_plan: pending;
+      ssot/release/go-live-scope-matrix.yaml#erp.readiness_status.hypercare_plan: not_drafted
+    mitigation_plan: >
+      1. Draft production support plan (docs/evidence/<date>/support/support-plan.md).
+      2. Define hypercare window (recommended: 72h per Section 5 open decision #3).
+      3. Define on-call contacts and escalation path.
+      4. Obtain sign-off.
+      Required content per ssot/release/go-live-readiness.yaml#core_readiness_checklist.support.
+    owner: platform-architecture
+    target_resolution_date: TBD
+    depends_on: [BLOCKER-02]
+
+  - id: BLOCKER-06
+    severity: critical
+    gate_classification: FIRST-GATE
+    category: cutover
+    description: >
+      Rollback plan has not been documented or tested in preprod. No rollback
+      criteria (sev1 trigger), no drill, no evidence.
+    surface_affected: erp
+    evidence_anchor: >
+      ssot/release/go-live-readiness.yaml#go_no_go_matrix.no_go_conditions_any_triggers: rollback_plan_untested;
+      ssot/release/go-live-scope-matrix.yaml#open_decisions (decision #4 unresolved)
+    mitigation_plan: >
+      1. Define rollback trigger criteria (e.g., P1 unresolved within 4h of cutover).
+      2. Document rollback steps (DB restore from bvault-ipai-dev-sea, ACA image rollback, SSO revert).
+      3. Run preprod drill and capture evidence.
+      4. Obtain sign-off before cutover window is approved.
+      Required per ssot/release/go-live-readiness.yaml#cutover_discipline.rollback_discipline.
+    owner: platform-architecture
+    target_resolution_date: TBD
+    depends_on: [BLOCKER-02]
+
+  # ---------------------------------------------------------------------------
+  # FIRST-GATE — High
+  # ---------------------------------------------------------------------------
+
+  - id: BLOCKER-07
+    severity: high
+    gate_classification: FIRST-GATE
+    category: identity
+    description: >
+      9 Entra member accounts active against target of 4. 5 surplus users must
+      be removed or reclassified (see drift-report.md Section 1 for disposition
+      of each account). Surplus accounts hold GA-level privilege and inflate attack surface.
+    surface_affected: platform
+    evidence_anchor: "docs/evidence/20260419/entra-identity-audit/drift-report.md — Section 1"
+    mitigation_plan: >
+      Follow drift-report.md Section 9 steps 3–7.
+      Required: jake.admin@ created and tested BEFORE removing current admin@ account.
+    owner: platform-architecture
+    target_resolution_date: TBD
+    depends_on: [BLOCKER-03]
+
+  - id: BLOCKER-08
+    severity: high
+    gate_classification: FIRST-GATE
+    category: identity
+    description: >
+      0 of 11 TBWA\SMP Finance guests have been invited. If TBWA\SMP user
+      participation is required for UAT, this must be resolved before UAT can begin.
+    surface_affected: platform
+    evidence_anchor: >
+      docs/evidence/20260419/entra-identity-audit/drift-report.md — Section 3;
+      ssot/identity/guest-invite-registry.yaml (canonical list);
+      ops/entra/guests/tbwa-smp-finance-import.csv (bulk-invite CSV)
+    mitigation_plan: >
+      1. Create guest group per ssot/identity/guest-groups.yaml (Step 1 of onboarding runbook).
+      2. Bulk-invite 11 TBWA\SMP guests from tbwa-smp-finance-import.csv.
+      3. Assign to grp-ext-tbwasmp-finance.
+      4. Confirm Odoo access scope if transactional ERP access is required.
+    owner: platform-architecture
+    target_resolution_date: TBD
+    depends_on: [BLOCKER-03]
+
+  - id: BLOCKER-09
+    severity: high
+    gate_classification: FIRST-GATE
+    category: agent_platform
+    description: >
+      MAF (Microsoft Agent Framework) migration phase 1 skeleton is not complete.
+      No pyproject.toml or uv.lock exists. Existing src/ uses non-packaged layout.
+      Runtime boundary between agent-platform/ and agents/ not enforced.
+    surface_affected: agent-platform
+    evidence_anchor: "ssot/agent-platform/agent_framework_adoption.yaml#migration.current_drift"
+    mitigation_plan: >
+      Execute phase_1_scaffold_skeleton per ssot/agent-platform/agent_framework_adoption.yaml:
+      1. Add pyproject.toml, uv.lock.
+      2. Create src/agent_platform/ package with __init__.py.
+      3. Create minimal runnable engine + foundry client + odoo tool + eval runner.
+      4. Add SSOT runtime/security/eval seed files.
+    owner: platform-architecture
+    target_resolution_date: TBD
+    depends_on: []
+
+  - id: BLOCKER-10
+    severity: high
+    gate_classification: FIRST-GATE
+    category: data
+    description: >
+      ssot/odoo/business_dimensions.yaml entity model is a stub. 6 of 8 master
+      entity types have status not_yet_defined or stub. Gold-layer fact tables
+      cannot be correctly modeled until this is complete.
+    surface_affected: erp
+    evidence_anchor: "ssot/odoo/business_dimensions.yaml#master_entity_model.status: STUB_pending_source_completion"
+    mitigation_plan: >
+      1. Complete trade_name keys (confirm FK to legal_entity or branch, canonical_value, active flag, effective dates).
+      2. Define keys for client_tenant, cost_center, business_line, document_series, tax_registration_context.
+      3. Validate against ssot/odoo/ce18_oca_uc_semantic_odata_binding.yaml.
+      4. Remove STUB status flag.
+    owner: platform-architecture
+    target_resolution_date: TBD
+    depends_on: []
+
+  # ---------------------------------------------------------------------------
+  # POST-GATE — Medium
+  # ---------------------------------------------------------------------------
+
+  - id: BLOCKER-11
+    severity: medium
+    gate_classification: POST-GATE
+    category: tooling
+    description: >
+      5 deprecated MCP connectors still active in claude.ai UI:
+      Supabase, Vercel, Cloudflare (×2), n8n. All are FORBIDDEN per CLAUDE.md.
+    surface_affected: platform
+    evidence_anchor: "ssot/tooling/mcp-runtime-state.yaml#cloud_remote_servers.deprecated_requires_user_action_in_claude_ai_ui"
+    mitigation_plan: >
+      User removes Supabase, Vercel, Cloudflare Developer Platform,
+      Cloudflare Developer Platform 2, and n8n from claude.ai integrations UI.
+      Netlify also to be removed (never used for IPAI).
+    owner: platform-architecture
+    target_resolution_date: TBD
+    depends_on: []
+
+  - id: BLOCKER-12
+    severity: medium
+    gate_classification: POST-GATE
+    category: tooling
+    description: >
+      Databricks Genie MCP removed from .mcp.json due to stale warehouse ID
+      (e7d89eabce4c330c → actual fdcdd6b50cd7ce99) and missing module.
+      Genie-as-MCP via workspace native path not yet adopted.
+    surface_affected: databricks_control_tower
+    evidence_anchor: "ssot/tooling/mcp-runtime-state.yaml#removed_from_repo_2026_04_19.databricks-genie"
+    mitigation_plan: >
+      Adopt Databricks native Genie-as-MCP via Workspace Settings → MCP Servers.
+      Use correct warehouse ID: fdcdd6b50cd7ce99 (dbw-ipai-dev).
+    owner: platform-architecture
+    target_resolution_date: TBD
+    depends_on: []
+
+  - id: BLOCKER-13
+    severity: medium
+    gate_classification: POST-GATE
+    category: agent_platform
+    description: >
+      MAF migration phase 2 pending: existing src/ code needs to be moved to
+      the packaged src/agent_platform/ layout. Import boundary not yet enforced
+      by CI gate (azure-pipelines-contract-checks.yml not yet added).
+    surface_affected: agent-platform
+    evidence_anchor: "ssot/agent-platform/agent_framework_adoption.yaml#migration.phase_2_migrate_existing_code"
+    mitigation_plan: >
+      Execute phase_2_migrate_existing_code per ssot/agent-platform/agent_framework_adoption.yaml.
+      Then execute phase_3_enforce_boundary (azure-pipelines-contract-checks.yml).
+    owner: platform-architecture
+    target_resolution_date: TBD
+    depends_on: [BLOCKER-09]
+
+  - id: BLOCKER-14
+    severity: medium
+    gate_classification: POST-GATE
+    category: scope_decision
+    description: >
+      Open decision: is pulser_chat_on_erp part of the first go-live gate or
+      a follow-on release? Eval gate acceptance, user training, Foundry SLA,
+      and cost cap are all gated on this decision.
+    surface_affected: pulser_chat_on_erp
+    evidence_anchor: "ssot/release/go-live-scope-matrix.yaml#open_decisions[0]"
+    mitigation_plan: >
+      Recommended default: exclude from first gate (see readiness-review-report.md Section 5).
+      Decision owner documents choice in ssot/release/go-live-scope-matrix.yaml.
+    owner: platform-architecture
+    target_resolution_date: TBD
+    depends_on: []
+
+  - id: BLOCKER-15
+    severity: medium
+    gate_classification: POST-GATE
+    category: scope_decision
+    description: >
+      Open decision: is databricks_control_tower part of the first go-live gate
+      or a parallel release track? Executive access entitlements and eval
+      regression loop are gated on this decision.
+    surface_affected: databricks_control_tower
+    evidence_anchor: "ssot/release/go-live-scope-matrix.yaml#open_decisions[1]"
+    mitigation_plan: >
+      Recommended default: exclude from first gate (see readiness-review-report.md Section 5).
+      Decision owner documents choice in ssot/release/go-live-scope-matrix.yaml.
+    owner: platform-architecture
+    target_resolution_date: TBD
+    depends_on: []
+
+  # ---------------------------------------------------------------------------
+  # POST-GATE — Low
+  # ---------------------------------------------------------------------------
+
+  - id: BLOCKER-16
+    severity: low
+    gate_classification: POST-GATE
+    category: identity
+    description: >
+      378 service principals in the tenant; 0 have canonical naming
+      (sp-*/mi-*/agent-* pattern). No ownership/classification assigned.
+    surface_affected: platform
+    evidence_anchor: "docs/evidence/20260419/entra-identity-audit/drift-report.md — Section 4"
+    mitigation_plan: >
+      Run separate SP audit PR: classify into keep_strategic / review_potentially_stale / remove.
+      Rename custom apps per ssot/identity/entra_target_state.yaml#workload_identities.naming_convention.
+      Assign owners. Not in scope for this gate.
+    owner: platform-architecture
+    target_resolution_date: TBD
+    depends_on: []
+
+  - id: BLOCKER-17
+    severity: low
+    gate_classification: POST-GATE
+    category: identity
+    description: >
+      1 unmanaged agent identity: no sponsor, no canonical name, no lifecycle disposition.
+    surface_affected: agent-platform
+    evidence_anchor: >
+      ssot/identity/entra_target_state.yaml#agent_identities.observed_state.unmanaged: 1;
+      docs/evidence/20260419/entra-identity-audit/drift-report.md — Section 5
+    mitigation_plan: >
+      1. Assign sponsor + technical owner to the unmanaged agent.
+      2. Rename to agent-<system>-<purpose>.
+      3. Record in ssot/identity/entra_target_state.yaml#agent_identities.
+    owner: platform-architecture
+    target_resolution_date: TBD
+    depends_on: []
+
+# -----------------------------------------------------------------------------
+# Summary
+# -----------------------------------------------------------------------------
+summary:
+  total_blockers: 17
+  by_severity:
+    critical: 6
+    high: 4
+    medium: 5
+    low: 2
+  by_gate_classification:
+    first_gate: 10
+    post_gate: 7
+  first_gate_critical_count: 6
+  go_live_recommendation: NO-GO
