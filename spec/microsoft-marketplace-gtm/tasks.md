@@ -4,8 +4,8 @@
 - **ISSUE**: Activate Core Program Benefits
     - [x] Claim GitHub Enterprise Coupon (ISV-Success-Program-12months-570064f)
     - [x] Activate M365 E5 Developer Sandbox
-    - [ ] Redeem Azure Standard Support Benefit
-    - [ ] Assign Managed Identity permissions for Azure Sponsorship management
+    - [x] Redeem Azure Standard Support Benefit (ID: PRD-ISS-001)
+    - [x] Assign Managed Identity permissions for Azure Sponsorship management
 - **ISSUE**: Technical Onboarding
     - [x] Schedule 'Marketplace Publish Consult' with EM (So Yeong Choi)
     - [x] Register for ISV Community Webinars (Q2 Session)
@@ -40,6 +40,6 @@
 *Last updated: 2026-04-18*
 
 ## Phase 54 — Media Ops Integration [NEW]
-- [ ] GTM-MEDIA-01: Scaffold `ipai_media_ops` module for Odoo.
-- [ ] GTM-MEDIA-02: Implement Sora/Veo/Nano-Banana skill in Pulser Assistant.
-- [ ] GTM-MEDIA-03: Create API Bridge spec for `ugc-mediaops-kit` ingestion.
+- [x] GTM-MEDIA-01: Scaffold `ipai_media_ops` module for Odoo. ✅
+- [x] GTM-MEDIA-02: Implement Sora/Veo/Nano-Banana skill in Pulser Assistant. ✅
+- [x] GTM-MEDIA-03: Create API Bridge spec for `ugc-mediaops-kit` ingestion. ✅
