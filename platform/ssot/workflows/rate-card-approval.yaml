@@ -1,0 +1,169 @@
+version: 1
+workflow_id: rate_card_budget_approval
+authorities:
+  final_procurement_decision:
+    actor_code: khalil_fd
+    title: Finance Director
+    exclusive: true
+visibility_policy:
+  vendor_identity:
+    portal_user: hidden
+    project_coordinator: conditional
+    finance_reviewer: visible
+    finance_director: visible
+    admin: visible
+  specialization_label:
+    portal_user: visible
+    project_coordinator: visible
+    finance_reviewer: visible
+    finance_director: visible
+    admin: visible
+portal_controls:
+  optional_budget_lines:
+    opt_in_enabled: true
+    opt_out_enabled: true
+  can_request_new_lines: true
+  can_approve_procurement: false
+pulser_controls:
+  can_recommend_lines: true
+  can_create_draft_budget: true
+  can_commit_procurement: false
+  can_override_approval: false
+billing_modes:
+  - standard
+  - hard_cost
+  - paper_billing
+  - offline_billing
+states:
+  - draft
+  - submitted
+  - coordinator_validated
+  - finance_review
+  - approved
+  - rejected
+  - cancelled
+transitions:
+  - from: draft
+    to: submitted
+    actor_roles: [portal_user, project_coordinator]
+  - from: submitted
+    to: coordinator_validated
+    actor_roles: [project_coordinator]
+  - from: coordinator_validated
+    to: finance_review
+    actor_roles: [finance_reviewer, finance_director]
+  - from: finance_review
+    to: approved
+    actor_roles: [finance_director]
+  - from: finance_review
+    to: rejected
+    actor_roles: [finance_reviewer, finance_director]
+  - from: draft
+    to: cancelled
+    actor_roles: [portal_user, project_coordinator, admin]
+rbac:
+  portal_user:
+    permissions:
+      - view_visible_rate_card_lines
+      - request_budget_lines
+      - opt_in_optional_lines
+      - opt_out_optional_lines
+      - view_own_request_status
+  project_coordinator:
+    permissions:
+      - create_draft_budget_lines
+      - edit_draft_budget_lines
+      - validate_requests
+      - view_hidden_vendor_identity_if_permitted
+      - route_for_finance_review
+  finance_reviewer:
+    permissions:
+      - review_commercial_requests
+      - view_hidden_vendor_identity
+      - recommend_approval
+      - reject_requests
+  finance_director:
+    permissions:
+      - final_procurement_decision
+      - approve_requests
+      - reject_requests
+      - view_hidden_vendor_identity
+  admin:
+    permissions:
+      - configure_workflow
+      - configure_visibility_policy
+      - view_audit_log
+    restrictions:
+      - no_implicit_procurement_approval_bypass
+audit:
+  required: true
+  events:
+    - rate_card_line_created
+    - budget_line_requested
+    - budget_line_opted_in
+    - budget_line_opted_out
+    - request_submitted
+    - request_validated
+    - request_sent_to_finance
+    - request_approved
+    - request_rejected
+    - billing_mode_changed
+    - vendor_identity_viewed
+entities:
+  RateCard:
+    fields:
+      - rate_card_id
+      - project_id
+      - effective_date
+      - currency
+      - visibility_policy_id
+  RateCardLine:
+    fields:
+      - line_id
+      - specialization
+      - vendor_profile_id
+      - consultant_name_hidden
+      - unit_type
+      - unit_rate
+      - optional_flag
+      - billing_mode
+      - active
+  VendorProfile:
+    fields:
+      - vendor_profile_id
+      - legal_name
+      - display_alias
+      - hidden_from_portal
+      - specialization_tags
+  BudgetRequest:
+    fields:
+      - request_id
+      - project_id
+      - requested_by
+      - state
+      - final_decision_by
+      - submitted_at
+  BudgetRequestLine:
+    fields:
+      - request_line_id
+      - request_id
+      - source_rate_card_line_id
+      - requested_quantity
+      - requested_amount
+      - opt_state
+      - note
+  ApprovalDecision:
+    fields:
+      - decision_id
+      - request_id
+      - actor_id
+      - role
+      - decision
+      - comment
+      - decided_at
+anchors:
+  spec_bundle: spec/commercial-controls-rate-card/
+  architecture_doc: docs/architecture/RATE_CARD_APPROVAL_WORKFLOW.md
+  guest_invite_registry: ssot/identity/guest-invite-registry.yaml
+  pulser_pack_matrix: platform/ssot/agents/pulser-pack-matrix.yaml
+  ai_governance_baseline: platform/ssot/policy/azure-ai-governance-baseline.yaml
