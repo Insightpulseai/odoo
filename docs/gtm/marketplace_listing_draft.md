@@ -23,27 +23,29 @@
   ### Why Pulser?
   For founders and operations leaders, Pulser provides the "Intelligent Operational Control" needed to scale without the paperwork storm.
 
-- **Keywords**: Odoo, ERP, AI, Agent, Databricks, Azure, CRM, Accounting, Philippines, ISV Success.
+- **Keywords**: Odoo, ERP, AI, Agent, Databricks, Azure, CRM, Accounting, Media Ops, Philippines, ISV Success.
 
 ## 3. Product & Solution Alignment
 - **Solution Area**: AI Business Solutions
 - **Category**: ERP / Business Application / Artificial Intelligence
-- **Industries**: Professional Services, Retail & Consumer Goods, Media & Entertainment.
+- **Industries**: Professional Services, Retail & Consumer Goods, Marketing & Media Operations.
 
 ## 4. Customer Evidence & Media (Matrix)
 | Artifact | Source File / Description |
 |----------|---------------------------|
 | **Screenshot 1** | Odoo AP Dashboard with Document Intelligence Overlays |
 | **Screenshot 2** | Pulser Assistant (Copilot) in the Odoo Sidebar |
-| **Screenshot 3** | Databricks / Power BI Margin Tracking Dashboard |
 | **Video** | 'Pulser for PH' Demo Storyboard (3-minute walk-through) |
+| **Mockup** | Generative Media Asset Creation (Sora/Veo/Nano-Banana) |
 
-## 5. Pricing & Tiers
-| Tier | Description | Price (Monthly) |
+## 5. Pricing & Plans
+| Plan | Description | Price (Monthly) |
 |------|-------------|-----------------|
-| **Starter** | Up to 5 users, standard AI credits. | ₱2,500 / user |
-| **Professional** | Unlimited users, dedicated Databricks workspace. | ₱4,500 / user |
-| **Enterprise** | Custom AI models (Foundry), White-glove support. | Contact Us |
+| **Foundational** | Odoo Core + Project-to-Profit Assistant. | $49.00 |
+| **Professional** | Full Platform + R2R & Media Ops specialists. | $199.00 |
+| **Enterprise** | Unified Governance + Priority AI + Premium Support. | $999.00 |
+
+---
 
 ---
 *Created: 2026-04-18*
