@@ -1,0 +1,434 @@
+# =============================================================================
+# Azure Boards Taxonomy — SSOT
+# =============================================================================
+# Authority: canonical Epic/Area/Iteration taxonomy for the ipai-platform
+#            Azure DevOps project. Lean Basic-process hierarchy:
+#            Epic → Issue → Task. Epic = capability domain, Issue =
+#            deliverable slice, Task = implementation step.
+# Related:   ssot/planning/azure-boards.contract.yaml (generic contract)
+#            ssot/agent-platform/boards_mapping.yaml (Agent Factory scope)
+#            ssot/architecture/azure-architecture-center-map.yaml
+#            ssot/governance/ado_github_authority_map.yaml
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: canonical
+
+project: ipai-platform
+process: basic
+hierarchy:
+  epic: capability_domain
+  issue: deliverable_slice
+  task: implementation_step
+
+# -----------------------------------------------------------------------------
+# Canonical Epic set (12)
+# -----------------------------------------------------------------------------
+epics:
+
+  EPIC-001:
+    title: "Business Systems / Odoo ERP"
+    repo_focus: addons/
+    primary_domain: erp.insightpulseai.com
+    aac_lane: "05_erp_transactional"
+    scope:
+      - odoo_runtime
+      - finance_workflows
+      - crm_and_work_management
+      - document_and_invoice_controls
+      - erp_auth_and_session
+      - erp_tool_surfaces_for_ai
+    seed_issues:
+      - "ERP: Normalize branch and entity model"
+      - "ERP: Odoo finance baseline hardening"
+      - "ERP: Invoice and document compliance controls"
+      - "ERP: Access model and privileged-role cleanup"
+      - "ERP: Odoo tool adapter contract for AI runtime"
+
+  EPIC-002:
+    title: "AI Runtime / Agent Platform"
+    repo_focus: agent-platform/
+    primary_domain: backend_runtime_no_public_root
+    aac_lane: "06_ai_runtime_and_copilots"
+    scope:
+      - foundry_provider_integration
+      - orchestration_runtime
+      - multi_agent_coordination
+      - retrieval_and_citations
+      - session_handling
+      - eval_and_observability
+      - tool_execution_framework
+    seed_issues:
+      - "AI Runtime: Bind Foundry provider to ipai-copilot-resource"
+      - "AI Runtime: Model registry and deployment mapping"
+      - "AI Runtime: Add Odoo tool adapter baseline"
+      - "AI Runtime: Retrieval pipeline with citations"
+      - "AI Runtime: Agent session state and transcript storage"
+      - "AI Runtime: Eval gate runner and scorecard output"
+      - "AI Runtime: Agent identity governance integration"
+
+  EPIC-003:
+    title: "Agent Definitions / Skills / Evals"
+    repo_focus: agents/
+    aac_lane: "06_ai_runtime_and_copilots (definitions layer)"
+    scope:
+      - personas
+      - prompt_contracts
+      - judges
+      - skills
+      - routing_metadata
+      - maturity_metadata
+      - eval_scenario_definitions
+    seed_issues:
+      - "Agents: Canonical Odoo Copilot persona set"
+      - "Agents: Finance approver/reviewer guest-facing agents"
+      - "Agents: Judge pack for grounded responses"
+      - "Agents: Eval fixtures for ERP-safe tool use"
+      - "Agents: Domain agent set for PrismaLab"
+      - "Agents: Policy metadata for allowed tools and escalation"
+
+  EPIC-004:
+    title: "Web Experience Surfaces"
+    repo_focus: web/
+    primary_domains:
+      - www.insightpulseai.com
+      - prismalab.insightpulseai.com
+      - www.w9studio.net
+    aac_lane: "03_public_edge_and_web_security"
+    scope:
+      - public_web_apps
+      - authenticated_workspaces
+      - frontend_routing
+      - chat_workspace_ui
+      - product_shell
+      - domain_specific_ux
+    seed_issues:
+      - "Web: Launch flagship InsightPulseAI web shell"
+      - "Web: Launch Prismalab workspace shell"
+      - "Web: Launch W9 Studio marketing site"
+      - "Web: Shared auth/session frontend contract"
+      - "Web: Chat UI against agent-platform"
+      - "Web: Artifact preview / citations UX"
+      - "Web: Cross-app design-system integration"
+
+  EPIC-005:
+    title: "Data Intelligence / Analytics / BI"
+    repo_focus: data-intelligence/
+    aac_lane: "08_data_intelligence_lakehouse_bi"
+    scope:
+      - databricks_workloads
+      - medallion_data_contracts
+      - semantic_serving_prep
+      - bi_artifacts
+      - governed_analytics_pipelines
+      - analytical_tool_surfaces_for_agents
+    seed_issues:
+      - "Data: Medallion contract baseline"
+      - "Data: ERP-to-analytics curated pipeline"
+      - "Data: Semantic-serving prep for finance insights"
+      - "Data: Analytical query tool for agent runtime"
+      - "Data: BI delivery contract for executive reporting"
+      - "Data: Telemetry exhaust modeling for AI runtime analytics"
+
+  EPIC-006:
+    title: "Platform Control Plane / SSOT"
+    repo_focus: platform/
+    aac_lane: "01_platform_foundation (application plane)"
+    scope:
+      - tenant_app_metadata
+      - runtime_bindings
+      - model_bindings
+      - feature_flags
+      - environment_mappings
+      - service_catalog
+      - secret_references
+      - control_plane_contracts
+    seed_issues:
+      - "Platform: Canonical runtime/service catalog SSOT"
+      - "Platform: Model binding registry for Foundry"
+      - "Platform: Environment binding contract for dev/staging/prod"
+      - "Platform: Tenant/app/domain mapping registry"
+      - "Platform: Feature flag framework"
+      - "Platform: Secret reference normalization"
+      - "Platform: Control-plane metadata for public domains and apps"
+
+  EPIC-007:
+    title: "Infrastructure / Azure / Edge / Hosting"
+    repo_focus: infra/
+    aac_lane: "01_platform_foundation + 04_compute_runtime"
+    scope:
+      - azure_infrastructure
+      - aca_hosting
+      - networking
+      - front_door_edge_integration
+      - managed_identities
+      - observability_substrate
+      - iac_and_deployment_contracts
+    seed_issues:
+      - "Infra: Provision ACA baseline for agent runtime"
+      - "Infra: Front Door / DNS routing contract"
+      - "Infra: Managed identity and RBAC baseline"
+      - "Infra: AI resource integration under sponsorship subscription"
+      - "Infra: Monitoring / diagnostics substrate"
+      - "Infra: Environment deployment topology"
+      - "Infra: Infra drift detection and evidence generation"
+
+  EPIC-008:
+    title: "Identity / Security / Governance"
+    repo_focus: cross_repo_primarily_infra_platform_docs
+    aac_lane: "02_identity_and_access + 11_security_zero_trust"
+    scope:
+      - entra_tenant_posture
+      - guest_identity_model
+      - mfa_conditional_access
+      - privileged_access
+      - app_identity_naming
+      - security_guardrails
+      - governance_evidence
+    seed_issues:
+      - "Identity: Normalize Entra user model"
+      - "Identity: Global Administrator reduction plan"
+      - "Identity: Guest identity onboarding pattern for TBWA\\SMP"
+      - "Identity: Mailbox authority vs Entra authority split"
+      - "Identity: App/SP/MI/agent naming standard"
+      - "Identity: Conditional Access baseline coverage"
+      - "Identity: Privileged identity separation and break-glass pattern"
+      - "Identity: Governance evidence pack for identity posture"
+
+  EPIC-009:
+    title: "Docs / Architecture / Runbooks / Evidence"
+    repo_focus: docs/
+    aac_lane: cross_cutting
+    scope:
+      - cross_repo_architecture
+      - target_state_documentation
+      - runbooks
+      - decision_records
+      - evidence_packs
+      - adoption_notes_from_microsoft_reference_architectures
+    seed_issues:
+      - "Docs: Publish repo boundary and target architecture note"
+      - "Docs: AI runtime adoption note for Microsoft Agent Framework"
+      - "Docs: Foundry reference crosswalk"
+      - "Docs: Production runbook set"
+      - "Docs: Architecture decision log for domain and repo splits"
+      - "Docs: Evidence structure for release/readiness"
+
+  EPIC-010:
+    title: "Automations / Scheduled Operations"
+    repo_focus: automations/
+    aac_lane: "09_realtime_and_evented_ops (when adopted)"
+    scope:
+      - jobs
+      - recurring_automations
+      - operational_scripts
+      - maintenance_routines
+      - scheduled_validations
+      - notification_pipelines
+    seed_issues:
+      - "Automations: Scheduled health checks for public domains"
+      - "Automations: Recurring evidence generation"
+      - "Automations: Release-notification workflows"
+      - "Automations: Periodic sign-in / role posture reporting"
+      - "Automations: Document processing batch jobs"
+      - "Automations: Housekeeping and retention automations"
+
+  EPIC-011:
+    title: "Design System / Brand / Tokens"
+    repo_focus: design/
+    aac_lane: "03_public_edge_and_web_security (frontend)"
+    scope:
+      - tokens
+      - components
+      - icons
+      - brand_assets
+      - design_consistency_across_surfaces
+    seed_issues:
+      - "Design: Token baseline for web surfaces"
+      - "Design: Component kit for flagship/prismalab/W9"
+      - "Design: Icon pipeline"
+      - "Design: Brand contract for multi-surface identity"
+      - "Design: Citation/artifact preview component patterns"
+
+  EPIC-012:
+    title: "Templates / Bootstrap"
+    repo_focus: templates/
+    aac_lane: "12_application_design_patterns"
+    scope:
+      - starter_kits
+      - bootstrap_only_repo_scaffolds
+      - reusable_initial_layouts
+    seed_issues:
+      - "Templates: Web app starter scaffold"
+      - "Templates: Agent-platform skeleton template"
+      - "Templates: Policy-aware repo bootstrap template"
+      - "Templates: Starter spec bundle template"
+
+# -----------------------------------------------------------------------------
+# Area Paths (architectural boundary, not cadence)
+# -----------------------------------------------------------------------------
+area_paths:
+  root: ipai-platform
+  children:
+    - ipai-platform\odoo
+    - ipai-platform\agent-platform
+    - ipai-platform\agents
+    - ipai-platform\web
+    - ipai-platform\data-intelligence
+    - ipai-platform\platform
+    - ipai-platform\infra
+    - ipai-platform\docs
+    - ipai-platform\automations
+    - ipai-platform\design
+    - ipai-platform\templates
+    - ipai-platform\identity-security
+  rule: reflect_repos_not_sprint_cadence
+
+# -----------------------------------------------------------------------------
+# Iteration Paths (cadence, not architecture)
+# -----------------------------------------------------------------------------
+iterations:
+  rule: reflect_time_cadence_not_architecture
+  model:
+    fiscal_year: FY26
+    quarters: [Q1, Q2, Q3, Q4]
+    sprint_length_weeks: 1_or_2_weeks_for_one_person_team
+  example_structure:
+    - FY26\Q2\Sprint 01
+    - FY26\Q2\Sprint 02
+    - FY26\Q2\Sprint 03
+    - FY26\Q2\Sprint 04
+
+# -----------------------------------------------------------------------------
+# Naming conventions
+# -----------------------------------------------------------------------------
+naming:
+  epic:
+    pattern: "<Capability domain>"
+    examples:
+      - "Business Systems / Odoo ERP"
+      - "AI Runtime / Agent Platform"
+  issue:
+    pattern: "<Domain>: <Deliverable slice>"
+    examples:
+      - "ERP: Normalize branch and entity model"
+      - "AI Runtime: Bind Foundry provider to ipai-copilot-resource"
+      - "Web: Launch Prismalab workspace shell"
+      - "Identity: Convert TBWA\\SMP contacts to guest model"
+      - "Infra: Provision ACA baseline for agent runtime"
+  task:
+    pattern: "<Verb> <concrete implementation step>"
+    examples:
+      - "Add Foundry provider settings loader"
+      - "Create Odoo tool adapter contract"
+      - "Render shared chat workspace layout"
+      - "Add guest access policy documentation"
+      - "Provision managed identity role assignments"
+
+# -----------------------------------------------------------------------------
+# Tags (cross-cutting lenses, not hierarchy)
+# -----------------------------------------------------------------------------
+tags:
+  rule: cross_cutting_lenses_not_hierarchy
+  canonical_set:
+    - foundry
+    - agent-framework
+    - odoo
+    - erp
+    - prismalab
+    - w9
+    - identity
+    - security
+    - aca
+    - entra
+    - guest-access
+    - retrieval
+    - evals
+    - observability
+    - release
+    - docs
+    - breaking-change
+    - production
+
+# -----------------------------------------------------------------------------
+# Workflow states (lean)
+# -----------------------------------------------------------------------------
+workflow:
+  rule: keep_lean_unless_reporting_need_demands_more
+  states:
+    - New
+    - Active
+    - Blocked
+    - Resolved
+    - Closed
+  optional_if_needed:
+    - Ready for Validation
+    - Ready for Release
+
+# -----------------------------------------------------------------------------
+# First-wave Epics to create now
+# -----------------------------------------------------------------------------
+first_wave:
+  priority_order:
+    - EPIC-001  # Business Systems / Odoo ERP
+    - EPIC-002  # AI Runtime / Agent Platform
+    - EPIC-004  # Web Experience Surfaces
+    - EPIC-007  # Infrastructure / Azure / Edge / Hosting
+    - EPIC-008  # Identity / Security / Governance
+    - EPIC-009  # Docs / Architecture / Runbooks / Evidence
+  rationale: >
+    Enough to organize the whole program without overcomplicating it.
+    Other epics (003 Agents, 005 Data, 006 Platform, 010 Automations,
+    011 Design, 012 Templates) can be added when work starts landing in
+    those lanes.
+
+# -----------------------------------------------------------------------------
+# Board queries / views
+# -----------------------------------------------------------------------------
+board_queries:
+  by_architectural_boundary:
+    - name: "Active work by Area Path"
+      wiql_hint: "WHERE [System.AreaPath] UNDER 'ipai-platform' AND [System.State] = 'Active'"
+    - name: "Blocked work by Area Path"
+      wiql_hint: "WHERE [System.State] = 'Blocked'"
+    - name: "Production-impacting work across all areas"
+      wiql_hint: "WHERE [System.Tags] CONTAINS 'production'"
+  by_governance_lens:
+    - production_tag
+    - identity_tag
+    - breaking_change_tag
+    - work_without_linked_spec_or_doc_evidence
+  by_lifecycle:
+    - strategize_design_ready
+    - in_implementation
+    - rehearsal_pre_prod
+    - done_with_evidence
+
+# -----------------------------------------------------------------------------
+# Executed vs codified scope
+# -----------------------------------------------------------------------------
+execution_boundary:
+  this_ssot_is:
+    - machine_readable_spec_for_taxonomy
+    - reference_for_board_queries
+    - naming_convention_authority
+  this_ssot_is_not:
+    - a_live_board_state_mirror
+    - auto_applied_to_the_ado_project
+  execution_runbook: docs/runbooks/azure-boards-setup.md
+  rule: >
+    Creating Epics, Area Paths, and Iterations in Azure DevOps is a
+    visible shared-state mutation. Execute only via the runbook with
+    explicit approval.
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  runbook: docs/runbooks/azure-boards-setup.md
+  aac_map: ssot/architecture/azure-architecture-center-map.yaml
+  existing_contract: ssot/planning/azure-boards.contract.yaml
+  agent_factory_mapping: ssot/agent-platform/boards_mapping.yaml
+  ado_github_authority: ssot/governance/ado_github_authority_map.yaml
