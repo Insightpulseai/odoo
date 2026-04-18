@@ -73,7 +73,7 @@ topics:
     canonical_product: Azure AI Foundry
     why_it_matters: >
       Central AI orchestration plane for agent runtime. ipai-copilot project
-      lives in this service (rg-data-intel-ph, eastus2). All agent definitions,
+      lives in this service (rg-ipai-dev-ai-sea, East US 2). All agent definitions,
       model deployments, and tool bindings flow through Foundry.
     mvp_critical: true
     recommended_queries:
@@ -406,3 +406,36 @@ topics:
       Databricks (data-intelligence/) or Foundry (agent runtime).
       AzureML is optional/deferred — query only if a skill contract
       explicitly requires it.
+
+  # ── Commercial & Media Expansion ──────────────────────────────────────────
+
+  marketplace_fulfillment:
+    topic_key: marketplace_fulfillment
+    canonical_product: Microsoft Commercial Marketplace
+    why_it_matters: >
+      Governs the technical fulfillment of Pulser SaaS offers. Covers
+      webhook integration, landing page SSO (Entra ID), and the Commercial
+      Marketplace SaaS API v2. Crucial for ipai_marketplace_fulfillment module.
+    mvp_critical: true
+    recommended_queries:
+      - "Microsoft Commercial Marketplace SaaS fulfillment webhook API v2"
+      - "Marketplace SaaS landing page SSO Entra ID integration"
+      - "Marketplace SaaS fulfillment service connection secret"
+    fallback_urls:
+      - https://learn.microsoft.com/en-us/marketplace/partner-center/pc-saas-fulfillment-api-v2
+      - https://learn.microsoft.com/en-us/marketplace/partner-center/pc-saas-registration-sso
+
+  azure_ai_video_generative:
+    topic_key: azure_ai_video_generative
+    canonical_product: Azure AI Foundry — Generative Video (Sora/Veo)
+    why_it_matters: >
+      Enables the ipai_media_ops specialist to ground itself in the latest
+      multimodal capabilities. Covers Sora (preview), Veo, and multimodal
+      prompting for Nano-Banana storyboarding.
+    mvp_critical: false
+    recommended_queries:
+      - "Azure AI Foundry Sora video generation preview"
+      - "Azure AI Foundry Veo multimodal prompting"
+      - "Azure AI Foundry video generation SDK Python"
+    fallback_urls:
+      - https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/video-generation-overview

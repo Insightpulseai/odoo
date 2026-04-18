@@ -26,7 +26,7 @@ SKILLS_MANIFEST = SSOT_DIR / "skills_manifest.yaml"
 TAXONOMY = SSOT_DIR / "knowledge_taxonomy.yaml"
 
 # Skills root
-SKILLS_DIR = REPO_ROOT / ".github" / "skills"
+SKILLS_DIR = REPO_ROOT / "agents" / "skills"
 
 # MCP endpoint (informational — not called here)
 MCP_ENDPOINT = "https://learn.microsoft.com/api/mcp"

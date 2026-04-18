@@ -146,7 +146,7 @@ skills:
     impact_tier: P1
     category: operations
     description: >
-      Wire Application Insights and Log Analytics to all ACA apps (ca-ipai-dev,
+      Wire Application Insights and Log Analytics to all ACA apps (acae-ipai-dev-sea,
       Odoo containers). Configure alert rules for SLO breach and error spikes.
     knowledge_sources:
       - ssot_agent_platform
@@ -167,9 +167,9 @@ skills:
     impact_tier: P1
     category: architecture
     description: >
-      Validate ipai-copilot Foundry project configuration, SDK v2 agent
-      definitions, model deployments, and tool registrations against
-      Microsoft Learn canonical patterns. Ensure no v1 classic debt remains.
+      Validate ipai-copilot Foundry project configuration (rg-ipai-dev-ai-sea),
+      SDK v2 agent definitions, model deployments, and tool registrations
+      against Microsoft Learn canonical patterns.
     knowledge_sources:
       - ssot_agent_platform
       - ssot_foundry
@@ -406,6 +406,66 @@ skills:
       50+ eval cases in Foundry, adversarial coverage >= 20%, regression
       baseline recorded — evidenced in docs/evidence/.
 
+  # ── Pulser GTM specialized Skills ─────────────────────────────────────────
+
+  - id: pulser-p2p
+    name: Pulser Project-to-Profit Specialist
+    location: agents/skills/pulser-p2p/
+    impact_tier: P1
+    category: odoo-ops
+    description: >
+      Specialized agent for Odoo 18 project operations, profitability monitoring,
+      and burn-rate analysis. Enforces P2P mission-critical grounding.
+    knowledge_sources:
+      - src-repo-ssot
+      - ms_learn_foundry
+    mvp_critical: true
+    status: active
+    mcp_queries_required: 3
+
+  - id: pulser-r2r
+    name: Pulser Record-to-Report Specialist
+    location: agents/skills/pulser-r2r/
+    impact_tier: P1
+    category: odoo-ops
+    description: >
+      Specialized agent for Odoo 18 financial close, tax compliance (BIR),
+      and audit readiness. Enforces R2R mission-critical grounding.
+    knowledge_sources:
+      - src-repo-ssot
+      - ms_learn_foundry
+    mvp_critical: true
+    status: active
+    mcp_queries_required: 3
+
+  - id: media-ops
+    name: Pulser Media Operations Specialist
+    location: agents/skills/media-ops/
+    impact_tier: P1
+    category: multimodal
+    description: >
+      Specialized agent for generative media operations (Sora/Veo/Banana).
+      Orchestrates multimodal content generation for GTM GTM storyboards.
+    knowledge_sources:
+      - ms_learn_foundry
+    mvp_critical: false
+    status: active
+    mcp_queries_required: 4
+
+  - id: marketplace-fulfillment
+    name: Marketplace Fulfillment Specialist
+    location: agents/skills/marketplace-fulfillment/
+    impact_tier: P1
+    category: commercial
+    description: >
+      Specialized agent for Microsoft Commercial Marketplace technical
+      fulfillment, webhook integration, and landing page SSO.
+    knowledge_sources:
+      - ms_learn_mcp
+    mvp_critical: true
+    status: active
+    mcp_queries_required: 3
+
   - id: service-matrix-truth
     name: Service Matrix Truth Reconciliation
     location: .github/skills/service-matrix-truth/
@@ -580,15 +640,16 @@ skills:
 # ---------------------------------------------------------------------------
 
 mvp_summary:
-  total_skills_registered: 25
+  total_skills_registered: 29
   github_skills: 13
   claude_skills: 9
-  office_skills: 3   # pulser-office-powerpoint-studio, word-studio, excel-studio
-  platform_skills_library: 264  # agents/skills/ — not individually listed here
-  mvp_critical_count: 18
-  p0_skills: 3   # azure-pg-ha-dr, entra-mfa-ca-hardening, aca-private-networking
-  p1_skills: 15  # +3 pulser-odoo-* product-release + 3 office studio skills
-  p2_skills: 3   # (7 platform) + odoo-copilot-evals, service-matrix-truth
-  status_active: 25
+  office_skills: 3
+  platform_specialary_skills: 4  # p2p, r2r, media, marketplace
+  platform_skills_library: 264
+  mvp_critical_count: 21
+  p0_skills: 3
+  p1_skills: 19
+  p2_skills: 3
+  status_active: 29
   status_draft: 0
   status_deprecated: 0
