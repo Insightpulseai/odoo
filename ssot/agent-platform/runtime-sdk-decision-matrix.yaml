@@ -1,0 +1,185 @@
+# =============================================================================
+# Runtime SDK Decision Matrix — SSOT
+# =============================================================================
+# Authority: canonical comparison of the 4 agent runtime primitive options
+#            and IPAI's decision for each. Microsoft Agent Framework is
+#            already chosen as substrate (see agent_framework_adoption.yaml);
+#            this file explains the tradeoffs and when each alternative
+#            is a valid reference or fallback.
+# Related:   ssot/agent-platform/agent_framework_adoption.yaml
+#            ssot/agent-platform/foundry-chat-and-function-calling-reference.yaml
+#            ssot/agent-platform/agent_delivery_stack.yaml
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: canonical
+
+# -----------------------------------------------------------------------------
+# The 4 options compared
+# -----------------------------------------------------------------------------
+options:
+
+  microsoft_agent_framework:
+    name: Microsoft Agent Framework (MAF)
+    classification: runtime_substrate (IPAI chosen)
+    level: framework_with_workflows_graphs_middleware_telemetry
+    language_surfaces: [python, dotnet]
+    primitives:
+      - Agent
+      - SequentialBuilder
+      - GraphBuilder
+      - AzureAIAgentClient (Foundry)
+      - FileCheckpointStorage
+      - OpenTelemetry_integration
+      - Middleware
+    best_for:
+      - multi_agent_coordination
+      - workflow_graphs_with_branching
+      - production_grade_orchestration
+      - foundry_aligned_backends
+      - supervisor_mediated_patterns
+    ipai_decision: ADOPTED_AS_SUBSTRATE
+    adoption_ssot: ssot/agent-platform/agent_framework_adoption.yaml
+    placement: agent-platform/src/agent_platform/
+
+  semantic_kernel:
+    name: Semantic Kernel (SK)
+    classification: application_side_orchestration_sdk
+    level: app_runtime_container (kernel + plugins + history)
+    language_surfaces: [dotnet, python, java]
+    primitives:
+      - Kernel
+      - Plugins_Functions
+      - ChatHistory
+      - FunctionChoiceBehavior.Auto
+      - Chat_completion_service_wiring
+      - Lightweight_planning_via_function_calling
+    best_for:
+      - single_agent_chat_apps
+      - typed_plugins_over_business_systems
+      - controlled_tool_invocation
+      - middleware_style_orchestration_in_app_code
+    not_ideal_as_sole_architecture_for:
+      - tenant_branch_domain_aware_control_plane
+      - enterprise_release_governance
+      - deep_identity_policy
+      - full_multi_surface_agent_platform
+    ipai_decision: REFERENCE_ONLY_NOT_RUNTIME
+    reason: >
+      SK is a sibling SDK to MAF (Microsoft has stated MAF evolves
+      from/alongside SK). For a single-agent chat app it is reasonable;
+      for IPAI's supervisor-mediated multi-agent + context-envelope +
+      judge-pipeline + domain-pack model, MAF is the better fit. Do NOT
+      mix SK into agent-platform/src/agent_platform/ runtime code.
+    when_to_revisit: "Only if MAF fails to cover a required primitive
+      and SK provides it. Unlikely given MAF's current trajectory."
+
+  foundry_agent_service:
+    name: Foundry Agent Service (hosted agents)
+    classification: azure_hosted_managed_agent_runtime
+    level: managed_service_no_app_side_runtime
+    language_surfaces: [any_client_via_sdk_or_rest]
+    primitives:
+      - Hosted_agent
+      - Persistent_threads_and_history
+      - Built_in_tool_orchestration
+      - Connected_knowledge_sources (AI Search)
+      - Content_safety_guardrails
+    best_for:
+      - poc_or_starter_chat_topology (see foundry POC reference)
+      - delegating_orchestration_to_managed_azure_service
+      - fast_experimentation_without_app_side_runtime
+    limitations_for_ipai:
+      - effectively_nondeterministic_behavior (per Foundry POC doc)
+      - limited_deterministic_control_over_tool_invocation
+      - harder_to_enforce_ipai_specific_policy_engine
+      - harder_to_enforce_supervisor_mediated_pattern
+      - harder_to_inject_ipai_context_envelope
+    ipai_decision: REFERENCE_ONLY_AS_BACKEND_OPTION_NOT_SOLE_RUNTIME
+    reason: >
+      Hosted Agent Service is a valid BACKEND for specific agents (e.g.,
+      a simple PrismaLab research agent) but cannot host IPAI's
+      supervisor-mediated orchestration + context envelope + judge
+      pipeline end-to-end. Use MAF client (AzureAIAgentClient) to call
+      hosted Agent Service WHEN AND ONLY WHEN the agent is a
+      straightforward hosted pattern.
+
+  raw_function_calling:
+    name: Raw function calling (OpenAI chat completions API)
+    classification: lowest_level_primitive
+    level: direct_model_api_no_framework
+    language_surfaces: [any]
+    primitives:
+      - chat_completions_api
+      - tools_array_in_request
+      - tool_calls_in_response
+      - role_tool_message_for_results
+      - tool_choice_auto_force_none
+    best_for:
+      - deterministic_ad_hoc_tool_calls
+      - specialized_ipai_internal_utilities
+      - cases_where_framework_overhead_is_unwanted
+      - library_code_that_must_stay_framework_agnostic
+    ipai_decision: ALLOWED_FOR_SPECIFIC_UTILITIES_NOT_PRIMARY_RUNTIME
+    reason: >
+      The loop IS the fallback when a framework is inappropriate. Used
+      internally where MAF adds no value (e.g., a single short-lived
+      utility function). For normal Pulser packs, MAF wraps this
+      primitive and adds supervisor + context + judges + hooks.
+    ipai_binding:
+      placement: agent-platform/src/agent_platform/providers/foundry/client.py
+      patterns_reference: ssot/agent-platform/foundry-chat-and-function-calling-reference.yaml
+
+# -----------------------------------------------------------------------------
+# IPAI decision summary
+# -----------------------------------------------------------------------------
+ipai_decision_summary:
+  runtime_substrate: microsoft_agent_framework
+  hosted_backends_allowed: foundry_agent_service (for simple hosted agents, via MAF client)
+  low_level_fallback: raw_function_calling (for utilities)
+  explicitly_rejected_as_runtime: semantic_kernel (reference only)
+  rationale: >
+    IPAI needs supervisor-mediated orchestration + context envelope +
+    domain packs + judge pipeline + 3-protocol (A2A/MCP/Agent365) +
+    hook lifecycle. MAF covers this best. SK is a sibling SDK with
+    overlapping but narrower scope; adopting it alongside MAF would
+    create two parallel orchestration stacks.
+
+# -----------------------------------------------------------------------------
+# Decision tree for new agent/tool
+# -----------------------------------------------------------------------------
+decision_tree:
+  q1_is_this_a_multi_agent_coordinated_workflow:
+    yes:
+      answer: MAF_SequentialBuilder_or_GraphBuilder
+    no:
+      q2_is_this_a_simple_single_hosted_agent_fit:
+        yes:
+          answer: MAF_AzureAIAgentClient_backed_by_Foundry_Agent_Service
+        no:
+          q3_is_this_framework_overhead_truly_unwanted_for_a_one_shot_utility:
+            yes:
+              answer: raw_function_calling_via_openai_client
+            no:
+              answer: default_to_MAF_Agent_primitive
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not running SK and MAF in parallel within agent-platform/
+  - not delegating IPAI supervisor-mediated orchestration to Foundry Agent Service
+  - not using raw function calling for packs that require judge pipeline + context envelope
+  - not re-evaluating the MAF choice without evidence that MAF cannot cover a required primitive
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  agent_framework_adoption: ssot/agent-platform/agent_framework_adoption.yaml
+  foundry_reference: ssot/agent-platform/foundry-chat-and-function-calling-reference.yaml
+  agent_delivery_stack: ssot/agent-platform/agent_delivery_stack.yaml
+  pulser_pack_matrix: platform/ssot/agents/pulser-pack-matrix.yaml
+  pulser_hook_lifecycle: platform/ssot/agents/pulser-hook-lifecycle.yaml
