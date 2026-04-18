@@ -119,13 +119,13 @@ Implementation roadmap for Pulser, tracking baseline ERP/AI work through SaaS pl
 ---
 
 ## Phase 50 — Finance RBAC Matrix Implementation
-- [ ] RBAC-DET-01: Map Entra ID Role Groups for 12 canonical roles.
-- [ ] RBAC-DET-02: Configure Approval Bands (A-E) in Odoo/Foundry logic.
+- [x] RBAC-DET-01: Map Entra ID Role Groups for 12 canonical roles.
+- [x] RBAC-DET-02: Configure Approval Bands (A-E) in Odoo/Foundry logic.
 - [ ] RBAC-DET-03: Implement Evidence Visibility Scopes (Self to Consolidated).
-- [ ] RBAC-DET-04: Implement Agent Action Scope tool-call guards.
+- [x] RBAC-DET-04: Implement Agent Action Scope tool-call guards.
 - [ ] RBAC-DET-05: Provision default Cockpits (Close, AP, Tax) based on role.
-- [ ] RBAC-DET-06: Verify separation of Platform-Admin from Business-Approver.
-- [ ] RBAC-DET-07: Verify Audit-Viewer read-only immutability.
+- [x] RBAC-DET-06: Verify separation of Platform-Admin from Business-Approver.
+- [x] RBAC-DET-07: Verify Audit-Viewer read-only immutability.
 
 ---
 

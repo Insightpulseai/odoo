@@ -143,7 +143,91 @@ roles:
         role: Gamma
         description: View-only dashboards
 
-  # ─── Role 7: Agent Workload (Non-Human) ────────────────────────────
+  # ─── Role 7: Internal Auditor ──────────────────────────────────────
+  - id: auditor
+    entra_group: SG-IPAI-Auditor
+    description: Internal compliance audit — read-only across all accounting and project data
+    scope: platform-read-only
+    mfa_required: true
+    conditional_access: CA-001
+    app_mappings:
+      odoo:
+        groups:
+          - account.group_account_readonly
+          - project.group_project_readonly
+        description: Read-only access to all financial records and project trails
+      plane:
+        role: viewer
+        description: View-only access to all workspaces
+      superset:
+        role: Gamma
+        description: Global view-only dash access
+
+  # ─── Role 8: Procurement Manager ───────────────────────────────────
+  - id: procurement-manager
+    entra_group: SG-IPAI-Procurement-Manager
+    description: Sourcing and purchasing — vendor management, PO creation/approval
+    scope: procurement-apps
+    mfa_required: false
+    conditional_access: null
+    app_mappings:
+      odoo:
+        groups:
+          - purchase.group_purchase_manager
+          - purchase.group_purchase_user
+        description: Full procurement lifecycle management
+      plane:
+        role: member
+        projects: [OPS, ERP]
+        description: Operational procurement project access
+
+  # ─── Role 9: HR / Payroll Manager ──────────────────────────────────
+  - id: hr-payroll
+    entra_group: SG-IPAI-HR-Payroll
+    description: Personnel and compensation — timesheet verification, local payroll (PH)
+    scope: hr-apps
+    mfa_required: true
+    conditional_access: CA-004
+    app_mappings:
+      odoo:
+        groups:
+          - hr.group_hr_manager
+          - hr_payroll.group_hr_payroll_manager
+        description: Sensitive personnel and compensation data management
+
+  # ─── Role 10: Accountant / Consultant ──────────────────────────────
+  - id: accountant
+    entra_group: SG-IPAI-Accountant
+    description: External or internal accounting support — ledger maintenance, reconciliation
+    scope: finance-apps
+    mfa_required: true
+    conditional_access: CA-002
+    app_mappings:
+      odoo:
+        groups:
+          - account.group_account_user
+          - account.group_account_invoice
+        description: Daily accounting operations and ledger entry
+
+  # ─── Role 11: Sales / Business Development ─────────────────────────
+  - id: sales-rep
+    entra_group: SG-IPAI-Sales
+    description: Customer acquisition — CRM, lead tracking, quotation preparation
+    scope: sales-apps
+    mfa_required: false
+    conditional_access: null
+    app_mappings:
+      odoo:
+        groups:
+          - sales_team.group_sale_salesman_all_leads
+          - crm.group_use_lead
+        description: Full CRM and sales pipeline access
+      plane:
+        role: member
+        projects: [SALES]
+        description: Sales pipeline project access
+
+  # ─── Role 12: Agent Workload (Non-Human) ───────────────────────────
   - id: agent-workload
     entra_group: null  # managed identity, not security group
     description: AI agent runtime identity — managed identity on ACA, not a human user

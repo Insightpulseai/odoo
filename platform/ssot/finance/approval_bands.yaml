@@ -1,0 +1,49 @@
+---
+# SSOT: Financial Approval Bands (A-E)
+# Codifies the spending/approval limits for Pulser for Odoo platform.
+# Last updated: 2026-04-18
+version: 1
+
+currency: USD  # Unified base currency for SSOT logic
+
+bands:
+  - id: A
+    name: "Micro / Petty"
+    limit: 100
+    description: "Low-risk, high-velocity transactions (e.g. coffee, taxi, small apps)."
+    policy: "Auto-approval enabled for compliant Agentic actions; human post-audit required."
+    approvers: [finance-user, project-manager, agent-workload]
+
+  - id: B
+    name: "Standard Operational"
+    limit: 1000
+    description: "Day-to-day operational expenses and minor project resources."
+    policy: "Single-human sign-off required (Finance User or Project Manager)."
+    approvers: [finance-user, project-manager]
+
+  - id: C
+    name: "Significant / Managed"
+    limit: 10000
+    description: "Equipment, marketing spends, or medium-term project commitments."
+    policy: "Dual-sign off (Maker-Checker) required (Finance User + Finance Manager)."
+    approvers: [finance-manager]
+
+  - id: D
+    name: "Strategic / CapEx"
+    limit: 50000
+    description: "Major software licenses, headcount expansion, or capital expenditures."
+    policy: "Executive sign-off required (Director / COO)."
+    approvers: [platform-admin]
+
+  - id: E
+    name: "Governance / Board"
+    limit: -1  # Unlimited (Greater than 50k)
+    description: "Platform-wide strategic investments or board-level authorizations."
+    policy: "Board-level approval required (CEO + Board Minute evidence)."
+    approvers: [platform-admin]
+
+governance:
+  maker_checker_enforced: true
+  evidence_required_all_bands: true
+  agent_authority_limit: A
+  agent_preparation_limit: E  # Agents can prepare anything, but only 'pre-validate' A
