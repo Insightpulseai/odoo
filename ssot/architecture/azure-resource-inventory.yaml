@@ -1,0 +1,472 @@
+# =============================================================================
+# Azure Resource Inventory — IPAI Dev Subscription SSOT
+# =============================================================================
+# Authority: canonical inventory of actual Azure resources in the IPAI
+#            Azure Sponsorship subscription, grouped by repo, domain,
+#            resource group, and architectural plane.
+# Scope:     environment = dev (sponsored sub eba824fb-332d-4623-9dfb-2c9f7ee83f4e)
+# Related:   ssot/architecture/azure-architecture-center-map.yaml
+#            ssot/governance/production-ai-foundation-adoption.yaml
+#            ssot/web/site-template-adoption.yaml
+#            ssot/identity/entra_target_state.yaml
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: canonical
+source: azure_portal_inventory_2026_04_19
+
+subscription:
+  id: eba824fb-332d-4623-9dfb-2c9f7ee83f4e
+  name: Microsoft Azure Sponsorship
+  environment: dev
+  primary_region: southeastasia
+  cross_region_exception:
+    region: eastus2
+    resources: [ipai-copilot-resource, ipai-copilot]
+    rationale: Foundry availability at time of provisioning
+    disposition: explicit_architectural_exception
+
+# -----------------------------------------------------------------------------
+# Canonical stack sentence
+# -----------------------------------------------------------------------------
+canonical_summary: >
+  Public apps (ipai-website, ipai-w9studio, ipai-prismalab, ipai-odoo-dev)
+  run in a shared ACA environment (acae-ipai-dev-sea) in Southeast Asia,
+  backed by PostgreSQL (pg-ipai-odoo), Foundry (ipai-copilot-resource /
+  ipai-copilot in East US 2), Search (srch-ipai-dev-sea), Document
+  Intelligence (docai-ipai-dev), Databricks (dbw-ipai-dev), Key Vault
+  (kv-ipai-dev-sea), with segregated monitoring/network/private-endpoint
+  resources.
+
+# -----------------------------------------------------------------------------
+# Public / product surfaces — resource mapping
+# -----------------------------------------------------------------------------
+public_surfaces:
+
+  erp_insightpulseai_com:
+    repo: addons/
+    workload: transactional_erp_runtime
+    aac_lane: "05_erp_transactional"
+    primary_resources:
+      container_app: ipai-odoo-dev
+      container_apps_environment: acae-ipai-dev-sea
+      postgres: pg-ipai-odoo
+      container_registry: acripaiodoo
+      key_vault: kv-ipai-dev-sea
+      managed_identity: id-ipai-dev-runtime
+      app_insights: appi-ipai-dev-runtime-sea
+      log_analytics: log-ipai-dev-runtime-sea
+    supporting_network:
+      vnet: vnet-ipai-dev-sea
+      private_endpoint: pe-ipai-dev-pg
+      private_dns_zone: privatelink.postgres.database.azure.com
+      public_dns_zone: insightpulseai.com
+
+  prismalab_insightpulseai_com:
+    repo: web/ + agent-platform/
+    workload: domain_ai_workspace_document_heavy
+    aac_lane: "06_ai_runtime + 07_retrieval"
+    primary_resources:
+      container_app: ipai-prismalab
+      container_apps_environment: acae-ipai-dev-sea
+      foundry_resource: ipai-copilot-resource
+      foundry_project: ipai-copilot
+      document_intelligence: docai-ipai-dev
+      search: srch-ipai-dev-sea
+      redis: redis-ipai-dev-sea
+      signalr: sigr-ipai-dev-sea
+      managed_identity: id-ipai-dev-agent
+      app_insights: appi-ipai-dev-agent-sea
+      log_analytics: log-ipai-dev-agent-sea
+    supporting_storage:
+      - stipaidevagent
+      - stipaidevlake
+      - stipaidevlogs
+
+  w9studio_net:
+    repo: web/
+    workload: lighter_public_commercial_site
+    aac_lane: "03_public_edge_and_web_security"
+    primary_resources:
+      container_app: ipai-w9studio
+      container_apps_environment: acae-ipai-dev-sea
+      container_registry_shared: acripaiodoo
+      managed_identity_current: id-ipai-dev-runtime
+      managed_identity_future: id-ipai-dev-web (planned)
+      app_insights_current: appi-ipai-dev
+      public_dns_zone: w9studio.net
+
+  www_insightpulseai_com:
+    repo: web/
+    workload: flagship_public_platform_site
+    aac_lane: "03_public_edge_and_web_security"
+    primary_resources:
+      container_app: ipai-website
+      container_apps_environment: acae-ipai-dev-sea
+      managed_identity_current: id-ipai-dev-runtime
+      managed_identity_future: id-ipai-dev-web (planned)
+      app_insights_current: appi-ipai-dev
+      public_dns_zone: insightpulseai.com
+
+# -----------------------------------------------------------------------------
+# AI runtime / agent platform plane
+# -----------------------------------------------------------------------------
+ai_runtime_plane:
+  repo: agent-platform/
+  aac_lane: "06_ai_runtime_and_copilots"
+  primary_resources:
+    foundry_resource: ipai-copilot-resource
+    foundry_project: ipai-copilot
+    document_intelligence: docai-ipai-dev
+    search: srch-ipai-dev-sea
+    redis: redis-ipai-dev-sea
+    signalr: sigr-ipai-dev-sea
+    communication_service: acs-ipai-dev-sea
+    managed_identity_agent: id-ipai-dev-agent
+    managed_identity_runtime: id-ipai-dev-runtime
+    managed_identity_pipeline: id-ipai-dev-pipeline
+    app_insights:
+      - appi-ipai-dev-agent-sea
+      - appi-ipai-dev-runtime-sea
+    log_analytics:
+      - log-ipai-dev-agent-sea
+      - log-ipai-dev-runtime-sea
+  canonical_interpretation:
+    model_provider_authority: ipai-copilot-resource + ipai-copilot
+    document_extraction: docai-ipai-dev
+    retrieval_search: srch-ipai-dev-sea
+    session_cache_realtime: redis-ipai-dev-sea + sigr-ipai-dev-sea
+    runtime_identity: id-ipai-dev-agent + id-ipai-dev-runtime
+
+# -----------------------------------------------------------------------------
+# Transactional data plane
+# -----------------------------------------------------------------------------
+transactional_plane:
+  repo: addons/
+  aac_lane: "05_erp_transactional"
+  primary_resources:
+    postgres: pg-ipai-odoo
+    private_endpoint: pe-ipai-dev-pg
+    private_dns: privatelink.postgres.database.azure.com
+    key_vault: kv-ipai-dev-sea
+    key_vault_private_endpoint: pe-ipai-dev-kv
+    key_vault_private_dns: privatelink.vaultcore.azure.net
+    storage_if_used: stdevipai
+    backup_vault: bvault-ipai-dev-sea
+
+# -----------------------------------------------------------------------------
+# Analytics / data intelligence plane
+# -----------------------------------------------------------------------------
+analytics_plane:
+  repo: data-intelligence/
+  aac_lane: "08_data_intelligence_lakehouse_bi"
+  primary_resources:
+    databricks: dbw-ipai-dev
+    unity_catalog_access_connector: unity-catalog-access-connector
+    databricks_managed_identity: dbmanagedidentity
+    workers_vnet: workers-vnet
+    workers_sg: workers-sg
+    databricks_storage: dbstorageqba5raeuajc6u
+    lake_storage: stipaidevlake
+    lake_storage_alt: stlkipaidev
+    managed_identity_data: id-ipai-dev-data
+    log_analytics_data: log-ipai-dev-data-sea
+    app_insights_current: appi-ipai-dev
+  governance_catalog:
+    purview_account: pv-ipai-dev-sea
+    purview_event_hubs_namespace: Atlas-e613d16b-0a3b-4715-bba1-3ecdb0857796
+    purview_managed_storage: scansoutheastasiadckrnut
+
+# -----------------------------------------------------------------------------
+# Control plane / config / secrets
+# -----------------------------------------------------------------------------
+control_plane:
+  repo: platform/
+  aac_lane: "01_platform_foundation (application plane)"
+  primary_resources:
+    key_vault: kv-ipai-dev-sea
+    managed_identities:
+      - id-ipai-dev             # general / default
+      - id-ipai-dev-runtime     # runtime workloads
+      - id-ipai-dev-agent       # agent runtime
+      - id-ipai-dev-data        # data/analytics
+      - id-ipai-dev-pipeline    # CI/CD / provisioning / worker
+  rule: >
+    This repo describes these resources (metadata, bindings, service
+    catalog). It does NOT provision them — that is infra/.
+
+# -----------------------------------------------------------------------------
+# Infrastructure / networking / edge plane
+# -----------------------------------------------------------------------------
+infrastructure_plane:
+  repo: infra/
+  aac_lane: "01_platform_foundation + 04_compute_runtime"
+  network_resources:
+    vnet: vnet-ipai-dev-sea
+    network_watcher: NetworkWatcher_southeastasia
+  public_dns_zones:
+    - insightpulseai.com
+    - w9studio.net
+  private_endpoints:
+    - pe-ipai-dev-kv
+    - pe-ipai-dev-pg
+    - pe-ipai-dev-search
+  private_dns_zones:
+    - privatelink.applicationinsights.azure.com
+    - privatelink.azurecr.io
+    - privatelink.blob.core.windows.net
+    - privatelink.cognitiveservices.azure.com
+    - privatelink.postgres.database.azure.com
+    - privatelink.search.windows.net
+    - privatelink.servicebus.windows.net
+    - privatelink.vaultcore.azure.net
+  runtime_hosting_substrate:
+    container_apps_environment: acae-ipai-dev-sea
+    container_registry: acripaiodoo
+
+# -----------------------------------------------------------------------------
+# Observability plane (cross-repo)
+# -----------------------------------------------------------------------------
+observability_plane:
+  repo_ownership_split: infra + platform + agent-platform + addons
+  aac_lane: "11_security_zero_trust (telemetry subset)"
+  app_insights:
+    - appi-ipai-dev              # shared / platform
+    - appi-ipai-dev-agent-sea    # agent runtime
+    - appi-ipai-dev-runtime-sea  # app runtime
+  action_groups:
+    - ag-ipai-dev-sea
+  smart_detection: Application Insights Smart Detection
+  log_analytics_workspaces:
+    - log-ipai-dev-sea           # shared / platform
+    - log-ipai-dev-agent-sea     # agent runtime
+    - log-ipai-dev-runtime-sea   # app runtime
+    - log-ipai-dev-data-sea      # analytics
+  logical_split:
+    runtime_logs: log-ipai-dev-runtime-sea
+    agent_logs: log-ipai-dev-agent-sea
+    data_logs: log-ipai-dev-data-sea
+    shared_platform_logs: log-ipai-dev-sea
+
+# -----------------------------------------------------------------------------
+# Resource groups → stack domains
+# -----------------------------------------------------------------------------
+resource_groups:
+
+  rg-ipai-dev-odoo-sea:
+    observed_contents:
+      - acae-ipai-dev-sea
+      - ipai-odoo-dev
+      - ipai-prismalab
+      - ipai-w9studio
+      - ipai-website
+    practical_role: app_runtime_rg_not_purely_odoo_anymore
+    naming_drift_note: >
+      Name implies Odoo-only but currently hosts all public app surfaces.
+      Candidate for rename to rg-ipai-dev-apps-sea when convenient.
+
+  rg-ipai-dev-ai-sea:
+    observed_contents:
+      - dbw-ipai-dev
+      - docai-ipai-dev
+      - ipai-copilot-resource
+      - ipai-copilot
+    practical_role: ai_and_analytics_service_rg
+    cross_region_note: Foundry (ipai-copilot-resource, ipai-copilot) is East US 2
+      while RG label suggests SEA — explicit architectural exception
+
+  rg-ipai-dev-security-sea:
+    observed_contents:
+      - kv-ipai-dev-sea
+      - managed_identities
+      - backup_vault
+      - purview_account
+    practical_role: security_and_control_rg
+
+  rg-ipai-dev-net-sea:
+    observed_contents:
+      - vnet
+      - private_endpoints
+      - dns_zones
+      - private_dns_zones
+    practical_role: networking_and_private_connectivity_rg
+
+  rg-ipai-data-sea:
+    observed_contents:
+      - pg-ipai-odoo
+    practical_role: data_persistence_rg
+
+  rg-ipai-dev-data-sea:
+    observed_contents:
+      - stdevipai
+      - stipaidevagent
+      - stipaidevbkp
+      - stipaidevlake
+      - stipaidevlogs
+      - stlkipaidev
+    practical_role: storage_data_accounts_rg
+
+  rg-ipai-dev-mon-sea:
+    observed_contents:
+      - app_insights
+      - log_analytics
+      - action_groups
+    practical_role: monitoring_rg
+
+# -----------------------------------------------------------------------------
+# Managed-identity-to-purpose mapping
+# -----------------------------------------------------------------------------
+managed_identities:
+  id-ipai-dev:
+    purpose: general_default
+    consumers: [various]
+  id-ipai-dev-runtime:
+    purpose: runtime_workload_auth
+    consumers: [ipai-odoo-dev, ipai-website, ipai-w9studio, ipai-prismalab (current)]
+  id-ipai-dev-agent:
+    purpose: agent_runtime_and_foundry_auth
+    consumers: [agent-platform runtime, ipai-prismalab (agent backend)]
+  id-ipai-dev-data:
+    purpose: databricks_and_data_pipelines
+    consumers: [dbw-ipai-dev, analytics jobs]
+  id-ipai-dev-pipeline:
+    purpose: cicd_provisioning_worker
+    consumers: [azure_pipelines, worker_containers]
+
+# -----------------------------------------------------------------------------
+# Repo → primary Azure resources matrix
+# -----------------------------------------------------------------------------
+repo_resource_matrix:
+  ".github":
+    primary_resources: []
+    note: no direct resources; pipeline bindings to identities/resources
+  "infra":
+    primary_resources:
+      - vnet-ipai-dev-sea
+      - private_endpoints (pe-ipai-dev-*)
+      - public_dns_zones (insightpulseai.com, w9studio.net)
+      - private_dns_zones
+      - acae-ipai-dev-sea
+      - acripaiodoo
+      - monitoring_substrate
+  "platform":
+    primary_resources:
+      - kv-ipai-dev-sea_references
+      - managed_identity_bindings
+      - environment_and_model_metadata
+  "agent-platform":
+    primary_resources:
+      - ipai-copilot-resource
+      - ipai-copilot
+      - docai-ipai-dev
+      - srch-ipai-dev-sea
+      - redis-ipai-dev-sea
+      - sigr-ipai-dev-sea
+      - acs-ipai-dev-sea
+      - id-ipai-dev-agent
+      - id-ipai-dev-runtime
+      - appi-ipai-dev-agent-sea
+      - appi-ipai-dev-runtime-sea
+      - log-ipai-dev-agent-sea
+      - log-ipai-dev-runtime-sea
+  "agents":
+    primary_resources: []
+    note: content/policy only; no primary Azure resources
+  "web":
+    primary_resources:
+      - ipai-website
+      - ipai-prismalab
+      - ipai-w9studio
+  "addons (odoo)":
+    primary_resources:
+      - ipai-odoo-dev
+      - pg-ipai-odoo
+      - id-ipai-dev-runtime
+      - erp_telemetry_resources
+  "data-intelligence":
+    primary_resources:
+      - dbw-ipai-dev
+      - unity-catalog-access-connector
+      - lake_storage_accounts
+      - pv-ipai-dev-sea
+  "automations":
+    primary_resources: []
+    note: expect pipeline/runtime identities + worker hosting when added
+  "docs":
+    primary_resources: []
+  "design":
+    primary_resources: []
+  "templates":
+    primary_resources: []
+
+# -----------------------------------------------------------------------------
+# Cleanup observations
+# -----------------------------------------------------------------------------
+cleanup_observations:
+
+  rg_naming_drift:
+    finding: >
+      rg-ipai-dev-odoo-sea is no longer just Odoo. It hosts Odoo, Prismalab,
+      W9 Studio, website, and the shared ACA env. That is really an app
+      runtime RG.
+    action: rename_candidate_to_rg-ipai-dev-apps-sea
+    priority: low (cosmetic, not blocking)
+
+  foundry_regional_split:
+    finding: >
+      Foundry resource ipai-copilot-resource is East US 2, while the rest
+      of the stack is Southeast Asia.
+    action: treat_as_explicit_architectural_exception_in_docs
+    priority: medium (document the exception; re-evaluate when Foundry
+      SEA regional availability improves)
+
+  managed_identity_model:
+    finding: >
+      MI separation already useful: id-ipai-dev, id-ipai-dev-agent,
+      id-ipai-dev-data, id-ipai-dev-pipeline, id-ipai-dev-runtime.
+      Maps cleanly to target repo split.
+    action: formalize_in_ssot (already done above)
+    priority: already_captured
+
+  web_dedicated_identity_and_telemetry:
+    finding: >
+      ipai-website and ipai-w9studio currently share id-ipai-dev-runtime
+      and appi-ipai-dev. Dedicated web MI + App Insights would give
+      cleaner separation.
+    action: planned_future_split (id-ipai-dev-web + appi-ipai-dev-web-sea)
+    priority: low_until_web_traffic_warrants_separation
+
+# -----------------------------------------------------------------------------
+# Drift detection hooks
+# -----------------------------------------------------------------------------
+drift_detection:
+  source_of_truth: this_ssot
+  live_source: azure_resource_graph
+  recommended_check:
+    tool: az_graph_query
+    command: >
+      az graph query -q "Resources | where subscriptionId == 'eba824fb-332d-4623-9dfb-2c9f7ee83f4e' | project name, type, location, resourceGroup | order by resourceGroup, type"
+  cadence: monthly_plus_on_infra_PRs
+  evidence_path: docs/evidence/<YYYYMMDD-HHMM>/azure-resource-inventory-drift/
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not_a_bicep_or_terraform_source_of_truth (that lives in infra/azure/)
+  - not_a_cost_model (tracked separately)
+  - not_a_permissions_matrix (tracked in ssot/identity/ and PIM)
+  - not_auto_synced_to_live_state (refresh on inventory audits)
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  architecture_map: ssot/architecture/azure-architecture-center-map.yaml
+  production_foundation: ssot/governance/production-ai-foundation-adoption.yaml
+  site_templates: ssot/web/site-template-adoption.yaml
+  identity_target: ssot/identity/entra_target_state.yaml
+  agent_framework: ssot/agent-platform/agent_framework_adoption.yaml
+  boards_taxonomy: ssot/governance/azure-boards-taxonomy.yaml
