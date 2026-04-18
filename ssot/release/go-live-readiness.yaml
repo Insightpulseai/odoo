@@ -1,0 +1,229 @@
+# =============================================================================
+# Go-Live Readiness — SSOT
+# =============================================================================
+# Authority: canonical go-live readiness doctrine. Adapted from Microsoft
+#            Dynamics Lifecycle go-live guidance. Distinct from feature
+#            ship-readiness (which is per-feature); this is production
+#            cutover for a solution-level release.
+# Related:   ssot/release/feature-ship-readiness-gates.yaml (per-feature)
+#            ssot/release/release_contract.yaml
+#            ssot/release/release_gates.yaml
+#            ssot/governance/azure-boards-taxonomy.yaml (EPIC-009 Release Ops)
+#            platform/ssot/agents/pulser-pack-matrix.yaml (pulser_release_ops)
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: canonical
+
+doctrine: >
+  Go-live = readiness review + cutover discipline + support readiness +
+  evidence-based go/no-go. NOT "deploy and hope." A solution may not go
+  live without signed-off testing, signed-off cutover, support coverage,
+  blocker classification, environment readiness, production monitoring,
+  and rollback/mitigation planning.
+
+# -----------------------------------------------------------------------------
+# Core readiness checklist (mandatory, pre-cutover)
+# -----------------------------------------------------------------------------
+core_readiness_checklist:
+
+  testing:
+    - system_integration_testing_completed_and_signed_off
+    - user_acceptance_testing_completed_and_signed_off
+    - performance_testing_completed_and_signed_off
+
+  deployable_artifacts:
+    - code_finished
+    - deployable_packages_built
+
+  data:
+    - data_migration_plan_documented
+
+  cutover:
+    - cutover_plan_signed_off
+    - cutover_window_defined
+    - rollback_window_defined
+
+  people:
+    - user_training_completed
+    - security_role_assignments_correct
+    - license_allocation_sufficient
+
+  support:
+    - production_support_plan_signed_off
+    - on_call_coverage_confirmed_for_cutover_window
+    - escalation_contacts_documented
+
+  risk:
+    - critical_open_issues_from_prior_reviews_mitigated
+
+# -----------------------------------------------------------------------------
+# Go-live readiness review (quality gate in the Prepare phase)
+# -----------------------------------------------------------------------------
+readiness_review:
+  purpose:
+    - assess_solution_functional_and_nonfunctional_readiness
+    - validate_cutover_plan_and_cutover_window
+    - identify_risks_and_blockers
+    - confirm_prior_implementation_activities_complete
+    - support_stakeholder_go_no_go_decision
+  timing:
+    start_rule: early_enough_to_mitigate_issues
+    start_anti_rule: not_so_early_that_the_project_is_still_too_immature_to_assess
+  outputs:
+    - readiness_review_report
+    - blocker_register_with_disposition
+    - mitigation_plan
+    - go_no_go_recommendation
+  decision_authority: named_stakeholder_set_per_release
+
+# -----------------------------------------------------------------------------
+# Customer engagement app specifics (web/API surface-facing releases)
+# -----------------------------------------------------------------------------
+customer_engagement_app_specifics:
+  applies_to:
+    - web/apps/*
+    - agent-platform/services/*
+    - ipai_odoo_copilot systray chat surface
+  requirements:
+    - validate_nonfunctional_requirements_load_times_integration_performance
+    - use_automation_testing
+    - prepare_training_and_adoption
+    - ensure_strong_monitoring_alerting_and_communication
+    - plan_for_data_migration_throughput_and_api_limits
+    - align_external_dependencies
+    - ensure_production_environment_matches_correct_app_version
+    - define_clear_support_model
+    - prepare_for_continuous_updates_and_change_management
+
+# -----------------------------------------------------------------------------
+# Finance / operations specifics (Odoo ERP + finance workflows)
+# -----------------------------------------------------------------------------
+finance_operations_specifics:
+  applies_to:
+    - addons/ (Odoo CE 18 + OCA + ipai_*)
+    - erp.insightpulseai.com
+    - finance pack (pulser_finance) release gates
+  requirements:
+    - lifecycle_management_tool_set_up_correctly
+    - confirm_production_environment_sizing_and_capacity
+    - use_lifecycle_tools_for_deployment_refresh_monitoring_diagnostics
+    - comply_with_version_update_policy
+    - perform_regression_testing_for_updates_and_fixes
+  note: >
+    Microsoft's "One Version" policy is Dynamics-specific. The IPAI
+    equivalent is "Odoo CE 18 + canonical OCA pinned branches + ipai_*
+    versioned modules." Upgrade from older Odoo versions MUST use
+    OCA-port and follow OCA/Odoo migration guidance.
+
+# -----------------------------------------------------------------------------
+# Go / no-go decision matrix
+# -----------------------------------------------------------------------------
+go_no_go_matrix:
+
+  go_conditions_all_required:
+    - core_readiness_checklist_complete
+    - readiness_review_report_published
+    - no_unmitigated_critical_blockers
+    - cutover_plan_signed_off_by_stakeholders
+    - production_support_on_call_confirmed
+    - rollback_plan_tested_in_preprod
+
+  no_go_conditions_any_triggers:
+    - unmitigated_critical_blocker
+    - cutover_plan_unsigned
+    - support_coverage_gap_during_cutover_window
+    - rollback_plan_untested
+    - environment_drift_between_preprod_and_prod
+    - licensing_gap_for_active_users
+
+  delay_conditions:
+    - non_critical_blockers_pending_but_resolvable_within_window
+    - external_dependency_readiness_pending_but_time_bounded
+
+# -----------------------------------------------------------------------------
+# Cutover discipline
+# -----------------------------------------------------------------------------
+cutover_discipline:
+  activities:
+    - prepare_production_environment
+    - deploy_solution
+  pre_cutover:
+    - final_data_export_from_source
+    - freeze_source_writes (if applicable)
+    - pre_flight_smoke_tests
+  during_cutover:
+    - execute_data_migration
+    - deploy_code_and_config
+    - run_post_deploy_smoke
+    - verify_monitoring_active
+  post_cutover:
+    - hypercare_window_defined (typically 72h)
+    - daily_go_live_status_report
+    - incident_escalation_ready
+    - rollback_criteria_monitored
+
+  rollback_discipline:
+    - rollback_plan_documented_and_signed_off
+    - rollback_executed_if_critical_sev1_unresolvable_within_hypercare
+    - rollback_evidence_captured
+
+# -----------------------------------------------------------------------------
+# Pulser Release Ops binding
+# -----------------------------------------------------------------------------
+pulser_release_ops_binding:
+  pack: pulser_release_ops (future domain pack, see pulser-domain-packs.yaml)
+  tasks:
+    - conduct_readiness_review
+    - classify_blockers
+    - draft_cutover_runbook
+    - monitor_hypercare_window
+    - produce_go_no_go_briefing
+  judges:
+    - release_readiness_judge
+    - policy_judge
+    - grounding_judge
+  tools:
+    - ado_boards_read (EPIC-009 Release Ops)
+    - pipelines_status_read
+    - monitoring_read (App Insights + Log Analytics)
+    - evidence_pack_write
+
+# -----------------------------------------------------------------------------
+# Evidence requirements
+# -----------------------------------------------------------------------------
+evidence_requirements:
+  pack_location: docs/evidence/<YYYYMMDD-HHMM>/go-live/
+  required_artifacts:
+    - readiness_review_report.md
+    - core_readiness_checklist_completed.yaml
+    - cutover_plan_signed.md
+    - rollback_plan_tested.md
+    - support_plan_signed.md
+    - blocker_register.yaml
+    - go_no_go_decision.md
+    - post_cutover_hypercare_log.md
+
+# -----------------------------------------------------------------------------
+# Scope clarifications
+# -----------------------------------------------------------------------------
+scope_clarification:
+  this_is: solution_level_production_cutover_readiness
+  this_is_not: per_feature_ship_readiness (see feature-ship-readiness-gates.yaml)
+  relationship: >
+    Feature ship-readiness is a per-feature gate. Go-live readiness is a
+    solution-level milestone that may include MANY feature ship events
+    plus cutover discipline. Both are required when cutover is involved.
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  feature_ship_gates: ssot/release/feature-ship-readiness-gates.yaml
+  release_contract: ssot/release/release_contract.yaml
+  release_gates: ssot/release/release_gates.yaml
+  boards_taxonomy: ssot/governance/azure-boards-taxonomy.yaml
+  pulser_pack_matrix: platform/ssot/agents/pulser-pack-matrix.yaml
+  upstream_reference: https://learn.microsoft.com/dynamics365/fin-ops-core/fin-ops/imp-lifecycle/go-live
