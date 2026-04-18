@@ -1,0 +1,318 @@
+stamp: 20260418-0109
+dry_run: false
+mcp_endpoint: https://learn.microsoft.com/api/mcp
+mcp_tools:
+- microsoft_docs_search
+- microsoft_code_sample_search
+- microsoft_docs_fetch
+manifests:
+  learn_mcp_topic_map:
+    path: ssot/agent-platform/learn_mcp_topic_map.yaml
+    exists: true
+  knowledge_sources:
+    path: ssot/agent-platform/knowledge_sources.yaml
+    exists: true
+  skills_manifest:
+    path: ssot/agent-platform/skills_manifest.yaml
+    exists: true
+  knowledge_taxonomy:
+    path: ssot/agent-platform/knowledge_taxonomy.yaml
+    exists: true
+topic_map:
+  total: 16
+  valid:
+  - foundry_overview
+  - foundry_agent_service
+  - foundry_iq
+  - rag_design
+  - ai_search_vector_search
+  - azure_container_apps
+  - key_vault
+  - private_endpoints
+  - azure_postgresql_flexible_server
+  - ai_well_architected_guidance
+  - ai_evaluation_and_monitoring
+  - content_safety
+  - managed_identity
+  - azure_front_door
+  - azure_monitor_for_ai
+  - azure_ml_automl
+  gaps: []
+  query_plan:
+  - topic: foundry_overview
+    tool: microsoft_docs_search
+    query: Azure AI Foundry overview project setup resource
+    mvp_critical: true
+  - topic: foundry_overview
+    tool: microsoft_docs_search
+    query: Azure AI Foundry SDK Python v2 quickstart
+    mvp_critical: true
+  - topic: foundry_overview
+    tool: microsoft_docs_search
+    query: Azure AI Foundry project endpoint connection string
+    mvp_critical: true
+  - topic: foundry_overview
+    tool: microsoft_docs_search
+    query: Azure AI Foundry hub project resource hierarchy
+    mvp_critical: true
+  - topic: foundry_agent_service
+    tool: microsoft_docs_search
+    query: Azure AI Foundry Agent Service Python SDK create agent thread
+    mvp_critical: true
+  - topic: foundry_agent_service
+    tool: microsoft_docs_search
+    query: Azure AI Foundry Agent Service tool definitions function calling
+    mvp_critical: true
+  - topic: foundry_agent_service
+    tool: microsoft_docs_search
+    query: Azure AI Foundry Agent Service connected agents handoff
+    mvp_critical: true
+  - topic: foundry_agent_service
+    tool: microsoft_docs_search
+    query: Azure AI Foundry Agent Service SDK v2 migration from v1
+    mvp_critical: true
+  - topic: foundry_iq
+    tool: microsoft_docs_search
+    query: Azure AI Foundry file search vector store grounding
+    mvp_critical: true
+  - topic: foundry_iq
+    tool: microsoft_docs_search
+    query: Azure AI Foundry Bing grounding tool agent
+    mvp_critical: true
+  - topic: foundry_iq
+    tool: microsoft_docs_search
+    query: Azure AI Foundry knowledge retrieval semantic search
+    mvp_critical: true
+  - topic: rag_design
+    tool: microsoft_docs_search
+    query: Azure AI Search RAG retrieval augmented generation pattern
+    mvp_critical: true
+  - topic: rag_design
+    tool: microsoft_docs_search
+    query: Azure AI Foundry RAG chunking strategy embedding model selection
+    mvp_critical: true
+  - topic: rag_design
+    tool: microsoft_docs_search
+    query: Azure AI Search hybrid semantic keyword search ranking
+    mvp_critical: true
+  - topic: ai_search_vector_search
+    tool: microsoft_docs_search
+    query: Azure AI Search vector search hybrid retrieval semantic ranking
+    mvp_critical: true
+  - topic: ai_search_vector_search
+    tool: microsoft_docs_search
+    query: Azure AI Search index management skillset enrichment
+    mvp_critical: true
+  - topic: ai_search_vector_search
+    tool: microsoft_docs_search
+    query: Azure AI Search integrated vectorization text-embedding-3-small
+    mvp_critical: true
+  - topic: ai_search_vector_search
+    tool: microsoft_docs_search
+    query: Azure AI Search private endpoint managed identity access
+    mvp_critical: true
+  - topic: azure_container_apps
+    tool: microsoft_docs_search
+    query: Azure Container Apps deployment scaling revisions ingress
+    mvp_critical: true
+  - topic: azure_container_apps
+    tool: microsoft_docs_search
+    query: Azure Container Apps private networking VNET subnet NSG
+    mvp_critical: true
+  - topic: azure_container_apps
+    tool: microsoft_docs_search
+    query: Azure Container Apps managed identity Key Vault integration
+    mvp_critical: true
+  - topic: azure_container_apps
+    tool: microsoft_docs_search
+    query: Azure Container Apps health probes liveness readiness
+    mvp_critical: true
+  - topic: key_vault
+    tool: microsoft_docs_search
+    query: Azure Key Vault RBAC secrets access managed identity ACA
+    mvp_critical: true
+  - topic: key_vault
+    tool: microsoft_docs_search
+    query: Azure Key Vault private endpoint network access restriction
+    mvp_critical: true
+  - topic: key_vault
+    tool: microsoft_docs_search
+    query: Azure Key Vault secret versioning rotation policy
+    mvp_critical: true
+  - topic: private_endpoints
+    tool: microsoft_docs_search
+    query: Azure private endpoint setup PostgreSQL Flexible Server
+    mvp_critical: true
+  - topic: private_endpoints
+    tool: microsoft_docs_search
+    query: Azure private link private endpoint ACA container apps integration
+    mvp_critical: true
+  - topic: private_endpoints
+    tool: microsoft_docs_search
+    query: Azure private DNS zone private endpoint name resolution
+    mvp_critical: true
+  - topic: azure_postgresql_flexible_server
+    tool: microsoft_docs_search
+    query: Azure PostgreSQL Flexible Server high availability zone redundant
+    mvp_critical: true
+  - topic: azure_postgresql_flexible_server
+    tool: microsoft_docs_search
+    query: Azure PostgreSQL Flexible Server backup retention geo-redundant backup
+    mvp_critical: true
+  - topic: azure_postgresql_flexible_server
+    tool: microsoft_docs_search
+    query: Azure PostgreSQL Flexible Server private endpoint VNET integration
+    mvp_critical: true
+  - topic: azure_postgresql_flexible_server
+    tool: microsoft_docs_search
+    query: Azure PostgreSQL Flexible Server major version upgrade
+    mvp_critical: true
+  - topic: ai_well_architected_guidance
+    tool: microsoft_docs_search
+    query: Azure Well-Architected Framework AI workload reliability security
+    mvp_critical: true
+  - topic: ai_well_architected_guidance
+    tool: microsoft_docs_search
+    query: Azure Well-Architected Framework AI agent stateless session management
+    mvp_critical: true
+  - topic: ai_well_architected_guidance
+    tool: microsoft_docs_search
+    query: Azure Well-Architected operational excellence AI platform monitoring
+    mvp_critical: true
+  - topic: ai_evaluation_and_monitoring
+    tool: microsoft_docs_search
+    query: Azure AI Foundry evaluation metrics groundedness relevance coherence
+    mvp_critical: false
+  - topic: ai_evaluation_and_monitoring
+    tool: microsoft_docs_search
+    query: Azure AI Foundry online evaluation monitoring production agents
+    mvp_critical: false
+  - topic: ai_evaluation_and_monitoring
+    tool: microsoft_docs_search
+    query: Azure AI Foundry prompt flow evaluation SDK
+    mvp_critical: false
+  - topic: content_safety
+    tool: microsoft_docs_search
+    query: Azure AI Content Safety Foundry agent integration
+    mvp_critical: false
+  - topic: content_safety
+    tool: microsoft_docs_search
+    query: Azure AI Content Safety prompt shield groundedness
+    mvp_critical: false
+  - topic: managed_identity
+    tool: microsoft_docs_search
+    query: Azure managed identity ACA container apps assignment Key Vault
+    mvp_critical: true
+  - topic: managed_identity
+    tool: microsoft_docs_search
+    query: Azure managed identity Foundry agent service project connection
+    mvp_critical: true
+  - topic: managed_identity
+    tool: microsoft_docs_search
+    query: Azure managed identity user-assigned system-assigned comparison
+    mvp_critical: true
+  - topic: azure_front_door
+    tool: microsoft_docs_search
+    query: Azure Front Door WAF policy routing rules TLS origin
+    mvp_critical: false
+  - topic: azure_front_door
+    tool: microsoft_docs_search
+    query: Azure Front Door ACA origin private link integration
+    mvp_critical: false
+  - topic: azure_monitor_for_ai
+    tool: microsoft_docs_search
+    query: Azure Monitor Application Insights ACA container apps instrumentation
+    mvp_critical: false
+  - topic: azure_monitor_for_ai
+    tool: microsoft_docs_search
+    query: Azure AI Foundry agent tracing telemetry Log Analytics
+    mvp_critical: false
+  - topic: azure_monitor_for_ai
+    tool: microsoft_docs_search
+    query: Azure Monitor alert rules AI workload error budget SLO
+    mvp_critical: false
+  - topic: azure_ml_automl
+    tool: microsoft_docs_search
+    query: Azure Machine Learning AutoML tabular classification regression
+    mvp_critical: false
+knowledge_sources:
+  source_order_valid: true
+  order_issues: []
+  paths_checked: 0
+  missing_paths: []
+skills_manifest:
+  total: 25
+  valid:
+  - azure-pg-ha-dr
+  - entra-mfa-ca-hardening
+  - aca-private-networking
+  - azure-observability-baseline
+  - azure-foundry-architecture
+  - odoo-image-supply-chain
+  - odoo-release-promotion
+  - pulser-odoo-architecture
+  - pulser-odoo-deploy
+  - pulser-odoo-foundry-runtime
+  - azure-policy-guardrails
+  - pulser-office-powerpoint-studio
+  - pulser-office-word-studio
+  - pulser-office-excel-studio
+  - odoo-copilot-evals
+  - service-matrix-truth
+  - claude_azure_document_intelligence
+  - claude_azure_runtime_review
+  - claude_ci_workflow_audit
+  - claude_entra_identity_governance
+  - claude_oca_module_porter
+  - claude_odoo_oca_governance
+  - claude_roadmap_ssot_guard
+  - claude_spec_kit_review
+  - claude_ui_ux_pro_max
+  missing_skill_dirs: []
+  missing_required_files:
+  - pulser-office-powerpoint-studio/examples.md
+  - pulser-office-word-studio/examples.md
+  - pulser-office-excel-studio/examples.md
+  - claude_azure_document_intelligence/examples.md
+  - claude_azure_runtime_review/examples.md
+  - claude_ci_workflow_audit/examples.md
+  - claude_entra_identity_governance/examples.md
+  - claude_oca_module_porter/examples.md
+  - claude_odoo_oca_governance/examples.md
+  - claude_roadmap_ssot_guard/examples.md
+  - claude_spec_kit_review/examples.md
+  - claude_ui_ux_pro_max/examples.md
+taxonomy:
+  deferred_count: 15
+  mvp_critical_in_deferred: []
+  missing_approved_alternative: []
+  duplicate_ids: []
+skills_on_disk:
+  total_on_disk: 18
+  skills:
+  - aca-private-networking
+  - azure-aca-runtime
+  - azure-ai-evals-governance
+  - azure-foundry-architecture
+  - azure-foundry-grounding
+  - azure-observability-baseline
+  - azure-pg-ha-dr
+  - azure-policy-guardrails
+  - azure-postgres-private-networking
+  - entra-mfa-ca-hardening
+  - microsoft-learn-research
+  - odoo-copilot-evals
+  - odoo-image-supply-chain
+  - odoo-release-promotion
+  - pulser-odoo-architecture
+  - pulser-odoo-deploy
+  - pulser-odoo-foundry-runtime
+  - service-matrix-truth
+  incomplete: []
+summary:
+  missing_manifests: []
+  topic_gaps: 0
+  missing_repo_paths: 0
+  mvp_topics_in_deferred: 0
+  incomplete_skills_on_disk: 0
+  query_plan_entries: 49
