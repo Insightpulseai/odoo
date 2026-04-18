@@ -1,0 +1,293 @@
+# =============================================================================
+# Entra Identity Matrix — SSOT
+# =============================================================================
+# Authority: canonical mapping of identity PLANES to USE CASES and
+#            INTEGRATION PATTERNS. Consolidates Entra ID (workforce) +
+#            Entra External ID (guests/customers) + Entra Agent ID
+#            (nonhuman agents) + Odoo Azure sign-in (app integration
+#            pattern) + Odoo multi-company (data-model isolation).
+# Related:   ssot/identity/entra_target_state.yaml (full target state)
+#            ssot/identity/mailbox-authority.yaml (mail authority split)
+#            ssot/identity/guest-invite-registry.yaml (B2B guests)
+#            ssot/odoo/odoo-sso-runtime-state.yaml (Odoo SSO config)
+#            ssot/odoo/business_dimensions.yaml (multi-company + branch)
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: canonical
+
+# -----------------------------------------------------------------------------
+# Canonical sentence
+# -----------------------------------------------------------------------------
+canonical_summary: |
+  Microsoft Entra ID        = humans in the workforce tenant
+  Microsoft Entra External ID = external humans (guests or customers)
+  Microsoft Entra Agent ID    = nonhuman agents
+  Odoo Azure sign-in          = app login integration against Entra
+  Odoo multi-company          = company-context data behavior inside ERP
+
+# -----------------------------------------------------------------------------
+# The 5 planes (do NOT collapse)
+# -----------------------------------------------------------------------------
+planes:
+
+  entra_id:
+    name: Microsoft Entra ID
+    plane_role: workforce_admin_guest_app_identity
+    use_for:
+      - internal_workforce_users
+      - admins
+      - guest_collaborators_in_workforce_tenant
+      - enterprise_applications_and_service_principals
+      - managed_identities_for_azure_resources
+    ipai_scope:
+      - jake_tolentino_and_jake_admin
+      - internal_insightpulseai_members
+      - tbwa_smp_omnicom_guest_users
+      - app_registrations_for_odoo_login
+      - managed_identities_for_runtime_workloads
+    ssot_anchor: ssot/identity/entra_target_state.yaml
+
+  entra_external_id:
+    name: Microsoft Entra External ID
+    plane_role: external_user_plane
+    use_for:
+      - b2b_guest_collaboration_with_partner_users
+      - ciam_for_customer_facing_apps
+      - cross_tenant_or_external_user_patterns
+    b2b_scope:
+      - partner_collaborators_in_workforce_tenant_as_guests
+      - tbwa_smp_omnicom_contacts
+      - any_partner_contact_who_needs_scoped_app_access
+    ciam_scope:
+      - reserved_for_customer_scale_self_service_login_only
+      - not_adopted_currently
+      - adopt_when_customer_portal_becomes_real
+    ipai_mode: b2b_only (ssot/identity/entra_target_state.yaml#external_identities.mode)
+
+  entra_agent_id:
+    name: Microsoft Entra Agent ID
+    plane_role: nonhuman_agent_identity_plane
+    use_for:
+      - ai_agents_that_need_enterprise_identities
+      - lifecycle_governance_for_agents
+      - sponsor_accountability_model
+      - secure_agent_access_to_apps_and_resources
+    ipai_scope:
+      - pulser_core_runtime_identity
+      - pulser_finance_agent
+      - pulser_erp_agent
+      - pulser_prismalab_agents
+      - pulser_web_agent
+      - pulser_identity_ops_agent
+    implementation_note: >
+      Agent IDs are special service principals created from blueprints
+      (part of Microsoft Agent 365). Naming convention per entra target
+      state: agent-<system>-<purpose>.
+    ssot_anchor: ssot/identity/entra_target_state.yaml#agent_identities
+    rule: >
+      Agent IDs are NOT human users, NOT shared mailboxes, NOT fake
+      human Entra users. Every agent needs a sponsor and explicit
+      lifecycle disposition.
+
+  odoo_azure_signin:
+    name: Odoo Azure sign-in
+    plane_role: app_integration_pattern_not_an_identity_plane
+    clarification: >
+      Odoo Azure sign-in is an INTEGRATION PATTERN where Odoo acts as
+      OAuth relying party against Entra ID. It is NOT its own identity
+      plane and NOT a replacement for Entra.
+    ipai_config:
+      odoo_module: auth_oauth (Odoo CE 18 built-in; no custom ipai_* module)
+      tenant_mode: single_tenant_entra_app_registration
+      audience: internal_workforce_users_primarily
+      provider_id: 4
+      client_id: "3446e178-3eba-48c9-b5bd-4283ff729eb1"
+      auth_endpoint: "https://login.microsoftonline.com/common/oauth2/v2.0/authorize"
+      data_endpoint: "https://graph.microsoft.com/v1.0/me"
+      scope: "openid profile email"
+      redirect_url: "https://erp.insightpulseai.com/auth_oauth/signin"
+      thin_helper_addon: ipai_auth_oauth_https (forces HTTPS callback behind Azure Front Door)
+    runtime_status: configured_not_verified (ssot/odoo/odoo-sso-runtime-state.yaml)
+
+  odoo_multi_company:
+    name: Odoo multi-company
+    plane_role: erp_data_model_isolation_not_identity_federation
+    clarification: >
+      Odoo multi-company is about COMPANY-CONTEXT BEHAVIOR inside the
+      ERP data model. It determines which company/branch/trade-name
+      context applies after sign-in. It is NOT an identity system.
+    controls:
+      - company_dependent_fields (company_dependent=True)
+      - explicit_company_context_switching (with_company(...))
+      - computed_depends_on_context (depends_context('company'))
+    ipai_use:
+      - dataverse_w9_prismalab_branch_trade_name_distinctions_modeled_here
+      - never_create_separate_identity_systems_for_every_commercial_label
+    ssot_anchor: ssot/odoo/business_dimensions.yaml
+
+# -----------------------------------------------------------------------------
+# Who-uses-what matrix
+# -----------------------------------------------------------------------------
+who_uses_what:
+
+  internal_workforce_users:
+    identity_plane: entra_id
+    odoo_access: entra_oauth_single_tenant
+    odoo_company_context: multi_company_data_behavior
+    examples:
+      - jake.tolentino@insightpulseai.com
+      - jake.admin@insightpulseai.com
+      - breakglass-01/02@insightpulseai.com
+
+  external_partner_collaborators:
+    identity_plane: entra_external_id_b2b
+    residence: workforce_tenant_as_guests
+    odoo_access: only_if_intentionally_allowed_and_mapped_to_erp_roles
+    default: keep_outside_erp_unless_transactional_access_required
+    examples:
+      - 11 TBWA\SMP guests at @omc.com (see guest-invite-registry.yaml)
+
+  public_or_customer_users:
+    identity_plane: entra_external_id_ciam
+    residence: external_tenant_or_workforce_depending_on_scope
+    current_ipai_status: not_adopted
+    adopt_when: customer_scale_self_service_login_required
+    do_not: push_customer_users_directly_into_core_odoo_backoffice
+
+  ai_agents:
+    identity_plane: entra_agent_id
+    residence: workforce_tenant (governed service-principal-like)
+    governance: blueprint_based + sponsor_required + lifecycle_disposition
+    examples:
+      - agent-pulser-core-primary
+      - agent-pulser-finance-reviewer
+      - agent-pulser-prismalab-researcher
+
+  mailbox_aliases:
+    identity_plane: none_of_the_above
+    residence: zoho_or_google_workspace (see mailbox-authority.yaml)
+    rule: MUST_NOT_be_entra_member_users_with_standing_privilege
+
+# -----------------------------------------------------------------------------
+# Per-surface identity binding
+# -----------------------------------------------------------------------------
+surface_identity_binding:
+
+  "erp.insightpulseai.com":
+    primary_identity_plane: entra_id
+    odoo_oauth_mode: single_tenant
+    audience: internal_workforce_users_primarily
+    guests: only_if_intentionally_allowed_and_mapped_into_erp_roles
+    data_context: odoo_multi_company (per business_dimensions.yaml)
+    default_configuration: "Accounts in this organizational directory only"
+
+  "www.insightpulseai.com":
+    primary_identity_plane: none_by_default
+    audience: public
+    if_authenticated_workspace_emerges:
+      evaluate:
+        - workforce_entra (for internal operators)
+        - entra_external_id_b2b (for partner workspaces)
+        - entra_external_id_ciam (only if customer-scale login needed)
+
+  "www.w9studio.net":
+    primary_identity_plane: none_by_default
+    audience: public_commercial
+    if_customer_self_service_login_becomes_necessary:
+      use: entra_external_id_ciam
+    otherwise: keep_unauthenticated_or_lightweight
+
+  "prismalab.insightpulseai.com":
+    primary_identity_plane_if_internal_professional_workspace: workforce_entra_or_b2b_guests
+    primary_identity_plane_if_customer_facing_research_product: entra_external_id_ciam
+    current_assumption: specialist_internal_professional_workspace
+
+# -----------------------------------------------------------------------------
+# Split rules
+# -----------------------------------------------------------------------------
+split_rules:
+
+  by_user_class:
+    - workforce_users → entra_id
+    - partner_guests → entra_external_id_b2b
+    - customer_public_users → entra_external_id_ciam
+    - agents → entra_agent_id
+
+  by_application_trust_boundary:
+    - erp_backoffice → single_tenant_entra_app
+    - public_app_or_workspace → evaluate_external_id_or_workforce_per_audience
+    - agents → entra_agent_id_service_principal_like_governance
+
+  do_not_split_when:
+    - branch_or_trade_name_distinctions → use_odoo_multi_company_not_a_new_tenant
+    - mail_alias_distinctions → use_zoho_or_google_workspace_not_entra
+
+# -----------------------------------------------------------------------------
+# Decision tree
+# -----------------------------------------------------------------------------
+decision_tree:
+  q1_is_the_actor_human:
+    yes:
+      q2_is_the_actor_internal:
+        yes:
+          plane: entra_id
+          app_access_pattern_for_odoo: single_tenant_entra_oauth
+        no:
+          q3_is_the_actor_a_partner_collaborator:
+            yes:
+              plane: entra_external_id_b2b
+              residence: workforce_tenant_as_guest
+              odoo_access: only_if_required_and_scoped
+            no:
+              q4_is_the_actor_a_customer_or_public_user:
+                yes:
+                  plane: entra_external_id_ciam
+                  adopt_when: customer_scale_login_required
+                  odoo_access: do_not_push_into_core_backoffice
+                no:
+                  plane: none
+                  consider: mailbox_only_identity_in_zoho_or_google
+    no:
+      q5_is_the_actor_an_ai_agent:
+        yes:
+          plane: entra_agent_id
+          naming: "agent-<system>-<purpose>"
+          governance: blueprint + sponsor + lifecycle_disposition
+        no:
+          q6_is_the_actor_an_azure_workload:
+            yes:
+              plane: entra_id_managed_identity
+              naming: "mi-<resource>-<env>"
+            no:
+              q7_is_the_actor_an_external_app_trust:
+                yes:
+                  plane: entra_id_service_principal
+                  naming: "sp-<app>-<env>"
+                no:
+                  unresolved: escalate_for_classification
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not a replacement for individual plane SSOTs (binds them, doesn't subsume)
+  - not an RBAC matrix (ssot/identity/pim-role-baseline.yaml owns role assignments)
+  - not a user directory (Entra admin center + ssot/identity/guest-invite-registry.yaml own lists)
+  - not an Odoo access configuration (addons/ipai/*/security/ owns that)
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  entra_target_state: ssot/identity/entra_target_state.yaml
+  mailbox_authority: ssot/identity/mailbox-authority.yaml
+  guest_invite_registry: ssot/identity/guest-invite-registry.yaml
+  guest_groups: ssot/identity/guest-groups.yaml
+  pim_baseline: ssot/identity/pim-role-baseline.yaml
+  odoo_sso_runtime: ssot/odoo/odoo-sso-runtime-state.yaml
+  business_dimensions: ssot/odoo/business_dimensions.yaml
+  agent_delivery_stack: ssot/agent-platform/agent_delivery_stack.yaml
+  agent_framework: ssot/agent-platform/agent_framework_adoption.yaml
