@@ -330,3 +330,7 @@ docs-site/site/
 
 # exclude build zips — regenerable from manifests + icons
 **/appPackage/build/
+
+# Competitive intel decks (binary, local only)
+docs/competitive/*.pptx
+docs/competitive/*.pdf
