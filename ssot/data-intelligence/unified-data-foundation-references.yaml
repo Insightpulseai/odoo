@@ -1,0 +1,145 @@
+# =============================================================================
+# Unified Data Foundation — Upstream Reference SSOT
+# =============================================================================
+# Authority: reference-only codification of two Microsoft upstream repos
+#            that inform the data-intelligence + agent-over-data pattern.
+#            Neither replaces the plane charter; both strengthen it.
+# Related:   ssot/data-intelligence/databricks-plane-charter.yaml (primary)
+#            ssot/agent-platform/agent_framework_adoption.yaml
+#            ssot/web/site-template-adoption.yaml
+#            CLAUDE.md #9 (Databricks primary) + #13 (Fabric mirroring)
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: canonical_reference_only
+
+# -----------------------------------------------------------------------------
+# Upstream references
+# -----------------------------------------------------------------------------
+upstream:
+
+  unified_data_foundation_accelerator:
+    repo: microsoft/agentic-applications-for-unified-data-foundation-solution-accelerator
+    url: https://github.com/microsoft/agentic-applications-for-unified-data-foundation-solution-accelerator
+    classification: reference_architecture_for_governed_data_plus_agent_layer
+    stack_elements:
+      - microsoft_fabric_as_unified_data_foundation
+      - foundry_agents
+      - microsoft_agent_framework_orchestration
+      - natural_language_access_and_workflow_automation_over_enterprise_data
+    ipai_use:
+      - governed_enterprise_data_foundation_patterns
+      - how_agentic_ai_sits_on_top_of_a_unified_analytical_substrate
+      - where_foundry_and_agent_framework_plug_into_a_data_platform
+    do_not_use_as:
+      - ipai_repo_topology_authority
+      - odoo_erp_model
+      - primary_runtime_control_plane
+
+  agentic_app_with_fabric:
+    repo: Azure-Samples/agentic-app-with-fabric
+    url: https://github.com/Azure-Samples/agentic-app-with-fabric
+    classification: implementation_sample_domain_facing_agentic_app_on_fabric
+    scope: interactive_banking_demo_oltp_oltp_and_ai_workloads_through_fabric
+    ipai_use:
+      - app_composition_around_fabric
+      - demo_grade_end_to_end_wiring
+      - how_a_domain_specific_agentic_ui_can_sit_on_top_of_data_plus_ai
+    constraint: still_a_sample_app_not_canonical_enterprise_operating_model
+    do_not_use_as:
+      - canonical_domain_app_pattern_for_ipai
+      - banking_data_model_as_enterprise_model
+      - sample_naming_adoption
+
+# -----------------------------------------------------------------------------
+# How these refs strengthen existing IPAI doctrine
+# -----------------------------------------------------------------------------
+alignment_with_existing_ssots:
+
+  foundry_plane:
+    existing_charter: ssot/data-intelligence/databricks-plane-charter.yaml
+    reinforcement: >
+      Both upstream repos confirm Foundry owns hosted agent runtime +
+      multi-agent orchestration endpoints. No change to IPAI doctrine.
+
+  data_plane:
+    existing_charter: ssot/data-intelligence/databricks-plane-charter.yaml + ssot/lakehouse/unity-catalog-map.yaml
+    reinforcement: >
+      Upstream patterns reinforce that the data plane owns governed
+      analytical substrate, curated enterprise knowledge, semantic
+      business data, eval datasets, domain data products. IPAI
+      invariant holds: Databricks is primary engineering plane (per
+      CLAUDE.md #9); Fabric is mirroring/complement (per CLAUDE.md #13).
+    ipai_note: >
+      The unified_data_foundation accelerator centers on Fabric. IPAI
+      adopts the PATTERN (unified governed substrate + agent-over-data)
+      but keeps Databricks as the primary engineering plane.
+
+  agent_framework:
+    existing_charter: ssot/agent-platform/agent_framework_adoption.yaml
+    reinforcement: >
+      Unified data foundation accelerator explicitly uses MAF on top of
+      data foundation. Confirms IPAI's MAF choice.
+
+# -----------------------------------------------------------------------------
+# Where these references are relevant per Pulser pack
+# -----------------------------------------------------------------------------
+pulser_pack_relevance:
+  good_fit:
+    - pulser_data_intelligence (future pack; analytics-heavy assistants)
+    - pulser_finance (financial reporting/query surfaces when data-backed)
+    - pulser_prismalab (research query over governed corpora)
+  weaker_direct_fit:
+    - pulser_erp (Odoo-transactional — different plane)
+    - pulser_web (public site)
+    - pulser_identity_ops (identity plane)
+    - pulser_release_ops (release/governance plane)
+
+# -----------------------------------------------------------------------------
+# Copy / adapt vs do-not
+# -----------------------------------------------------------------------------
+copy_adapt:
+  from_unified_data_foundation_accelerator:
+    - unified_data_foundation_mental_model
+    - agent_over_data_architecture
+    - separation_between_data_platform_and_agent_runtime
+    - foundry_plus_agent_framework_over_enterprise_data
+  from_agentic_app_with_fabric:
+    - app_composition_ideas
+    - domain_demo_patterns
+    - how_to_present_ai_and_data_workloads_together
+
+do_not_copy_blindly:
+  - repo_structure
+  - demo_specific_domain_assumptions
+  - sample_app_naming
+  - sample_banking_data_model_as_enterprise_model
+
+# -----------------------------------------------------------------------------
+# IPAI layering (confirmed, not changed)
+# -----------------------------------------------------------------------------
+ipai_layering:
+  pulser_core_and_hosted_assistants: foundry + agent_framework
+  unified_enterprise_data_semantic_analytical_foundation: databricks + fabric_mirroring + power_bi
+  sample_interactive_domain_app_patterns: adapt_from_agentic_app_with_fabric
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not adopting Fabric as primary engineering plane (CLAUDE.md #9 reserves that for Databricks)
+  - not adopting sample banking domain model
+  - not cloning upstream repo topology into IPAI monorepo
+  - not replacing Odoo ERP model with data-foundation patterns
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  plane_charter: ssot/data-intelligence/databricks-plane-charter.yaml
+  unity_catalog: ssot/lakehouse/unity-catalog-map.yaml
+  agent_framework_adoption: ssot/agent-platform/agent_framework_adoption.yaml
+  runtime_sdk_decision_matrix: ssot/agent-platform/runtime-sdk-decision-matrix.yaml
+  aac_map: ssot/architecture/azure-architecture-center-map.yaml
