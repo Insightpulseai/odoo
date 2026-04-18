@@ -9,6 +9,8 @@ principles:
   - monitoring_required
   - auditing_required
   - human_review_for_high_risk_actions
+  - keyless_auth_over_api_keys  # per Azure-Samples/azure-openai-keyless-go
+  - rbac_assignment_lives_in_infra_not_app_code
 control_requirements:
   tool_access:
     allowlist_required: true
@@ -16,6 +18,8 @@ control_requirements:
   identity:
     managed_identity_preferred: true
     shared_human_accounts_disallowed_for_workloads: true
+    keyless_entra_auth_preferred_over_api_keys: true
+    api_key_fallback_allowed_only_when_unavoidable: true
   observability:
     logs_required: true
     traces_required: true

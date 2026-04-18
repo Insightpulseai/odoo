@@ -29,6 +29,18 @@ upstream:
     name: Microsoft Foundry — Function calling for Azure OpenAI
     classification: canonical_tool_execution_pattern
     url: https://learn.microsoft.com/azure/ai-services/openai/how-to/function-calling
+  keyless_go_sample:
+    repo: Azure-Samples/azure-openai-keyless-go
+    classification: keyless_auth_pattern_reference_go_specific
+    purpose: provision_azure_openai_with_rbac_keyless_entra_auth
+    rbac_role_example: Cognitive Services OpenAI User
+    ipai_role: reference_only_not_runtime_adoption
+    reason_not_runtime: IPAI runtime is Python-first per MAF adoption SSOT
+    reusable_lessons:
+      - keyless_auth_over_api_keys
+      - rbac_via_entra_identities_not_distributed_keys
+      - sdk_based_invocation_not_raw_http_with_static_keys
+      - rbac_assignment_lives_in_infra_not_app_code
 
 # -----------------------------------------------------------------------------
 # POC chat topology (intro article)
