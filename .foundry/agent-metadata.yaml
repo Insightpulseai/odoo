@@ -13,6 +13,25 @@ orchestration:
   defaultModel: "gpt-4o"
   defaultVersion: "1.0.0"
 
+specialists:
+  - id: "pulser-project-to-profit"
+    name: "Project-to-Profit Specialist"
+    model: "gpt-4o"
+    version: "1.0.0-stable"
+    capabilities: ["Odoo:Finance", "Odoo:Project"]
+
+  - id: "pulser-record-to-report"
+    name: "Record-to-Report Specialist"
+    model: "gpt-4o"
+    version: "1.0.0-stable"
+    capabilities: ["Odoo:Compliance", "Odoo:Accounting"]
+
+  - id: "pulser-media-ops"
+    name: "Media Ops Specialist"
+    model: "gemini-1.5-pro"  # Optimized for multimodal content generation
+    version: "2.0.0-beta"
+    capabilities: ["Multimodal:Video", "Multimodal:Image"]
+
 environments:
   dev:
     endpoint: "https://ipai-foundry-ph.eastus2.inference.ai.azure.com"

@@ -20,4 +20,4 @@
 3.2 **MVP Guardrail**: The "Minimum Publishable version" must include Odoo Accounting, Pulser AI (Extraction + Guidance), and basic Power BI reporting.
 
 ---
-*Last updated: 2026-04-18*
+*Last updated: 2026-04-18 — Rule 2.4 Compliance Audit Completed (Foundry Specialists Registered)*
