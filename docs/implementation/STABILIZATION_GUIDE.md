@@ -37,6 +37,18 @@ Required Sign-offs:
 2. **Operational Stability Sign-off**: Verified by the Pulser SRE/Platform Lead.
 3. **User Proficiency Sign-off**: Verified by the Tenant Process Owner.
 
+## 4. Marketplace Subscription Reliability (GTM)
+
+For tenants provisioned via the Microsoft Commercial Marketplace, the "Stabilization Window" begins with the technical handshake.
+
+### SaaS Fulfillment Monitoring
+- **Webhook Handshake**: Monitor `/api/marketplace/webhook` via App Insights for `200 OK` responses during `Activate` and `Resolve` calls.
+- **Onboarding Link**: Verify the customer completes the Entra ID SSO handshake at `w9studio.net/onboarding/marketplace` within 24 hours of purchase.
+
+### Operational Failover (Hypercare Only)
+- **Manual Activation**: In the event of an API `v2` handshake failure, the Platform Lead may manually activate the Odoo Subscription record to ensure zero-downtime onboarding, provided a valid `Marketplace Purchase ID` is evidenced in the Partner Center portal.
+- **Retry Logic**: All failed webhooks must be replayed within 4 hours to synchronize the Odoo `marketplace.fulfillment` audit log.
+
 ---
 
-*Last updated: 2026-04-11*
+*Last updated: 2026-04-18*
