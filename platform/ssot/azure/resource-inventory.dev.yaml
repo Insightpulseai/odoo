@@ -1,0 +1,525 @@
+version: 1
+environment: dev
+subscription:
+  name: Microsoft Azure Sponsorship
+  id: eba824fb-332d-4623-9dfb-2c9f7ee83f4e
+tenant:
+  name: Default Directory
+  primary_domain: insightpulseai.com
+regions:
+  primary_runtime: southeastasia
+  ai_exception:
+    foundry_resource_region: eastus2
+domains:
+  - host: erp.insightpulseai.com
+    repo_primary: odoo
+    plane: transactional
+    workload: odoo_erp
+  - host: prismalab.insightpulseai.com
+    repo_primary: web
+    repo_secondary: agent-platform
+    plane: domain_ai_workspace
+    workload: prismalab
+  - host: www.insightpulseai.com
+    repo_primary: web
+    plane: public_web
+    workload: flagship_site
+  - host: www.w9studio.net
+    repo_primary: web
+    plane: public_web
+    workload: studio_site
+resource_groups:
+  - name: rg-ipai-dev-odoo-sea
+    canonical_role: app_runtime
+    note: Shared ACA app runtime RG; no longer Odoo-only.
+  - name: rg-ipai-dev-ai-sea
+    canonical_role: ai_services
+    note: Foundry resource resides in East US 2 despite SEA RG naming.
+  - name: rg-ipai-dev-security-sea
+    canonical_role: security_control
+  - name: rg-ipai-dev-net-sea
+    canonical_role: network_private_connectivity
+  - name: rg-ipai-data-sea
+    canonical_role: transactional_data
+  - name: rg-ipai-dev-data-sea
+    canonical_role: storage_data_lake
+  - name: rg-ipai-dev-mon-sea
+    canonical_role: observability
+  - name: rg-ipai-dev-realtime
+    canonical_role: realtime_services
+  - name: rg-ipai-shared
+    canonical_role: shared_registry
+  - name: rg-ipai-dev-dbw-managed
+    canonical_role: databricks_managed
+  - name: managed-rg-pv-ipai-dev-sea
+    canonical_role: purview_managed
+planes:
+  public_web:
+    repo_owner: web
+    domains:
+      - www.insightpulseai.com
+      - www.w9studio.net
+    resources:
+      - name: ipai-website
+        type: Container App
+        resource_group: rg-ipai-dev-odoo-sea
+        region: southeastasia
+        role: flagship_public_site
+      - name: ipai-w9studio
+        type: Container App
+        resource_group: rg-ipai-dev-odoo-sea
+        region: southeastasia
+        role: studio_public_site
+      - name: acae-ipai-dev-sea
+        type: Container Apps Environment
+        resource_group: rg-ipai-dev-odoo-sea
+        region: southeastasia
+        role: shared_hosting_environment
+      - name: insightpulseai.com
+        type: DNS zone
+        resource_group: rg-ipai-dev-net-sea
+        region: global
+        role: dns_zone
+      - name: w9studio.net
+        type: DNS zone
+        resource_group: rg-ipai-dev-net-sea
+        region: global
+        role: dns_zone
+  transactional:
+    repo_owner: odoo
+    domains:
+      - erp.insightpulseai.com
+    resources:
+      - name: ipai-odoo-dev
+        type: Container App
+        resource_group: rg-ipai-dev-odoo-sea
+        region: southeastasia
+        role: erp_runtime
+      - name: pg-ipai-odoo
+        type: Azure Database for PostgreSQL flexible server
+        resource_group: rg-ipai-data-sea
+        region: southeastasia
+        role: erp_primary_database
+      - name: kv-ipai-dev-sea
+        type: Key vault
+        resource_group: rg-ipai-dev-security-sea
+        region: southeastasia
+        role: secrets_authority
+      - name: id-ipai-dev-runtime
+        type: Managed Identity
+        resource_group: rg-ipai-dev-security-sea
+        region: southeastasia
+        role: erp_runtime_identity
+      - name: appi-ipai-dev-runtime-sea
+        type: Application Insights
+        resource_group: rg-ipai-dev-mon-sea
+        region: southeastasia
+        role: erp_observability
+      - name: log-ipai-dev-runtime-sea
+        type: Log Analytics workspace
+        resource_group: rg-ipai-dev-mon-sea
+        region: southeastasia
+        role: erp_logs
+      - name: pe-ipai-dev-pg
+        type: Private endpoint
+        resource_group: rg-ipai-dev-net-sea
+        region: southeastasia
+        role: postgres_private_connectivity
+      - name: privatelink.postgres.database.azure.com
+        type: Private DNS zone
+        resource_group: rg-ipai-dev-net-sea
+        region: global
+        role: postgres_private_dns
+  domain_ai_workspace:
+    repo_owner: web
+    runtime_repo_owner: agent-platform
+    domains:
+      - prismalab.insightpulseai.com
+    resources:
+      - name: ipai-prismalab
+        type: Container App
+        resource_group: rg-ipai-dev-odoo-sea
+        region: southeastasia
+        role: prismalab_frontend_or_app
+      - name: ipai-copilot-resource
+        type: Foundry
+        resource_group: rg-ipai-dev-ai-sea
+        region: eastus2
+        role: primary_foundry_resource
+        endpoints:
+          inference: https://ipai-foundry-sea.services.ai.azure.com/models
+      - name: ipai-copilot
+        type: Foundry project
+        resource_group: rg-ipai-dev-ai-sea
+        region: eastus2
+        role: primary_foundry_project
+      - name: docai-ipai-dev
+        type: Document intelligence
+        resource_group: rg-ipai-dev-ai-sea
+        region: southeastasia
+        role: document_extraction
+      - name: srch-ipai-dev-sea
+        type: Search service
+        resource_group: rg-ipai-dev-ai-sea
+        region: southeastasia
+        role: retrieval_search
+      - name: redis-ipai-dev-sea
+        type: Azure Cache for Redis
+        resource_group: rg-ipai-dev-realtime
+        region: southeastasia
+        role: session_cache
+      - name: sigr-ipai-dev-sea
+        type: SignalR
+        resource_group: rg-ipai-dev-realtime
+        region: southeastasia
+        role: realtime_updates
+      - name: acs-ipai-dev-sea
+        type: Communication Service
+        resource_group: rg-ipai-dev-realtime
+        region: global
+        role: communications
+      - name: id-ipai-dev-agent
+        type: Managed Identity
+        resource_group: rg-ipai-dev-security-sea
+        region: southeastasia
+        role: agent_runtime_identity
+      - name: appi-ipai-dev-agent-sea
+        type: Application Insights
+        resource_group: rg-ipai-dev-mon-sea
+        region: southeastasia
+        role: agent_observability
+      - name: log-ipai-dev-agent-sea
+        type: Log Analytics workspace
+        resource_group: rg-ipai-dev-mon-sea
+        region: southeastasia
+        role: agent_logs
+      - name: stipaidevagent
+        type: Storage account
+        resource_group: rg-ipai-dev-data-sea
+        region: southeastasia
+        role: agent_storage
+      - name: stipaidevlogs
+        type: Storage account
+        resource_group: rg-ipai-dev-data-sea
+        region: southeastasia
+        role: log_archive_storage
+  ai_runtime:
+    repo_owner: agent-platform
+    resources:
+      - name: ipai-copilot-resource
+        type: Foundry
+        resource_group: rg-ipai-dev-ai-sea
+        region: eastus2
+        role: model_provider_authority
+      - name: ipai-copilot
+        type: Foundry project
+        resource_group: rg-ipai-dev-ai-sea
+        region: eastus2
+        role: project_runtime_authority
+      - name: docai-ipai-dev
+        type: Document intelligence
+        resource_group: rg-ipai-dev-ai-sea
+        region: southeastasia
+        role: document_pipeline
+      - name: srch-ipai-dev-sea
+        type: Search service
+        resource_group: rg-ipai-dev-ai-sea
+        region: southeastasia
+        role: retrieval_index
+      - name: redis-ipai-dev-sea
+        type: Azure Cache for Redis
+        resource_group: rg-ipai-dev-realtime
+        region: southeastasia
+        role: cache_memory_state
+      - name: sigr-ipai-dev-sea
+        type: SignalR
+        resource_group: rg-ipai-dev-realtime
+        region: southeastasia
+        role: realtime_streaming
+      - name: id-ipai-dev-agent
+        type: Managed Identity
+        resource_group: rg-ipai-dev-security-sea
+        region: southeastasia
+        role: primary_agent_identity
+      - name: id-ipai-dev-runtime
+        type: Managed Identity
+        resource_group: rg-ipai-dev-security-sea
+        region: southeastasia
+        role: shared_runtime_identity
+      - name: id-ipai-dev-pipeline
+        type: Managed Identity
+        resource_group: rg-ipai-dev-security-sea
+        region: southeastasia
+        role: pipeline_identity
+  analytics:
+    repo_owner: data-intelligence
+    resources:
+      - name: dbw-ipai-dev
+        type: Azure Databricks Service
+        resource_group: rg-ipai-dev-ai-sea
+        region: southeastasia
+        role: analytics_workspace
+      - name: unity-catalog-access-connector
+        type: Access Connector for Azure Databricks
+        resource_group: rg-ipai-dev-dbw-managed
+        region: southeastasia
+        role: unity_catalog_connector
+      - name: dbmanagedidentity
+        type: Managed Identity
+        resource_group: rg-ipai-dev-dbw-managed
+        region: southeastasia
+        role: databricks_managed_identity
+      - name: workers-vnet
+        type: Virtual network
+        resource_group: rg-ipai-dev-dbw-managed
+        region: southeastasia
+        role: databricks_worker_network
+      - name: workers-sg
+        type: Network security group
+        resource_group: rg-ipai-dev-dbw-managed
+        region: southeastasia
+        role: databricks_worker_nsg
+      - name: stipaidevlake
+        type: Storage account
+        resource_group: rg-ipai-dev-data-sea
+        region: southeastasia
+        role: lake_storage
+      - name: stlkipaidev
+        type: Storage account
+        resource_group: rg-ipai-dev-data-sea
+        region: southeastasia
+        role: analytics_storage
+      - name: id-ipai-dev-data
+        type: Managed Identity
+        resource_group: rg-ipai-dev-security-sea
+        region: southeastasia
+        role: data_runtime_identity
+      - name: log-ipai-dev-data-sea
+        type: Log Analytics workspace
+        resource_group: rg-ipai-dev-mon-sea
+        region: southeastasia
+        role: analytics_logs
+      - name: pv-ipai-dev-sea
+        type: Microsoft Purview account
+        resource_group: rg-ipai-dev-security-sea
+        region: southeastasia
+        role: data_governance
+      - name: Atlas-e613d16b-0a3b-4715-bba1-3ecdb0857796
+        type: Event Hubs Namespace
+        resource_group: managed-rg-pv-ipai-dev-sea
+        region: southeastasia
+        role: purview_managed_event_hubs
+      - name: scansoutheastasiadckrnut
+        type: Storage account
+        resource_group: managed-rg-pv-ipai-dev-sea
+        region: southeastasia
+        role: purview_managed_storage
+  control_plane:
+    repo_owner: platform
+    resources:
+      - name: kv-ipai-dev-sea
+        type: Key vault
+        resource_group: rg-ipai-dev-security-sea
+        region: southeastasia
+        role: secrets_reference_authority
+      - name: id-ipai-dev
+        type: Managed Identity
+        resource_group: rg-ipai-dev-security-sea
+        region: southeastasia
+        role: shared_platform_identity
+      - name: id-ipai-dev-agent
+        type: Managed Identity
+        resource_group: rg-ipai-dev-security-sea
+        region: southeastasia
+        role: referenced_agent_identity
+      - name: id-ipai-dev-data
+        type: Managed Identity
+        resource_group: rg-ipai-dev-security-sea
+        region: southeastasia
+        role: referenced_data_identity
+      - name: id-ipai-dev-pipeline
+        type: Managed Identity
+        resource_group: rg-ipai-dev-security-sea
+        region: southeastasia
+        role: referenced_pipeline_identity
+      - name: id-ipai-dev-runtime
+        type: Managed Identity
+        resource_group: rg-ipai-dev-security-sea
+        region: southeastasia
+        role: referenced_runtime_identity
+  infrastructure:
+    repo_owner: infra
+    resources:
+      - name: acae-ipai-dev-sea
+        type: Container Apps Environment
+        resource_group: rg-ipai-dev-odoo-sea
+        region: southeastasia
+        role: shared_container_runtime
+      - name: acripaiodoo
+        type: Container registry
+        resource_group: rg-ipai-shared
+        region: southeastasia
+        role: image_registry
+      - name: vnet-ipai-dev-sea
+        type: Virtual network
+        resource_group: rg-ipai-dev-net-sea
+        region: southeastasia
+        role: primary_vnet
+      - name: pe-ipai-dev-kv
+        type: Private endpoint
+        resource_group: rg-ipai-dev-net-sea
+        region: southeastasia
+        role: key_vault_private_connectivity
+      - name: pe-ipai-dev-search
+        type: Private endpoint
+        resource_group: rg-ipai-dev-net-sea
+        region: southeastasia
+        role: search_private_connectivity
+      - name: pe-ipai-dev-pg
+        type: Private endpoint
+        resource_group: rg-ipai-dev-net-sea
+        region: southeastasia
+        role: postgres_private_connectivity
+      - name: privatelink.applicationinsights.azure.com
+        type: Private DNS zone
+        resource_group: rg-ipai-dev-net-sea
+        region: global
+        role: appinsights_private_dns
+      - name: privatelink.azurecr.io
+        type: Private DNS zone
+        resource_group: rg-ipai-dev-net-sea
+        region: global
+        role: acr_private_dns
+      - name: privatelink.blob.core.windows.net
+        type: Private DNS zone
+        resource_group: rg-ipai-dev-net-sea
+        region: global
+        role: blob_private_dns
+      - name: privatelink.cognitiveservices.azure.com
+        type: Private DNS zone
+        resource_group: rg-ipai-dev-net-sea
+        region: global
+        role: cognitive_private_dns
+      - name: privatelink.postgres.database.azure.com
+        type: Private DNS zone
+        resource_group: rg-ipai-dev-net-sea
+        region: global
+        role: postgres_private_dns
+      - name: privatelink.search.windows.net
+        type: Private DNS zone
+        resource_group: rg-ipai-dev-net-sea
+        region: global
+        role: search_private_dns
+      - name: privatelink.servicebus.windows.net
+        type: Private DNS zone
+        resource_group: rg-ipai-dev-net-sea
+        region: global
+        role: servicebus_private_dns
+      - name: privatelink.vaultcore.azure.net
+        type: Private DNS zone
+        resource_group: rg-ipai-dev-net-sea
+        region: global
+        role: vault_private_dns
+      - name: NetworkWatcher_southeastasia
+        type: Network Watcher
+        resource_group: NetworkWatcherRG
+        region: southeastasia
+        role: network_diagnostics
+  observability:
+    repo_owner: infra
+    consumers:
+      - odoo
+      - agent-platform
+      - data-intelligence
+      - web
+    resources:
+      - name: ag-ipai-dev-sea
+        type: Action group
+        resource_group: rg-ipai-dev-mon-sea
+        region: global
+        role: alert_routing
+      - name: Application Insights Smart Detection
+        type: Action group
+        resource_group: rg-ipai-dev-mon-sea
+        region: global
+        role: smart_detection_notifications
+      - name: appi-ipai-dev
+        type: Application Insights
+        resource_group: rg-ipai-dev-mon-sea
+        region: southeastasia
+        role: shared_app_insights
+      - name: appi-ipai-dev-agent-sea
+        type: Application Insights
+        resource_group: rg-ipai-dev-mon-sea
+        region: southeastasia
+        role: agent_app_insights
+      - name: appi-ipai-dev-runtime-sea
+        type: Application Insights
+        resource_group: rg-ipai-dev-mon-sea
+        region: southeastasia
+        role: runtime_app_insights
+      - name: log-ipai-dev-sea
+        type: Log Analytics workspace
+        resource_group: rg-ipai-dev-mon-sea
+        region: southeastasia
+        role: shared_logs
+      - name: log-ipai-dev-agent-sea
+        type: Log Analytics workspace
+        resource_group: rg-ipai-dev-mon-sea
+        region: southeastasia
+        role: agent_logs
+      - name: log-ipai-dev-runtime-sea
+        type: Log Analytics workspace
+        resource_group: rg-ipai-dev-mon-sea
+        region: southeastasia
+        role: runtime_logs
+      - name: log-ipai-dev-data-sea
+        type: Log Analytics workspace
+        resource_group: rg-ipai-dev-mon-sea
+        region: southeastasia
+        role: data_logs
+  realtime:
+    repo_owner: agent-platform
+    resources:
+      - name: acs-ipai-dev-sea
+        type: Communication Service
+        resource_group: rg-ipai-dev-realtime
+        region: global
+        role: communication_channel
+      - name: redis-ipai-dev-sea
+        type: Azure Cache for Redis
+        resource_group: rg-ipai-dev-realtime
+        region: southeastasia
+        role: cache_state
+      - name: sigr-ipai-dev-sea
+        type: SignalR
+        resource_group: rg-ipai-dev-realtime
+        region: southeastasia
+        role: realtime_transport
+identity_model:
+  mailbox_authorities:
+    insightpulseai.com: zoho_mail
+    w9studio.net: google_workspace
+  workforce_authority:
+    tenant: Microsoft Entra ID
+    domain: insightpulseai.com
+  managed_identities:
+    - name: id-ipai-dev
+      purpose: shared_platform
+    - name: id-ipai-dev-agent
+      purpose: agent_runtime
+    - name: id-ipai-dev-data
+      purpose: analytics_runtime
+    - name: id-ipai-dev-pipeline
+      purpose: ci_cd_pipeline
+    - name: id-ipai-dev-runtime
+      purpose: shared_app_runtime
+exceptions:
+  - key: foundry_region_split
+    description: Foundry resource is hosted in East US 2 while primary runtime, data, network, and app workloads are in Southeast Asia.
+  - key: app_runtime_rg_drift
+    description: rg-ipai-dev-odoo-sea functions as shared app runtime RG for multiple sites and apps, not Odoo-only.
+naming_recommendations:
+  - rg-ipai-dev-odoo-sea should be renamed or semantically documented as shared app runtime RG in future normalization.
+  - Foundry resource region exception should be explicitly captured in platform bindings and infra docs.
+  - Managed identities already align well to repo/runtime boundaries and should be preserved.

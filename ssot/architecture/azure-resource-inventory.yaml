@@ -1,9 +1,10 @@
 # =============================================================================
-# Azure Resource Inventory — IPAI Dev Subscription SSOT
+# Azure Resource Inventory — Architectural Analysis (interpretation layer)
 # =============================================================================
-# Authority: canonical inventory of actual Azure resources in the IPAI
-#            Azure Sponsorship subscription, grouped by repo, domain,
-#            resource group, and architectural plane.
+# Role:      ARCHITECTURAL ANALYSIS of the dev estate — planes, cleanup
+#            observations, MI→purpose mapping, drift-detection hooks.
+# Canonical raw inventory (machine-readable): platform/ssot/azure/resource-inventory.dev.yaml
+# Canonical short doc:                        docs/architecture/AZURE_RESOURCE_INVENTORY_DEV.md
 # Scope:     environment = dev (sponsored sub eba824fb-332d-4623-9dfb-2c9f7ee83f4e)
 # Related:   ssot/architecture/azure-architecture-center-map.yaml
 #            ssot/governance/production-ai-foundation-adoption.yaml
