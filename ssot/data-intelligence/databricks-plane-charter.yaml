@@ -1,0 +1,203 @@
+# =============================================================================
+# Databricks Plane Charter — SSOT
+# =============================================================================
+# Authority: canonical declaration of what Databricks (Mosaic AI) owns vs
+#            what Foundry / Odoo / agent-platform own. Closes ambiguity
+#            around fine-tuning, vector search, model serving, and RAG
+#            in the IPAI stack.
+# Related:   ssot/lakehouse/unity-catalog-map.yaml
+#            ssot/agent-platform/agent_framework_adoption.yaml
+#            ssot/agent-platform/foundry-chat-and-function-calling-reference.yaml
+#            ssot/architecture/azure-architecture-center-map.yaml
+#            ssot/odoo/ce18_oca_uc_semantic_odata_binding.yaml
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: canonical
+
+doctrine: >
+  Azure Databricks (Mosaic AI) is the governed DATA + RETRIEVAL +
+  EVALUATION + MODEL-ENGINEERING plane. Foundry / Azure OpenAI is the
+  MODEL AND HOSTED AGENT SERVING plane. Odoo is the TRANSACTIONAL
+  SoR plane. Pulser / agent-platform is the ORCHESTRATION plane.
+  None of these four planes is a substitute for another.
+
+# -----------------------------------------------------------------------------
+# Four-plane separation
+# -----------------------------------------------------------------------------
+planes:
+
+  foundry_serving:
+    role: model_and_hosted_agent_serving
+    owns:
+      - model_inference_endpoint
+      - hosted_agent_execution
+      - chat_history_and_thread_persistence
+      - content_safety_guardrails
+      - final_tuned_model_target (for fine-tuning workflows)
+    does_not_own:
+      - data_engineering
+      - retrieval_index_governance
+      - model_training_or_fine_tuning_workflow
+      - evaluation_experiment_tracking
+    ipai_resource: ipai-copilot-resource (Foundry project ipai-copilot, East US 2)
+
+  databricks_mosaic_ai:
+    role: governed_data_retrieval_evaluation_and_model_engineering_plane
+    owns:
+      generative_ai_apps:
+        - ai_playground
+        - foundation_models
+        - knowledge_assistant
+        - agent_framework (Databricks' agent framework — reference only; see non_goals)
+        - mlflow_for_genai
+        - vector_search
+        - ai_runtime
+        - foundation_model_fine_tuning
+      classic_ml_dl:
+        - automl
+        - runtime_for_ml
+        - feature_engineering
+        - notebooks
+        - distributed_training
+      serving_and_governance:
+        - model_serving
+        - ai_gateway
+        - external_models
+        - unity_catalog
+        - data_profiling
+        - anomaly_detection
+        - mlflow_for_models
+      productionization:
+        - models_in_unity_catalog
+        - lakeflow_jobs
+        - ray_on_databricks
+        - git_integration
+        - mlops_workflows
+    does_not_own:
+      - foundry_hosted_agent_serving (that's Foundry's role)
+      - orchestration_of_ipai_domain_packs (that's agent-platform's role)
+      - erp_transactional_writes (that's Odoo's role)
+    ipai_resource: dbw-ipai-dev (Southeast Asia; Unity Catalog governance)
+
+  odoo_transactional:
+    role: transactional_system_of_record
+    owns:
+      - erp_writes
+      - business_object_truth
+      - branch_trade_name_tax_context (via multi-company)
+    surface: erp.insightpulseai.com
+    ssot_anchor: ssot/odoo/ce18_oca_uc_semantic_odata_binding.yaml
+
+  agent_platform_orchestration:
+    role: orchestration_plane
+    owns:
+      - context_envelope_resolution
+      - policy_engine
+      - judge_pipeline
+      - supervisor_mediated_routing
+      - tool_registry_and_execution
+      - session_state
+      - hook_lifecycle
+    substrate: microsoft_agent_framework
+    ssot_anchor: ssot/agent-platform/agent_framework_adoption.yaml
+
+# -----------------------------------------------------------------------------
+# Fine-tuning decision model
+# -----------------------------------------------------------------------------
+fine_tuning:
+  doctrine: >
+    Fine-tuning is the LAST resort. Prompt/tool/policy improvements and
+    RAG over governed knowledge must be exhausted first. Fine-tuning is
+    justified only for stable, repeated task patterns where the
+    material gain exceeds operational complexity + cost.
+
+  order_of_operations:
+    - 1_prompt_tool_policy_improvements
+    - 2_rag_over_governed_knowledge_via_databricks_vector_search_or_ai_search
+    - 3_fine_tuning_only_for_stable_repeated_task_patterns
+
+  workflow_location: databricks_mosaic_ai (data prep, experiment, workflow)
+  target_model_location: foundry_or_azure_openai (tuned model is served there)
+
+  when_to_consider_fine_tuning:
+    - prompt_and_rag_both_exhausted
+    - stable_task_pattern_repeated_over_time
+    - material_quality_gain_demonstrated_in_evals
+    - operational_cost_is_justified_by_volume
+
+  when_NOT_to_fine_tune:
+    - novel_or_evolving_task_pattern
+    - small_volume_of_calls
+    - prompt_iteration_still_producing_gains
+    - rag_corpus_not_yet_governed
+    - no_eval_harness_to_prove_gain
+
+# -----------------------------------------------------------------------------
+# Retrieval / RAG placement
+# -----------------------------------------------------------------------------
+retrieval_placement:
+  rule: >
+    RAG corpora and retrieval governance live in Databricks (Vector
+    Search + Unity Catalog) OR Azure AI Search depending on workload.
+    Neither lives in Foundry directly (Foundry consumes them as
+    connections).
+  options:
+    databricks_vector_search:
+      when: large_volume_lakehouse_backed_corpora
+      governance: unity_catalog
+    azure_ai_search:
+      when: foundry_backed_copilot_grounding (currently IPAI default)
+      resource: srch-ipai-dev-sea
+  ipai_default_right_now: azure_ai_search (via agent-platform retrieval module)
+  future_expansion: databricks_vector_search_for_prismalab_evidence_corpora
+
+# -----------------------------------------------------------------------------
+# Evaluation placement
+# -----------------------------------------------------------------------------
+evaluation_placement:
+  rule: >
+    Evaluation datasets, regression loops, and MLflow experiment tracking
+    live in Databricks. Judge runs (per-request) live in agent-platform.
+    CI eval gates live in Azure Pipelines.
+  layers:
+    offline_eval_harness: databricks (MLflow + LakeFlow Jobs)
+    per_request_judges: agent-platform/src/agent_platform/evals/
+    ci_eval_gate: azure-pipelines-eval-gate.yml
+
+# -----------------------------------------------------------------------------
+# Model serving decision
+# -----------------------------------------------------------------------------
+model_serving:
+  rule: >
+    Default model serving = Foundry (Azure OpenAI). Databricks Model
+    Serving is permitted for NON-FOUNDRY-AVAILABLE models or for
+    specialized hosted endpoints (e.g., custom fine-tuned open-source
+    models). Route selection lives in agent-platform providers/.
+  primary: foundry (ipai-copilot-resource)
+  alternative_when_model_not_available_in_foundry: databricks_model_serving
+  alternative_when_specialized_open_source_needed: databricks_model_serving
+  never: distribute_api_keys_to_services_that_can_use_managed_identity
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not adopting Databricks Agent Framework as IPAI runtime (we use MAF; see runtime-sdk-decision-matrix.yaml)
+  - not using Databricks as ERP transactional plane
+  - not using Foundry as data engineering plane
+  - not fine-tuning as a first response to any quality gap
+  - not running Databricks Model Serving in parallel with Foundry for the same model (pick one per model)
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  unity_catalog_map: ssot/lakehouse/unity-catalog-map.yaml
+  agent_framework_adoption: ssot/agent-platform/agent_framework_adoption.yaml
+  runtime_sdk_decision_matrix: ssot/agent-platform/runtime-sdk-decision-matrix.yaml
+  foundry_reference: ssot/agent-platform/foundry-chat-and-function-calling-reference.yaml
+  aac_map: ssot/architecture/azure-architecture-center-map.yaml
+  odoo_cross_layer: ssot/odoo/ce18_oca_uc_semantic_odata_binding.yaml
