@@ -1,0 +1,227 @@
+# =============================================================================
+# microsoft/Deploy-Your-AI-Application-In-Production — Adoption SSOT
+# =============================================================================
+# Authority: canonical decision on how to consume the Microsoft production
+#            foundation accelerator. Reference-only for patterns; DO NOT
+#            clone repo topology. Lands adapted into infra/, platform/,
+#            and agent-platform/ (secondarily).
+# Related:   ssot/agent-platform/agent_framework_adoption.yaml
+#            ssot/agent-platform/agent_delivery_stack.yaml
+#            ssot/identity/entra_target_state.yaml
+#            ssot/governance/reference-samples-register.yaml
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: canonical
+
+upstream:
+  repo: microsoft/Deploy-Your-AI-Application-In-Production
+  url: https://github.com/microsoft/Deploy-Your-AI-Application-In-Production
+  classification: production_foundation_solution_accelerator
+  not_classified_as:
+    - sample_chat_app
+    - product_template
+    - frontend_template
+    - agent_definition_repo
+
+# -----------------------------------------------------------------------------
+# Adoption decision
+# -----------------------------------------------------------------------------
+decision:
+  adopt_mode: reference_only_for_patterns
+  do_not: clone_repo_topology
+  do_not: fork
+  do_not: match_naming_conventions_when_they_conflict_with_ipai_canonical
+
+  rationale: >
+    This accelerator is Microsoft's production-baseline for Azure AI workloads
+    (Foundry + Fabric + AI Search + optional Purview, pre-wired with private
+    networking, managed identities, governance). It is the closest Microsoft
+    reference for our infra + platform production baseline — NOT our
+    frontend, agent persona, or ERP layer.
+
+# -----------------------------------------------------------------------------
+# What the upstream accelerator includes
+# -----------------------------------------------------------------------------
+upstream_scope:
+  provisions:
+    - microsoft_foundry
+    - microsoft_fabric
+    - azure_ai_search
+    - optional_microsoft_purview_tenant_connection
+  pre_wired_with:
+    - private_networking (private endpoints, network isolation)
+    - managed_identities
+    - governance_controls
+    - production_ready_defaults
+  aligns_to:
+    - microsoft_well_architected_framework
+    - azure_production_guidance
+
+# -----------------------------------------------------------------------------
+# Crosswalk — upstream patterns → IPAI repo targets
+# -----------------------------------------------------------------------------
+crosswalk:
+
+  primary_targets:
+    infra:
+      path: infra/azure/
+      absorbs:
+        - private_endpoint_and_network_isolation_patterns
+        - managed_identity_and_role_binding_patterns
+        - environment_separation_concepts
+        - foundry_resource_provisioning_patterns
+        - ai_search_resource_provisioning_patterns
+        - fabric_workspace_provisioning_patterns
+        - optional_purview_tenant_binding
+      existing_related:
+        - infra/azure/
+        - infra/identity/
+        - infra/entra/
+        - infra/dns/
+
+    platform:
+      path: platform/
+      absorbs:
+        - environment_bindings_to_provisioned_resources
+        - control_plane_metadata_for_foundry_fabric_search
+        - tenant_to_environment_mapping
+        - secret_reference_model (Key Vault indirection)
+      existing_related:
+        - platform/ (general control-plane)
+
+    docs:
+      path: docs/runbooks/
+      absorbs:
+        - production_hardening_runbooks
+        - deployment_checklist_patterns
+        - incident_response_templates
+      existing_related:
+        - docs/runbooks/
+
+  secondary_targets:
+    agent_platform:
+      path: agent-platform/
+      absorbs_only:
+        - runtime_assumptions_that_depend_on_provisioned_substrate
+        - foundry_client_auth_patterns_via_managed_identity
+        - ai_search_retrieval_client_patterns
+      does_not_absorb:
+        - infra_provisioning_logic
+        - tenant_boundary_logic
+      existing_related:
+        - agent-platform/src/agent_platform/providers/foundry/ (future)
+        - agent-platform/src/agent_platform/retrieval/ (future)
+
+# -----------------------------------------------------------------------------
+# Patterns to copy/adapt
+# -----------------------------------------------------------------------------
+copy_adapt:
+  - pattern: private_endpoints_for_foundry_search_fabric
+    adapt_into: infra/azure/modules/private-endpoints.bicep
+    ipai_delta: wire to existing ACA VNet + Azure Front Door topology
+  - pattern: managed_identity_first_authentication
+    adapt_into: infra/azure/modules/managed-identities.bicep
+    ipai_delta: use mi-* naming from ssot/identity/entra_target_state.yaml
+  - pattern: environment_separation_dev_staging_prod
+    adapt_into: infra/env/
+    ipai_delta: match existing IPAI env conventions (ipai-dev, ipai-staging, ipai-prod)
+  - pattern: foundry_project_provisioning
+    adapt_into: infra/azure/modules/foundry-project.bicep
+    ipai_delta: target ipai-copilot-resource / proj-ipai-copilot (canonical)
+  - pattern: ai_search_index_and_indexer_provisioning
+    adapt_into: infra/azure/modules/ai-search.bicep
+    ipai_delta: schemas live in agent-platform/src/agent_platform/retrieval/
+  - pattern: fabric_workspace_and_lakehouse_binding
+    adapt_into: infra/azure/modules/fabric-workspace.bicep
+    ipai_delta: reconcile with data-intelligence/ Databricks-first doctrine
+  - pattern: purview_tenant_id_optional_binding
+    adapt_into: infra/azure/modules/purview-binding.bicep
+    ipai_delta: flag-gated; only enable when Purview becomes live
+  - pattern: governance_defaults_diagnostic_settings_log_analytics
+    adapt_into: infra/azure/modules/diagnostics.bicep
+    ipai_delta: route to existing App Insights / LAW resources
+
+# -----------------------------------------------------------------------------
+# Patterns to NOT blindly copy
+# -----------------------------------------------------------------------------
+do_not_copy_blindly:
+  - repo_topology: "accelerator repo layout ≠ IPAI monorepo layout"
+  - sample_specific_naming: "Microsoft sample names collide with ipai-* canonical"
+  - resource_group_assumptions: "accelerator may assume greenfield RG; IPAI has rg-ipai-dev-ai-sea etc."
+  - tenant_and_domain_assumptions: "accelerator assumes demo domains; IPAI uses insightpulseai.com"
+  - single_environment_opinions: "IPAI has dev/staging/prod envs, not one"
+  - fabric_as_primary_engineering_plane: "IPAI doctrine: Databricks + Unity Catalog is primary; Fabric is mirroring/complement only"
+
+# -----------------------------------------------------------------------------
+# Conflict reconciliation with IPAI invariants
+# -----------------------------------------------------------------------------
+conflict_reconciliation:
+
+  fabric_vs_databricks:
+    upstream_position: Fabric as data foundation
+    ipai_invariant: "Databricks + Unity Catalog is the mandatory governed transformation/engineering/serving plane (CLAUDE.md #9). Fabric is mirroring/OneLake complement (CLAUDE.md #13)."
+    decision: adopt_fabric_provisioning_patterns_for_mirroring_only
+    not_as: primary_engineering_plane
+
+  purview_optional:
+    upstream_position: optional tenant-level Purview connection
+    ipai_status: not_yet_adopted
+    decision: reference_only_until_purview_becomes_live_requirement
+
+  private_networking:
+    upstream_position: private endpoints by default
+    ipai_status: partial (ACA behind Azure Front Door; some PaaS still public)
+    decision: adopt_as_hardening_target_for_production_environment
+
+  managed_identity_first:
+    upstream_position: managed identities for all workload auth
+    ipai_status: aligned (per ssot/identity/entra_target_state.yaml)
+    decision: reinforce_existing_doctrine
+
+# -----------------------------------------------------------------------------
+# Not for these repos
+# -----------------------------------------------------------------------------
+not_for:
+  - path: web/
+    reason: frontend concern; use site-template-adoption SSOT instead
+  - path: agents/
+    reason: definitions layer; no infra concerns
+  - path: addons/
+    reason: Odoo runtime; independent of Azure AI accelerator
+  - path: data-intelligence/
+    reason: Databricks-first per doctrine; Fabric patterns absorbed only for mirroring
+
+# -----------------------------------------------------------------------------
+# Adoption order
+# -----------------------------------------------------------------------------
+adoption_order:
+  phase_1_hardening_patterns:
+    - review accelerator private-networking Bicep modules
+    - land adapted private endpoint patterns in infra/azure/modules/
+    - align managed identity naming with ssot/identity/entra_target_state.yaml
+  phase_2_foundry_provisioning:
+    - adapt Foundry project Bicep to ipai-copilot-resource naming
+    - wire managed identity auth to MAF runtime in agent-platform/
+  phase_3_search_and_retrieval:
+    - adapt AI Search provisioning for agent-platform retrieval
+    - connect to retrieval/ module (to be scaffolded)
+  phase_4_fabric_mirroring_only:
+    - adapt Fabric workspace provisioning for mirroring scenarios
+    - reconcile with existing Databricks Unity Catalog plane
+  phase_5_purview_deferred:
+    - do not adopt Purview binding until live requirement exists
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  agent_framework_adoption: ssot/agent-platform/agent_framework_adoption.yaml
+  agent_delivery_stack: ssot/agent-platform/agent_delivery_stack.yaml
+  identity_target: ssot/identity/entra_target_state.yaml
+  reference_samples_m365: ssot/governance/reference-samples-register.yaml
+  architecture_doc: docs/architecture/production-ai-foundation-adoption.md
+  upstream_repo: https://github.com/microsoft/Deploy-Your-AI-Application-In-Production
+  waf: https://learn.microsoft.com/azure/well-architected/
