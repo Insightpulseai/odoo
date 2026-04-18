@@ -1,0 +1,57 @@
+{
+  "resourceType": "Offer",
+  "id": "insightpulse-pulser-odoo",
+  "offerType": "SaaS",
+  "alias": "Pulser for Odoo - Strategic AI Operations",
+  "definition": {
+    "displayText": "Pulser for Odoo",
+    "description": "Enterprise-grade AI operating copilot for Odoo 18. Automates finance, compliance, and media ops.",
+    "summary": "AI operating copilot for Odoo workflows.",
+    "offerSearchKeywords": ["Odoo", "ERP", "AI", "Copilot", "Philippines", "BIR", "Accounting", "Media Ops"],
+    "marketingLinks": [
+      {
+        "displayText": "Privacy Policy",
+        "url": "https://insightpulseai.com/privacy"
+      },
+      {
+        "displayText": "Support Page",
+        "url": "https://insightpulseai.com/support"
+      }
+    ]
+  },
+  "technicalConfiguration": {
+    "landingPageUrl": "https://erp.insightpulseai.com/onboarding/marketplace",
+    "connectionId": "MICROSOFT_SAAS_FULFILLMENT_CONNECTION",
+    "azureActiveDirectoryTenantId": "INSIGHTPULSEAI_TENANT_ID",
+    "azureActiveDirectoryApplicationId": "MICROSOFT_MARKETPLACE_APP_ID"
+  },
+  "plans": [
+    {
+      "id": "pulser-odoo-foundational",
+      "alias": "Foundational (SME)",
+      "displayName": "Pulser Foundational",
+      "description": "Odoo Core + P2P Assistant.",
+      "price": {
+        "monthly": 49.00
+      }
+    },
+    {
+      "id": "pulser-odoo-pro",
+      "alias": "Professional (Growth)",
+      "displayName": "Pulser Professional",
+      "description": "Full Platform + R2R & Media Ops specialists.",
+      "price": {
+        "monthly": 199.00
+      }
+    },
+    {
+      "id": "pulser-odoo-enterprise",
+      "alias": "Enterprise (Strategic)",
+      "displayName": "Pulser Enterprise",
+      "description": "Unified Governance + Priority AI.",
+      "price": {
+        "monthly": 999.00
+      }
+    }
+  ]
+}

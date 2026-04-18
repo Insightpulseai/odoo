@@ -1,0 +1,43 @@
+---
+# SSOT: Marketplace Plans & Pricing Structure
+# Codifies the commercial tiers and agent entitlements for the transactable offer.
+# Last updated: 2026-04-18
+version: 1
+
+plans:
+  - id: plan-foundational
+    sku: "pulser-odoo-foundational"
+    name: "Pulser Foundational (SME)"
+    price_usd_monthly: 49.00
+    description: "Core Odoo ERP + Pulser Project-to-Profit Assistant."
+    entitlements:
+      agents: ["pulser-project-to-profit"]
+      layers: ["odoo_on_cloud", "ai_wrapper"]
+      support: "Community/Standard"
+
+  - id: plan-professional
+    sku: "pulser-odoo-pro"
+    name: "Pulser Professional (Growth)"
+    price_usd_monthly: 199.00
+    description: "Full platform + Record-to-Report & Media Ops Specialist Agents."
+    entitlements:
+      agents: ["pulser-project-to-profit", "pulser-record-to-report", "pulser-media-ops"]
+      layers: ["odoo_on_cloud", "ai_wrapper", "analytics_plane", "media_ops_pipeline"]
+      support: "Priority (Business Day)"
+
+  - id: plan-enterprise
+    sku: "pulser-odoo-enterprise"
+    name: "Pulser Enterprise (Strategic)"
+    price_usd_monthly: 999.00
+    description: "Unified Governance, PIM, Custom Agents, and Priority Inference."
+    entitlements:
+      agents: ["all", "custom-developed-agents"]
+      layers: ["all", "governance_shield", "priority_inference"]
+      support: "Executive (24/7 Premium)"
+    private_offers_enabled: true
+
+billing_policy:
+  currency: USD
+  frequency: [monthly, yearly]
+  annual_discount: 0.15
+  token_pricing: "Tiered (included floor + overage per 1M tokens)"
