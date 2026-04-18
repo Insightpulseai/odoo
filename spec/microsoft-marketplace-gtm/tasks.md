@@ -38,3 +38,8 @@
 
 ---
 *Last updated: 2026-04-18*
+
+## Phase 54 — Media Ops Integration [NEW]
+- [ ] GTM-MEDIA-01: Scaffold `ipai_media_ops` module for Odoo.
+- [ ] GTM-MEDIA-02: Implement Sora/Veo/Nano-Banana skill in Pulser Assistant.
+- [ ] GTM-MEDIA-03: Create API Bridge spec for `ugc-mediaops-kit` ingestion.

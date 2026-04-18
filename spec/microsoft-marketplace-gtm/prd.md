@@ -14,11 +14,12 @@ As part of the Microsoft ISV Success Program, InsightPulseAI (Dataverse IT Consu
 - **Core Value**: Guided workflows, reporting, and operational control.
 
 ## 3. Offering Scope
-The offer encapsulates an *AI-assisted operational platform* structured in four layers:
+The offer encapsulates an *AI-assisted operational platform* structured in five layers:
 1. **Odoo on Cloud:** Governed system of record for operational workflows.
-2. **Pulser AI Wrapper:** AI-assisted workflow, guidance, summarization, and intelligence layer.
-3. **Analytics Plane:** Databricks + Unity Catalog for governed BI and conversational analytics.
-4. **Managed Support Services:** Setup, integration, technical ops, and Azure deployment.
+2. **Pulser AI Wrapper:** AI-assisted workflow, guidance, and intelligence layer.
+3. **Analytics Plane:** Databricks + Unity Catalog for governed BI.
+4. **Media Ops Pipeline:** Integration with `ugc-mediaops-kit` for generative content (Video/Images via Sora/Veo/Nano-Banana).
+5. **Managed Support Services:** Setup, integration, and Azure deployment.
 
 ## 4. Immediate Roadmap & Blockers
 - **Priorities**: Finalizing transactable offer packaging, defining publication sequence (platform -> analytics -> AI), and preparing GTM materials.
