@@ -352,7 +352,8 @@ domain_packs:
     kind: domain
     repo: agents
     surfaces:
-      - mobile_companion
+      - mobile_pwa
+    delivery_mode: progressive_web_app (NOT native app)
     personas:
       - expense_submitter
       - cash_advance_requester
@@ -372,27 +373,53 @@ domain_packs:
       - policy_judge
       - responsible_ai_judge
     tools:
-      - mobile_camera_capture
+      - pwa_camera_capture (getUserMedia MediaDevices API)
       - ocr_foundry_pipeline
       - accounting_read
       - guarded_finance_actions
-      - push_notifications
+      - web_push_notifications (VAPID)
     mutation_policy: guarded_write
-    split_reason: mobile_native_workflow_narrow_companion
+    split_reason: mobile_pwa_workflow_narrow_companion_not_native_app
     scope_rule: >
-      Narrow mobile companion ONLY. Not a full mobile ERP. Not a
-      broad multi-domain mobile launch. Not a broad Pulser mobile shell.
+      Narrow PWA companion ONLY. NOT a full mobile ERP. NOT a broad
+      multi-domain mobile launch. NOT a native iOS/Android app. NOT a
+      broad Pulser mobile shell. Delivered as a browser-installable
+      Progressive Web App.
+    pwa_technical_requirements:
+      - web_app_manifest (name, icons, display=standalone, theme_color)
+      - service_worker (offline fallback + background sync for queued submissions)
+      - https_served (required for installability + camera + Web Push)
+      - installable_prompt_supported
+      - lighthouse_pwa_audit_passing_baseline
+      - web_push_via_vapid_for_android_and_desktop
+      - ios_push_caveat_documented (Safari Web Push 16.4+; limited notification behaviors)
+    relationship_to_existing_ios_wrapper:
+      existing_native_wrapper_path: web/mobile/ (Swift/Xcode project — `OdooWrapper.xcodeproj`)
+      relationship: >
+        The native iOS wrapper (per CLAUDE.md #18–20) hosts web content
+        via allowlist-based WKWebView. A PWA is a complementary delivery
+        path — browser-installable on all platforms without the iOS
+        wrapper. Both can coexist: PWA is the default; the native
+        wrapper adds native auth/biometrics/SF Symbols shell only on iOS.
+      do_not:
+        - replace the existing iOS wrapper with pure PWA on iOS devices
+        - duplicate auth/biometric code paths across PWA and wrapper
+      do:
+        - use the SAME web content inside both PWA and iOS wrapper
+        - serve from the same origin with the same service worker
     includes:
-      - receipt_capture
+      - receipt_capture (getUserMedia)
       - ocr_submission
       - expense_draft_review
       - cash_advance_status
       - approval_actions
-      - push_notifications
+      - web_push_notifications
+      - offline_queue_for_receipt_upload (service worker background sync)
     excludes:
       - full_backoffice_erp
       - full_databricks_authoring
       - broad_multi_domain_workflows
+      - native_app_store_submission_pipeline (use existing iOS wrapper for App Store)
 judges:
   - judge_id: grounding_judge
     kind: shared

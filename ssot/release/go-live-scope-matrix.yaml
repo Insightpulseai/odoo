@@ -149,38 +149,53 @@ surfaces:
       app_scaffold: not_yet
 
   expense_mobile_companion:
-    name: Expense + Approvals Mobile Companion
-    surface_location: mobile_companion (iOS + Android wrapper; not a full mobile ERP)
-    repo: web/mobile/ + agent-platform/src/agent_platform/tools/ + addons/ipai/ipai_expense_mobile/ (planned)
+    name: Expense + Approvals Mobile Companion (PWA)
+    delivery_mode: progressive_web_app
+    surface_location: mobile_pwa (browser-installable; NOT a native app)
+    repo: web/apps/expense-mobile-pwa/ (planned) + agent-platform tools + addons/ipai/ipai_expense_mobile/ (planned)
     pulser_pack: pulser_expense_mobile_companion
     product_in_scope: true
     go_live_gate_scope: decide_now
     rationale: >
       Mobile is naturally native for expense capture + OCR + cash
-      advance monitoring + approval nudges. Narrow scope: receipt
-      capture, OCR submission, expense draft review, cash advance
-      status, approval actions, push notifications. NOT a full mobile
-      ERP, NOT a broad Pulser mobile shell.
+      advance monitoring + approval nudges. Deliver as PWA (Progressive
+      Web App): installable via browser, single codebase, no app store
+      submission cycle, camera via getUserMedia, offline via service
+      worker. Existing iOS native wrapper (web/mobile/ per CLAUDE.md
+      #18-20) can host the same web content when native shell features
+      are needed.
+    delivery_choice_pwa_vs_native:
+      default: pwa (single codebase, faster iteration, no app store gating)
+      native_ios_wrapper: complementary (retain existing web/mobile/ for
+        native auth + biometrics + SF Symbols shell only; same web
+        content inside)
     includes:
-      - receipt_capture
+      - receipt_capture (getUserMedia)
       - ocr_submission (via Foundry Document Intelligence)
       - expense_draft_review
       - cash_advance_status
       - approval_actions
-      - push_notifications
+      - web_push_notifications (VAPID)
+      - offline_queue_service_worker_background_sync
     excludes:
       - full_backoffice_erp
       - full_databricks_authoring
       - broad_multi_domain_workflows
-    mobile_specific_readiness_gates:
-      - authenticated_mobile_sign_in_flow_verified
+      - native_app_store_submission_pipeline (use iOS wrapper if needed)
+    pwa_specific_readiness_gates:
+      - web_app_manifest_published
+      - service_worker_registered_and_passing_lighthouse_pwa_audit
+      - https_and_installability_verified
+      - getusermedia_camera_path_verified
       - receipt_upload_path_verified
-      - ocr_extraction_path_verified
+      - foundry_ocr_extraction_path_verified
       - expense_draft_submit_path_verified
       - approval_action_path_verified
-      - push_notification_strategy_defined
-      - mobile_support_matrix_defined
-      - rollback_path_for_mobile_companion_defined
+      - web_push_vapid_configured_android_desktop
+      - ios_safari_push_caveat_documented_16_4_plus_required
+      - offline_queue_background_sync_tested
+      - entra_oauth_pkce_mobile_flow_verified
+      - rollback_path_for_pwa_companion_defined
 
   asset_ops:
     name: Production Asset Ops (barcode + booking + loaning)
