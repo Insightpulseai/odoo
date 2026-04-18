@@ -1,0 +1,24 @@
+pack_id: pulser_platform
+kind: domain
+status: starter
+personas:
+  - platform_strategist
+  - product_architect
+  - support_concierge
+  - solution_advisor
+tasks:
+  - explain_capabilities
+  - route_user
+  - summarize_platform_state
+  - draft_solution_response
+judges:
+  - grounding_judge
+  - platform_policy_judge
+  - brand_judge
+  - release_readiness_judge
+tools:
+  - docs_retrieval
+  - platform_metadata_read
+surfaces:
+  - www.insightpulseai.com
+mutation_policy: read_only

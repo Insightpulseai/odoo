@@ -1,0 +1,20 @@
+pack_id: project_management_pack
+kind: shared_role
+status: starter
+personas:
+  - project_coordinator
+  - delivery_assistant
+tasks:
+  - summarize_project
+  - identify_blockers
+  - draft_status
+judges:
+  - grounding_judge
+  - policy_judge
+tools:
+  - project_read
+  - task_read
+  - notifications
+surfaces:
+  - www.w9studio.net
+  - erp.insightpulseai.com

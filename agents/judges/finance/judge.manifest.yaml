@@ -1,0 +1,6 @@
+judge_id: finance_correctness_judge
+kind: domain
+status: starter
+rules:
+  validates_finance_terms: true
+  blocks_unsafe_mutations: true

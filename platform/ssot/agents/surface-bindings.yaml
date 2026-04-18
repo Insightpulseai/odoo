@@ -1,160 +1,104 @@
-# =============================================================================
-# Pulser Surface → Pack Bindings — SSOT
-# =============================================================================
-# Authority: canonical binding from public surface (domain) to the Pulser
-#            pack set, judges, allowed surfaces, and blocked defaults.
-#            Consumed at runtime by context_resolver to select packs
-#            without user input.
-# Related:   platform/ssot/agents/pulser-pack-matrix.yaml
-#            platform/ssot/agents/pulser-context-awareness.yaml
-#            platform/ssot/agents/pulser-domain-packs.yaml
-#            ssot/web/site-template-adoption.yaml
-# =============================================================================
-
-schema_version: "1.0"
-last_updated: "2026-04-19"
-owner: "platform-architecture"
-status: canonical
-
-# -----------------------------------------------------------------------------
-# Surface bindings (4 public surfaces)
-# -----------------------------------------------------------------------------
+version: 1
+system: pulser
 surface_bindings:
-
-  "www.insightpulseai.com":
-    surface_role: flagship_platform_and_capability_front_door
-    core: [pulser_core]
+  - surface: www.insightpulseai.com
+    class: flagship_platform
+    default_domain_pack: pulser_platform
     shared_role_packs:
       - strategy_pack
       - product_pack
       - support_pack
       - engineering_pack
-      - marketing_pack
-    domain_packs:
-      - pulser_platform
-      - pulser_web
     optional_domain_packs:
       - pulser_finance
       - pulser_identity_ops
-    judges:
+    default_judges:
       - grounding_judge
       - platform_policy_judge
       - brand_judge
-      - release_readiness_judge
-    allowed_surfaces:
-      - public_web
-      - authenticated_workspace
-    blocked_defaults:
-      - direct_erp_mutation
-      - privileged_identity_changes
-    app_path: web/apps/ipai-landing
-
-  "www.w9studio.net":
-    surface_role: commercial_branch_studio_site
-    core: [pulser_core]
+    default_tools:
+      - docs_retrieval
+      - platform_metadata_read
+    blocked_default_tools:
+      - guarded_odoo_write
+      - guarded_finance_actions
+      - identity_admin_write
+  - surface: www.w9studio.net
+    class: commercial_branch
+    default_domain_pack: pulser_w9studio
     shared_role_packs:
       - marketing_pack
       - sales_pack
       - support_pack
       - project_management_pack
-    domain_packs:
-      - pulser_w9studio
-    judges:
+    default_judges:
       - brand_judge
       - customer_value_judge
       - safe_public_response_judge
-    allowed_surfaces:
-      - public_web
-      - lightweight_authenticated_ops
-    blocked_defaults:
-      - finance_posting
-      - identity_admin
-      - deep_erp_mutation
-    app_path: web/apps/w9studio-site
-
-  "prismalab.insightpulseai.com":
-    surface_role: specialized_evidence_heavy_domain_workspace
-    core: [pulser_core]
+    default_tools:
+      - crm_read
+      - notifications
+      - scheduling_optional
+    blocked_default_tools:
+      - accounting_read
+      - guarded_finance_actions
+      - guarded_odoo_write
+      - identity_admin_write
+  - surface: prismalab.insightpulseai.com
+    class: evidence_workspace
+    default_domain_pack: pulser_prismalab_research
     shared_role_packs:
       - support_pack
-    domain_packs:
-      - pulser_prismalab_research
-      - pulser_prismalab_screening
-      - pulser_prismalab_extraction
-      - pulser_prismalab_synthesis
-    judges:
+    default_judges:
       - grounding_judge
       - citation_judge
       - evidence_quality_judge
       - research_policy_judge
-    allowed_surfaces:
-      - authenticated_workspace
-      - document_intake
-      - export_review_surface
-    blocked_defaults:
-      - unsupported_claim_generation
-      - uncited_synthesis_for_high_stakes_outputs
-    app_path: web/apps/prismalab
-    split_earlier_rationale:
-      - distinct_ontology
-      - distinct_evidence_requirements
-      - distinct_judges
-      - distinct_task_graph
-      - higher_grounding_audit_expectations
-
-  "erp.insightpulseai.com":
-    surface_role: transactional_erp_adjacent_assistant
-    core: [pulser_core]
+    default_tools:
+      - doc_ingest
+      - retrieval
+      - extraction
+      - citation_export
+    blocked_default_tools:
+      - guarded_odoo_write
+      - guarded_finance_actions
+      - identity_admin_write
+  - surface: erp.insightpulseai.com
+    class: transactional_backoffice
+    default_domain_pack: pulser_erp
+    secondary_domain_packs:
+      - pulser_finance
     shared_role_packs:
       - support_pack
-    domain_packs:
-      - pulser_erp
-      - pulser_finance
-    judges:
-      - finance_correctness_judge
+      - project_management_pack
+    default_judges:
       - erp_mutation_guard_judge
       - branch_context_judge
       - policy_judge
-    allowed_surfaces:
-      - authenticated_erp
-      - backoffice_ops
-    blocked_defaults:
-      - public_access
-      - uncontrolled_mutations
-    app_path: addons/ (Odoo native)
-
-# -----------------------------------------------------------------------------
-# Resolution rule
-# -----------------------------------------------------------------------------
-resolution_rule: >
-  context_resolver reads the Host header / routing surface, looks up
-  the matching surface binding, and seeds the pack set, judges, allowed
-  surfaces, and blocked_defaults into the request context envelope
-  BEFORE any persona or tool selection. No user input is required to
-  bind packs; user overrides happen at step 6 of the resolution
-  pipeline (see pulser-context-awareness.yaml).
-
-# -----------------------------------------------------------------------------
-# Cross-references to other SSOTs
-# -----------------------------------------------------------------------------
-cross_references:
-  site_template_adoption: ssot/web/site-template-adoption.yaml
-  azure_resource_inventory: platform/ssot/azure/resource-inventory.dev.yaml
-  aac_map: ssot/architecture/azure-architecture-center-map.yaml
-
-# -----------------------------------------------------------------------------
-# Non-goals
-# -----------------------------------------------------------------------------
-non_goals:
-  - not a DNS or routing authority (infra/dns/ + Azure Front Door own that)
-  - not a per-user personalization matrix (session memory + role do that)
-  - not a feature flag registry (platform/ owns that)
-
-# -----------------------------------------------------------------------------
-# Anchors
-# -----------------------------------------------------------------------------
-anchors:
-  pack_matrix: platform/ssot/agents/pulser-pack-matrix.yaml
-  context_awareness: platform/ssot/agents/pulser-context-awareness.yaml
-  domain_packs: platform/ssot/agents/pulser-domain-packs.yaml
-  hook_lifecycle: platform/ssot/agents/pulser-hook-lifecycle.yaml
+    default_tools:
+      - odoo_read
+      - accounting_read
+      - payment_read
+    guarded_tools:
+      - guarded_odoo_write
+      - guarded_finance_actions
+    blocked_default_tools:
+      - public_cms_write
+      - identity_admin_write
+context_inheritance:
+  global:
+    - actor
+    - tenant
+    - environment
+  session:
+    - domain
+    - branch
+    - trade_name
+    - selected_contact
+    - selected_account
+    - selected_project
+  request:
+    - task
+    - object
+    - approval_mode
+    - persona_override

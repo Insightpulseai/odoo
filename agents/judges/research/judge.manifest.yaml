@@ -1,0 +1,6 @@
+judge_id: evidence_quality_judge
+kind: domain
+status: starter
+rules:
+  requires_structured_evidence: true
+  blocks_on_low_confidence: true

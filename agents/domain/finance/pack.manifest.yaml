@@ -1,0 +1,25 @@
+pack_id: pulser_finance
+kind: domain
+status: starter
+personas:
+  - finance_ops_assistant
+  - invoice_analyst
+  - reconciliation_assistant
+tasks:
+  - summarize_receivables
+  - summarize_payables
+  - explain_invoice
+  - stage_reconciliation
+judges:
+  - finance_correctness_judge
+  - policy_judge
+  - grounding_judge
+  - branch_context_judge
+tools:
+  - accounting_read
+  - payment_read
+  - guarded_finance_actions
+surfaces:
+  - erp.insightpulseai.com
+  - www.insightpulseai.com
+mutation_policy: guarded_write

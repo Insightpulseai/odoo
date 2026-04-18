@@ -1,0 +1,20 @@
+pack_id: pulser_erp
+kind: domain
+status: starter
+personas:
+  - erp_operator
+  - project_ops_coordinator
+tasks:
+  - inspect_object_state
+  - summarize_order_or_project
+  - prepare_safe_action
+judges:
+  - erp_mutation_guard_judge
+  - branch_context_judge
+  - policy_judge
+tools:
+  - odoo_read
+  - guarded_odoo_write
+surfaces:
+  - erp.insightpulseai.com
+mutation_policy: guarded_write

@@ -1,0 +1,24 @@
+pack_id: pulser_w9studio
+kind: domain
+status: starter
+personas:
+  - studio_sales_assistant
+  - booking_coordinator
+  - client_support_agent
+  - creative_brief_assistant
+tasks:
+  - qualify_lead
+  - answer_booking_questions
+  - draft_followup
+  - summarize_client_request
+judges:
+  - brand_judge
+  - customer_value_judge
+  - safe_public_response_judge
+tools:
+  - crm_read
+  - notifications
+  - scheduling_optional
+surfaces:
+  - www.w9studio.net
+mutation_policy: guarded_write

@@ -1,0 +1,18 @@
+pack_id: product_pack
+kind: shared_role
+status: starter
+personas:
+  - product_architect
+  - workflow_designer
+tasks:
+  - define_scope
+  - propose_workflow
+  - summarize_requirements
+judges:
+  - grounding_judge
+  - policy_judge
+tools:
+  - docs_retrieval
+  - platform_metadata_read
+surfaces:
+  - www.insightpulseai.com

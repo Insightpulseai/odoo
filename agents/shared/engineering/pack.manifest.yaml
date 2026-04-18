@@ -1,0 +1,18 @@
+pack_id: engineering_pack
+kind: shared_role
+status: starter
+personas:
+  - engineering_advisor
+  - integration_architect
+tasks:
+  - explain_architecture
+  - propose_integration
+  - summarize_runtime_state
+judges:
+  - grounding_judge
+  - release_readiness_judge
+tools:
+  - docs_retrieval
+  - runtime_metadata_read
+surfaces:
+  - www.insightpulseai.com

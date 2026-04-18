@@ -1,164 +1,206 @@
-# =============================================================================
-# Pulser Pack Matrix — SSOT
-# =============================================================================
-# Authority: canonical personas / tasks / judges / tools / surfaces per
-#            Pulser pack. Machine-readable source for runtime pack
-#            selection and policy enforcement.
-# Related:   platform/ssot/agents/pulser-context-awareness.yaml
-#            platform/ssot/agents/pulser-domain-packs.yaml
-#            platform/ssot/agents/surface-bindings.yaml
-#            platform/ssot/agents/pulser-hook-lifecycle.yaml
-# =============================================================================
-
-schema_version: "1.0"
-last_updated: "2026-04-19"
-owner: "platform-architecture"
-status: canonical
-
-doctrine: >
-  One Pulser Core + shared role packs + domain packs + judge packs.
-  Google production disciplines (models/tools/orchestration/memory/
-  evaluation/productionization) + VS Code hook lifecycle + context-
-  resolved routing. Split only when ontology, tools, risk, eval
-  contract, tenant isolation, or latency profile diverge.
-
-# -----------------------------------------------------------------------------
-# Pack matrix — core + shared role packs + domain packs
-# -----------------------------------------------------------------------------
-pulser_pack_matrix:
-
-  # --- Core (centralized, non-optional) --------------------------------------
-
-  pulser_core:
-    tier: core
-    personas: []
+version: 1
+system: pulser
+default_runtime_repo: agent-platform
+default_definition_repo: agents
+default_binding_repo: platform
+core:
+  pack_id: pulser_core
+  kind: core
+  owns:
+    - context_resolution
+    - actor_resolution
+    - tenant_resolution
+    - branch_resolution
+    - environment_resolution
+    - contact_resolution
+    - session_memory
+    - policy_engine
+    - hook_engine
+    - tool_registry
+    - audit_logging
+    - telemetry
+    - judge_runner
+  runtime_components:
+    - context_resolver
+    - persona_router
+    - task_router
+    - policy_engine
+    - hook_lifecycle
+    - tool_runner
+    - judge_runner
+    - session_store
+    - audit_event_sink
+shared_role_packs:
+  - pack_id: strategy_pack
+    kind: shared_role
+    repo: agents
+    personas:
+      - platform_strategist
+      - solution_advisor
     tasks:
-      - resolve_context
-      - route_request
-      - enforce_policy
-      - audit_event
+      - explain_capabilities
+      - compare_options
+      - summarize_strategy
     judges:
+      - grounding_judge
       - policy_judge
     tools:
-      - context_resolver
-      - policy_engine
-      - audit_log
-    surfaces: [all]
-    placement:
-      runtime: agent-platform/src/agent_platform/
-      bindings: platform/ssot/agents/
-
-  # --- Shared role packs (reusable, agency-agents taxonomy influence) --------
-
-  strategy_pack:
-    tier: shared
-    personas: [platform_strategist, solution_advisor]
-    tasks: [explain_capabilities, draft_solution_narrative, compare_options]
-    judges: [grounding_judge, brand_judge]
-    tools: [docs_retrieval, platform_metadata_read]
-    surfaces: [www.insightpulseai.com]
-    placement: agents/shared/strategy/
-
-  product_pack:
-    tier: shared
-    personas: [product_architect]
-    tasks: [describe_capability, draft_roadmap_narrative, summarize_release_notes]
-    judges: [grounding_judge, brand_judge]
-    tools: [docs_retrieval, platform_metadata_read]
-    surfaces: [www.insightpulseai.com]
-    placement: agents/shared/product/
-
-  engineering_pack:
-    tier: shared
-    personas: [engineering_explainer]
-    tasks: [explain_architecture, generate_integration_snippet, summarize_technical_doc]
-    judges: [grounding_judge, policy_judge]
-    tools: [docs_retrieval, code_sample_retrieval]
-    surfaces: [www.insightpulseai.com]
-    placement: agents/shared/engineering/
-
-  marketing_pack:
-    tier: shared
-    personas: [content_writer, creative_briefing_assistant]
-    tasks: [draft_landing_copy, restyle_marketing_page, produce_case_study_outline]
-    judges: [brand_judge, safe_public_response_judge]
-    tools: [storage_blobs, notifications]
-    surfaces: [www.w9studio.net, www.insightpulseai.com]
-    placement: agents/shared/marketing/
-
-  sales_pack:
-    tier: shared
-    personas: [studio_sales_assistant, solution_qualifier]
-    tasks: [qualify_lead, answer_package_pricing_questions, draft_followup]
-    judges: [brand_judge, customer_value_judge, safe_public_response_judge]
-    tools: [crm_read_write_guarded, notifications]
-    surfaces: [www.w9studio.net]
-    placement: agents/shared/sales/
-
-  support_pack:
-    tier: shared
-    personas: [support_concierge, client_support_agent]
-    tasks: [route_request, summarize_ticket_state, draft_response]
-    judges: [grounding_judge, brand_judge]
-    tools: [docs_retrieval, crm_read, notifications]
-    surfaces: [all]
-    placement: agents/shared/support/
-
-  project_management_pack:
-    tier: shared
-    personas: [booking_coordinator, project_ops_coordinator]
-    tasks: [collect_booking_requirements, summarize_project_state, draft_status_update]
-    judges: [brand_judge, policy_judge]
-    tools: [scheduling_optional, crm_read_write_guarded]
-    surfaces: [www.w9studio.net, erp.insightpulseai.com]
-    placement: agents/shared/project_management/
-
-  # --- Domain packs (IPAI-owned, authored locally) ---------------------------
-
-  pulser_platform:
-    tier: domain
-    personas: [platform_strategist, product_architect, support_concierge]
+      - docs_retrieval
+      - platform_metadata_read
+  - pack_id: product_pack
+    kind: shared_role
+    repo: agents
+    personas:
+      - product_architect
+      - workflow_designer
     tasks:
-      - explain_platform_capabilities
-      - route_user_to_workspace
+      - define_scope
+      - propose_workflow
+      - summarize_requirements
+    judges:
+      - grounding_judge
+      - policy_judge
+    tools:
+      - docs_retrieval
+      - platform_metadata_read
+  - pack_id: engineering_pack
+    kind: shared_role
+    repo: agents
+    personas:
+      - engineering_advisor
+      - integration_architect
+    tasks:
+      - explain_architecture
+      - propose_integration
+      - summarize_runtime_state
+    judges:
+      - grounding_judge
+      - release_readiness_judge
+    tools:
+      - docs_retrieval
+      - runtime_metadata_read
+  - pack_id: marketing_pack
+    kind: shared_role
+    repo: agents
+    personas:
+      - campaign_assistant
+      - copy_assistant
+    tasks:
+      - draft_copy
+      - summarize_offer
+      - adapt_message
+    judges:
+      - brand_judge
+      - safe_public_response_judge
+    tools:
+      - cms_read
+      - asset_catalog_read
+  - pack_id: sales_pack
+    kind: shared_role
+    repo: agents
+    personas:
+      - sales_assistant
+      - qualification_assistant
+    tasks:
+      - qualify_lead
+      - summarize_account
+      - draft_followup
+    judges:
+      - customer_value_judge
+      - policy_judge
+    tools:
+      - crm_read
+      - notifications
+  - pack_id: support_pack
+    kind: shared_role
+    repo: agents
+    personas:
+      - support_concierge
+      - case_assistant
+    tasks:
+      - answer_question
+      - route_user
+      - summarize_case
+    judges:
+      - grounding_judge
+      - policy_judge
+    tools:
+      - docs_retrieval
+      - case_read
+      - notifications
+  - pack_id: project_management_pack
+    kind: shared_role
+    repo: agents
+    personas:
+      - project_coordinator
+      - delivery_assistant
+    tasks:
+      - summarize_project
+      - identify_blockers
+      - draft_status
+    judges:
+      - grounding_judge
+      - policy_judge
+    tools:
+      - project_read
+      - task_read
+      - notifications
+domain_packs:
+  - pack_id: pulser_platform
+    kind: domain
+    repo: agents
+    surfaces:
+      - www.insightpulseai.com
+    personas:
+      - platform_strategist
+      - product_architect
+      - support_concierge
+      - solution_advisor
+    tasks:
+      - explain_capabilities
+      - route_user
       - summarize_platform_state
       - draft_solution_response
-    judges: [grounding_judge, platform_policy_judge, brand_judge]
-    tools: [docs_retrieval, platform_metadata_read]
-    surfaces: [www.insightpulseai.com]
-    placement: agents/domain/platform/
-
-  pulser_web:
-    tier: domain
-    personas: [content_writer, studio_creative]
-    tasks: [draft_landing_copy, restyle_marketing_page, produce_case_study_outline]
-    judges: [brand_judge, tbwa_fit_judge, safety_judge]
-    tools: [storage_blobs, notifications]
-    blocked_defaults: [any_erp_write_path]
-    surfaces: [www.insightpulseai.com]
-    placement: agents/domain/web/
-
-  pulser_w9studio:
-    tier: domain
+    judges:
+      - grounding_judge
+      - platform_policy_judge
+      - brand_judge
+      - release_readiness_judge
+    tools:
+      - docs_retrieval
+      - platform_metadata_read
+    mutation_policy: read_only
+    split_reason: flagship_platform_surface
+  - pack_id: pulser_w9studio
+    kind: domain
+    repo: agents
+    surfaces:
+      - www.w9studio.net
     personas:
       - studio_sales_assistant
       - booking_coordinator
       - client_support_agent
-      - creative_briefing_assistant
+      - creative_brief_assistant
     tasks:
       - qualify_lead
       - answer_booking_questions
       - draft_followup
       - summarize_client_request
-      - collect_booking_requirements
-    judges: [brand_judge, customer_value_judge, safe_public_response_judge]
-    tools: [crm_read_write_guarded, notifications, scheduling_optional]
-    blocked_defaults: [finance_posting, identity_admin, deep_erp_mutation]
-    surfaces: [www.w9studio.net]
-    placement: agents/domain/w9studio/
-
-  pulser_prismalab_research:
-    tier: domain
+    judges:
+      - brand_judge
+      - customer_value_judge
+      - safe_public_response_judge
+    tools:
+      - crm_read
+      - notifications
+      - scheduling_optional
+    mutation_policy: guarded_write
+    split_reason: commercial_branch_surface
+  - pack_id: pulser_prismalab_research
+    kind: domain
+    repo: agents
+    surfaces:
+      - prismalab.insightpulseai.com
     personas:
       - research_screener
       - evidence_extractor
@@ -169,145 +211,162 @@ pulser_pack_matrix:
       - extract_evidence
       - compare_studies
       - generate_cited_summary
-    judges: [grounding_judge, citation_judge, evidence_quality_judge, research_policy_judge]
-    tools: [doc_ingest, retrieval, extraction, citation_export]
-    blocked_defaults: [unsupported_claim_generation, uncited_synthesis_for_high_stakes_outputs]
-    surfaces: [prismalab.insightpulseai.com]
-    placement: agents/domain/prismalab/research/
-
-  pulser_prismalab_screening:
-    tier: domain
-    personas: [research_screener]
-    tasks: [apply_inclusion_criteria, flag_exclusions, triage_for_extraction]
-    judges: [grounding_judge, research_policy_judge]
-    tools: [retrieval, extraction]
-    surfaces: [prismalab.insightpulseai.com]
-    placement: agents/domain/prismalab/screening/
-
-  pulser_prismalab_extraction:
-    tier: domain
-    personas: [evidence_extractor]
-    tasks: [extract_pico, extract_outcome_measures, structured_evidence_capture]
-    judges: [grounding_judge, citation_judge, evidence_quality_judge]
-    tools: [doc_ingest, extraction]
-    surfaces: [prismalab.insightpulseai.com]
-    placement: agents/domain/prismalab/extraction/
-
-  pulser_prismalab_synthesis:
-    tier: domain
-    personas: [synthesis_assistant, methods_reviewer]
-    tasks: [generate_cited_summary, prisma_report_generation, meta_analysis_prep]
-    judges: [grounding_judge, citation_judge, evidence_quality_judge, research_policy_judge]
-    tools: [retrieval, citation_export]
-    surfaces: [prismalab.insightpulseai.com]
-    placement: agents/domain/prismalab/synthesis/
-
-  pulser_erp:
-    tier: domain
-    personas: [erp_operator, project_ops_coordinator]
+    judges:
+      - grounding_judge
+      - citation_judge
+      - evidence_quality_judge
+      - research_policy_judge
+    tools:
+      - doc_ingest
+      - retrieval
+      - extraction
+      - citation_export
+    mutation_policy: read_only
+    split_reason: evidence_heavy_specialized_domain
+  - pack_id: pulser_erp
+    kind: domain
+    repo: agents
+    surfaces:
+      - erp.insightpulseai.com
+    personas:
+      - erp_operator
+      - project_ops_coordinator
     tasks:
       - inspect_object_state
       - summarize_order_or_project
       - prepare_safe_action
-      - navigate_branch_data
-      - route_approval
-    judges: [erp_mutation_guard_judge, branch_context_judge, policy_judge]
-    tools: [odoo_read, guarded_odoo_write]
-    blocked_defaults: [public_access, uncontrolled_mutations]
-    surfaces: [erp.insightpulseai.com]
-    placement: agents/domain/erp/
-
-  pulser_finance:
-    tier: domain
-    personas: [finance_ops_assistant, invoice_analyst, reconciliation_assistant]
+    judges:
+      - erp_mutation_guard_judge
+      - branch_context_judge
+      - policy_judge
+    tools:
+      - odoo_read
+      - guarded_odoo_write
+    mutation_policy: guarded_write
+    split_reason: transactional_backoffice_surface
+  - pack_id: pulser_finance
+    kind: domain
+    repo: agents
+    surfaces:
+      - erp.insightpulseai.com
+      - www.insightpulseai.com
+    personas:
+      - finance_ops_assistant
+      - invoice_analyst
+      - reconciliation_assistant
     tasks:
       - summarize_receivables
       - summarize_payables
       - explain_invoice
       - stage_reconciliation
-      - vat_filing_prep
-    judges: [finance_correctness_judge, policy_judge, grounding_judge]
-    tools: [accounting_read, payment_read, guarded_finance_actions]
-    blocked_defaults: [post_payment_without_approval, alter_journal, force_close_period]
-    surfaces: [erp.insightpulseai.com, www.insightpulseai.com]
-    placement: agents/domain/finance/
-
-  pulser_identity_ops:
-    tier: domain
-    personas: [identity_operator, guest_onboarding_advisor]
-    tasks: [list_guest_users, propose_role_reduction, draft_ca_policy_change]
-    judges: [privileged_action_judge, pim_eligibility_judge, grounding_judge]
-    tools: [entra_read, guarded_entra_write]
-    blocked_defaults: [create_user, assign_role, modify_ca_policy]
-    tool_policy_rule: privileged_tools_require_dual_control_and_pim_active
-    surfaces: [www.insightpulseai.com]
-    placement: agents/domain/identity_ops/
-
-# -----------------------------------------------------------------------------
-# Runtime default-selection algorithm
-# -----------------------------------------------------------------------------
-runtime_default_selection:
-  resolution_order:
-    - 1_surface               # erp.insightpulseai.com / prismalab / w9studio / insightpulseai
-    - 2_actor_role            # from context envelope actor.role_assignments
-    - 3_domain                # from context envelope domain.domain_code
-    - 4_contact_object_context  # partner_id / object_type + object_ids
-    - 5_environment           # dev / staging / prod
-    - 6_explicit_user_override
-
-  worked_example_prismalab_specialist:
-    inputs:
-      surface: prismalab.insightpulseai.com
-      object_type: paper_set
-      actor_role: specialist_reviewer
-      environment: prod
-    derived_binding:
-      pack: pulser_prismalab_research
-      task: extract_evidence | generate_cited_summary
-      judges: [grounding_judge, citation_judge, evidence_quality_judge]
-      user_selection_required: false
-
-# -----------------------------------------------------------------------------
-# Google-style production disciplines (mandatory per pack)
-# -----------------------------------------------------------------------------
-production_disciplines:
-  every_pack_must_declare:
+    judges:
+      - finance_correctness_judge
+      - policy_judge
+      - grounding_judge
+      - branch_context_judge
     tools:
-      - allowed
-      - blocked
-      - human_approval_requirements
-      - environment_restrictions
-    memory:
-      - session_memory
-      - long_term_memory_by_object_contact_tenant
-      - compaction_aware_export_handoff
-    evaluation:
-      - golden_scenarios
-      - judge_configs
-      - threshold_policies
-      - failure_escalation_paths
-    production:
-      - deployment_surfaces
-      - scaling_class
-      - logging_requirements
-      - audit_requirements
-      - safe_defaults
-
-# -----------------------------------------------------------------------------
-# Non-goals
-# -----------------------------------------------------------------------------
-non_goals:
-  - not encoding permissions into persona text (role + policy_engine own authority)
-  - not duplicating persona content across packs (shared/ cross-references)
-  - not inlining tool code (lives in agent-platform/src/agent_platform/tools/)
-
-# -----------------------------------------------------------------------------
-# Anchors
-# -----------------------------------------------------------------------------
-anchors:
-  context_awareness: platform/ssot/agents/pulser-context-awareness.yaml
-  domain_packs: platform/ssot/agents/pulser-domain-packs.yaml
-  surface_bindings: platform/ssot/agents/surface-bindings.yaml
-  hook_lifecycle: platform/ssot/agents/pulser-hook-lifecycle.yaml
-  agent_framework: ssot/agent-platform/agent_framework_adoption.yaml
-  architecture_doc: docs/architecture/pulser-context-awareness.md
+      - accounting_read
+      - payment_read
+      - guarded_finance_actions
+    mutation_policy: guarded_write
+    split_reason: finance_risk_and_ontology
+  - pack_id: pulser_identity_ops
+    kind: domain
+    repo: agents
+    surfaces:
+      - www.insightpulseai.com
+    personas:
+      - identity_operations_advisor
+      - guest_access_coordinator
+    tasks:
+      - summarize_identity_state
+      - classify_identity
+      - draft_access_recommendation
+    judges:
+      - identity_policy_judge
+      - policy_judge
+    tools:
+      - entra_read
+      - identity_audit_read
+    mutation_policy: read_only
+    split_reason: privileged_identity_domain
+judges:
+  - judge_id: grounding_judge
+    kind: shared
+    repo: agents
+    contract:
+      requires_citations: true
+      blocks_on_missing_evidence: true
+  - judge_id: citation_judge
+    kind: domain
+    repo: agents
+    contract:
+      requires_citations: true
+      validates_reference_format: true
+  - judge_id: evidence_quality_judge
+    kind: domain
+    repo: agents
+    contract:
+      requires_structured_evidence: true
+      blocks_on_low_confidence: true
+  - judge_id: finance_correctness_judge
+    kind: domain
+    repo: agents
+    contract:
+      validates_finance_terms: true
+      blocks_unsafe_mutations: true
+  - judge_id: erp_mutation_guard_judge
+    kind: domain
+    repo: agents
+    contract:
+      requires_guarded_write_policy: true
+      blocks_unapproved_side_effects: true
+  - judge_id: branch_context_judge
+    kind: domain
+    repo: agents
+    contract:
+      validates_branch_trade_name_scope: true
+  - judge_id: platform_policy_judge
+    kind: shared
+    repo: agents
+    contract:
+      validates_surface_policy: true
+  - judge_id: brand_judge
+    kind: shared
+    repo: agents
+    contract:
+      validates_brand_tone: true
+  - judge_id: customer_value_judge
+    kind: shared
+    repo: agents
+    contract:
+      validates_customer_clarity: true
+  - judge_id: safe_public_response_judge
+    kind: shared
+    repo: agents
+    contract:
+      validates_public_safe_content: true
+  - judge_id: release_readiness_judge
+    kind: shared
+    repo: agents
+    contract:
+      validates_operational_readiness: true
+  - judge_id: research_policy_judge
+    kind: domain
+    repo: agents
+    contract:
+      validates_research_workflow_rules: true
+  - judge_id: identity_policy_judge
+    kind: domain
+    repo: agents
+    contract:
+      validates_identity_governance_rules: true
+hook_events:
+  - SessionStart
+  - UserPromptSubmit
+  - PreToolUse
+  - PostToolUse
+  - PreCompact
+  - SubagentStart
+  - SubagentStop
+  - Stop

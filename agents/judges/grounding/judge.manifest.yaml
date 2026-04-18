@@ -1,0 +1,6 @@
+judge_id: grounding_judge
+kind: shared
+status: starter
+rules:
+  requires_citations: true
+  blocks_on_missing_evidence: true

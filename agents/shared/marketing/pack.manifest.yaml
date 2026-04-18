@@ -1,0 +1,19 @@
+pack_id: marketing_pack
+kind: shared_role
+status: starter
+personas:
+  - campaign_assistant
+  - copy_assistant
+tasks:
+  - draft_copy
+  - summarize_offer
+  - adapt_message
+judges:
+  - brand_judge
+  - safe_public_response_judge
+tools:
+  - cms_read
+  - asset_catalog_read
+surfaces:
+  - www.insightpulseai.com
+  - www.w9studio.net

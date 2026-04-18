@@ -1,0 +1,26 @@
+pack_id: pulser_prismalab_research
+kind: domain
+status: starter
+personas:
+  - research_screener
+  - evidence_extractor
+  - synthesis_assistant
+  - methods_reviewer
+tasks:
+  - classify_document
+  - extract_evidence
+  - compare_studies
+  - generate_cited_summary
+judges:
+  - grounding_judge
+  - citation_judge
+  - evidence_quality_judge
+  - research_policy_judge
+tools:
+  - doc_ingest
+  - retrieval
+  - extraction
+  - citation_export
+surfaces:
+  - prismalab.insightpulseai.com
+mutation_policy: read_only

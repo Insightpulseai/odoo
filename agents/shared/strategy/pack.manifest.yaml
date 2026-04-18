@@ -1,0 +1,18 @@
+pack_id: strategy_pack
+kind: shared_role
+status: starter
+personas:
+  - platform_strategist
+  - solution_advisor
+tasks:
+  - explain_capabilities
+  - compare_options
+  - summarize_strategy
+judges:
+  - grounding_judge
+  - policy_judge
+tools:
+  - docs_retrieval
+  - platform_metadata_read
+surfaces:
+  - www.insightpulseai.com

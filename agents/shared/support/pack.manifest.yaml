@@ -1,0 +1,22 @@
+pack_id: support_pack
+kind: shared_role
+status: starter
+personas:
+  - support_concierge
+  - case_assistant
+tasks:
+  - answer_question
+  - route_user
+  - summarize_case
+judges:
+  - grounding_judge
+  - policy_judge
+tools:
+  - docs_retrieval
+  - case_read
+  - notifications
+surfaces:
+  - www.insightpulseai.com
+  - www.w9studio.net
+  - prismalab.insightpulseai.com
+  - erp.insightpulseai.com

@@ -1,0 +1,18 @@
+pack_id: sales_pack
+kind: shared_role
+status: starter
+personas:
+  - sales_assistant
+  - qualification_assistant
+tasks:
+  - qualify_lead
+  - summarize_account
+  - draft_followup
+judges:
+  - customer_value_judge
+  - policy_judge
+tools:
+  - crm_read
+  - notifications
+surfaces:
+  - www.w9studio.net

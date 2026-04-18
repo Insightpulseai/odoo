@@ -1,0 +1,19 @@
+pack_id: pulser_identity_ops
+kind: domain
+status: starter
+personas:
+  - identity_operations_advisor
+  - guest_access_coordinator
+tasks:
+  - summarize_identity_state
+  - classify_identity
+  - draft_access_recommendation
+judges:
+  - identity_policy_judge
+  - policy_judge
+tools:
+  - entra_read
+  - identity_audit_read
+surfaces:
+  - www.insightpulseai.com
+mutation_policy: read_only

@@ -1,0 +1,66 @@
+version: 1
+system: pulser
+context_schema:
+  actor:
+    fields:
+      - actor_id
+      - actor_type
+      - display_name
+      - role_assignments
+      - expertise_level
+      - entra_user_type
+      - groups
+      - privileges
+  tenant:
+    fields:
+      - tenant_id
+      - tenant_type
+      - tenant_code
+      - legal_entity_id
+      - client_id
+      - tenant_brand
+      - isolation_mode
+  organization:
+    fields:
+      - company_id
+      - branch_id
+      - branch_code
+      - trade_name_id
+      - cost_center_id
+      - department_id
+      - branding_profile
+      - tax_profile
+      - document_series_profile
+  domain:
+    fields:
+      - domain_code
+      - subdomain_code
+  environment:
+    fields:
+      - environment
+      - runtime_surface
+      - deployment_ring
+      - data_mode
+      - mutation_policy
+      - evidence_required
+      - approval_required_for_side_effects
+  contact:
+    fields:
+      - contact_id
+      - partner_id
+      - account_id
+      - relationship_type
+      - conversation_scope
+  policy:
+    fields:
+      - data_classification
+      - allowed_tools
+      - blocked_tools
+      - approval_mode
+      - citation_required
+  task:
+    fields:
+      - intent
+      - object_type
+      - object_ids
+      - success_contract
