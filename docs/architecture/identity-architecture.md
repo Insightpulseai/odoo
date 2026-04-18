@@ -6,6 +6,30 @@
 
 ---
 
+## Authority Separation (canonical, do not collapse)
+
+Three separate identity authorities. Mailbox aliases are NOT Entra Member users.
+External collaborators are NOT Members. Workload identities are NOT humans.
+
+| Authority | Purpose | System | SSOT |
+|---|---|---|---|
+| Mailbox authority | Mail routing / delivery | Zoho (`insightpulseai.com`), Google Workspace (`w9studio.net`) | [ssot/identity/mailbox-authority.yaml](../../ssot/identity/mailbox-authority.yaml) |
+| Workforce authority | Workforce + admin + workload + policy | Microsoft Entra ID | [ssot/identity/entra_target_state.yaml](../../ssot/identity/entra_target_state.yaml) |
+| External collaboration authority | B2B guest access (partners/clients) | Microsoft Entra ID (B2B) | [ssot/identity/guest-invite-registry.yaml](../../ssot/identity/guest-invite-registry.yaml) |
+
+**Rule**: a `business@`, `finance@`, `admin@`, `ceo@`, `devops@`, etc. address
+MUST NOT be a primary Entra Member identity. If Entra sign-in is genuinely
+required for such an address, classify it as a non-human operational identity
+(see [mailbox-authority.yaml](../../ssot/identity/mailbox-authority.yaml)).
+
+**Rule**: external partner/client users (`@omc.com`, etc.) MUST be created as
+Entra Guest users with display name `<Full Name> (TBWA\SMP)` or equivalent
+partner-context suffix, never as Member. See
+[guest-invite-registry.yaml](../../ssot/identity/guest-invite-registry.yaml)
+and runbook [entra-guest-onboarding.md](../runbooks/entra-guest-onboarding.md).
+
+---
+
 ## Three Identity Classes
 
 ### 1. Workforce Identity (Human Users via Entra OIDC)

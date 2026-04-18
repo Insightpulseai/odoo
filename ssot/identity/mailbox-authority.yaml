@@ -1,0 +1,99 @@
+# =============================================================================
+# Mailbox Authority — SSOT
+# =============================================================================
+# Authority: canonical list of mailbox and alias identities.
+# Doctrine:  Mailboxes are ROUTING identities. They MUST NOT be primary Entra
+#            Member users. Mailbox authority is Zoho or Google Workspace,
+#            never Microsoft Entra.
+# Related:   ssot/identity/entra_target_state.yaml
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: canonical
+
+doctrine: >
+  Mail/routing identities remain in Zoho Mail (for insightpulseai.com) or
+  Google Workspace (for w9studio.net). They MUST NOT be created as primary
+  Entra Member users. If a mailbox-like address needs Entra sign-in for a
+  specific app, classify it as a non-human operational identity, deny
+  standing privileged access, and exclude it from normal user groups.
+
+# -----------------------------------------------------------------------------
+# Authority 1 — Zoho Mail (insightpulseai.com)
+# -----------------------------------------------------------------------------
+zoho:
+  domain: insightpulseai.com
+  admin_surface: Zoho Mail Admin Console
+  primary_mailboxes:
+    - address: business@insightpulseai.com
+      type: primary_mailbox
+      purpose: general_business_correspondence
+    - address: finance@insightpulseai.com
+      type: finance_mailbox
+      purpose: finance_and_accounting_correspondence
+
+  aliases_on_business:
+    parent: business@insightpulseai.com
+    list:
+      - admin@insightpulseai.com
+      - billing@insightpulseai.com
+      - ceo@insightpulseai.com
+      - devops@insightpulseai.com
+      - expenses@insightpulseai.com
+      - info@insightpulseai.com
+      - jake.tolentino@insightpulseai.com
+
+# -----------------------------------------------------------------------------
+# Authority 2 — Google Workspace (w9studio.net)
+# -----------------------------------------------------------------------------
+google_workspace:
+  domain: w9studio.net
+  admin_surface: Google Workspace Admin Console
+  primary_mailboxes:
+    - address: business@w9studio.net
+      type: primary_mailbox
+    - address: finance@w9studio.net
+      type: finance_mailbox
+    - address: accounts@w9studio.net
+      type: accounting_mailbox
+
+# -----------------------------------------------------------------------------
+# Non-human operational identity policy
+# -----------------------------------------------------------------------------
+non_human_entra_identities:
+  rule: >
+    If a mailbox-style address absolutely requires Entra sign-in for a
+    specific application, treat it as a non-human operational identity:
+  requirements:
+    - userType: Member
+    - displayName_suffix: "(Non-Human)"
+    - employeeType: NonHuman
+    - no_standing_privileged_roles
+    - excluded_from_standard_user_groups
+    - mfa: required_fido2
+    - owned_by: platform-architecture
+    - review_cadence: quarterly
+  current_non_human_members_to_reclassify:
+    - upn: ceo@insightpulseai.com
+      current_display: "Jake Tolentino"
+      disposition: remove_from_entra_or_convert_to_non_human
+      rationale: mailbox_alias_not_human_identity
+    - upn: devops@insightpulseai.com
+      current_display: "DevOps Service"
+      disposition: convert_to_service_principal_or_non_human
+      rationale: service_role_not_human
+    - upn: finance@insightpulseai.com
+      current_display: "Dataverse Finance"
+      disposition: remove_from_entra_or_convert_to_non_human
+      rationale: mailbox_alias_not_human_identity
+
+# -----------------------------------------------------------------------------
+# Prohibitions
+# -----------------------------------------------------------------------------
+prohibitions:
+  - mailbox_aliases_MUST_NOT_be_entra_members_with_standing_privilege
+  - mailbox_aliases_MUST_NOT_hold_global_administrator
+  - mailbox_aliases_MUST_NOT_be_assigned_to_standard_user_groups
+  - mailbox_aliases_MUST_NOT_appear_in_enterprise_app_direct_assignment_lists

@@ -1,163 +1,343 @@
 # =============================================================================
-# Microsoft Entra ID Target State — SSOT
+# Microsoft Entra ID Target State — SSOT (v2.0)
 # =============================================================================
-# Last updated: 2026-03-23
+# Authority: canonical target for Entra identity, privileged access, auth,
+#            Conditional Access, external identities, and workload identities.
+# Scope:     tenant eba824fb-... (Azure Sponsorship), domain insightpulseai.com
+# Related:   ssot/identity/mailbox-authority.yaml       (Zoho/Google mail SSOT)
+#            ssot/identity/guest-invite-registry.yaml   (TBWA\SMP guests)
+#            ssot/identity/guest-groups.yaml            (guest group model)
+#            ssot/identity/pim-role-baseline.yaml       (PIM eligibility)
+#            ssot/identity/entra_rbac_roles.yaml        (role assignment model)
 # =============================================================================
 
-schema_version: "1.0"
-last_updated: "2026-03-23"
+schema_version: "2.0"
+last_updated: "2026-04-19"
+supersedes: "1.0 (2026-03-23)"
 owner: "platform-architecture"
+status: canonical
 
+# -----------------------------------------------------------------------------
+# Core doctrine: three authorities, do not collapse
+# -----------------------------------------------------------------------------
+identity_authorities:
+  doctrine: >
+    Three separate identity authorities. Do NOT collapse. Mailbox aliases
+    are NOT Entra human users. External collaborators are NOT Members.
+    Workload identities are NOT humans.
+
+  mailbox_authority:
+    purpose: routing and delivery of mail only
+    systems:
+      - name: zoho
+        scope: insightpulseai.com
+        ssot: ssot/identity/mailbox-authority.yaml
+      - name: google_workspace
+        scope: w9studio.net
+        ssot: ssot/identity/mailbox-authority.yaml
+    rule: mailbox addresses MUST NOT become primary Entra Member identities
+
+  workforce_authority:
+    purpose: workforce, admin, guest, app, agent, and policy governance
+    system: microsoft_entra_id
+    tenant_id: "eba824fb-332d-4623-9dfb-2c9f7ee83f4e"
+    verified_domain: insightpulseai.com
+
+  external_collaboration_authority:
+    purpose: B2B guest access for partner/client users
+    system: microsoft_entra_id_b2b
+    mode: b2b_only
+    ciam: not_adopted
+    ciam_rationale: >
+      No customer-facing sign-up/sign-in journeys in scope. Do not overbuild
+      External ID / CIAM until a concrete CIAM use case exists.
+
+# -----------------------------------------------------------------------------
+# Tenant & licensing
+# -----------------------------------------------------------------------------
 tenant:
   name: Default Directory
   default_domain: ceoinsightpulseai.onmicrosoft.com
   verified_custom_domain: insightpulseai.com
-  additional_subdomains: 0
   subdomain_policy: >
-    Do not add Entra subdomains unless a distinct UPN/identity
-    namespace is truly required. Root domain auto-verifies children.
+    Do not add Entra subdomains unless a distinct UPN namespace is truly
+    required. Root domain auto-verifies children.
 
 licensing:
-  current: entra_id_free
-  minimum_target: entra_id_p1
-  preferred_target: entra_id_p2
-  p1_unlocks:
+  current: entra_id_p2
+  target: entra_id_p2
+  p2_features_active:
     - conditional_access
-    - group_based_app_assignment
-    - self_service_password_reset
-    - dynamic_groups
-  p2_unlocks:
     - identity_protection
-    - risk_based_conditional_access
     - privileged_identity_management
     - access_reviews
 
+# -----------------------------------------------------------------------------
+# Internal human members (target: 4 accounts)
+# -----------------------------------------------------------------------------
+members:
+  target_count: 4
+  target:
+    - display_name: "Jake Tolentino"
+      purpose: daily_use
+      upn_pattern: "<firstname>.<lastname>@insightpulseai.com"
+      roles: none_standing
+      mfa: required
+
+    - display_name: "Jake Tolentino (Admin)"
+      purpose: privileged_admin
+      upn_pattern: "<firstname>.admin@insightpulseai.com"
+      roles_policy: pim_eligible_only
+      mfa: strongest_feasible
+
+    - display_name: "Emergency Access 01"
+      purpose: break_glass
+      upn_pattern: "breakglass01@insightpulseai.com"
+      conditional_access: excluded_from_standard_ca
+      mfa_policy: hardware_fido2_only
+      review_cadence: quarterly
+
+    - display_name: "Emergency Access 02"
+      purpose: break_glass
+      upn_pattern: "breakglass02@insightpulseai.com"
+      conditional_access: excluded_from_standard_ca
+      mfa_policy: hardware_fido2_only
+      review_cadence: quarterly
+
+  rules:
+    - daily_use_and_privileged_accounts_must_be_separate
+    - mailbox_aliases_never_become_members
+    - break_glass_count_is_exactly_2
+
+# -----------------------------------------------------------------------------
+# External guests (see guest-invite-registry.yaml for canonical list)
+# -----------------------------------------------------------------------------
+guests:
+  naming_convention: "<Full Name> (TBWA\\SMP)"
+  user_type: Guest
+  home_email_domain_preserved: true
+  standing_roles: none
+  access_model: group_and_app_assignment_only
+  invite_authority: admin_only
+  default_directory_permissions: restricted
+  canonical_list: ssot/identity/guest-invite-registry.yaml
+  current_set:
+    name: tbwa_smp_finance
+    count: 11
+    primary_group: grp-ext-tbwasmp-finance
+
+# -----------------------------------------------------------------------------
+# Privileged access
+# -----------------------------------------------------------------------------
+privileged_access:
+  global_administrator:
+    microsoft_guidance_ceiling: 5
+    target_count: 3
+    target_accounts:
+      - "Jake Tolentino (Admin)"
+      - "Emergency Access 01"
+      - "Emergency Access 02"
+    must_not_have_ga:
+      - mailbox_alias_users
+      - guest_users
+      - workload_identities
+
+  pim:
+    default_activation: eligible_not_active
+    time_bound_activation: true
+    approval_required_for:
+      - global_administrator
+      - privileged_role_administrator
+      - user_administrator
+      - application_administrator
+    access_reviews:
+      privileged_roles: quarterly
+      group_memberships: semi_annual
+
+  role_minimization:
+    rule: use_least_privilege_always
+    preferred_roles:
+      - application_administrator
+      - cloud_application_administrator
+      - authentication_administrator
+      - user_administrator
+    avoid: global_administrator_as_catch_all
+
+# -----------------------------------------------------------------------------
+# Authentication methods
+# -----------------------------------------------------------------------------
 authentication:
-  current_baseline: security_defaults
-  target_baseline: conditional_access_after_p1
-  legacy_mfa_sspr_policy: must_migrate_to_modern
-  auth_methods_enabled:
+  policy_authority: unified_authentication_methods_policy
+  legacy_mfa_sspr_cutoff: "2025-09-30"
+  legacy_mfa_sspr_status: must_not_be_used
+  methods_enabled:
     - passkey_fido2
-    - microsoft_authenticator
+    - microsoft_authenticator_push
+    - microsoft_authenticator_passwordless
     - temporary_access_pass
     - software_oath
-    - email_otp
-  auth_methods_deferred:
+  methods_deferred:
     - sms
     - voice
+    - email_otp
     - certificate_based
     - qr_code
-  conditional_access_policies_after_p1:
-    - name: require_mfa_for_admins
-      scope: global_admins + privileged_roles
-    - name: require_strong_auth_all_users
+
+# -----------------------------------------------------------------------------
+# Conditional Access
+# -----------------------------------------------------------------------------
+conditional_access:
+  required_policies:
+    - id: CA-001
+      name: require_mfa_for_all_users
       scope: all_users
-    - name: block_legacy_auth
+      exclusions: [emergency_access_01, emergency_access_02]
+      apps: all_cloud_apps
+      grant: mfa
+
+    - id: CA-002
+      name: require_strong_mfa_for_admins
+      scope: directory_roles + privileged_roles
+      grant: phishing_resistant_auth_strength
+
+    - id: CA-003
+      name: block_legacy_auth
       scope: all_users
-    - name: secure_mfa_registration
-      scope: all_users_excluding_breakglass
+      client_apps: legacy
 
-users:
-  current_count: 4
-  target_count: 4-8
-  emergency_access_accounts:
-    required: 2
-    excluded_from: conditional_access_lockout
-    naming: breakglass-1@insightpulseai.com, breakglass-2@insightpulseai.com
+    - id: CA-004
+      name: risky_sign_in_response
+      scope: all_users
+      condition: sign_in_risk_high
+      grant: mfa + password_change
 
-groups:
-  current_count: 12
-  target_count: 8-15
-  recommended:
-    - grp-global-admins
-    - grp-platform-admins
-    - grp-developers
-    - grp-finance-tax
-    - grp-data-intelligence
-    - grp-odoo-users
-    - grp-diva-approvers
-    - grp-breakglass-exclusions
-  policy: >
-    All app/role assignment must be group-based.
-    No direct user-to-app assignment unless unavoidable.
+    - id: CA-005
+      name: risky_user_response
+      scope: all_users
+      condition: user_risk_high
+      grant: block_or_password_change
 
-enterprise_applications:
-  current_count: 4
-  target:
-    - name: Databricks
-      status: keep
-      group_assignment: grp-data-intelligence
-    - name: GitHub Subscription Permission Validation
-      status: keep
-      notes: Microsoft-managed system app
-    - name: ipai-n8n-entra
-      status: keep
-      group_assignment: grp-platform-admins
-    - name: Microsoft Graph Command Line Tools
-      status: keep
-      group_assignment: grp-platform-admins
-    - name: Odoo ERP SSO
-      status: add_if_using_entra_signin
-      group_assignment: grp-odoo-users
-    - name: Tableau Cloud
-      status: keep_or_add
-      group_assignment: grp-data-intelligence
+    - id: CA-006
+      name: guest_mfa_required
+      scope: guest_users
+      apps: collaboration_apps
+      grant: mfa
 
-app_registrations:
-  current_count: 6
-  keep:
-    - name: InsightPulse AI - Odoo ERP
-      purpose: Odoo SSO/API integration
-    - name: InsightPulse AI - Tableau Cloud
-      purpose: Tableau integration
-    - name: ipai-github-oidc
-      purpose: GitHub Actions federated credential (no long-lived secrets)
-    - name: ipai-n8n-entra
-      purpose: n8n auth
-    - name: sp-ipai-azdevops
-      purpose: Azure DevOps integration
-    - name: ipai-tableau-sso
-      purpose: Tableau SSO
-  add:
-    - name: Diva Goals Web
-      purpose: Browser sign-in for Diva Goals web app
-      type: spa
-    - name: Diva Goals API
-      purpose: Protected API resource for platform backend
-      type: api
+  named_locations:
+    current_count: 0
+    target: optional_not_mandatory
+    adopt_when: stable_office_or_admin_ip_ranges_exist
 
-managed_identities:
-  target_count: 3
-  identities:
-    - name: mi-web-runtime
-      purpose: Web/runtime authenticates to Key Vault, Search, etc.
-      scope: Azure Container Apps
-    - name: mi-jobs-automation
-      purpose: Scheduled jobs, pipelines, background workers
-      scope: Databricks, ACA Jobs
-    - name: mi-data-agent
-      purpose: Agent and data services
-      scope: Foundry, Databricks, AI Search
-  policy: >
-    Prefer managed identities and federated credentials over
-    long-lived client secrets for all Azure-hosted workloads.
+  device_conditions:
+    current_state: no_intune_no_devices_registered
+    target: defer
+    adopt_when: intune_compliance_becomes_real
 
-domain_services:
-  target_count: 0
-  provision: false
-  reason: >
-    No LDAP/Kerberos/NTLM/domain-join dependency exists.
-    Current stack is modern-auth only (OIDC/OAuth/SAML).
+# -----------------------------------------------------------------------------
+# External identities
+# -----------------------------------------------------------------------------
+external_identities:
+  mode: b2b_only
+  linked_subscription: not_linked
+  linked_subscription_target: not_required_at_current_scale
+  guest_invitation_policy: admin_or_user_admin_only
+  guest_directory_permissions: restricted
+  domain_restrictions:
+    allowlist: [omc.com]
+    blocklist: []
 
-verified_id:
-  target_count: 0
-  provision: false
-  future: >
-    Enable only for concrete credential use cases such as
-    contractor onboarding, helpdesk verification, or
-    high-assurance identity recovery.
+# -----------------------------------------------------------------------------
+# Enterprise apps and workload identities
+# -----------------------------------------------------------------------------
+workload_identities:
+  naming_convention:
+    service_principal: "sp-<app>-<env>"
+    managed_identity:  "mi-<resource>-<env>"
+    agent_identity:    "agent-<system>-<purpose>"
 
-devices:
-  current_count: 0
-  target: out_of_scope
-  notes: Device management via Intune is not part of core platform target
+  examples:
+    - sp-ipai-copilot-gateway-prod
+    - sp-insightpulse-odoo-login-prod
+    - mi-ipai-copilot-gateway-prod
+    - agent-ipai-copilot-primary
+    - agent-ipai-copilot-eval
+
+  rules:
+    - every_enterprise_app_has_business_and_technical_owner
+    - every_app_has_review_cadence_and_keep_remove_disposition
+    - custom_apps_must_encode_environment_in_name
+    - no_workload_identity_holds_global_administrator
+    - agent_ids_must_have_sponsor_no_unmanaged_steady_state
+
+enterprise_apps:
+  classification_required: true
+  classes: [keep_strategic, review_potentially_stale, remove_unused]
+  keep_strategic:
+    - Databricks
+    - "GitHub Enterprise Cloud - Insightpulseai SAML SSO"
+    - "Zoho / Zoho Mail Admin"
+    - ipai-copilot-gateway
+    - "InsightPulse AI - Odoo Login"
+  review_potentially_stale:
+    - "Adobe Learning Manager"
+    - "Microsoft Tech Community"
+    - "Microsoft Graph Command Line Tools"
+    - ZoomInfo
+    - "GitHub Subscription Permission Validation"
+
+agent_identities:
+  rule_no_unmanaged_steady_state: true
+  naming: "agent-<system>-<purpose>"
+  examples:
+    - agent-ipai-copilot-primary
+    - agent-ipai-copilot-eval
+  observed_state:
+    active: 2
+    unmanaged: 1
+    blueprint: 1
+  required_attributes: [sponsor, technical_owner, review_cadence, disposition]
+
+# -----------------------------------------------------------------------------
+# Secure score
+# -----------------------------------------------------------------------------
+secure_score:
+  current_percent: 43.77
+  baseline_captured_on: "2026-04-19"
+  near_term_target_percent: 65
+  long_term_target_percent: 80
+  improvement_levers:
+    - reduce_global_admins_to_3
+    - migrate_off_legacy_mfa_sspr_policies
+    - enforce_mfa_all_users
+    - enforce_mfa_all_admins
+    - implement_risk_based_ca
+    - restrict_guest_invite_and_directory_visibility
+    - enable_pim_for_privileged_roles
+
+# -----------------------------------------------------------------------------
+# Final target matrix (flat)
+# -----------------------------------------------------------------------------
+target_matrix:
+  mailbox_authority: "zoho (insightpulseai.com) + google_workspace (w9studio.net)"
+  workforce_admin_authority: "microsoft_entra_id"
+  internal_members: "minimal Member accounts only (target: 4)"
+  privileged_accounts: "1 admin + 2 break-glass (GA target: 3)"
+  external_collaborators: "Guests named '<Full Name> (TBWA\\SMP)'"
+  mfa_authority: "unified authentication_methods_policy only"
+  conditional_access: "all-users MFA, admin MFA, legacy-auth block, risk CA, guest MFA"
+  external_identities: "b2b_only; no CIAM overbuild"
+  enterprise_apps: "classified, owned, environment-normalized"
+  workload_identities: "sp-*, mi-*, agent-* with owner + cadence + disposition"
+  agent_identities: "named, sponsored, zero unmanaged in steady state"
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  mailbox_authority_ssot: ssot/identity/mailbox-authority.yaml
+  guest_invite_registry:  ssot/identity/guest-invite-registry.yaml
+  guest_group_model:      ssot/identity/guest-groups.yaml
+  pim_baseline:           ssot/identity/pim-role-baseline.yaml
+  identity_architecture:  docs/architecture/identity-architecture.md
+  onboarding_runbook:     docs/runbooks/entra-guest-onboarding.md
+  drift_report:           docs/evidence/20260419/entra-identity-audit/drift-report.md

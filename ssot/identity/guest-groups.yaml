@@ -1,0 +1,114 @@
+# =============================================================================
+# Guest Group Model — SSOT
+# =============================================================================
+# Authority: canonical group definitions used for B2B guest app assignment.
+# Doctrine:  Guests access apps only through groups. No direct user-to-app
+#            binding. One parent group per partner, plus role-scoped subs.
+# Related:   ssot/identity/guest-invite-registry.yaml
+#            ssot/identity/entra_target_state.yaml
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: canonical
+
+doctrine: >
+  One parent group per external partner (membership = all guests from that
+  partner). Role-scoped sub-groups carry the app assignments. Direct user-to-app
+  binding is prohibited. Group membership MUST be explicit and reviewed.
+
+# -----------------------------------------------------------------------------
+# TBWA\SMP Finance groups
+# -----------------------------------------------------------------------------
+partner_tbwa_smp_finance:
+
+  parent:
+    display_name: grp-ext-tbwasmp-finance
+    mail_nickname: grp-ext-tbwasmp-finance
+    description: "TBWA\\SMP Finance — parent group for all guest collaborators"
+    membership_type: assigned
+    security_enabled: true
+    mail_enabled: false
+    owners: ["Jake Tolentino (Admin)"]
+    review_cadence: quarterly
+
+  approvers:
+    display_name: grp-ext-tbwasmp-finance-approvers
+    description: "TBWA\\SMP Finance — invoice/PO approvers"
+    membership_type: assigned
+    owners: ["Jake Tolentino (Admin)"]
+    review_cadence: quarterly
+    app_assignment:
+      policy: group_only
+      target_apps:
+        - InsightPulse AI - Odoo Login
+        - ipai-copilot-gateway
+      scope: approval_workflows_only
+
+  reviewers:
+    display_name: grp-ext-tbwasmp-finance-reviewers
+    description: "TBWA\\SMP Finance — invoice/PO reviewers"
+    membership_type: assigned
+    owners: ["Jake Tolentino (Admin)"]
+    review_cadence: quarterly
+    app_assignment:
+      policy: group_only
+      target_apps:
+        - InsightPulse AI - Odoo Login
+      scope: review_workflows_only
+
+  readonly:
+    display_name: grp-ext-tbwasmp-finance-readonly
+    description: "TBWA\\SMP Finance — read-only observers"
+    membership_type: assigned
+    owners: ["Jake Tolentino (Admin)"]
+    review_cadence: quarterly
+    app_assignment:
+      policy: group_only
+      target_apps:
+        - InsightPulse AI - Odoo Login
+      scope: read_only
+
+# -----------------------------------------------------------------------------
+# Membership mapping (derived from guest-invite-registry.yaml)
+# -----------------------------------------------------------------------------
+membership:
+  grp-ext-tbwasmp-finance:
+    - Khalil Veracruz (TBWA\SMP)
+    - Rey Meran (TBWA\SMP)
+    - Amor Lasaga (TBWA\SMP)
+    - Beng Manalo (TBWA\SMP)
+    - Jinky Paladin (TBWA\SMP)
+    - Jerald Loterte (TBWA\SMP)
+    - Jasmin Ignacio (TBWA\SMP)
+    - Jhoee Oliva (TBWA\SMP)
+    - Joana Maravillas (TBWA\SMP)
+    - Sally Brillantes (TBWA\SMP)
+    - Cliff Dejecacion (TBWA\SMP)
+
+  grp-ext-tbwasmp-finance-approvers:
+    - Khalil Veracruz (TBWA\SMP)
+
+  grp-ext-tbwasmp-finance-reviewers:
+    - Rey Meran (TBWA\SMP)
+    - Amor Lasaga (TBWA\SMP)
+    - Beng Manalo (TBWA\SMP)
+    - Jinky Paladin (TBWA\SMP)
+    - Jerald Loterte (TBWA\SMP)
+    - Jasmin Ignacio (TBWA\SMP)
+    - Jhoee Oliva (TBWA\SMP)
+    - Joana Maravillas (TBWA\SMP)
+
+  grp-ext-tbwasmp-finance-readonly:
+    - Sally Brillantes (TBWA\SMP)
+    - Cliff Dejecacion (TBWA\SMP)
+
+# -----------------------------------------------------------------------------
+# Prohibitions
+# -----------------------------------------------------------------------------
+prohibitions:
+  - guest_to_app_direct_assignment_is_forbidden
+  - guest_groups_must_not_contain_member_users
+  - guest_groups_must_not_be_assigned_to_directory_roles
+  - sub_groups_must_roll_up_into_the_parent_group

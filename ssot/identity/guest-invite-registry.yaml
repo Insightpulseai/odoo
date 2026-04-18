@@ -1,0 +1,161 @@
+# =============================================================================
+# Guest Invite Registry — SSOT
+# =============================================================================
+# Authority: canonical list of Entra B2B guest invitations.
+# Scope:     TBWA\SMP Finance partner/client collaborators (11 guests).
+# Related:   ssot/identity/entra_target_state.yaml
+#            ssot/identity/guest-groups.yaml
+#            ops/entra/guests/tbwa-smp-finance-import.csv
+#            docs/runbooks/entra-guest-onboarding.md
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: canonical
+
+doctrine: >
+  External collaborators are Entra B2B Guest users. Real email is preserved
+  (@omc.com). Display name carries the business context (TBWA\SMP), NOT the
+  parent holding (Omnicom). No standing roles. No direct app assignment.
+  Access only through guest-scoped groups.
+
+# -----------------------------------------------------------------------------
+# Guest naming and attribute standard
+# -----------------------------------------------------------------------------
+naming_standard:
+  display_name_pattern: "<Full Name> (TBWA\\SMP)"
+  mail_nickname_pattern: "ext-tbwasmp-<first>-<last>"
+  user_type: Guest
+  company_name: "TBWA\\SMP"
+  department: Finance
+  employee_type: ExternalClient
+  account_enabled: true
+  home_email_domain_preserved: true
+
+# -----------------------------------------------------------------------------
+# Canonical guest set — TBWA\SMP Finance
+# -----------------------------------------------------------------------------
+guests:
+  - code: CKVC
+    full_name: "Khalil Veracruz"
+    email: khalil.veracruz@omc.com
+    display_name: "Khalil Veracruz (TBWA\\SMP)"
+    mail_nickname: ext-tbwasmp-khalil-veracruz
+    role_hint: client_finance_approver
+    primary_group: grp-ext-tbwasmp-finance
+    sub_group: grp-ext-tbwasmp-finance-approvers
+
+  - code: RIM
+    full_name: "Rey Meran"
+    email: rey.meran@omc.com
+    display_name: "Rey Meran (TBWA\\SMP)"
+    mail_nickname: ext-tbwasmp-rey-meran
+    role_hint: client_finance_reviewer
+    primary_group: grp-ext-tbwasmp-finance
+    sub_group: grp-ext-tbwasmp-finance-reviewers
+
+  - code: LAS
+    full_name: "Amor Lasaga"
+    email: amor.lasaga@omc.com
+    display_name: "Amor Lasaga (TBWA\\SMP)"
+    mail_nickname: ext-tbwasmp-amor-lasaga
+    role_hint: client_finance_reviewer
+    primary_group: grp-ext-tbwasmp-finance
+    sub_group: grp-ext-tbwasmp-finance-reviewers
+
+  - code: BOM
+    full_name: "Beng Manalo"
+    email: beng.manalo@omc.com
+    display_name: "Beng Manalo (TBWA\\SMP)"
+    mail_nickname: ext-tbwasmp-beng-manalo
+    role_hint: client_finance_reviewer
+    primary_group: grp-ext-tbwasmp-finance
+    sub_group: grp-ext-tbwasmp-finance-reviewers
+
+  - code: JAP
+    full_name: "Jinky Paladin"
+    email: jinky.paladin@omc.com
+    display_name: "Jinky Paladin (TBWA\\SMP)"
+    mail_nickname: ext-tbwasmp-jinky-paladin
+    role_hint: client_finance_reviewer
+    primary_group: grp-ext-tbwasmp-finance
+    sub_group: grp-ext-tbwasmp-finance-reviewers
+
+  - code: JPAL
+    full_name: "Jerald Loterte"
+    email: jerald.loterte@omc.com
+    display_name: "Jerald Loterte (TBWA\\SMP)"
+    mail_nickname: ext-tbwasmp-jerald-loterte
+    role_hint: client_finance_reviewer
+    primary_group: grp-ext-tbwasmp-finance
+    sub_group: grp-ext-tbwasmp-finance-reviewers
+
+  - code: JLI
+    full_name: "Jasmin Ignacio"
+    email: jasmin.ignacio@omc.com
+    display_name: "Jasmin Ignacio (TBWA\\SMP)"
+    mail_nickname: ext-tbwasmp-jasmin-ignacio
+    role_hint: client_finance_reviewer
+    primary_group: grp-ext-tbwasmp-finance
+    sub_group: grp-ext-tbwasmp-finance-reviewers
+
+  - code: JRMO
+    full_name: "Jhoee Oliva"
+    email: jhoee.oliva@omc.com
+    display_name: "Jhoee Oliva (TBWA\\SMP)"
+    mail_nickname: ext-tbwasmp-jhoee-oliva
+    role_hint: client_finance_reviewer
+    primary_group: grp-ext-tbwasmp-finance
+    sub_group: grp-ext-tbwasmp-finance-reviewers
+
+  - code: JMSM
+    full_name: "Joana Maravillas"
+    email: joana.maravillas@omc.com
+    display_name: "Joana Maravillas (TBWA\\SMP)"
+    mail_nickname: ext-tbwasmp-joana-maravillas
+    role_hint: client_finance_reviewer
+    primary_group: grp-ext-tbwasmp-finance
+    sub_group: grp-ext-tbwasmp-finance-reviewers
+
+  - code: RMQB
+    full_name: "Sally Brillantes"
+    email: sally.brillantes@omc.com
+    display_name: "Sally Brillantes (TBWA\\SMP)"
+    mail_nickname: ext-tbwasmp-sally-brillantes
+    role_hint: client_finance_readonly
+    primary_group: grp-ext-tbwasmp-finance
+    sub_group: grp-ext-tbwasmp-finance-readonly
+
+  - code: CSD
+    full_name: "Cliff Dejecacion"
+    email: cliff.dejecacion@omc.com
+    display_name: "Cliff Dejecacion (TBWA\\SMP)"
+    mail_nickname: ext-tbwasmp-cliff-dejecacion
+    role_hint: client_finance_readonly
+    primary_group: grp-ext-tbwasmp-finance
+    sub_group: grp-ext-tbwasmp-finance-readonly
+
+# -----------------------------------------------------------------------------
+# Guest access model
+# -----------------------------------------------------------------------------
+access_model:
+  assignment_rule: group_only_no_direct_app_binding
+  standing_roles: none
+  mfa_required: true
+  invitation_redirect_url: "https://myapplications.microsoft.com"
+  invitation_message: >
+    You have been invited by InsightPulse AI to collaborate on the TBWA\SMP
+    Finance engagement. You will retain your @omc.com sign-in. Accept this
+    invitation to receive access to the agreed collaboration apps. MFA is
+    required on first sign-in.
+
+# -----------------------------------------------------------------------------
+# Prohibitions
+# -----------------------------------------------------------------------------
+prohibitions:
+  - guests_MUST_NOT_be_created_as_Member
+  - guests_MUST_NOT_hold_any_directory_role
+  - guests_MUST_NOT_be_assigned_directly_to_apps_bypassing_groups
+  - guests_display_name_MUST_use_TBWA_SMP_not_Omnicom
+  - guests_email_MUST_remain_at_omc_com
