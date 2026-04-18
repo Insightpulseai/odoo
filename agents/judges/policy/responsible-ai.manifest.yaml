@@ -1,0 +1,8 @@
+judge_id: responsible_ai_judge
+kind: shared
+status: starter
+rules:
+  requires_risk_assessment_for_sensitive_actions: true
+  requires_auditability_for_guarded_workflows: true
+  requires_human_review_for_high_risk_outputs: true
+  validates_least_privilege_tool_usage: true

@@ -11,6 +11,7 @@ tasks:
 judges:
   - identity_policy_judge
   - policy_judge
+  - responsible_ai_judge
 tools:
   - entra_read
   - identity_audit_read

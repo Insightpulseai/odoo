@@ -1,0 +1,29 @@
+version: 1
+policy_set: azure_ai_governance_baseline
+source_references:
+  - jamesmcroft/Security-and-Responsible-AI-Guide
+principles:
+  - secure_by_default
+  - least_privilege
+  - risk_assessment_required
+  - monitoring_required
+  - auditing_required
+  - human_review_for_high_risk_actions
+control_requirements:
+  tool_access:
+    allowlist_required: true
+    deny_by_default_for_sensitive_tools: true
+  identity:
+    managed_identity_preferred: true
+    shared_human_accounts_disallowed_for_workloads: true
+  observability:
+    logs_required: true
+    traces_required: true
+    metrics_required: true
+  governance:
+    policy_checks_required: true
+    evidence_retention_required: true
+    escalation_for_high_risk: true
+  content_safety:
+    domain_judge_required_for_high_stakes_outputs: true
+    citation_required_when_claims_are_material: true

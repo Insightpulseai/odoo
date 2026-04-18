@@ -216,6 +216,7 @@ domain_packs:
       - citation_judge
       - evidence_quality_judge
       - research_policy_judge
+      - responsible_ai_judge
     tools:
       - doc_ingest
       - retrieval
@@ -285,6 +286,7 @@ domain_packs:
     judges:
       - identity_policy_judge
       - policy_judge
+      - responsible_ai_judge
     tools:
       - entra_read
       - identity_audit_read
@@ -361,6 +363,14 @@ judges:
     repo: agents
     contract:
       validates_identity_governance_rules: true
+  - judge_id: responsible_ai_judge
+    kind: shared
+    repo: agents
+    contract:
+      requires_risk_assessment_for_sensitive_actions: true
+      requires_auditability_for_guarded_workflows: true
+      requires_human_review_for_high_risk_outputs: true
+      validates_least_privilege_tool_usage: true
 hook_events:
   - SessionStart
   - UserPromptSubmit

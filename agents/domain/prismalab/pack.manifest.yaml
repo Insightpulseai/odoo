@@ -16,6 +16,7 @@ judges:
   - citation_judge
   - evidence_quality_judge
   - research_policy_judge
+  - responsible_ai_judge
 tools:
   - doc_ingest
   - retrieval
