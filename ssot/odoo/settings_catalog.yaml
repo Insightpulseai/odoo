@@ -1,0 +1,251 @@
+# =============================================================================
+# Odoo CE 18 — Settings / Feature Toggle Catalog SSOT
+# =============================================================================
+# Status:    bootstrap_canonical — hand-curated while the generator script
+#            (scripts/odoo/extract_settings_catalog.py) is not yet implemented.
+#            Once the generator exists, this file becomes GENERATED and must
+#            only be modified by re-running the extractor.
+#
+# Authority: canonical list of Odoo 18 CE feature toggles and their intended
+#            states per InsightPulseAI. Paired with OCA must-have catalog
+#            (infra/ssot/oca/must_have_*.yaml) and ipai_* delta layer
+#            (ssot/odoo/package-classification.yaml).
+#
+# Related:   ssot/odoo/package-classification.yaml
+#            infra/ssot/oca/must_have_{base,accounting,sales,purchases,projects}.yaml
+#            ssot/odoo/ce18_oca_uc_semantic_odata_binding.yaml
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: bootstrap_canonical
+generator_script_planned: scripts/odoo/extract_settings_catalog.py
+generator_behavior: >
+  When implemented, the generator must read res.config.settings from a
+  reference Odoo 18 CE database, enumerate all available feature toggles,
+  and emit this file deterministically. The IPAI-specific `intended_state`
+  values below are policy and must survive regeneration via a merge layer.
+
+odoo_version: "18.0"
+edition: community
+base_modules:
+  doctrine: "CE baseline only. No Enterprise modules. No odoo.com IAP."
+  install_source:
+    - core_ce_18
+    - vendored_oca_18_0_branches
+    - ipai_star_delta_layer
+
+# -----------------------------------------------------------------------------
+# Feature toggle groups (CE 18 — canonical list)
+# -----------------------------------------------------------------------------
+# Each group mirrors an `Apps` / `Settings` → feature-group in CE 18.
+# `intended_state` is IPAI policy:
+#   - enabled     = install and activate
+#   - disabled    = do not install / explicit opt-out
+#   - oca_override = install the OCA replacement, not the EE variant
+#   - deferred    = revisit when a business requirement emerges
+# -----------------------------------------------------------------------------
+
+groups:
+
+  general_settings:
+    description: "General platform settings (companies, languages, timezones, chatter)"
+    toggles:
+      - key: multi_company
+        intended_state: enabled
+        rationale: "TBWA\\SMP engagements often require branch/entity model."
+      - key: multi_currency
+        intended_state: enabled
+        rationale: "Cross-border work with Omnicom/USD exposure."
+      - key: multi_website
+        intended_state: disabled
+        rationale: "Odoo website not used for public sites (see site-template-adoption)."
+      - key: developer_mode
+        intended_state: enabled_in_dev_disabled_in_prod
+      - key: send_invitations_by_email
+        intended_state: enabled
+
+  accounting:
+    description: "Invoicing, accounting, taxes"
+    toggles:
+      - key: invoicing
+        intended_state: enabled
+      - key: accounting
+        intended_state: enabled
+      - key: accounting_use_analytic_accounting
+        intended_state: enabled
+        rationale: "Required for project-financed engagements."
+      - key: accounting_use_budgets
+        intended_state: enabled
+      - key: accounting_anglo_saxon
+        intended_state: deferred
+        rationale: "PH accounting defaults are continental-style; revisit per entity."
+      - key: accounting_tax_cash_basis
+        intended_state: enabled
+        rationale: "BIR VAT on actual collection/payment date."
+      - key: peppol_integration
+        intended_state: disabled
+        rationale: "EE-only; OCA replacement when needed."
+
+  sales:
+    description: "CRM, sales, pricing, invoicing-from-sales"
+    toggles:
+      - key: crm
+        intended_state: enabled
+      - key: sale_management
+        intended_state: enabled
+      - key: sale_pricelist
+        intended_state: enabled
+      - key: sale_discount
+        intended_state: enabled
+      - key: sale_margin
+        intended_state: enabled
+      - key: sale_subscription
+        intended_state: deferred
+        rationale: "EE feature; use OCA alternative when subscription billing arrives."
+
+  purchases:
+    description: "Purchase, vendor bills, approvals"
+    toggles:
+      - key: purchase
+        intended_state: enabled
+      - key: purchase_requisition
+        intended_state: enabled
+      - key: purchase_double_validation
+        intended_state: enabled
+        rationale: "Approval discipline for finance engagements."
+
+  projects:
+    description: "Project, tasks, timesheets"
+    toggles:
+      - key: project
+        intended_state: enabled
+      - key: project_timesheet
+        intended_state: enabled
+      - key: project_forecast
+        intended_state: deferred
+        rationale: "EE feature; OCA timeline/forecast alternative when needed."
+      - key: project_time_off
+        intended_state: enabled
+
+  hr:
+    description: "HR, employees, payroll, time-off"
+    toggles:
+      - key: hr
+        intended_state: enabled
+      - key: hr_attendance
+        intended_state: enabled
+      - key: hr_expense
+        intended_state: enabled
+      - key: hr_time_off
+        intended_state: enabled
+      - key: hr_payroll
+        intended_state: disabled
+        rationale: "PH payroll handled via OCA l10n_ph + ipai_ph_payroll delta."
+
+  inventory_mrp:
+    description: "Inventory, warehouse, manufacturing"
+    toggles:
+      - key: stock
+        intended_state: enabled
+      - key: stock_multi_warehouse
+        intended_state: enabled
+      - key: stock_lot_serial
+        intended_state: enabled
+      - key: mrp
+        intended_state: deferred
+        rationale: "Enable only when MRP becomes an active business need."
+
+  marketing_websites:
+    description: "Website, e-commerce, marketing"
+    toggles:
+      - key: website
+        intended_state: disabled
+        rationale: "Public sites are handled by web/apps/, not Odoo website."
+      - key: website_sale
+        intended_state: disabled
+      - key: mass_mailing
+        intended_state: deferred
+      - key: marketing_automation
+        intended_state: disabled
+        rationale: "EE feature."
+
+  document_productivity:
+    description: "Documents, sign, knowledge, chatter"
+    toggles:
+      - key: documents
+        intended_state: enabled
+        rationale: "Attachment routing needed for finance workflows."
+      - key: sign
+        intended_state: disabled
+        rationale: "EE feature; consider OCA/document alternatives."
+      - key: knowledge
+        intended_state: enabled
+        rationale: "Used for AI copilot grounding."
+
+  integrations:
+    description: "SSO, external auth, email, calendar"
+    toggles:
+      - key: auth_oauth
+        intended_state: enabled
+        rationale: "Entra ID SSO via ipai_auth_oidc."
+      - key: auth_ldap
+        intended_state: disabled
+      - key: mail_server_outbound
+        intended_state: enabled
+        rationale: "Zoho SMTP configured at ir.mail_server (not Odoo online)."
+      - key: google_calendar
+        intended_state: disabled
+        rationale: "Workforce auth is Entra, not Google; calendar sync deferred."
+      - key: microsoft_calendar
+        intended_state: deferred
+      - key: odoo_online_connectors
+        intended_state: disabled
+        rationale: "No IAP / no odoo.com dependencies (CE-only doctrine)."
+
+  ai_copilot:
+    description: "IPAI AI integrations (ipai_* delta layer)"
+    toggles:
+      - key: ipai_ai_copilot
+        intended_state: enabled
+        rationale: "Native Odoo 18 Ask AI integration per CLAUDE.md."
+      - key: ipai_ai_widget
+        intended_state: disabled
+        rationale: "Deprecated global patch — replaced by native + ipai_ai_copilot."
+
+# -----------------------------------------------------------------------------
+# IPAI policy summary
+# -----------------------------------------------------------------------------
+policy_summary:
+  ce_only: true
+  no_enterprise_modules: true
+  no_odoo_com_iap: true
+  oca_first: true
+  delta_layer_name_pattern: "ipai_<domain>_<feature>"
+  toggle_change_process:
+    - update this SSOT
+    - regenerate via extract_settings_catalog.py (when available)
+    - apply to target environment via `scripts/odoo/apply_settings.py` (when available)
+    - capture evidence in docs/evidence/<YYYYMMDD-HHMM>/odoo-settings-apply/
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not an exhaustive list of every res.config.settings field (generator will fill)
+  - not a live mirror of deployed environment state (reconcile via drift check)
+  - not a replacement for module-level configuration data (stays in module data/)
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  package_classification: ssot/odoo/package-classification.yaml
+  oca_must_have_base: infra/ssot/oca/must_have_base.yaml
+  oca_must_have_accounting: infra/ssot/oca/must_have_accounting.yaml
+  oca_must_have_sales: infra/ssot/oca/must_have_sales.yaml
+  oca_must_have_purchases: infra/ssot/oca/must_have_purchases.yaml
+  oca_must_have_projects: infra/ssot/oca/must_have_projects.yaml
+  cross_layer_binding: ssot/odoo/ce18_oca_uc_semantic_odata_binding.yaml
+  generator_script_planned: scripts/odoo/extract_settings_catalog.py

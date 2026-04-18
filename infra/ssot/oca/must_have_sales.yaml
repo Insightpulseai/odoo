@@ -1,0 +1,33 @@
+schema: ssot.oca.must_have_sales.v1
+version: "1.0"
+status: scaffold_pending_oca_source_reconciliation
+source:
+  name: "OCA Must Have Sales modules"
+  url: "https://odoo-community.org/page/oca-must-have-sales-modules"
+policy:
+  rule: populate_only_from_verified_oca_18_branches
+  verification_required: true
+  do_not_invent_modules: true
+modules:
+  # TODO: populate from OCA verified 18.0 branches.
+  # Candidate repos (verify each module exists on 18.0):
+  #   - OCA/sale-workflow
+  #   - OCA/commission
+  #   - OCA/sale-financial
+  #   - OCA/sale-reporting
+  - technical_name: sale_order_line_menu
+    repo: sale-workflow
+    rationale: "Menu-level access to sale order lines for bulk operations."
+    verified_on_18_0: pending
+  - technical_name: sale_exception
+    repo: sale-workflow
+    rationale: "Exception framework for preventing invalid sale order confirmation."
+    verified_on_18_0: pending
+  - technical_name: sale_commission
+    repo: commission
+    rationale: "Commission management for sales reps and agents."
+    verified_on_18_0: pending
+notes:
+  - "Scaffold only — full population requires reconciling against OCA 18.0 branches."
+  - "See infra/ssot/oca/must_have_base.yaml for the pattern."
+  - "Do not add modules without verifying they ship on 18.0 with CE-compatible dependencies."

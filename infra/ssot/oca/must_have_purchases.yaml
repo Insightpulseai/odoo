@@ -1,0 +1,32 @@
+schema: ssot.oca.must_have_purchases.v1
+version: "1.0"
+status: scaffold_pending_oca_source_reconciliation
+source:
+  name: "OCA Must Have Purchases modules"
+  url: "https://odoo-community.org/page/oca-must-have-purchases-modules"
+policy:
+  rule: populate_only_from_verified_oca_18_branches
+  verification_required: true
+  do_not_invent_modules: true
+modules:
+  # TODO: populate from OCA verified 18.0 branches.
+  # Candidate repos (verify each module exists on 18.0):
+  #   - OCA/purchase-workflow
+  #   - OCA/purchase-reporting
+  #   - OCA/rma
+  - technical_name: purchase_order_approval_block
+    repo: purchase-workflow
+    rationale: "Hard block on PO approval until conditions are met."
+    verified_on_18_0: pending
+  - technical_name: purchase_request
+    repo: purchase-workflow
+    rationale: "Formal purchase request workflow preceding PO creation."
+    verified_on_18_0: pending
+  - technical_name: purchase_delivery_split_date
+    repo: purchase-workflow
+    rationale: "Split deliveries by requested date when different lines differ."
+    verified_on_18_0: pending
+notes:
+  - "Scaffold only — full population requires reconciling against OCA 18.0 branches."
+  - "See infra/ssot/oca/must_have_base.yaml for the pattern."
+  - "Do not add modules without verifying they ship on 18.0 with CE-compatible dependencies."

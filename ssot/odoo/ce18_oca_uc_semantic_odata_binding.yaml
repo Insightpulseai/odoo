@@ -1,0 +1,269 @@
+# =============================================================================
+# CE 18 + OCA + ipai_* → Unity Catalog → Semantic Layer → OData — Binding SSOT
+# =============================================================================
+# Authority: canonical cross-layer binding that ties the Odoo CE 18 runtime
+#            (toggles + OCA must-have + ipai_* delta) to the analytics
+#            governance plane (Unity Catalog), the metric/dimension plane
+#            (semantic layer), and the consumer query plane (OData).
+#
+# Mental model: one truth at each layer; each layer projects into the next
+#               via well-defined contracts. No metrics live in Odoo. No OLTP
+#               truth lives in UC. No ad-hoc OData on top of raw tables.
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: canonical
+
+# -----------------------------------------------------------------------------
+# Layer authorities (must-hold invariants)
+# -----------------------------------------------------------------------------
+layer_authorities:
+
+  layer_1_odoo_orm:
+    role: operational_truth_oltp
+    authority_ssot: ssot/odoo/orm-registry.yaml
+    rule: "All transactional writes happen against Odoo ORM. No writes against UC/semantic/OData."
+
+  layer_2_odoo_feature_toggles:
+    role: feature_surface_truth
+    authority_ssot: ssot/odoo/settings_catalog.yaml
+    rule: "Toggles determine which domain tables exist and which fields are populated."
+
+  layer_3_oca_must_have:
+    role: ee_parity_and_capability_extension
+    authority_ssots:
+      - infra/ssot/oca/must_have_base.yaml
+      - infra/ssot/oca/must_have_accounting.yaml
+      - infra/ssot/oca/must_have_sales.yaml
+      - infra/ssot/oca/must_have_purchases.yaml
+      - infra/ssot/oca/must_have_projects.yaml
+    rule: "OCA modules extend Odoo ORM; they DO NOT introduce new authoritative layers."
+
+  layer_4_ipai_delta:
+    role: thin_delta_for_integration_bridges
+    authority_ssot: ssot/odoo/package-classification.yaml
+    rule: "ipai_* wraps CE+OCA. Never duplicates OCA capability."
+
+  layer_5_unity_catalog:
+    role: governance_discovery_access
+    authority_ssot: ssot/lakehouse/unity-catalog-map.yaml
+    rule: "UC governs analytics projections of Odoo ORM. UC is NOT an OLTP source."
+
+  layer_6_semantic:
+    role: metric_and_dimension_truth
+    authority_ssot: ssot/semantic/semantic-layer.yaml
+    rule: "KPIs, dimensions, and business metric definitions live here — not in UC, not in OData, not in Odoo reports."
+
+  layer_7_odata:
+    role: consumer_query_interface
+    authority_ssot: platform/ssot/semantic/odata-entity-map.yaml
+    canonical_home: data-intelligence/
+    rule: "OData exposes governed entity sets with $select/$apply/paging. No raw table passthrough."
+
+# -----------------------------------------------------------------------------
+# Projection flow (Odoo → UC → Semantic → OData)
+# -----------------------------------------------------------------------------
+projection_flow:
+
+  odoo_to_uc:
+    mechanism: azure_postgres_to_databricks_mirroring
+    pattern: bronze_raw_silver_cleaned_gold_curated
+    ownership: data-intelligence
+    governance:
+      - uc_catalog_per_environment (ipai_dev, ipai_staging, ipai_prod)
+      - row_level_security_via_uc_policies
+      - column_level_masking_for_pii
+    contract: ssot/lakehouse/unity-catalog-map.yaml
+
+  uc_to_semantic:
+    mechanism: databricks_sql_views_plus_metric_definitions
+    pattern: semantic_views_per_domain (finance, sales, inventory, projects, hr, tax_compliance, pulser_ops)
+    ownership: data-intelligence
+    governance:
+      - every_metric_defined_once
+      - dimension_reuse_across_domains
+      - kpi_contracts_versioned
+    contract: ssot/semantic/semantic-layer.yaml
+
+  semantic_to_odata:
+    mechanism: odata_v4_over_semantic_views
+    pattern: entity_sets_per_bounded_context
+    ownership: data-intelligence + platform
+    governance:
+      - consumer_access_policy_evaluated_per_query
+      - $select_allowlist_per_entity
+      - $apply_shapes_predeclared
+      - paging_mandatory_over_1000_rows
+    contract: platform/ssot/semantic/odata-entity-map.yaml
+    consumer_policy: ssot/semantic/consumer-access-policy.yaml
+
+# -----------------------------------------------------------------------------
+# Consumer lanes
+# -----------------------------------------------------------------------------
+consumer_lanes:
+
+  power_bi:
+    via: odata_v4
+    primary: true
+    rationale: "CLAUDE.md #12 — Power BI is the mandatory BI surface."
+
+  agent_platform:
+    via:
+      - odata_v4 (for grounded metric queries)
+      - uc_sql (via Databricks SQL for ad-hoc agent tool calls)
+    tool_adapter: agent-platform/src/agent_platform/tools/databricks/
+
+  fabric_mirroring:
+    via: fabric_shortcut_to_uc
+    scope: mirroring_only (per CLAUDE.md #13)
+    rule: "Fabric never replaces Databricks engineering."
+
+  ui_reports_in_odoo:
+    via: odoo_native_reports (studio-style)
+    scope: operational_reports_only
+    rule: "No analytics/BI in Odoo reports. Use Power BI via OData."
+
+# -----------------------------------------------------------------------------
+# Feature toggle → UC catalog enablement matrix
+# -----------------------------------------------------------------------------
+# Reads from ssot/odoo/settings_catalog.yaml and determines which UC schemas
+# and tables must exist. A disabled CE toggle MUST NOT have a populated UC
+# projection (data doesn't exist).
+toggle_to_uc_matrix:
+  rule: >
+    A UC table/view under ipai_<env>.<domain>.<object> exists ONLY IF the
+    corresponding CE toggle is enabled OR an OCA must-have module provides
+    the source table. If the toggle is disabled, the projection pipeline
+    skips that object silently.
+
+  mappings:
+    - toggle_group: accounting
+      toggle_keys_any: [accounting, invoicing]
+      enables_uc_domain: finance
+      enables_uc_schemas: [bronze, silver, gold]
+
+    - toggle_group: sales
+      toggle_keys_any: [sale_management]
+      enables_uc_domain: sales
+      enables_uc_schemas: [bronze, silver, gold]
+
+    - toggle_group: purchases
+      toggle_keys_any: [purchase]
+      enables_uc_domain: purchases
+      enables_uc_schemas: [bronze, silver, gold]
+
+    - toggle_group: projects
+      toggle_keys_any: [project]
+      enables_uc_domain: projects
+      enables_uc_schemas: [bronze, silver, gold]
+
+    - toggle_group: hr
+      toggle_keys_any: [hr, hr_attendance]
+      enables_uc_domain: hr
+      enables_uc_schemas: [bronze, silver, gold]
+
+    - toggle_group: inventory_mrp
+      toggle_keys_any: [stock]
+      enables_uc_domain: inventory
+      enables_uc_schemas: [bronze, silver, gold]
+
+# -----------------------------------------------------------------------------
+# OCA module → OLTP source table → UC projection targets
+# -----------------------------------------------------------------------------
+oca_to_uc_projection_examples:
+  # Finance/accounting OCA modules
+  - oca_module: account_financial_report
+    oca_repo: account-financial-reporting
+    source_tables: [account.move, account.move.line]
+    uc_projection: ipai_<env>.finance.gold.financial_reports
+    semantic_entity: semantic.finance.report_pack
+
+  # Sales
+  - oca_module: sale_commission
+    oca_repo: commission
+    source_tables: [sale.commission, account.invoice.line.agent]
+    uc_projection: ipai_<env>.sales.gold.commission_ledger
+    semantic_entity: semantic.sales.commission
+
+  # Projects
+  - oca_module: project_timeline
+    oca_repo: project
+    source_tables: [project.task, project.project]
+    uc_projection: ipai_<env>.projects.silver.task_timeline
+    semantic_entity: semantic.projects.task_duration
+
+# -----------------------------------------------------------------------------
+# OData entity set policy
+# -----------------------------------------------------------------------------
+odata_entity_set_policy:
+  rule: "Every OData entity set MUST be backed by a semantic view, never a raw UC table."
+  minimum_exposure_elements:
+    - entity_set_name
+    - backing_semantic_view
+    - primary_key
+    - selectable_fields
+    - filterable_fields
+    - apply_aggregation_shapes
+    - max_page_size
+    - consumer_classes_allowed
+  consumer_classes:
+    - power_bi_service
+    - agent_platform_runtime
+    - authorized_internal_tools
+
+# -----------------------------------------------------------------------------
+# Governance enforcement
+# -----------------------------------------------------------------------------
+governance:
+
+  write_boundary:
+    writes_permitted:
+      - odoo_orm (transactional)
+    writes_forbidden:
+      - unity_catalog (reads/analytics only)
+      - semantic_layer (definitions only)
+      - odata (query surface only)
+
+  schema_evolution:
+    authority: odoo_orm_migration
+    propagation_order:
+      - odoo ORM migration
+      - UC bronze mirror refresh
+      - UC silver/gold transforms
+      - semantic view update
+      - OData entity set update (if shape changed)
+    rule: "A schema change at odoo ORM triggers downstream updates, not the reverse."
+
+  pii_handling:
+    classification_authority: ssot/lakehouse/unity-catalog-map.yaml
+    masking_enforced_at: uc_and_semantic
+    no_pii_in_odata_unless_consumer_class_permits: true
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not a replacement for individual layer SSOTs (this binds them, doesn't subsume)
+  - not an ETL DAG (that lives in data-intelligence)
+  - not a metric definition (semantic-layer.yaml owns that)
+  - not a RBAC matrix (identity SSOT owns that)
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  odoo_orm_registry: ssot/odoo/orm-registry.yaml
+  settings_catalog: ssot/odoo/settings_catalog.yaml
+  package_classification: ssot/odoo/package-classification.yaml
+  oca_base: infra/ssot/oca/must_have_base.yaml
+  oca_accounting: infra/ssot/oca/must_have_accounting.yaml
+  oca_sales: infra/ssot/oca/must_have_sales.yaml
+  oca_purchases: infra/ssot/oca/must_have_purchases.yaml
+  oca_projects: infra/ssot/oca/must_have_projects.yaml
+  unity_catalog: ssot/lakehouse/unity-catalog-map.yaml
+  semantic_layer: ssot/semantic/semantic-layer.yaml
+  odata_entity_map: platform/ssot/semantic/odata-entity-map.yaml
+  consumer_access_policy: ssot/semantic/consumer-access-policy.yaml
+  aac_map: ssot/architecture/azure-architecture-center-map.yaml
