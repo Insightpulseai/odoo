@@ -2,20 +2,22 @@
 # GHA Scoped Exception — SSOT
 #
 # Authority: CLAUDE.md §"Engineering & Delivery Authority (REVISED 2026-04-16)"
-# Purpose: Govern the narrow conditions under which GitHub Actions is permitted.
-# Default: FORBIDDEN. Exception: scopes listed below, with hard conditions.
-# Rev: 2026-04-16
+# Purpose: Govern the conditions under which GitHub Actions is permitted.
+# Default: SCOPED EXCEPTION. Scopes listed below, with hard conditions.
+# Rev: 2026-04-19 (expanded per github-actions-azure-oidc-policy.yaml)
 
-version: 1
+version: 2
 status: canonical
-effective_date: 2026-04-16
-supersedes: null
+effective_date: 2026-04-19
+supersedes_version: 1
+supersedes_effective_date: 2026-04-16
 
 doctrine_sentence: |
-  GitHub Actions is allowed ONLY as a pre-merge validation tool for the scopes
-  enumerated here, with Azure-subscription billing, sibling Azure Pipeline
-  defense-in-depth, and zero direct Azure write access. Azure Pipelines
-  remains the sole deploy authority.
+  GitHub Actions is allowed for repo CI, nonprod deploys, package and image
+  publishing, and scheduled maintenance — with OIDC-based Azure auth,
+  Azure-subscription billing, and zero long-lived secrets. Azure Pipelines
+  remains the sole authority for production + approval-gated promotions +
+  release evidence capture (per github-actions-azure-oidc-policy.yaml).
 
 # ───────────────────────────────────────────────
 # Allowed scopes (ANY new GHA workflow must match one)
@@ -67,6 +69,71 @@ allowed_scopes:
     allowed_actions: [link-check, markdown-lint, alt-text-audit]
     forbidden: [deploy, anything-that-modifies-content]
     sibling_azure_pipeline_required: false   # trivial scope
+    status: allowed
+
+  # ─────────────────────────────────────────────────────────────────
+  # Scopes added 2026-04-19 per github-actions-azure-oidc-policy.yaml
+  # Expands GHA from pre-merge-validation-only to include repo CI,
+  # nonprod deploys, and package/image publishing. Production remains
+  # Azure Pipelines only.
+  # ─────────────────────────────────────────────────────────────────
+
+  repo_builds:
+    description: |
+      Build / test / lint on PR and push to main. Default repo CI lane
+      for engineering repos.
+    triggers: [pull_request, push]
+    permissions: [contents:read, pull-requests:read]
+    allowed_actions: [lint, format-check, unit-test, integration-test, build]
+    forbidden: [deploy-to-prod, prod-secret-read, release-tag-on-prod]
+    sibling_azure_pipeline_required: false   # repo CI is GHA-default
+    status: allowed
+
+  package_publish:
+    description: |
+      Publish npm packages to GHCR npm registry and container images to
+      GHCR per platform/ssot/org/package-and-artifact-topology.yaml.
+      Versioned + SHA-traceable tags only.
+    triggers: [push, release, workflow_dispatch]
+    permissions: [contents:read, packages:write]
+    allowed_actions: [npm-publish, docker-push-ghcr, sbom-generate, provenance-attest]
+    forbidden: [publish-without-sha-tag, publish-from-fork-pr, bypass-tests]
+    sibling_azure_pipeline_required: false
+    status: allowed
+
+  image_builds:
+    description: |
+      Build container images for IPAI workloads and push to GHCR.
+      Release images tagged immutable; preview images short-lived.
+    triggers: [pull_request, push, workflow_dispatch]
+    permissions: [contents:read, packages:write, id-token:write]
+    allowed_actions: [docker-build, docker-push-ghcr, multi-arch-build]
+    forbidden: [push-to-acr-for-prod, untagged-pushes]
+    sibling_azure_pipeline_required: false
+    status: allowed
+
+  nonprod_deploys:
+    description: |
+      Deploy to dev and staging environments via OIDC-federated managed
+      identity. Production NEVER via this scope — Azure Pipelines owns
+      production deploys per ci-cd-authority-matrix.yaml.
+    triggers: [push, workflow_dispatch]
+    permissions: [contents:read, id-token:write]
+    allowed_actions: [azure-login-oidc, aca-deploy-nonprod, bicep-deploy-rg-scoped]
+    forbidden: [production-env-targeting, prod-key-vault-read, prod-db-write]
+    sibling_azure_pipeline_required: false   # nonprod is GHA-default lane
+    environment_restriction: "dev or staging only (never production)"
+    status: allowed
+
+  scheduled_maintenance:
+    description: |
+      Scheduled drift detection, SSO health checks, and other
+      repo-scoped maintenance flows.
+    triggers: [schedule, workflow_dispatch]
+    permissions: [contents:read, issues:write]
+    allowed_actions: [drift-scan, sso-health-check, dependency-audit-scheduled]
+    forbidden: [prod-mutating-actions, secret-rotation]
+    sibling_azure_pipeline_required: false
     status: allowed
 
 # ───────────────────────────────────────────────
@@ -149,13 +216,13 @@ enforcement:
     - any GHA workflow that runs on `schedule:` trigger unless scope allows → BLOCK
 
   checklist_at_pr_review:
-    - [ ] Scope matches an allowed_scopes entry
-    - [ ] Billing configured (Azure subscription)
-    - [ ] OIDC federation in use (no client-secret)
-    - [ ] Sibling Azure Pipeline exists (if required by scope)
-    - [ ] Branch protection unchanged on main
-    - [ ] Workflow file references this YAML in its header comment
-    - [ ] platform-engineering approval recorded
+    - "Scope matches an allowed_scopes entry"
+    - "Billing configured (Azure subscription)"
+    - "OIDC federation in use (no client-secret)"
+    - "Sibling Azure Pipeline exists (if required by scope)"
+    - "Branch protection unchanged on main"
+    - "Workflow file references this YAML in its header comment"
+    - "platform-engineering approval recorded"
 
 # ───────────────────────────────────────────────
 # Revision triggers (when to revisit this doctrine)
