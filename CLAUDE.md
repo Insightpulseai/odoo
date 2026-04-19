@@ -349,30 +349,33 @@ Authoritative rule:
 - **GitHub Issues** is the engineering execution backlog.
 - See `ssot/governance/platform-authority-split.yaml`, `ssot/governance/ci-cd-authority-matrix.yaml`, and `ssot/governance/repo-delivery-disposition.yaml`.
 
-### Engineering & Delivery Authority (REVISED 2026-04-16)
+### Engineering & Delivery Authority (REVISED 2026-04-19)
 
-**Azure Pipelines is the sole CI/CD *deploy* authority. GitHub Actions is allowed only as a narrow scoped exception for pre-merge validation, with Azure-subscription billing enforced.**
+**GitHub Actions is the default repo CI + nonprod deploy + package/image publish authority using OIDC federation to Azure. Azure Pipelines remains the sole authority for production deploys, approval-gated promotions, and release evidence capture. Azure-subscription billing enforced. Zero long-lived secrets.**
 
 | System | Role | Status |
 |---|---|---|
-| **Azure Pipelines** | **Sole deploy authority** for ALL lanes (Odoo, Databricks, infra, docs, web, agents, tests) | ✅ Canonical |
+| **Azure Pipelines** | **Sole authority** for production deploys, approval-gated promotions, release evidence capture, Odoo cloud platform promotions, finance-affecting mutations | ✅ Canonical |
+| **GitHub Actions** | **Default** for repo CI, nonprod deploys (dev + staging), package/image publish to GHCR, PR validation, scheduled maintenance. OIDC federation to Azure; no client secrets. Azure-subscription billing. | ✅ Canonical (expanded 2026-04-19) |
 | **Azure DevOps Boards** | Portfolio/planning system of record | ✅ Canonical |
 | **GitHub** | Source control + PRs + Issues (engineering execution backlog) | ✅ Canonical |
-| **GitHub Actions (scoped exception)** | Pre-merge validation ONLY for allowed lanes (see §GHA Scoped Exception below). **Never a deploy authority.** Billing MUST route through Azure subscription. | 🟡 Scoped allow |
 | **Vercel** | **FORBIDDEN** — deprecated 2026-04-07, fully removed | ❌ REMOVED |
 
-### GHA Scoped Exception (2026-04-16)
+### GHA Allowed Scopes (REVISED 2026-04-19)
 
-GHA is allowed **only** for the following pre-merge validation scopes. Any new GHA workflow outside this list is a doctrine violation and blocked at code review.
+GHA is allowed for the following scopes. Any new workflow outside these scopes is a doctrine violation and blocked at code review.
 
 | Allowed scope | Rationale |
 |---|---|
-| **Copilot Coding Agent PR autogen validation** (when Coding Agent adopted) | Coding Agent generates PRs from Issues; GHA runs syntactic lint/test. Azure Pipelines still runs canonical gate before merge. |
-| **GHAS Code Scanning (CodeQL)** *only if Defender for DevOps proves insufficient* | Today Defender covers this; GHA CodeQL remains a break-glass option. |
-| **Dependabot-triggered dependency-audit PR checks** | GitHub-native; mirror in ADO not always practical. |
-| **Docs/README link validation on PRs** | Lightweight, GitHub-native, cheaper than spinning an ADO agent. |
+| **repo_builds** (lint/test/build on PR + push) | Default repo CI lane |
+| **package_publish** (npm → GHCR, container images → GHCR) | Per `platform/ssot/org/package-and-artifact-topology.yaml` |
+| **image_builds** (container image build + push to GHCR) | Release tags immutable; preview tags short-lived |
+| **nonprod_deploys** (dev + staging only, via OIDC managed identity) | Production is Azure Pipelines only |
+| **pr_validation** (Copilot Coding Agent autogen, Dependabot checks) | GitHub-native PR context |
+| **scheduled_maintenance** (drift detection, SSO health, dependency audits) | Repo-scoped automation |
+| **repo_scoped_policy_checks** (CodeQL break-glass, docs link validation) | Defender for DevOps remains primary for code scanning |
 
-**Not allowed under this exception:** deploy workflows, image builds, infrastructure provisioning, release tags, container pushes, secret-bearing workflows, anything that writes to Azure resources, anything that writes to production branches, anything that runs on a scheduled cron outside PR context.
+**Never in GitHub Actions:** production deploys requiring human approval gates, Odoo ERP prod promotions, finance-affecting mutations without FD approval, any workflow using long-lived client secrets, Key Vault write operations.
 
 ### GHA Hard Rules (scoped exception conditions)
 
