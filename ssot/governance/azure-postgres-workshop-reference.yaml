@@ -1,0 +1,148 @@
+version: 1
+kind: upstream_reference_classification
+status: canonical_reference_only
+last_updated: "2026-04-19"
+owner: platform-architecture
+
+upstream:
+  name: Azure-Samples/azure-postgresql (self-paced workshop)
+  classification: workshop_reference_not_production_authority
+  explicit_disclaimer_from_upstream: "Samples are not intended for production"
+  audience_per_upstream: developers_with_basic_postgresql_sql_knowledge
+
+# -----------------------------------------------------------------------------
+# What the workshop contains (capability survey)
+# -----------------------------------------------------------------------------
+workshop_coverage:
+  fundamentals:
+    - postgresql_fundamentals
+    - getting_started
+  developer_integration:
+    - pgbouncer
+    - logical_replication
+    - azure_functions_dotnet
+    - azure_functions_python
+    - azure_logic_apps
+    - azure_data_factory
+    - azure_synapse
+    - azure_batch
+  ai_on_postgres:
+    - generative_ai_with_azure_database_for_postgresql_flexible_server
+    - hugging_face
+    - langchain
+    - vector_similarity_in_postgres
+    - semantic_kernel
+    - full_chat_app_semantic_kernel_plus_postgres_plus_azure_openai
+  supplementary:
+    - best_practices
+    - troubleshooting
+    - architectures
+    - case_studies
+    - infrastructure_concepts
+    - application_modernization
+
+# -----------------------------------------------------------------------------
+# IPAI classification
+# -----------------------------------------------------------------------------
+ipai_classification:
+  production_authority: false
+  best_fit_repos:
+    - docs
+    - platform
+    - data-intelligence
+  use_for:
+    - postgres_capability_patterns
+    - replication_and_pooling_patterns
+    - ai_on_postgres_prototype_examples (RAG / vector / chat)
+    - app_modernization_examples
+
+  do_not_use_as:
+    - canonical_odoo_runtime_design (use odoo CE/OCA doctrine instead)
+    - production_release_model_source (use ssot/release/go-live-readiness.yaml)
+    - enterprise_authority_truth_plane_design (use planning-surface-authority-map.yaml)
+    - ssot_structure_authority (use existing ssot/ and platform/ssot/)
+    - secure_managed_agent_runtime_authority (use agent-platform SSOTs)
+
+# -----------------------------------------------------------------------------
+# Relevance per IPAI repo
+# -----------------------------------------------------------------------------
+relevance_per_repo:
+
+  platform:
+    value: medium
+    use_for:
+      - azure_postgresql_capability_notes
+      - control_plane_design_references
+      - non_authoritative_architecture_examples
+    ipai_live_reference: pg-ipai-odoo (Flexible Server; see platform/ssot/azure/resource-inventory.dev.yaml)
+
+  data_intelligence:
+    value: medium_to_high
+    use_for:
+      - vector_similarity_patterns
+      - langchain_on_postgres_patterns
+      - semantic_kernel_on_postgres_patterns (REFERENCE ONLY per runtime-sdk-decision-matrix — MAF is IPAI runtime; SK is not)
+      - rag_and_chat_prototypes_before_promotion
+    ipai_stance: prototype only; production RAG must route through
+      ssot/agent-platform/agent_framework_adoption.yaml substrate
+
+  odoo:
+    value: low
+    reason: >
+      Odoo's production PostgreSQL path is driven by CE 18 + Odoo's
+      own session/transaction model + Azure Flexible Server config.
+      Workshop samples don't replace that doctrine.
+
+  docs:
+    value: medium
+    use_for:
+      - reference pattern harvesting into architecture notes
+      - non-authoritative capability summaries for executive briefings
+
+# -----------------------------------------------------------------------------
+# Caveat on Semantic Kernel examples in the workshop
+# -----------------------------------------------------------------------------
+semantic_kernel_caveat:
+  workshop_includes: semantic_kernel_chat_example_on_postgres
+  ipai_runtime_decision: microsoft_agent_framework (not Semantic Kernel)
+  authority: ssot/agent-platform/runtime-sdk-decision-matrix.yaml
+  rule: >
+    Do not adopt the Semantic Kernel chat-on-Postgres sample as IPAI
+    production architecture. SK is reference-only per the runtime SDK
+    decision matrix. The pattern (AI-augmented queries on Postgres)
+    is useful; the SDK choice is not.
+
+# -----------------------------------------------------------------------------
+# Harvest rules
+# -----------------------------------------------------------------------------
+harvest_rules:
+  allowed:
+    - pattern_extraction_into_docs_architecture_notes
+    - capability_validation_in_platform_reference_material
+    - prototype_code_in_data_intelligence_sandbox_branches
+  forbidden:
+    - wholesale_import_of_workshop_code_into_production_repos
+    - use_of_workshop_code_as_canonical_implementation
+    - adoption_of_conflicting_sdk_choices (esp. SK vs MAF)
+    - skipping_go_live_readiness_gates_because_workshop_shows_simpler_pattern
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not treating workshop as production authority
+  - not adopting Semantic Kernel as IPAI runtime because workshop uses it
+  - not replacing Odoo PostgreSQL runtime design with workshop samples
+  - not skipping enterprise-grade auth/secrets patterns (use MI + Key Vault
+    per platform/ssot/policy/azure-ai-governance-baseline.yaml)
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  runtime_sdk_decision_matrix: ssot/agent-platform/runtime-sdk-decision-matrix.yaml
+  agent_framework_adoption: ssot/agent-platform/agent_framework_adoption.yaml
+  databricks_plane_charter: ssot/data-intelligence/databricks-plane-charter.yaml
+  azure_resource_inventory: platform/ssot/azure/resource-inventory.dev.yaml
+  ai_governance_baseline: platform/ssot/policy/azure-ai-governance-baseline.yaml
+  upstream_adoption_register: ssot/governance/upstream-adoption-register.yaml
