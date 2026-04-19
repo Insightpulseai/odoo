@@ -1,0 +1,232 @@
+version: 1
+kind: entra_break_glass_admin_governance
+status: canonical
+last_updated: "2026-04-19"
+verified_against_live_state: true
+verification_source: "Microsoft Graph v1.0 directoryRoles members endpoint"
+verification_date: "2026-04-19"
+owner: platform-architecture + identity-ops
+
+doctrine: >
+  Break-glass admin accounts are non-MFA-dependent emergency-only
+  identities for tenant recovery. Microsoft best practice = 2 break-
+  glass accounts. IPAI currently has 5 break-glass + 1 human (admin@)
+  = 6 total Global Administrators. Excess break-glass accounts inflate
+  attack surface without improving recovery posture. Go-live blocker
+  B-03 resolution requires reduction to target state.
+
+# -----------------------------------------------------------------------------
+# Current state (verified 2026-04-19 via Graph)
+# -----------------------------------------------------------------------------
+current_state:
+
+  total_global_administrators: 6
+
+  human_admin_identities: 1
+  break_glass_identities: 5
+
+  full_enumeration:
+    - upn: admin@insightpulseai.com
+      display_name: "Jake Tolentino"
+      id: 1ee9e10b-c962-4f25-9aea-6bcd20322018
+      type: human_primary_operator
+      azure_rbac_roles: ["Owner on subscription eba824fb", "Key Vault Administrator on kv-ipai-dev-sea"]
+      mfa_status: to_be_verified
+    - upn: emergency-admin@insightpulseai.com
+      display_name: "Emergency Admin"
+      id: 8ea896bb-4482-455e-a288-18d6b39221e5
+      type: break_glass
+      azure_rbac_roles: none
+      mfa_status: should_be_exempt (break-glass pattern)
+    - upn: emergency-admin-2@insightpulseai.com
+      display_name: "Emergency Admin 2"
+      id: 6617348a-669e-4d13-b83d-586645b7468d
+      type: break_glass
+      azure_rbac_roles: none
+    - upn: breakglass01@insightpulseai.com
+      display_name: "BreakGlass-Admin-01"
+      id: d7491f6e-ff7b-4b0a-8286-3c4e1ee4e29e
+      type: break_glass
+      azure_rbac_roles: none
+    - upn: breakglass02@insightpulseai.com
+      display_name: "BreakGlass-Admin-02"
+      id: 84677a24-ccaf-4715-8785-cd198c937a03
+      type: break_glass
+      azure_rbac_roles: none
+    - upn: breakglass-admin@insightpulseai.com
+      display_name: "Break Glass Admin"
+      id: 2c8150ab-842f-4ad3-83a9-0588f3b9ad57
+      type: break_glass
+      azure_rbac_roles: none
+
+# -----------------------------------------------------------------------------
+# Best practice target state
+# -----------------------------------------------------------------------------
+target_state:
+  total_global_administrators_permanent: 2 (break-glass only)
+  total_global_administrators_pim_eligible: 1 (Jake — activates via PIM when needed)
+
+  canonical_break_glass_pair:
+    accounts:
+      - breakglass01@insightpulseai.com
+      - breakglass02@insightpulseai.com
+    rationale: "One primary + one backup; names align with Microsoft docs examples"
+
+  human_operator_identity:
+    upn: admin@insightpulseai.com
+    note: "Jake — convert from standing GA to PIM-eligible"
+    pim_activation_duration: 4_hours_max
+    pim_approval_required: true
+    approval_note: "Self-approval acceptable at 1-operator scale; add reviewer when team grows"
+    mfa_required_for_activation: fido2_or_authenticator
+
+  to_delete: 3 excess break-glass accounts
+    - emergency-admin@insightpulseai.com
+    - emergency-admin-2@insightpulseai.com
+    - breakglass-admin@insightpulseai.com (redundant with breakglass01/02)
+
+# -----------------------------------------------------------------------------
+# Break-glass account configuration requirements (apply to the 2 kept)
+# -----------------------------------------------------------------------------
+break_glass_configuration:
+
+  password_management:
+    rotation: annual_or_on_incident
+    storage: physical_offline_secure (safe deposit box or password manager with split key)
+    access: platform-architecture_only_via_documented_procedure
+
+  mfa_posture:
+    mfa_enforced: NO (critical — break-glass must NOT depend on MFA that could lock out)
+    exemption_mechanism: exclude_from_ca_policy_requiring_mfa
+    verification: separate_ca_policy_exempts_only_these_2_accounts
+
+  conditional_access_exemption:
+    required: true (break-glass must bypass CA to avoid lockout)
+    exempted_accounts: [breakglass01, breakglass02]
+    approval: platform-architecture
+    monitoring: sign-in_alerts_to_platform-architecture_on_any_break_glass_use
+
+  monitoring_and_alerting:
+    alert_on: any_sign_in_from_break_glass_account
+    alert_destination: platform-architecture + identity-ops
+    incident_response: immediate_investigation_required_any_break_glass_use_outside_drill
+
+  audit:
+    usage_review: monthly
+    password_test_drill: quarterly (verify passwords still work)
+    rotation_drill: annual
+
+# -----------------------------------------------------------------------------
+# Resolution of go-live blocker B-03
+# -----------------------------------------------------------------------------
+go_live_blocker_b_03_resolution:
+
+  prior_assumption: "7 GAs + CA baseline incomplete"
+  verified_reality: "6 GAs + CA baseline incomplete"
+
+  target_for_minimum_viable_go_live: 3 total GAs (2 BG + 1 Jake-as-PIM-eligible)
+
+  remediation_sequence:
+    step_1_verify_passwords_work:
+      targets: [breakglass01, breakglass02]
+      action: attempt_sign_in_with_documented_password; rotate if failed
+      evidence: docs/evidence/<ts>/break-glass-verification/
+
+    step_2_document_break_glass_procedure:
+      output: docs/runbooks/break-glass-admin-procedure.md
+      contents: when_to_use + how_to_access_password + recovery_steps + post_use_mandatory_rotation
+
+    step_3_configure_ca_exemption_for_break_glass_pair:
+      action: create CA policy excluding [breakglass01, breakglass02] from MFA requirement
+      verify: other CA policies still apply to all other identities
+
+    step_4_configure_monitoring_alerts:
+      action: Sentinel or LA alert rule on sign-ins from break-glass UPNs
+      destination: platform-architecture
+
+    step_5_convert_jake_to_pim_eligible:
+      action: remove_admin@_from_standing_ga_assignment; add_as_eligible_via_pim
+      az_command: |
+        az rest --method POST \
+          --url https://graph.microsoft.com/v1.0/policies/roleManagementPolicyAssignments \
+          --body (PIM policy assignment JSON)
+      requires: Entra ID P2 (confirmed present per m365-tenant-license-inventory)
+
+    step_6_delete_excess_break_glass_accounts:
+      targets: [emergency-admin, emergency-admin-2, breakglass-admin]
+      pre_delete_verification:
+        - no_role_assignments_besides_global_administrator
+        - no_unique_licenses_assigned
+        - no_owned_groups_or_service_principals
+      az_command: "az ad user delete --id <upn>"
+      evidence: docs/evidence/<ts>/break-glass-reduction/
+
+    step_7_final_state_verification:
+      query: "az rest GET /directoryRoles/25fc5549-4496-42f6-96cf-92effad8e76b/members"
+      expected_result:
+        - breakglass01@insightpulseai.com
+        - breakglass02@insightpulseai.com
+      jake_pim_eligible: confirmed_via_pim_ui
+
+# -----------------------------------------------------------------------------
+# Security Workspace access (Partner Center) — separate but related
+# -----------------------------------------------------------------------------
+partner_center_security_workspace:
+  current_state: access_NOT_granted (observed 2026-04-19)
+  request_destination: listed in Partner Center UI as admin@insightpulseai.com + 5 break-glass (all are valid request targets per Partner Center)
+  action: submit access request via Partner Center My Access page
+  rationale_for_access: >
+    Security Workspace is a centralized security posture + incident
+    triage surface. Relevant to IPAI's agentic workflow security
+    doctrine + go-live readiness. Access should be granted to
+    admin@insightpulseai.com (Jake) as platform-architecture.
+
+# -----------------------------------------------------------------------------
+# Success criteria
+# -----------------------------------------------------------------------------
+success_criteria:
+  - id: BG-1
+    description: Total Global Administrators reduced from 6 to 3
+    target: 3 (2 BG + 1 PIM-eligible Jake)
+    measurement: az rest /directoryRoles/GA/members count
+  - id: BG-2
+    description: CA policy exempts only the 2 break-glass accounts from MFA
+    target: 2 exempted, all others covered
+    measurement: ca_policy_audit
+  - id: BG-3
+    description: Monitoring alert fires on any break-glass sign-in
+    target: true
+    measurement: alert_rule_presence + test_event
+  - id: BG-4
+    description: Break-glass procedure runbook exists
+    target: docs/runbooks/break-glass-admin-procedure.md
+    measurement: file_presence
+  - id: BG-5
+    description: Jake moved from standing GA to PIM-eligible
+    target: admin@ has no permanent GA; has eligible assignment via PIM
+    measurement: pim_eligibility_report
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not enforcing MFA on break-glass accounts (anti-pattern — breaks recovery)
+  - not reducing below 2 break-glass accounts (single-point-of-failure)
+  - not deleting break-glass accounts without password verification first
+  - not executing PIM migration during go-live cutover window
+  - not exposing break-glass passwords in any digital system beyond encrypted secure storage
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/identity/entra_target_state.yaml
+  - ssot/identity/entra-governance-policy.yaml
+  - ssot/identity/entra-primary-upn-reconciliation.yaml
+  - ssot/identity/m365-tenant-license-inventory-and-capability-map.yaml
+  - ssot/release/go-live-readiness.yaml (B-03 resolution)
+  - docs/evidence/20260419-1800/go-live-readiness-review/blocker-register.yaml
+
+source_references:
+  - https://learn.microsoft.com/entra/identity/role-based-access-control/security-emergency-access
+  - https://learn.microsoft.com/entra/id-governance/privileged-identity-management
