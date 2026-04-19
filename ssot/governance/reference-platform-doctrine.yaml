@@ -1,0 +1,301 @@
+version: 1
+kind: reference_platform_doctrine
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+
+doctrine: >
+  Reference platforms inform UX, ergonomics, and pattern choices. They
+  do not become runtime, routing, deployment, identity, or control-plane
+  authorities. Azure is the primary runtime + control-plane authority.
+  Four platform references and four pattern references are kept — no more.
+
+parent_ssots:
+  - ssot/governance/github-desired-state.yaml
+  - ssot/governance/github-target-state-success-criteria.yaml
+
+# -----------------------------------------------------------------------------
+# Platform authority (canonical rule)
+# -----------------------------------------------------------------------------
+platform_authority_rules:
+  azure:
+    role:
+      - runtime_authority
+      - control_plane_authority
+      - deployment_authority
+      - routing_authority
+      - identity_authority
+  cloudpepper:
+    role:
+      - benchmark_for_odoo_operational_experience_only
+  vercel_enterprise:
+    role:
+      - benchmark_for_web_platform_experience_only
+  webflow:
+    role:
+      - benchmark_for_marketing_site_and_content_ops_experience_only
+  azure_marketplace_web_offers:
+    role:
+      - benchmark_for_packaging_and_commercialization_only
+
+# -----------------------------------------------------------------------------
+# Four platform references (keep exactly these four)
+# -----------------------------------------------------------------------------
+platform_references:
+
+  cloudpepper:
+    category: odoo_managed_operations
+    evidence:
+      - odoo_specific_control_plane
+      - staging_environments
+      - managed_backups
+      - git_deployment
+      - deploy_on_other_cloud_providers
+      - azure_blob_backup_support
+    allowed_role:
+      - odoo_control_plane_ux_reference
+      - backup_restore_expectation_reference
+      - odoo_environment_management_reference
+      - managed_odoo_operations_reference
+    forbidden_role:
+      - primary_runtime_authority
+      - primary_identity_authority
+      - primary_deployment_authority
+      - control_plane_authority
+    ipai_translation: >
+      Benchmark Azure-native Odoo operator experience against Cloudpepper
+      ergonomics (provisioning simplicity, backups, restore, environment
+      duplication, update hygiene). Runtime stays on Azure (ACA + Flexible
+      Postgres). Cloudpepper is never the substrate.
+
+  vercel_enterprise:
+    category: managed_web_platform
+    evidence:
+      - managed_web_platform
+      - built_in_ci_cd
+      - preview_and_collaboration_features
+      - own_runtime_and_security_platform
+      - azure_integration_is_integration_not_native_hosting
+    allowed_role:
+      - web_platform_ux_reference
+      - preview_deployment_ergonomics_reference
+      - product_polish_reference
+    forbidden_role:
+      - azure_native_runtime_authority
+      - routing_authority
+      - deployment_authority
+      - control_plane_authority
+      - any_repo_dependency_on_vercel_sdks_or_runtime
+    deprecation_anchor: CLAUDE.md Deprecated (2026-04-07)
+    ipai_translation: >
+      Reproduce Vercel-like DX on Azure: Front Door for edge/path
+      routing, ACA/App Service/AKS for runtime, ACR/GHCR for images,
+      Entra/OIDC for auth, own preview/deploy contracts. Never
+      re-adopt Vercel as a platform dependency.
+
+  webflow:
+    category: managed_visual_website_platform
+    evidence:
+      - visual_website_builder
+      - cms_hosting_localization_security
+      - enterprise_collaboration_positioning
+    allowed_role:
+      - marketing_site_ux_reference
+      - content_operations_reference
+      - cms_editor_experience_reference
+      - enterprise_collaboration_reference_for_non_engineering_web_teams
+    forbidden_role:
+      - runtime_authority
+      - deployment_authority
+      - routing_authority
+      - identity_authority
+      - control_plane_authority
+    ipai_translation: >
+      If editorial polish is wanted for marketing surfaces, benchmark
+      against Webflow ergonomics but deliver via Odoo CMS + Azure
+      Container Apps + Azure Front Door. Never move marketing content
+      onto Webflow as the canonical surface.
+
+  azure_marketplace_web_offers:
+    category: marketplace_listing_patterns
+    evidence:
+      - vendor_packaged_vm_offers
+      - one_click_web_platforms
+      - managed_appliance_style_products
+    allowed_role:
+      - marketplace_packaging_reference
+      - commercial_offer_reference
+      - short_term_bootstrap_reference
+    forbidden_role:
+      - architecture_authority
+      - runtime_authority
+      - control_plane_authority
+      - default_platform_selection_source
+    ipai_translation: >
+      Review Azure Marketplace listings for packaging patterns to
+      inform the Pulser for Odoo SaaS offer. Never import their
+      runtime shape as the IPAI platform default.
+    cross_reference:
+      - ssot/governance/partner-program-authority.yaml
+      - ssot/governance/partner-center-account-management.yaml
+
+# -----------------------------------------------------------------------------
+# Four pattern references (concrete patterns already in the scaffold)
+# -----------------------------------------------------------------------------
+pattern_references:
+
+  odoo_sh_environment_rails:
+    source: odoo.sh
+    pattern_extracted: dev_staging_production_lanes_with_promotion_ux
+    ipai_implementation: platform/ssot/runtime/branch-environment-contract.yaml
+    ipai_deviation_from_source:
+      - hosted_on_azure_container_apps_not_odoo_sh
+      - promotions_go_through_azure_pipelines (not odoo.sh drag-to-promote UI)
+    status: pattern_adopted_source_not_adopted
+
+  vercel_saas_microservices:
+    source: Vercel SaaS Microservices Template
+    pattern_extracted: path_based_composition_under_single_hostname
+    ipai_implementation:
+      edge: azure_front_door_path_rules (not vercel_multi_zones)
+      local_dev: traefik_container_in_docker_compose_or_turbo_proxy_script (not @vercel/microfrontends)
+      monorepo_orchestration: turborepo (vendor_neutral, acceptable)
+      ssot_location: platform/ssot/routing/front-door-paths.yaml (to be written on request)
+    canonical_contract:
+      hostname: console.insightpulseai.com
+      origins:
+        ops-console: ca-ipai-prd-ops-console
+        platform-api: ca-ipai-prd-platform-api
+      routes:
+        - path: /api/v1/*
+          origin: platform-api
+          caching: disabled
+        - path: /hubs/*
+          origin: platform-api
+          websocket: true
+        - path: /*
+          origin: ops-console
+          caching: static_assets_3600s
+    forbidden_imports:
+      - "@vercel/*"
+      - "vercel_multi_zones"
+    status: pattern_adopted_source_not_adopted
+
+  visactor_next_template:
+    source: visactor-next-template.vercel.app (demo URL)
+    pattern_extracted:
+      - sidebar_with_user_card_nav (avatar + name + role at top, primary nav below)
+      - kpi_quad_plus_delta_convention (four headline metrics, current + period-over-period delta)
+      - simple_two_route_information_architecture (Dashboard + Ticket only)
+    ipai_implementation:
+      charting_library: recharts (NOT visactor)
+      two_route_rule_applied_to_ops_console:
+        primary_surfaces:
+          - name: Operations
+            scope: branches_builds_databases_logs (everything live-running)
+          - name: Work
+            scope: roadmap_intake_sprints_docs (everything planned)
+        secondary_tabs_or_filters:
+          - insights
+          - tenants
+          - compliance
+          - settings
+          - agents
+    forbidden_deps:
+      - visactor (ByteDance-origin; enterprise procurement risk for TBWA\SMP and Marketplace co-sell)
+    status: patterns_adopted_library_rejected
+
+  blazity_next_enterprise:
+    source: next-enterprise.vercel.app (Blazity boilerplate)
+    pattern_extracted: engineering_chassis_for_ops_console_scaffold
+    ipai_implementation: web/ops-console/ scaffold (committed)
+    feature_disposition:
+      kept_as_is: 14
+      kept_with_azure_swap: 3
+      dropped_or_deferred: 5
+      replaced: 3
+    explicit_replacements:
+      - github_actions_for_bundle_size_and_perf_tracking → azure_pipelines
+      - automated_chatgpt_code_reviews → claude_code_plus_mcp_or_manual_review
+      - deploy_now_to_vercel_button → bicep_to_aca
+    dropped:
+      - renovate_bot (GitHub-centric)
+      - patch_package (pnpm patches cover the need)
+    deferred:
+      - conventional_commits_hook
+      - semantic_release
+      - dependency_cruiser_coupling_graph
+    future_ai_reviewer_doctrine:
+      location: agents/skills/code_review/doctrine_guardrails.md (to be written)
+      scope: >
+        Doctrine-aware PR reviewer that flags Supabase / GHA-for-prod /
+        Vercel imports / Cloudflare / n8n / Mailgun / Wix / DigitalOcean.
+    status: chassis_adopted_and_hardened
+
+# -----------------------------------------------------------------------------
+# Success criteria
+# -----------------------------------------------------------------------------
+reference_platform_success_criteria:
+  - id: REF-1
+    description: Azure remains primary runtime authority
+    target: true
+    measurement: platform_authority_audit
+  - id: REF-2
+    description: Azure remains primary control plane authority
+    target: true
+    measurement: platform_authority_audit
+  - id: REF-3
+    description: Cloudpepper used only as Odoo ops reference
+    target: true
+    measurement: runtime_dep_scan_and_doctrine_review
+  - id: REF-4
+    description: Vercel used only as web platform UX reference (no Vercel SDK/runtime deps)
+    target: 0 vercel imports
+    measurement: package_json_plus_lockfile_scan
+  - id: REF-5
+    description: Webflow used only as marketing site UX reference (no Webflow runtime deps)
+    target: true
+    measurement: doctrine_review
+  - id: REF-6
+    description: Azure Marketplace web offers not used as architecture authority
+    target: true
+    measurement: spec_review
+  - id: REF-7
+    description: No @vercel/* imports present in repo
+    target: 0
+    measurement: eslint_ban_plus_lockfile_scan
+  - id: REF-8
+    description: No VisActor library imports (ByteDance) — Recharts substitution holds
+    target: 0
+    measurement: package_json_scan
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not promoting any reference platform to runtime authority
+  - not adding reference surfaces beyond the 4 platform references documented above
+  - not re-adopting Vercel or Webflow as runtime or deploy surfaces
+  - not importing VisActor library (ByteDance procurement risk)
+  - not adopting Cloudpepper infrastructure (only its UX expectations)
+
+# -----------------------------------------------------------------------------
+# Bottom line
+# -----------------------------------------------------------------------------
+bottom_line: >
+  Cloudpepper = Odoo ops reference. Vercel = web platform UX reference.
+  Webflow = marketing/CMS UX reference. Azure Marketplace web offers =
+  packaging/commercialization reference. Azure remains the runtime,
+  routing, deployment, and control-plane authority.
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/governance/github-desired-state.yaml
+  - ssot/governance/partner-program-authority.yaml
+  - ssot/governance/partner-center-account-management.yaml
+  - ssot/governance/saas-tenancy-model-pulser-for-odoo.yaml
+  - platform/ssot/runtime/branch-environment-contract.yaml
+  - ssot/governance/ops-console-scaffold-contract.yaml
+  - CLAUDE.md
