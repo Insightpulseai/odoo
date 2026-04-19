@@ -1,0 +1,305 @@
+version: 1
+kind: github_org_admin_api_matrix
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+verified_against: docs.github.com (REST + GraphQL references + Enterprise Cloud docs)
+
+doctrine: >
+  REST is the primary org admin write plane. GraphQL is the selective
+  domain/object mutation plane (e.g. verifiable domains). Webhooks are
+  the event plane — not a settings-edit plane. Every org-admin capability
+  is judged by: REST endpoint? GraphQL mutation? Webhook event?
+  Automation confidence = HIGH | MEDIUM | LOW.
+
+parent_ssots:
+  - ssot/governance/github-desired-state.yaml
+  - ssot/governance/github-enterprise-org-target-state.yaml
+  - ssot/governance/github-identity-and-oauth.yaml
+
+# -----------------------------------------------------------------------------
+# Authoritative rule
+# -----------------------------------------------------------------------------
+rule: |
+  REST = primary org admin write plane
+  GraphQL = selective domain/object mutation plane
+  Webhooks = event plane, not settings-edit plane
+
+# -----------------------------------------------------------------------------
+# Matrix
+# -----------------------------------------------------------------------------
+matrix:
+
+  # ─────────────────────────────────────────────
+  # REST-safe (HIGH confidence — PATCH /orgs/{org})
+  # ─────────────────────────────────────────────
+  - capability: organization_display_name
+    rest: "PATCH /orgs/{org} (name field)"
+    graphql: not_primary_surface
+    webhook: none
+    confidence: high
+
+  - capability: public_email
+    rest: "PATCH /orgs/{org} (email field)"
+    graphql: not_primary_surface
+    webhook: none
+    confidence: high
+
+  - capability: billing_email
+    rest: "PATCH /orgs/{org} (billing_email field)"
+    graphql: not_primary_surface
+    webhook: none
+    confidence: high
+
+  - capability: company
+    rest: "PATCH /orgs/{org} (company field)"
+    graphql: not_primary_surface
+    webhook: none
+    confidence: high
+
+  - capability: location
+    rest: "PATCH /orgs/{org} (location field)"
+    graphql: not_primary_surface
+    webhook: none
+    confidence: high
+
+  - capability: description
+    rest: "PATCH /orgs/{org} (description field)"
+    graphql: not_primary_surface
+    webhook: none
+    confidence: high
+
+  - capability: twitter_x_username
+    rest: "PATCH /orgs/{org} (twitter_username field)"
+    graphql: not_primary_surface
+    webhook: none
+    confidence: high
+
+  - capability: blog_url
+    rest: "PATCH /orgs/{org} (blog field)"
+    graphql: not_primary_surface
+    webhook: none
+    confidence: high
+
+  - capability: default_repository_permission_and_org_defaults
+    rest: "PATCH /orgs/{org} (default_repository_permission + other defaults)"
+    graphql: not_primary_surface
+    webhook: none
+    confidence: high
+
+  - capability: delete_organization
+    rest: "DELETE /orgs/{org} (async 202 response)"
+    graphql: no
+    webhook: not_applicable
+    confidence: high
+    note: login_unavailable_90_days_post_deletion
+
+  - capability: organization_webhooks_management
+    rest: "POST/PATCH/DELETE /orgs/{org}/hooks"
+    graphql: no
+    webhook: "organization_event_available_to_orgs_and_apps"
+    confidence: high
+
+  # ─────────────────────────────────────────────
+  # SELECTIVE GraphQL (MEDIUM confidence)
+  # ─────────────────────────────────────────────
+  - capability: domain_verification
+    rest: no
+    graphql:
+      mutations:
+        - addVerifiableDomain
+        - approveVerifiableDomain
+        - deleteVerifiableDomain
+        - regenerateVerifiableDomainToken
+        - verifyVerifiableDomain
+    webhook: none
+    confidence: medium
+    note: DNS_txt_record_step_is_external_to_github
+
+  - capability: scim_user_lifecycle (create / update / deprovision)
+    rest: "GET/POST/PUT/PATCH/DELETE /scim/v2/organizations/{org}/Users"
+    graphql: no
+    webhook: none
+    confidence: medium
+    gate: "GHEC + SAML SSO required; initial IdP wiring is UI-only"
+    cross_reference: ssot/governance/github-identity-and-oauth.yaml
+
+  # ─────────────────────────────────────────────
+  # UI-ONLY / LOW confidence
+  # ─────────────────────────────────────────────
+  - capability: rename_organization_handle_or_login
+    rest: not_documented
+    graphql: not_documented
+    webhook: none
+    confidence: low
+
+  - capability: archive_or_unarchive_organization
+    rest: not_documented (read-only `archived_at` field exists on GET)
+    graphql: not_documented
+    webhook: none
+    confidence: low
+
+  - capability: profile_picture_or_avatar
+    rest: not_documented
+    graphql: not_documented
+    webhook: none
+    confidence: low
+
+  - capability: url_website_field
+    rest: partially_covered_by_blog_field
+    graphql: no
+    webhook: none
+    confidence: low
+
+  - capability: social_profile_links_1_to_4
+    rest: not_documented
+    graphql: not_documented
+    webhook: none
+    confidence: low
+
+  - capability: patreon_or_sponsors_update_email_or_gravatar_email
+    rest: not_documented
+    graphql: not_documented
+    webhook: none
+    confidence: low
+
+  - capability: promotions_or_tips_toggles
+    rest: not_documented
+    graphql: not_documented
+    webhook: none
+    confidence: low
+
+  - capability: member_appearance_or_profile_name_visibility
+    rest: not_documented
+    graphql: not_documented
+    webhook: none
+    confidence: low
+
+  - capability: transfer_organization_ownership
+    rest: no
+    graphql: "transferEnterpriseOrganization_exists_but_only_for_enterprise_to_enterprise_moves"
+    webhook: none
+    confidence: low
+    note: owner_transfer_to_individual_is_ui_only
+
+  - capability: saml_sso_enforcement_toggle_at_org_level
+    rest: no (only GET /orgs/{org}/credential-authorizations and DELETE .../{id} exist, for managing existing SAML tokens)
+    graphql: no_at_org_level (enterprise-level updateEnterpriseSamlIdentityProvider exists, not org-level)
+    webhook: none
+    confidence: low
+    cross_reference: ssot/governance/github-identity-and-oauth.yaml
+
+# -----------------------------------------------------------------------------
+# IPAI automation scope (derived)
+# -----------------------------------------------------------------------------
+ipai_automation_scope:
+
+  automate_via_rest (tier 1 — safe today):
+    - org_profile_fields (display_name, email, billing_email, company, location, description, twitter_username, blog)
+    - default_repository_permission_and_org_defaults
+    - organization_webhooks_management
+    - delete_organization (emergency / lifecycle only; requires org-owner token + platform-architecture signoff)
+
+  automate_via_graphql (tier 2 — selective):
+    - verifiable_domain_lifecycle (add / approve / verify / regenerate / delete)
+    - if enterprise-level SAML rotation needed: updateEnterpriseSamlIdentityProvider
+
+  automate_via_scim (tier 3 — identity lifecycle):
+    operations:
+      - user_provisioning
+      - user_deprovisioning
+      - profile_update
+      - reactivation
+    dependencies:
+      - saml_sso_enabled_on_org
+      - scim_authorizing_identity_exists (svc-github-scim per github-identity-and-oauth.yaml)
+
+  manual_or_ui_only (do_not_assume_automatable):
+    - rename_org_handle
+    - archive_or_unarchive_org
+    - avatar_upload
+    - social_profile_links
+    - patreon_or_sponsors_email_fields
+    - promotions_and_tips_toggles
+    - transfer_ownership_to_individual
+    - saml_sso_enforcement_toggle (the on/off switch at org scope)
+
+  treat_as_event_source_not_settings_write:
+    - organization_webhook_event (available_to_orgs_and_enterprises_and_github_apps)
+
+# -----------------------------------------------------------------------------
+# Tooling preference
+# -----------------------------------------------------------------------------
+tooling_preference:
+  auth_to_github_rest_graphql_scim:
+    preferred: github_app_with_narrow_permissions_installed_on_org
+    acceptable: oauth_app_or_pat_only_for_ad_hoc_ops
+    forbidden:
+      - unscoped_personal_access_tokens_for_automation
+      - pat_checked_into_repo
+  language_bindings:
+    rest: octokit_ts_js / octokit_py / go-github / curl for ad-hoc
+    graphql: octokit_graphql / graphql-python
+    scim: direct_http_with_bearer_or_basic_auth
+
+# -----------------------------------------------------------------------------
+# Quick reference for implementation
+# -----------------------------------------------------------------------------
+quick_reference:
+  patch_orgs_org_example_body: |
+    {
+      "name": "Insightpulse-ai",
+      "description": "IPAI — AI copilot platform for Odoo",
+      "billing_email": "finance@insightpulseai.com",
+      "company": "Insightpulse AI",
+      "location": "Southeast Asia",
+      "default_repository_permission": "read"
+    }
+  graphql_verifiable_domain_add_example: |
+    mutation AddVerifiableDomain($orgId: ID!, $domain: URI!) {
+      createVerifiableDomain(input: { ownerId: $orgId, domain: $domain }) {
+        domain { id host verificationToken }
+      }
+    }
+  scim_user_create_example_body: |
+    {
+      "schemas": ["urn:ietf:params:scim:schemas:core:2.0:User"],
+      "userName": "<handle>",
+      "name": {"givenName": "<first>", "familyName": "<last>"},
+      "emails": [{"value": "<email>", "primary": true}],
+      "externalId": "<idp-object-id>"
+    }
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not treating docs page existence as proof of API existence
+  - not assuming REST has full UI parity
+  - not using webhooks as a settings-edit plane
+  - not automating UI-only operations via browser-automation scripts as a primary pattern
+  - not committing any GitHub App private key, PAT, or OAuth client secret to git
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/governance/github-desired-state.yaml
+  - ssot/governance/github-enterprise-org-target-state.yaml
+  - ssot/governance/github-identity-and-oauth.yaml
+  - ssot/governance/github-operating-layers.yaml
+  - ssot/governance/github-integration-model.yaml
+
+# -----------------------------------------------------------------------------
+# Source references (for future re-verification)
+# -----------------------------------------------------------------------------
+source_references:
+  - https://docs.github.com/en/rest/orgs/orgs
+  - https://docs.github.com/en/enterprise-cloud@latest/rest/orgs/orgs
+  - https://docs.github.com/en/graphql/reference/mutations
+  - https://docs.github.com/en/enterprise-cloud@latest/graphql/reference/mutations
+  - https://docs.github.com/en/enterprise-cloud@latest/rest/scim/scim
+  - https://docs.github.com/en/enterprise-cloud@latest/organizations/managing-organization-settings/verifying-or-approving-a-domain-for-your-organization
+  - https://docs.github.com/en/enterprise-cloud@latest/organizations/managing-saml-single-sign-on-for-your-organization/enforcing-saml-single-sign-on-for-your-organization
+  - https://docs.github.com/en/organizations/managing-organization-settings/renaming-an-organization
+  - https://docs.github.com/en/organizations/managing-organization-settings/archiving-an-organization
