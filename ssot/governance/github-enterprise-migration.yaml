@@ -174,6 +174,62 @@ migration_phases:
       - test_user_provisioning_deprovisioning
     evidence: scim_provisioning_logs
 
+  phase_7_azure_private_networking_for_runners_optional:
+    adopt_when: github_hosted_runners_need_to_reach_private_azure_resources
+    rationale: >
+      GitHub Enterprise Cloud supports private network configurations
+      for GitHub-hosted runners using an Azure VNet. This is created at
+      the enterprise level by enterprise owners. Lets hosted runners
+      access private Azure resources (Key Vault, Postgres private
+      endpoint, private ACR) WITHOUT defaulting to self-hosted runners.
+    ipai_relevance: HIGH (IPAI has private endpoints on KV, PG, Search)
+    steps:
+      - create_enterprise_level_private_network_configuration
+      - link_to_ipai_azure_vnet (vnet-ipai-dev-sea or dedicated runner subnet)
+      - test_hosted_runner_reaches_private_pg_endpoint
+      - test_hosted_runner_reaches_private_kv
+      - document_which_workflows_require_private_network_config
+    evidence: private_network_config_exports + test_workflow_runs
+    replaces: self_hosted_runners_for_most_ci_scenarios
+
+# -----------------------------------------------------------------------------
+# Identity choice — personal accounts vs EMU (clarification)
+# -----------------------------------------------------------------------------
+identity_choice_clarified:
+  options:
+    enterprise_with_personal_accounts:
+      ipai_current_posture: preferred_default
+      pros: [simpler_setup, users_keep_personal_github_for_oss, lower_identity_commitment]
+      cons: [less_strict_governance_than_emu, relies_on_saml_sso_enforcement_not_idp_lifecycle]
+
+    enterprise_with_managed_users_emu:
+      ipai_current_posture: deferred_not_day_one (per original decisions_deferred section)
+      pros: [stricter_governance, full_idp_lifecycle_control, required_for_data_residency_ghe_com]
+      cons: [users_cannot_contribute_to_public_repos_with_emu_account, separate_emu_identity_required, cannot_link_to_personal_github, bigger_operational_commitment]
+
+  data_residency_tie_in:
+    rule: github_data_residency_on_ghe_com_subdomain_is_tied_to_managed_users
+    regions_available: [eu, australia, us, japan]
+    ipai_need: not_required_today (tenant region is SEA; regulatory requirement not yet triggered)
+    revisit_when: compliance_or_client_contract_requires_specific_data_residency
+
+# -----------------------------------------------------------------------------
+# Actions at enterprise layer (clarification)
+# -----------------------------------------------------------------------------
+actions_enterprise_layer:
+  github_default: actions_enabled_by_default_on_github_enterprise_cloud
+  ipai_policy: scoped_exception_only_per_claude_md
+  enterprise_level_management:
+    - enable_disable_per_org
+    - set_allowed_actions_policy (trusted_publishers_only, marketplace_allowlist)
+    - set_runner_group_access
+    - set_workflow_permissions (default_read_only, explicit_write_grants)
+  ipai_enterprise_policy_desired:
+    default_permissions: read_only
+    allowed_actions: verified_creators_plus_explicit_allowlist
+    fork_pull_request_workflow_approval: required
+    oidc_federation_to_azure: required (no PAT_based_deploys)
+
 # -----------------------------------------------------------------------------
 # Decisions deferred
 # -----------------------------------------------------------------------------
