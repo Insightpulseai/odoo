@@ -1,0 +1,181 @@
+# =============================================================================
+# Unified Capability Template Authority — SSOT
+# =============================================================================
+# Authority: canonical declaration that IPAI uses ONE unified capability
+#            template spanning governance (PRINCE2 concepts) + spec/design
+#            (GitHub spec-kit) + delivery (Azure Boards Basic) + execution
+#            (informal 1-2 week iterations). Replaces fragmented templates.
+# Related:   spec/_templates/unified-capability-template.md (the template)
+#            spec/_templates/azure-boards-mapping.md
+#            spec/_templates/go-live-readiness-template.md
+#            ssot/governance/planning-surface-authority-map.yaml
+#            ssot/governance/vmokrapi-spatres-mapping.yaml
+#            ssot/governance/azure-boards-taxonomy.yaml
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: canonical
+
+doctrine: >
+  Spec Kit-style operating template as the spec spine, mapped to
+  PRINCE2 governance concepts (business case, stage gates, approvals),
+  Azure Boards Basic for planning/traceability, informal 1-2 week
+  iterations for execution, and VMOKRAPI-SPATRES as the mental model
+  for linking strategy to daily tasks.
+
+# -----------------------------------------------------------------------------
+# The 3-layer model
+# -----------------------------------------------------------------------------
+three_layer_model:
+
+  layer_1_governance:
+    role: prince2_concepts_without_full_prince2_methodology
+    owns:
+      - vision
+      - mission_outcome
+      - objectives_okrs
+      - business_case
+      - governance_roles
+      - stage_gates
+      - exception_handling
+    captured_in: spec/_templates/unified-capability-template.md §1-4
+    prince2_subset_adopted:
+      - business_case_thinking
+      - stage_gate_reviews_as_go_live_readiness
+      - role_clarity (executive sponsor / product owner / delivery owner / architecture owner / security / finance)
+      - tolerance_and_exception_handling
+    prince2_NOT_adopted:
+      - full_prince2_role_set
+      - formal_stage_plan_documents
+      - heavyweight_project_board_ceremonies
+    rule: use_concepts_not_methodology_overhead
+
+  layer_2_spec_and_design:
+    role: github_spec_kit_style_spec_driven_development
+    owns:
+      - capability_summary
+      - user_actor_model
+      - workflow_state_machine
+      - data_model
+      - integrations (including Odoo interop template)
+      - ai_pulser_behavior
+      - security_compliance
+      - analytics_reporting
+    captured_in: spec/_templates/unified-capability-template.md §5-12
+    spec_kit_pattern:
+      constitution_md: principles (copy from applicable SSOTs; no new invariants without review)
+      prd_md: requirements (§1-12 of unified template)
+      plan_md: implementation plan (§9, §13)
+      tasks_md: detailed tasks (§13 expanded)
+    ipai_skills_available:
+      - speckit.specify
+      - speckit.constitution
+      - speckit.clarify
+      - speckit.plan
+      - speckit.tasks
+      - speckit.analyze
+      - speckit.checklist
+      - speckit.implement
+
+  layer_3_delivery:
+    role: azure_boards_basic_plus_informal_iterations
+    owns:
+      - epic_feature_story_task_hierarchy
+      - sprint_goals_if_iterations_enabled
+      - readiness_gates
+      - go_no_go_decision
+      - support_hypercare
+    captured_in: spec/_templates/unified-capability-template.md §13-16
+    boards_basic_hierarchy: Epic → Issue → Task
+    scrum_status: not_adopted (see planning-surface-authority-map)
+
+# -----------------------------------------------------------------------------
+# Crosswalk (methodology to IPAI artifact)
+# -----------------------------------------------------------------------------
+methodology_crosswalk:
+  prince2:
+    use_for: [business_case, stage_gates, tolerances, exception_handling, approvals, role_clarity]
+    ipai_artifact: unified-capability-template §1, §4, §14, §15, §16
+  azure_boards:
+    use_for: [epics, features, stories, issues, tasks, dependencies, delivery_reporting]
+    ipai_artifact: unified-capability-template §13 + azure-boards-mapping.md
+  scrum_informal:
+    use_for: [sprint_goals, informal_backlog_refinement, daily_execution]
+    ipai_artifact: iterations in azure-boards-taxonomy.yaml
+  github_spec_kit:
+    use_for: [canonical_spec_bundle, executable_product_truth, constitution, prd, plan, tasks]
+    ipai_artifact: spec/<slug>/ bundles + unified-capability-template
+  vmokrapi_spatres:
+    use_for: [strategy_to_execution_mental_model]
+    ipai_artifact: vmokrapi-spatres-mapping.yaml + unified-capability-template §1-3, §13
+
+# -----------------------------------------------------------------------------
+# Authoritative file set
+# -----------------------------------------------------------------------------
+authoritative_files:
+  template_pack:
+    - spec/_templates/unified-capability-template.md
+    - spec/_templates/azure-boards-mapping.md
+    - spec/_templates/go-live-readiness-template.md
+  supporting_ssots:
+    - ssot/governance/planning-surface-authority-map.yaml
+    - ssot/governance/vmokrapi-spatres-mapping.yaml
+    - ssot/governance/azure-boards-taxonomy.yaml
+    - ssot/release/go-live-readiness.yaml
+    - ssot/release/go-live-scope-matrix.yaml
+    - ssot/odoo/interoperability-template.yaml
+    - platform/ssot/agents/pulser-pack-matrix.yaml
+
+# -----------------------------------------------------------------------------
+# Usage rule
+# -----------------------------------------------------------------------------
+usage_rule: >
+  Every new capability or significant change MUST:
+  1. Copy spec/_templates/unified-capability-template.md → spec/<slug>/prd.md
+     (or split across constitution.md / prd.md / plan.md / tasks.md per
+     spec-kit pattern)
+  2. Fill every section before design review
+  3. Add boards mapping per spec/_templates/azure-boards-mapping.md
+  4. Produce readiness review per spec/_templates/go-live-readiness-template.md
+     before go-live gate
+  5. Reference the Odoo interoperability template if Odoo-adjacent
+  6. Complete sections even if the answer is "n/a" or "out of scope"
+
+# -----------------------------------------------------------------------------
+# Deprecated / replaced
+# -----------------------------------------------------------------------------
+deprecated_by_this_template:
+  - fragmented_per_feature_templates_that_drift_from_each_other
+  - free_form_prd_documents_without_structure
+  - verbal_go_live_approvals
+  - ad_hoc_epic_feature_story_hierarchies
+
+preserved_alongside:
+  - spec/_templates/bugfix/ (scoped to bug fixes, inherits from unified)
+  - spec/_templates/feature/ (inherits from unified)
+  - spec/_templates/infra-change/ (inherits from unified)
+  - spec/_templates/vertical-package/ (inherits from unified)
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not adopting full PRINCE2 methodology
+  - not adopting full Scrum process
+  - not mandating every section for trivial changes (bugfix templates exist)
+  - not replacing ssot/ invariant files with template sections
+  - not putting PII or secrets in spec bundles
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  template_pack: spec/_templates/
+  planning_authority: ssot/governance/planning-surface-authority-map.yaml
+  vmokrapi_mapping: ssot/governance/vmokrapi-spatres-mapping.yaml
+  boards_taxonomy: ssot/governance/azure-boards-taxonomy.yaml
+  go_live_readiness: ssot/release/go-live-readiness.yaml
+  odoo_interop_template: ssot/odoo/interoperability-template.yaml
+  upstream_spec_kit: https://github.com/github/spec-kit
