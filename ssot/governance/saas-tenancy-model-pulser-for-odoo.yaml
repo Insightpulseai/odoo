@@ -1,0 +1,250 @@
+version: 1
+kind: saas_tenancy_model
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture + gtm
+
+doctrine: >
+  Pulser for Odoo is a multi-tenant SaaS offer with isolated data planes
+  per customer and a shared control plane for orchestration. The
+  default isolation unit is the tenant database + tenant Azure Container
+  App + tenant Entra External ID B2B/B2C directory scope. Secrets never
+  cross tenant boundaries. Runtime, observability, and billing are
+  all tenant-tagged.
+
+# -----------------------------------------------------------------------------
+# Offer surface
+# -----------------------------------------------------------------------------
+offer:
+  name: Pulser for Odoo
+  distribution: azure_marketplace_saas_transactable (per partner-program-authority.yaml)
+  plans:
+    - foundational (per platform/ssot/gtm/marketplace_plans.yaml)
+    - growth
+    - enterprise
+  signup_flow: marketplace_subscribe → ipai_fulfillment_webhook → tenant_provisioning
+
+# -----------------------------------------------------------------------------
+# Isolation model
+# -----------------------------------------------------------------------------
+isolation_model:
+
+  chosen_pattern: per_tenant_data_plane_plus_shared_control_plane
+  alternative_considered_and_rejected:
+    shared_database_with_row_level_security: >
+      Rejected because Odoo CE multi-company ≠ multi-tenant isolation.
+      Cross-tenant data leak risk is too high. Compliance posture
+      (BIR + SOC 2 aspirations) requires DB-level separation.
+
+  isolation_boundaries:
+    data:
+      - one_postgres_database_per_tenant (named: odoo_<tenant_id>)
+      - one_azure_storage_container_per_tenant (attachments + evidence)
+      - one_search_index_per_tenant (when search adopted)
+    compute:
+      - tier_standard: shared_aca_with_tenant_scoped_container_apps (one ACA per tenant at Foundational/Growth)
+      - tier_enterprise: dedicated_aca_environment (Enterprise plan only)
+    identity:
+      - tenant_users_in_tenant_entra_external_id_scope
+      - cross_tenant_identity_federation_disabled_by_default
+    secrets:
+      - one_key_vault_scope_per_tenant OR tenant_prefixed_secrets_in_shared_kv (decision per plan tier)
+      - tenant_managed_identity_cannot_read_other_tenant_secrets
+
+# -----------------------------------------------------------------------------
+# Naming conventions (tenant-scoped resources)
+# -----------------------------------------------------------------------------
+naming:
+  tenant_id_format: "t-<8-char-base36>"  # e.g. t-a9k2p4q7
+  tenant_slug: lowercase_alnum_3to32 (customer-chosen, uniqueness enforced)
+
+  resource_naming_pattern:
+    postgres_db: "odoo_<tenant_id>"
+    aca: "aca-pulser-<tenant_slug>-<env>"
+    storage_container: "tenant-<tenant_id>"
+    key_vault_prefix: "t-<tenant_id>-"
+    search_index: "idx-pulser-<tenant_id>"
+    entra_group: "grp-pulser-<tenant_id>-<role>"
+
+  tag_discipline:
+    every_tenant_resource_must_carry:
+      - tenant_id
+      - tenant_slug
+      - plan_tier (foundational | growth | enterprise)
+      - subscription_state (trial | active | suspended | cancelled)
+    cross_reference: ssot/governance/finops-azure-cost-governance.yaml
+
+# -----------------------------------------------------------------------------
+# Tenant lifecycle
+# -----------------------------------------------------------------------------
+lifecycle:
+
+  provision:
+    trigger: marketplace_subscribe_webhook_from_partner_center
+    steps:
+      - validate_plan_and_customer
+      - allocate_tenant_id_and_slug
+      - create_entra_external_id_scope (or onboard into existing tenant directory)
+      - provision_postgres_database
+      - provision_aca_container_app (plan-tier-aware)
+      - provision_tenant_key_vault_scope
+      - provision_tenant_storage_container
+      - seed_initial_odoo_data (module install + admin user)
+      - enable_tenant_telemetry_dashboard
+      - send_welcome_email_with_sso_url
+    owner: agent_platform_fulfillment_worker
+    evidence: docs/evidence/<ts>/tenant-provisioning/<tenant_id>/
+
+  suspend:
+    triggers:
+      - payment_failure
+      - plan_downgrade_to_trial_end
+      - compliance_hold
+    effect:
+      - aca_scaled_to_zero
+      - api_returns_402_or_423
+      - data_retained_per_retention_policy
+
+  upgrade_or_downgrade:
+    trigger: partner_center_plan_change_webhook
+    effect: adjust_aca_sku_and_quota; idempotent
+
+  cancel:
+    grace_period_days: 30
+    effect_after_grace:
+      - aca_decommission
+      - db_backup_to_cold_storage (retained per retention policy)
+      - attachments_retained_per_retention_policy
+      - tenant_marked_cancelled_in_ssot
+
+  delete:
+    trigger: customer_requests_data_deletion (GDPR-style right-to-erasure)
+    steps:
+      - verify_request_via_authenticated_channel
+      - delete_tenant_db
+      - delete_tenant_storage_container
+      - delete_tenant_kv_secrets
+      - delete_tenant_entra_group_assignments
+      - retain_evidence_log_of_deletion (no_tenant_data_in_evidence)
+    evidence: docs/evidence/<ts>/tenant-delete/<tenant_id>/
+
+# -----------------------------------------------------------------------------
+# Data residency
+# -----------------------------------------------------------------------------
+data_residency:
+  default_region: southeastasia (per CLAUDE.md + entra_target_state.yaml)
+  tenant_requested_regions_supported_on_enterprise_plan_only:
+    - southeastasia (default)
+    - australiaeast (optional)
+    - japaneast (optional)
+  cross_border_data_movement: disabled_by_default
+  compliance_anchors:
+    - ph_dpa_2012_local_data_subject_posture
+    - soc_2_aspirational_posture
+    - gdpr_style_right_to_erasure_flow_supported
+
+# -----------------------------------------------------------------------------
+# Secrets and auth per tenant
+# -----------------------------------------------------------------------------
+secrets_and_auth:
+  auth_flow:
+    customer_users: entra_external_id_b2b_or_b2c (per tenant directory scope)
+    ipai_operators: entra_id_workforce (primary IPAI tenant)
+    service_principals: managed_identity_per_tenant_aca
+  secret_scope:
+    principle: tenant_managed_identity_can_only_read_its_own_tenant_prefixed_secrets
+    enforcement: key_vault_access_policy_or_rbac_scoped_to_tenant_prefix
+  forbidden:
+    - shared_secret_across_tenants
+    - hardcoded_tenant_credentials_in_repo
+    - cross_tenant_admin_tokens
+
+# -----------------------------------------------------------------------------
+# Observability per tenant
+# -----------------------------------------------------------------------------
+observability_per_tenant:
+  telemetry_tag_required: tenant_id
+  dashboards:
+    - wb-tenant-<tenant_id>-health (auto-provisioned)
+    - wb-tenant-<tenant_id>-usage
+  metering:
+    billable_metrics:
+      - api_calls
+      - agent_tool_calls
+      - storage_gb_month
+      - active_users
+    export_to_marketplace_metering_api: when_metered_plan_is_active
+  cross_reference: ssot/governance/observability-and-telemetry.yaml
+
+# -----------------------------------------------------------------------------
+# Billing integration
+# -----------------------------------------------------------------------------
+billing:
+  source_of_truth: partner_center (per partner-center-account-management.yaml)
+  webhook_events_handled:
+    - subscription_created
+    - subscription_suspended
+    - subscription_reinstated
+    - subscription_cancelled
+    - plan_changed
+    - usage_metering_sent (for metered plans)
+  fulfillment_endpoint: https://erp.insightpulseai.com/api/marketplace/webhook (per partner_center_checklist.md)
+
+# -----------------------------------------------------------------------------
+# Governance gates before first paying tenant
+# -----------------------------------------------------------------------------
+production_readiness_gates:
+  - tenant_provisioning_runbook_exists (to be written)
+  - tenant_deletion_runbook_exists (gdpr style)
+  - isolation_tested_across_two_test_tenants
+  - cross_tenant_access_denied_proven_via_test
+  - observability_dashboards_auto_provision_verified
+  - billing_webhook_happy_path_plus_suspend_plus_cancel_tested
+  - disaster_recovery_rpo_rto_defined_per_plan_tier (DR SSOT to be written)
+
+# -----------------------------------------------------------------------------
+# Success criteria
+# -----------------------------------------------------------------------------
+success_criteria:
+  - id: SAAS-1
+    description: Every tenant resource carries tenant_id + tenant_slug + plan_tier + subscription_state tags
+    target: 100%
+    measurement: azure_resource_graph_tag_audit
+  - id: SAAS-2
+    description: No shared secrets across tenants
+    target: 0 shared secrets
+    measurement: key_vault_access_policy_audit
+  - id: SAAS-3
+    description: Cross-tenant data access denied (proven by test)
+    target: 100% of cross-tenant requests blocked
+    measurement: penetration_test_report
+  - id: SAAS-4
+    description: Tenant lifecycle events (provision/suspend/cancel/delete) captured as evidence
+    target: 100%
+    measurement: docs/evidence/<ts>/tenant-*/ presence
+  - id: SAAS-5
+    description: Tenant-level dashboards auto-provisioned
+    target: 100% of active tenants
+    measurement: workbook_inventory_per_tenant
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not using Odoo multi-company as a tenant isolation substitute
+  - not sharing secrets across tenants
+  - not relying on RLS as the sole isolation mechanism
+  - not provisioning tenants manually at GA scale
+  - not conflating customer users with IPAI workforce identities
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/governance/observability-and-telemetry.yaml
+  - ssot/governance/finops-azure-cost-governance.yaml
+  - ssot/governance/partner-program-authority.yaml
+  - ssot/governance/partner-center-account-management.yaml
+  - docs/gtm/partner_center_checklist.md
+  - platform/ssot/runtime/branch-environment-contract.yaml
+  - ssot/identity/entra_target_state.yaml

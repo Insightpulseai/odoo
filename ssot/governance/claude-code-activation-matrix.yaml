@@ -1,0 +1,382 @@
+version: 1
+kind: claude_code_activation_matrix
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+
+doctrine: >
+  Claude Code is a governed repo-native execution layer for IPAI:
+  CLI-first, VS Code-supported, plan-reviewed, MCP-enabled, and
+  GitHub-automated where bounded and auditable. Not "Claude everywhere
+  in full auto." Every surface is explicitly classified activated /
+  partially / not / deferred / unknown, and every activation is tied
+  to a governance control.
+
+parent_ssots:
+  - ssot/governance/claude-code-operating-standard-authority.yaml
+  - ssot/governance/vscode-operating-profile.yaml
+  - ssot/governance/github-target-state-success-criteria.yaml
+
+status_vocabulary:
+  activated: in_use_and_governed
+  partially_activated: in_use_but_not_standardized
+  not_activated: absent
+  deferred: decided_not_now (revisit trigger documented)
+  unknown: evidence_not_collected
+
+# -----------------------------------------------------------------------------
+# 1. Core Claude Code surfaces
+# -----------------------------------------------------------------------------
+core_surfaces:
+  claude_code_cli:
+    current: activated
+    target: activated
+    notes: Part of current cloud / agent workflow vocabulary
+  claude_code_vscode_extension:
+    current: partially_activated
+    target: activated
+    notes: Under evaluation; not yet standardized across repos
+  graphical_panel_workflow:
+    current: unknown
+    target: optional
+    notes: No evidence of panel-first vs terminal-first adoption
+  terminal_mode_in_vscode:
+    current: likely_activated_in_practice
+    target: activated
+    notes: Best fit for repo-first operating style
+  conversation_history_and_resume:
+    current: unknown
+    target: activated
+  multiple_conversations_or_tabs:
+    current: unknown
+    target: activated
+  checkpoints_and_rewind:
+    current: unknown
+    target: activated
+    notes: High-value for agent iteration
+  remote_sessions_from_claude_ai:
+    current: unknown
+    target: optional
+  claude_code_on_web:
+    current: unknown
+    target: optional
+
+# -----------------------------------------------------------------------------
+# 2. IDE and editor integration
+# -----------------------------------------------------------------------------
+ide_integration:
+  vscode_extension_install_path:
+    current: unknown
+    target: activated
+    notes: Candidate standard for desktop IDE usage
+  spark_panel_or_sidebar_workflow:
+    current: unknown
+    target: optional
+  at_file_and_line_references:
+    current: partially_activated
+    target: activated
+    notes: Strong fit for review/debug
+  selection_aware_context:
+    current: unknown
+    target: activated
+  native_diff_review_before_accept:
+    current: partially_activated
+    target: activated
+    notes: Aligns with controlled-approval governance
+  auto_accept_edits_mode:
+    current: not_activated_by_default
+    target: deferred_or_selective
+    notes: Approval-first except sandbox lanes
+  plan_mode_with_editable_markdown_plan:
+    current: partially_activated_conceptually
+    target: activated
+    notes: Aligned with spec-first doctrine
+  chrome_extension_or_browser_flows:
+    current: not_activated
+    target: optional
+  jupyter_execution_via_ide_mcp:
+    current: not_activated
+    target: optional
+
+# -----------------------------------------------------------------------------
+# 3. MCP / tool integration
+# -----------------------------------------------------------------------------
+mcp_integration:
+  mcp_server_support:
+    current: partially_activated
+    target: activated
+  mcp_management_via_slash_mcp:
+    current: unknown
+    target: activated
+  ide_built_in_mcp_server:
+    current: activated_when_extension_runs
+    target: activated
+  github_mcp_server_on_github_com:
+    current: unknown
+    target: activated
+    notes: Strong fit when standardizing Claude + GitHub workflows
+  ghes_github_mcp_server:
+    current: not_supported_by_platform
+    target: deferred
+    notes: GHES MCP server explicitly unsupported; not applicable to Enterprise Cloud
+  external_tool_db_api_via_mcp:
+    current: partially_activated_directionally
+    target: activated
+
+# -----------------------------------------------------------------------------
+# 4. GitHub Actions / CI-CD integration
+# -----------------------------------------------------------------------------
+github_actions_integration:
+  claude_code_github_action:
+    current: unknown
+    target: activated_in_selected_repos
+    selected_repos_target:
+      - docs
+      - web
+      - design
+    governance_constraint: must_comply_with_gha-scoped-exception.yaml_and_github-actions-azure-oidc-policy.yaml
+  at_claude_issue_pr_invocation:
+    current: unknown
+    target: activated_in_selected_repos
+  prompt_driven_automation_mode:
+    current: unknown
+    target: activated
+  skills_use_in_workflows:
+    current: unknown
+    target: activated
+  claude_md_repo_guidance:
+    current: partially_activated_conceptually
+    target: activated
+    notes: Root CLAUDE.md exists; per-repo CLAUDE.md standardization needed
+  manual_github_app_install:
+    current: unknown
+    target: activated_where_needed
+  slash_install_github_app_quick_setup:
+    current: unknown
+    target: optional
+  custom_github_app_for_claude:
+    current: unknown
+    target: activated_for_enterprise_control
+    rationale: branded, controlled, auditable org setup
+  bedrock_or_vertex_provider_path:
+    current: not_activated
+    target: deferred
+    rationale: not IPAI primary provider path
+  microsoft_foundry_provider_path:
+    current: partially_aligned_conceptually
+    target: activated_selectively
+    rationale: strategic fit with Azure/Foundry baseline (per ssot/agent-platform/agent_framework_adoption.yaml)
+
+# -----------------------------------------------------------------------------
+# 5. Git / repo workflows
+# -----------------------------------------------------------------------------
+git_repo_workflows:
+  commit_generation:
+    current: unknown
+    target: activated
+  pr_generation:
+    current: unknown
+    target: activated
+  branch_aware_editing:
+    current: likely_activated
+    target: activated
+  worktree_support:
+    current: unknown
+    target: activated
+    notes: Excellent fit for parallel agent sessions
+  claude_resume_shared_history:
+    current: unknown
+    target: activated
+  at_terminal_name_prompt_context:
+    current: unknown
+    target: activated
+    notes: Useful for logs/debug flows
+
+# -----------------------------------------------------------------------------
+# 6. Governance / security posture
+# -----------------------------------------------------------------------------
+governance_and_security:
+  manual_approval_mode:
+    current: likely_default
+    target: activated
+    rationale: best match for IPAI governance posture
+  plan_mode:
+    current: partially_activated_conceptually
+    target: activated
+  auto_or_bypass_permissions:
+    current: not_activated_by_default
+    target: deferred_except_sandboxes
+    rationale: docs warn this should be sandbox-only
+  shared_settings_home_claude:
+    current: unknown
+    target: activated
+    notes: Should become canonical for shared CLI/extension config
+  org_or_project_managed_settings:
+    current: unknown
+    target: activated
+    rationale: required when standardizing marketplaces/plugins/MCP
+  plugin_system:
+    current: unknown
+    target: optional
+  plugin_marketplaces:
+    current: unknown
+    target: activated_selectively
+    rationale: only if IPAI curates internal tooling
+  data_privacy_safe_posture:
+    current: unknown
+    target: activated
+    notes: Must be part of formal baseline
+  restricted_mode_for_untrusted_workspaces:
+    current: unknown
+    target: activated_for_risky_repos
+
+# -----------------------------------------------------------------------------
+# 7. GHES-specific support
+# -----------------------------------------------------------------------------
+ghes_support:
+  applicability_to_ipai: not_applicable (IPAI is on GitHub Enterprise Cloud, not GHES)
+  entire_lane_status: deferred_unless_ghes_appears
+  per_feature:
+    claude_code_on_web_with_ghes: { platform: supported, ipai: deferred }
+    code_review_on_ghes: { platform: supported, ipai: deferred }
+    teleport_sessions_on_ghes: { platform: supported, ipai: deferred }
+    plugin_marketplaces_on_ghes: { platform: supported, ipai: deferred }
+    contribution_metrics_on_ghes: { platform: supported, ipai: deferred }
+    github_actions_with_ghes: { platform: supported, ipai: deferred, notes: manual workflow setup required }
+    github_mcp_server_on_ghes: { platform: not_supported, ipai: deferred }
+
+# -----------------------------------------------------------------------------
+# Recommended rollout phases
+# -----------------------------------------------------------------------------
+rollout_phases:
+
+  phase_1_activate_now:
+    - claude_code_cli
+    - vscode_extension_in_terminal_first_and_plan_first_mode
+    - claude_md_per_repo
+    - mcp_support
+    - custom_github_app_plus_claude_github_action_in_selected_repos
+    - worktree_based_parallel_sessions
+    - manual_approval_and_plan_mode_defaults
+
+  phase_2_activate_next:
+    - prompt_based_scheduled_workflows
+    - plugin_marketplaces_for_internal_tooling
+    - shared_managed_settings_across_users_and_repos
+    - at_terminal_and_log_aware_debugging_patterns
+    - native_diff_edit_review_workflow_in_vscode
+
+  phase_3_defer:
+    - auto_or_bypass_permissions (except isolated sandboxes)
+    - chrome_or_browser_automation
+    - remote_web_sessions
+    - ghes_specific_setup
+    - bedrock_or_vertex_provider_path
+
+# -----------------------------------------------------------------------------
+# Canonical target-state sentence
+# -----------------------------------------------------------------------------
+canonical_target_state:
+  core:
+    cli: activated
+    vscode_extension: activated
+    default_permission_mode: plan
+    manual_approval_mode: activated
+  repo_contract:
+    claude_md: activated
+    shared_settings_json: activated
+  integrations:
+    mcp: activated
+    github_action: activated_in_selected_repos
+    custom_github_app: activated
+    worktrees: activated
+  optional:
+    plugins: selective
+    plugin_marketplaces: selective
+    chrome_automation: deferred
+    remote_web_sessions: deferred
+  excluded_for_now:
+    ghes_lane: deferred
+    bypass_permissions: deferred_except_sandbox
+
+# -----------------------------------------------------------------------------
+# SMART success criteria
+# -----------------------------------------------------------------------------
+success_criteria:
+
+  repo_baseline:
+    - id: CC-1
+      description: 100% of selected repos have a CLAUDE.md (root + per-repo layering)
+      target: 100%
+      measurement: repo_hygiene_scan
+    - id: CC-2
+      description: 100% of selected repos define shared Claude settings (settings.json or managed equivalent)
+      target: 100%
+      measurement: settings_presence_audit
+
+  ide_adoption:
+    - id: CC-3
+      description: VS Code extension enabled for primary engineering users
+      target: 100% of named primary engineers
+      measurement: extension_activation_audit
+    - id: CC-4
+      description: Default permission mode set to plan or manual
+      target: plan_or_manual_default
+      measurement: managed_settings_check
+
+  automation:
+    - id: CC-5
+      description: Claude Code GitHub Action live in at least 3 selected repos
+      target: ">= 3 repos"
+      measurement: workflow_presence_scan
+    - id: CC-6
+      description: Custom GitHub App used for repo automation (branded, auditable)
+      target: 1 custom app
+      measurement: installed_apps_registry
+    - id: CC-7
+      description: No hardcoded API keys in workflows
+      target: 0
+      measurement: secret_scanning_plus_workflow_lint
+
+  tooling:
+    - id: CC-8
+      description: MCP enabled for approved servers only (allowlist)
+      target: 100% allowlist-compliant
+      measurement: mcp_allowlist_audit (per ssot/governance/mcp-allowlist.yaml)
+    - id: CC-9
+      description: Worktree pattern documented and in use
+      target: documented_and_in_use
+      measurement: runbook_presence + activity_sample
+
+# -----------------------------------------------------------------------------
+# Bottom line
+# -----------------------------------------------------------------------------
+bottom_line: >
+  Most important next move — standardize three things:
+  (1) CLAUDE.md per repo,
+  (2) shared Claude settings,
+  (3) one controlled Claude GitHub Action rollout in selected repos.
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not enabling full auto-accept or bypass permissions outside sandboxes
+  - not activating GHES lane while IPAI is on Enterprise Cloud
+  - not adopting Bedrock or Vertex provider paths when Foundry is the strategic default
+  - not activating every feature at once (phased rollout is the discipline)
+  - not committing API keys or provider secrets in workflows or repo settings
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/governance/claude-code-operating-standard-authority.yaml
+  - ssot/governance/vscode-operating-profile.yaml
+  - ssot/governance/github-target-state-success-criteria.yaml
+  - ssot/governance/github-actions-azure-oidc-policy.yaml
+  - ssot/governance/gha-scoped-exception.yaml
+  - ssot/governance/mcp-allowlist.yaml
+  - docs/operating/CLAUDE_CODE_OPERATING_STANDARD.md
+  - docs/operating/HEADLESS_AGENT_WORKFLOWS.md
+  - docs/operating/SESSION_LIFECYCLE.md

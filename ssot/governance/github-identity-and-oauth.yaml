@@ -1,0 +1,166 @@
+version: 1
+kind: github_identity_and_oauth_policy
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture + identity-ops
+
+doctrine: >
+  GitHub org access is IdP-governed. SAML SSO + SCIM are required for
+  the primary operating org. OAuth app access restrictions stay enabled
+  by default. Only explicitly allowlisted apps (e.g. Okta SCIM) may
+  access private org resources. No ambient OAuth approval; no ambient
+  lifecycle. Joiner/mover/leaver flows through the IdP.
+
+parent_ssots:
+  - ssot/governance/github-desired-state.yaml
+  - ssot/governance/github-enterprise-org-target-state.yaml
+  - ssot/governance/github-integration-model.yaml
+  - ssot/identity/entra_target_state.yaml
+
+# -----------------------------------------------------------------------------
+# SAML SSO
+# -----------------------------------------------------------------------------
+saml_sso:
+  enabled: true
+  required_for_primary_operating_org: true
+  idp: okta_or_entra_id (primary production choice TBD — see ipai_decision below)
+  target_state:
+    - org_access_controlled_via_idp
+    - session_lifetime_aligned_to_idp_policy
+    - conditional_access_inherited_from_idp
+  plan_requirement: github_enterprise_cloud
+
+  ipai_decision:
+    primary_idp: entra_id (aligns with CLAUDE.md + entra_target_state.yaml)
+    okta_posture: not_adopted_by_default; revisit only if required by a specific integration
+
+# -----------------------------------------------------------------------------
+# SCIM (System for Cross-domain Identity Management)
+# -----------------------------------------------------------------------------
+scim:
+  enabled: true
+  provider: entra_id_or_okta (follows saml_sso.ipai_decision)
+  lifecycle_flows_governed:
+    - joiner
+    - mover
+    - leaver
+    - reactivation
+    - profile_update
+
+  operational_constraint:
+    issue: >
+      Org-level SCIM (Okta path) requires a third-party-owned OAuth app
+      that acts on behalf of a specific GitHub user. If that user leaves
+      or is removed, SCIM stops working.
+    mitigation: dedicated_service_account_required
+
+  scim_service_account:
+    required: true
+    role: organization_owner
+    purpose: scim_authorizing_identity
+    human_personal_account: false
+    consumes_license: true
+    naming: svc-github-scim (no personal email)
+    ownership: platform-architecture + identity-ops
+    rotation_policy: annually_or_on_ownership_change
+
+# -----------------------------------------------------------------------------
+# OAuth app access restrictions
+# -----------------------------------------------------------------------------
+oauth_app_access_restrictions:
+
+  enabled: true
+  default_for_new_orgs: true
+  posture: unapproved_oauth_apps_blocked_from_private_org_resources
+
+  approval_model:
+    owner_approval_required: true
+    requester_role: members_and_outside_collaborators_cannot_self_authorize
+
+  allowlist_doctrine:
+    rule: keep_restrictions_on_and_approve_the_minimum_required_app_only
+
+# -----------------------------------------------------------------------------
+# Approved OAuth apps (explicit allowlist)
+# -----------------------------------------------------------------------------
+approved_oauth_apps:
+  - app: okta_scim_integration
+    approved_if: scim_provider_is_okta
+    status: conditional
+  # Future entries follow the shape: { app, reason, approver, approved_on }
+
+# -----------------------------------------------------------------------------
+# Critical interaction (SCIM + OAuth restrictions)
+# -----------------------------------------------------------------------------
+interaction_note: >
+  SCIM (when using Okta) depends on a third-party OAuth app. With OAuth
+  access restrictions ON, the SCIM integration app must be explicitly
+  approved. This is not a reason to disable restrictions globally — it
+  is a reason to approve the minimum required app while restrictions
+  remain on.
+
+# -----------------------------------------------------------------------------
+# Governance rules
+# -----------------------------------------------------------------------------
+identity_rules:
+  - org_access_must_be_idp_governed
+  - saml_sso_required_for_primary_operating_org
+  - scim_required_for_joiner_mover_leaver_automation
+  - scim_must_use_dedicated_owner_account
+
+oauth_rules:
+  - oauth_app_access_restrictions_must_remain_enabled
+  - unapproved_oauth_apps_must_not_access_private_org_resources
+  - oauth_exceptions_must_be_explicitly_approved
+  - okta_scim_integration_must_be_approved_if_scim_via_okta_is_enabled
+  - no_ambient_oauth_approval_through_individual_member_consent
+
+# -----------------------------------------------------------------------------
+# Success criteria
+# -----------------------------------------------------------------------------
+success_criteria:
+  - id: IDO-1
+    description: SAML SSO enabled for primary operating org
+    target: true
+    measurement: github_org_settings_audit
+  - id: IDO-2
+    description: SCIM enabled and successfully provisioning
+    target: true
+    measurement: scim_provisioning_report
+  - id: IDO-3
+    description: Dedicated SCIM owner service account exists
+    target: true
+    measurement: svc-github-scim_presence_check
+  - id: IDO-4
+    description: OAuth app access restrictions enabled
+    target: true
+    measurement: github_org_oauth_settings_audit
+  - id: IDO-5
+    description: Okta SCIM integration approved if SCIM-via-Okta path is in use
+    target: true_when_applicable
+    measurement: approved_oauth_apps_registry_check
+  - id: IDO-6
+    description: No unapproved OAuth apps have private org access
+    target: 0
+    measurement: oauth_access_audit
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not disabling OAuth restrictions to make SCIM work
+  - not using a personal human account as the SCIM authorizing identity
+  - not relying on ambient member OAuth consent for org integrations
+  - not skipping SAML SSO for the primary operating org
+  - not adopting Okta as the IdP by default (Entra ID is the IPAI choice)
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/governance/github-desired-state.yaml
+  - ssot/governance/github-enterprise-org-target-state.yaml
+  - ssot/governance/github-integration-model.yaml
+  - ssot/identity/entra_target_state.yaml
+  - ssot/identity/entra-identity-matrix.yaml
+  - ssot/governance/labels.yaml

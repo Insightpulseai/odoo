@@ -1,0 +1,207 @@
+version: 1
+kind: foundry_resource_model
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+
+doctrine: >
+  Microsoft Foundry is the governed Azure runtime and control plane for
+  IPAI AI workloads. All projects, model deployments, agents, tool
+  registrations, tracing, monitoring, evaluations, RBAC, and networking
+  policies for AI workloads follow the Foundry resource model.
+
+parent_ssot: ssot/ai/external-reference-authorities.yaml
+
+# -----------------------------------------------------------------------------
+# Foundry resource hierarchy (as adopted by IPAI)
+# -----------------------------------------------------------------------------
+resource_hierarchy:
+
+  subscription:
+    id_ref: eba824fb  # ISV Sponsored (see project_legal_identifiers memory)
+    role: azure_governance_boundary
+
+  resource_group:
+    name: rg-ipai-dev-ai-sea
+    region: southeastasia
+    purpose: holds Foundry project + AI companion resources (Document Intelligence, Azure AI Search, Databricks)
+    current_state: exists (verified via az 2026-04-19)
+    current_contents:
+      - docai-ipai-dev (Microsoft.CognitiveServices/accounts, FormRecognizer kind, S0)
+      - srch-ipai-dev-sea (Microsoft.Search/searchServices)
+      - dbw-ipai-dev (Microsoft.Databricks/workspaces)
+    historical_note: "Earlier SSOT drafts referenced rg-ipai-ai-sea — that RG does not exist; canonical is rg-ipai-dev-ai-sea"
+
+  foundry_project:
+    canonical_name: ipai-copilot-resource
+    resource_type: Microsoft.CognitiveServices/accounts (AIFoundry kind) OR Microsoft.MachineLearningServices/workspaces (AIFoundry workspace kind)
+    role: runtime_scope_for_agents_and_models
+    current_state: NOT_YET_PROVISIONED (verified via az 2026-04-19)
+    provisioning_status: target_state_only
+    provisioning_runbook: docs/runbooks/foundry-project-provisioning.md (TO BE WRITTEN)
+    blocker_impact:
+      - agent-platform default Foundry provider lane is aspirational until provisioning completes
+      - any Agent Card registration into Foundry is blocked
+      - any model deployment (gpt-4.1 or equivalent) is blocked
+      - listed in go-live readiness as a provisioning blocker
+    notes:
+      - reference_to_ssot_agent_framework_adoption_yaml_default_provider
+
+  supporting_resources:
+    - keyvault: kv-ipai-dev-sea (holds model keys, service creds)
+    - app_insights: appi-ipai-dev-runtime-sea
+    - log_analytics: log-ipai-dev-runtime-sea
+    - storage: staipaiodoo (shared blob for attachments + evidence)
+    - private_endpoints: enforced_for_prod_lanes
+
+# -----------------------------------------------------------------------------
+# Control-plane capabilities mapped to Foundry
+# -----------------------------------------------------------------------------
+control_plane_capabilities:
+
+  projects:
+    authority: foundry
+    ipai_projects:
+      - ipai-copilot-resource (primary)
+    rules:
+      - one_project_per_runtime_scope
+      - project_scopes_agent_and_model_visibility
+
+  model_deployments:
+    authority: foundry
+    default_family: gpt-4.1 (team mode)
+    local_family: phi-4_or_qwen (solo mode via Foundry Local)
+    rule: "Model choice swaps via env var; Agent Card stays identical"
+    cross_reference: ssot/agent-platform/agent_framework_adoption.yaml
+
+  agents:
+    authority: foundry + agent-platform_runtime
+    registration_flow: agent-platform_registers_into_foundry_project
+    agent_card_location: /.well-known/agent-card.json
+    cross_reference: docs/architecture/three-protocol-model.md
+
+  tools:
+    authority: foundry_tool_registry + agent-platform_adapters
+    ipai_adapters:
+      - odoo
+      - databricks
+      - docintel
+      - storage
+      - communications
+    rule: "Tools are typed adapters, not prompt blobs"
+
+  tracing:
+    authority: foundry + app_insights
+    retention: 30d_dev / 60d_staging / 90d_prod (per branch-environment-contract.yaml)
+
+  monitoring:
+    authority: foundry + app_insights + log_analytics
+    dashboards_location: workbooks_in_app_insights_workspace
+
+  evaluations:
+    authority: foundry_evals + agent-platform_evals
+    eval_gate_ref: ssot/release/feature-ship-readiness-gates.yaml#G6_eval_gate
+
+  rbac:
+    authority: foundry_rbac + entra_id
+    principal_model: managed_identity_preferred
+    forbidden: user_impersonation_for_agent_runtime
+
+  networking_policy:
+    authority: foundry + azure_firewall + private_endpoints
+    prod_posture: private_endpoints_for_all_dependent_services
+    cross_reference: platform/ssot/azure/resource-inventory.dev.yaml
+
+# -----------------------------------------------------------------------------
+# Boundary rules
+# -----------------------------------------------------------------------------
+boundary_rules:
+
+  foundry_as_authority_for:
+    - project_and_resource_model
+    - model_deployment_lifecycle
+    - tracing_monitoring_eval_control
+    - rbac_at_foundry_resource_level
+    - networking_policy_for_ai_resources
+
+  foundry_NOT_authority_for:
+    - repo_structure (ssot/governance/ owns)
+    - spec_authority (spec/ + ssot/ own)
+    - release_gating (azure_pipelines + ssot/release/ own)
+    - odoo_business_logic (addons/ + spec/ own)
+    - agent_skill_definitions (agents/ owns)
+
+# -----------------------------------------------------------------------------
+# Adoption guardrails
+# -----------------------------------------------------------------------------
+guardrails:
+  - foundry_endpoints_must_be_referenced_not_hardcoded
+  - model_names_must_be_resolved_via_provider_adapter (not inline strings)
+  - secrets_flow_only_via_managed_identity_keyvault_bindings
+  - no_direct_portal_changes_without_iac_commit_reference
+  - every_agent_registered_in_foundry_must_have_agent_card
+  - every_model_deployment_must_have_eval_coverage
+
+# -----------------------------------------------------------------------------
+# Reality vs target state (reconciliation against live Azure)
+# -----------------------------------------------------------------------------
+reality_vs_target:
+  verified_on: "2026-04-19"
+  subscription: "Microsoft Azure Sponsorship (eba824fb-332d-4623-9dfb-2c9f7ee83f4e)"
+
+  present_today:
+    - name: docai-ipai-dev
+      type: Microsoft.CognitiveServices/accounts
+      kind: FormRecognizer
+      rg: rg-ipai-dev-ai-sea
+      role: Document Intelligence (Pulser doc extraction flows)
+    - name: srch-ipai-dev-sea
+      type: Microsoft.Search/searchServices
+      rg: rg-ipai-dev-ai-sea
+      role: vector + hybrid retrieval surface for agent-platform
+    - name: dbw-ipai-dev
+      type: Microsoft.Databricks/workspaces
+      rg: rg-ipai-dev-ai-sea
+      role: analytics engineering plane (not Foundry)
+
+  missing_but_target_state:
+    - foundry_project (ipai-copilot-resource)
+    - foundry_hosted_model_deployments (e.g. gpt-4.1)
+    - foundry_agent_registry_bindings
+    - foundry_tool_registry_bindings
+
+  drift_flagged_in_cross_repo:
+    count: ~188 files reference ipai-copilot-resource or rg-ipai-ai-sea
+    disposition: separate_reconciliation_pr (do not mass-edit without directed scope)
+    canonical_rg_going_forward: rg-ipai-dev-ai-sea
+
+# -----------------------------------------------------------------------------
+# Migration & reconciliation
+# -----------------------------------------------------------------------------
+migration_notes:
+  foundry_vs_previous_patterns:
+    - previous_openai_resource_direct_usage_migrating_to_foundry_project_scope
+    - standalone_cognitive_services_accounts_consolidating_into_foundry
+  reconciliation_required:
+    - provision_foundry_project_in_rg-ipai-dev-ai-sea (not rg-ipai-ai-sea)
+    - update_agent-platform_provider_to_default_foundry_once_provisioned
+    - update_agent_card_publish_flow_to_register_in_foundry
+    - move_tool_registrations_from_ad_hoc_to_foundry_tool_registry
+    - sweep_~188_files_for_rg-ipai-ai-sea_references_as_separate_pr
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/ai/external-reference-authorities.yaml
+  - ssot/agent-platform/agent_framework_adoption.yaml
+  - platform/docs/architecture/FOUNDRY_CONTROL_PLANE.md
+  - platform/ssot/foundry/ops_platform__foundry__agent_registry__v1.registry.yaml
+  - platform/ssot/foundry/ops_platform__foundry__model_registry__v1.registry.yaml
+  - platform/ssot/foundry/ops_platform__foundry__tool_registry__v1.registry.yaml
+  - docs/architecture/MULTI_MODEL_RUNTIME_AND_PROMPT_STRATEGY.md
+
+non_goals:
+  - not adopting Foundry governance inside agents/ or agent-platform/ source
+  - not duplicating Foundry project config in multiple SSOTs
+  - not using Foundry for non-AI workloads

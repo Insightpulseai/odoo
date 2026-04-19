@@ -1,0 +1,100 @@
+version: 1
+kind: github_repo_classes
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+
+doctrine: >
+  Every IPAI repo belongs to exactly one class. Classes drive tiering
+  (security posture, review depth, deploy path). Repo names are
+  lowercase-kebab-case, aligned to function not experiments.
+
+classes:
+
+  tier0_runtime:
+    purpose: production_critical_business_runtime
+    security_tier: tier_0
+    examples: [odoo]
+
+  platform_control:
+    purpose: control_plane_governance_ops_apis
+    security_tier: tier_0
+    examples: [platform]
+
+  web_experience:
+    purpose: frontend_apps_portals_shells
+    security_tier: tier_1
+    examples: [web]
+
+  data_intelligence:
+    purpose: lakehouse_analytics_bi_data_products
+    security_tier: tier_1
+    examples: [data-intelligence]
+
+  agent_platform:
+    purpose: agent_runtime_orchestration_evaluation
+    security_tier: tier_0
+    examples: [agent-platform]
+
+  infra:
+    purpose: iac_landing_zones_deployment_substrate
+    security_tier: tier_0
+    examples: [infra]
+
+  design:
+    purpose: tokens_components_visual_system
+    security_tier: tier_1
+    examples: [design]
+
+  automations:
+    purpose: workflow_jobs_schedulers
+    security_tier: tier_1
+    examples: [automations]
+
+  agents:
+    purpose: personas_skills_judges_agent_packs
+    security_tier: tier_1
+    examples: [agents]
+
+  docs:
+    purpose: architecture_strategy_governance_evidence
+    security_tier: tier_2
+    examples: [docs]
+
+  templates:
+    purpose: starter_kits_golden_paths
+    security_tier: tier_2
+    examples: [templates]
+
+  governance_meta:
+    purpose: org_level_policy_templates_workflow_defaults
+    security_tier: tier_1
+    examples: [.github]
+
+naming_rules:
+  case: lowercase-kebab-case
+  singular_vs_plural: singular_when_platform_product_plural_when_collection
+  forbidden:
+    - vanity_suffixes (v2, final, new, temp)
+    - environment_suffixes_in_repo_names (unless the env is a truly separate product)
+    - camelCase
+    - UPPERCASE
+
+security_tier_mapping:
+  tier_0:
+    posture: maximum (branch protection, required reviewers, GHAS max, secret + code scanning, dependency review)
+    cross_reference: ssot/governance/github-target-state-success-criteria.yaml#repo_tiering
+  tier_1:
+    posture: high (GHAS high, secret + code scanning, branch protection)
+  tier_2:
+    posture: standard (secret scanning, branch protection)
+
+non_goals:
+  - not creating catch-all repos as systems-of-record
+  - not spawning environment-specific repo variants (odoo-dev, odoo-prod, etc.)
+  - not letting experiments live under production repo names
+
+anchors:
+  - ssot/governance/github-desired-state.yaml
+  - ssot/governance/github-target-state-success-criteria.yaml
+  - ssot/governance/github-enterprise-org-target-state.yaml

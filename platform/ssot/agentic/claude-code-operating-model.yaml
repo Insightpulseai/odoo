@@ -1,0 +1,415 @@
+version: 1
+kind: claude_code_operating_model
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+
+doctrine: >
+  Claude Code is a governed agentic engineering layer for IPAI:
+  spec-first, plan-first, verification-first; CLI-native, VS Code-
+  supported, GitHub-automated only where bounded. It is a bounded
+  implementation and review engine inside the repo workflow — not
+  a chatbot and not an "ask anything" surface.
+
+parent_ssots:
+  - ssot/governance/claude-code-activation-matrix.yaml
+  - ssot/governance/claude-code-operating-standard-authority.yaml
+  - ssot/governance/vscode-operating-profile.yaml
+
+# -----------------------------------------------------------------------------
+# Provider / surface model
+# -----------------------------------------------------------------------------
+provider:
+  canonical_surface: cli
+  ide_surface: vscode_extension
+  default_permission_mode: plan
+  rationale: >
+    CLI is the execution surface; VS Code is the visual shell for plan
+    review and diff approval. Plan mode is the default for non-trivial
+    changes; manual approval mode is the default for implementation.
+
+# -----------------------------------------------------------------------------
+# Repo contract (what every selected repo must provide)
+# -----------------------------------------------------------------------------
+repo_contract:
+
+  require_claude_md: true
+  require_skills: true
+  require_verification_commands: true
+
+  claude_md_shape:
+    include_only:
+      - coding_style_deltas_claude_cannot_infer
+      - exact_verification_commands
+      - repo_etiquette
+      - architectural_rules
+      - important_gotchas
+      - allowed_implementation_patterns
+    exclude:
+      - long_tutorials
+      - obvious_language_conventions
+      - giant_architecture_essays
+      - frequently_changing_details
+      - file_by_file_descriptions
+    length_guideline: concise (target <= 200 lines; layer to .claude/rules/ path-scoped files for more)
+
+  directory_layout:
+    required:
+      - CLAUDE.md
+      - .claude/settings.json (or shared user settings + repo overrides)
+      - .claude/skills/
+    recommended:
+      - .claude/agents/ (specialized subagents)
+      - .github/workflows/ (where Claude Action is used)
+
+# -----------------------------------------------------------------------------
+# Permission model
+# -----------------------------------------------------------------------------
+governance:
+
+  auto_mode_default: false
+  bypass_permissions_default: false
+  require_manual_review_before_merge: true
+  default_flow: plan_then_manual_approval
+
+  selective_exceptions_for_auto_mode:
+    allowed_in:
+      - ephemeral_sandboxes
+      - isolated_ci_tasks
+      - bounded_refactors_with_deterministic_verification
+    never_allowed_in:
+      - important_repos_by_default
+      - production_bound_branches
+
+# -----------------------------------------------------------------------------
+# Canonical workflow (the explicit loop)
+# -----------------------------------------------------------------------------
+canonical_workflow:
+
+  non_trivial_changes:
+    steps:
+      - step_1: start_in_plan_mode
+      - step_2: explore_codebase_narrowly
+      - step_3: produce_implementation_plan
+      - step_4: refine_plan
+      - step_5: switch_to_implementation
+      - step_6: make_changes
+      - step_7: run_verification_commands
+      - step_8: review_diff
+      - step_9: commit_or_pr
+      - step_10: resume_later_by_named_session_if_needed
+
+  parallel_or_larger_work:
+    steps:
+      - step_1: create_worktree
+      - step_2: start_claude_session_in_worktree
+      - step_3: use_subagents_for_research_or_review
+      - step_4: verify
+      - step_5: create_pr
+      - step_6: keep_or_discard_worktree
+
+# -----------------------------------------------------------------------------
+# Parallelism (worktrees + subagents)
+# -----------------------------------------------------------------------------
+parallelism:
+
+  worktrees_enabled: true
+  subagents_enabled: true
+
+  worktree_pattern:
+    rule: one_task_equals_one_worktree
+    rationale: keeps main branch and main session clean
+    discard_policy: discard_if_no_changes_committed
+
+  subagent_pattern:
+    use_for:
+      - security_review
+      - debugging
+      - test_gap_detection
+      - architecture_inspection
+      - log_analysis
+    rule: one_parallel_investigation_equals_one_subagent_or_one_worktree_session
+
+# -----------------------------------------------------------------------------
+# Context hygiene (context is a resource)
+# -----------------------------------------------------------------------------
+context_hygiene:
+
+  core_principle: performance_degrades_as_context_fills
+  canonical_practices:
+    - narrow_prompts
+    - frequent_slash_clear
+    - use_subagents_for_research
+    - use_worktrees_for_parallel_tasks
+    - keep_claude_md_concise
+    - keep_skills_scoped_and_reusable
+
+  anti_patterns:
+    - letting_one_session_accumulate_unrelated_context
+    - bloated_claude_md
+    - treating_claude_like_a_general_chat_pane
+    - long_lived_unbounded_background_loops_without_verification_gates
+
+# -----------------------------------------------------------------------------
+# GitHub Action integration model
+# -----------------------------------------------------------------------------
+automation:
+
+  github_action:
+    enabled_repos: []   # populate as rollout proceeds
+    auth_model: custom_github_app
+    trigger_modes:
+      - issue_comment
+      - pr_comment
+      - scheduled_prompt
+
+    recommended_use_cases:
+      - at_claude_issue_or_pr_implementation
+      - pr_summaries
+      - review_comments
+      - scheduled_reporting
+      - low_risk_code_transformations
+      - guided_bug_fixes
+      - doc_generation
+
+    not_recommended:
+      - unrestricted_repo_wide_autonomous_mutation
+      - direct_full_auto_merging
+      - long_lived_unbounded_background_loops_without_verification_gates
+
+  authentication:
+    prefer:
+      - custom_github_app
+      - secrets_stored_via_repo_or_org_secrets
+      - repo_scoped_install
+    explicit_permissions_only_for:
+      - contents
+      - issues
+      - pull_requests
+    cross_reference: ssot/governance/github-actions-azure-oidc-policy.yaml
+
+# -----------------------------------------------------------------------------
+# Hooks (deterministic enforcement)
+# -----------------------------------------------------------------------------
+hooks:
+
+  purpose: place_for_hard_policy_that_must_always_happen (not CLAUDE.md)
+
+  canonical_hook_categories:
+    - post_edit_lint
+    - block_writes_to_protected_paths
+    - desktop_notification_when_claude_needs_input
+    - test_command_reminders
+    - security_guardrails
+
+  governance_rule: >
+    If a rule is non-negotiable, enforce it via hooks — not prose in
+    CLAUDE.md. Prose guides judgment; hooks prevent accidents.
+
+# -----------------------------------------------------------------------------
+# Skills (reusable execution playbooks)
+# -----------------------------------------------------------------------------
+skills:
+
+  purpose: canonical_form_for_reusable_execution_playbooks
+
+  examples:
+    - fix_an_issue
+    - create_a_pr
+    - run_release_checks
+    - perform_repo_audit
+    - validate_odoo_module_structure
+    - generate_azure_deployment_diff_review
+    - perform_spec_to_implementation_workflow
+
+  governance_rule: >
+    Skills are more important than generic chat prompts. Repeat work
+    becomes a skill; one-off work stays in conversation.
+
+# -----------------------------------------------------------------------------
+# Tooling (MCP + plugins)
+# -----------------------------------------------------------------------------
+tooling:
+
+  mcp_policy: approved_only
+  plugin_policy: curated_only
+  cross_reference: ssot/governance/mcp-allowlist.yaml
+
+# -----------------------------------------------------------------------------
+# Feature activation matrix (with proof_required)
+# -----------------------------------------------------------------------------
+feature_activation_matrix:
+
+  - feature: claude_code_cli
+    current_state: activated
+    target_state: activated
+    priority: p0
+    owner: platform-architecture
+    proof_required: cli_version_recorded_in_session_evidence
+
+  - feature: vscode_extension
+    current_state: partially_activated
+    target_state: activated
+    priority: p0
+    owner: platform-architecture
+    proof_required: extension_installed_on_primary_engineer_machines
+
+  - feature: plan_mode_default
+    current_state: partially_activated
+    target_state: activated
+    priority: p0
+    owner: platform-architecture
+    proof_required: managed_settings_json_shows_default_permission_mode=plan
+
+  - feature: manual_approval_mode
+    current_state: likely_default
+    target_state: activated
+    priority: p0
+    owner: platform-architecture
+    proof_required: workflow_sample_shows_approval_step
+
+  - feature: auto_mode
+    current_state: not_activated_by_default
+    target_state: selective_only
+    priority: p2
+    owner: platform-architecture
+    proof_required: allowlist_of_sandbox_paths_documented
+
+  - feature: claude_md_in_selected_repos
+    current_state: partially_activated
+    target_state: activated
+    priority: p0
+    owner: repo_owners
+    proof_required: repo_hygiene_scan_shows_claude_md_present
+
+  - feature: skills
+    current_state: unknown
+    target_state: activated
+    priority: p1
+    owner: platform-architecture
+    proof_required: at_least_3_skills_per_selected_repo
+
+  - feature: subagents
+    current_state: unknown
+    target_state: activated
+    priority: p1
+    owner: platform-architecture
+    proof_required: subagent_definitions_in_dot_claude_agents
+
+  - feature: mcp
+    current_state: partially_activated
+    target_state: activated_selectively
+    priority: p1
+    owner: platform-architecture
+    proof_required: mcp_allowlist_enforced_in_ci
+
+  - feature: hooks
+    current_state: unknown
+    target_state: activated
+    priority: p1
+    owner: platform-architecture
+    proof_required: at_least_one_protected_path_block_hook_enforced
+
+  - feature: claude_github_action
+    current_state: unknown
+    target_state: activated_selectively
+    priority: p1
+    owner: platform-architecture
+    proof_required: live_in_at_least_3_selected_repos
+
+  - feature: custom_github_app
+    current_state: unknown
+    target_state: activated
+    priority: p1
+    owner: platform-architecture
+    proof_required: app_registered_and_installed_under_Insightpulse-ai
+
+  - feature: chrome_or_browser_automation
+    current_state: not_activated
+    target_state: optional
+    priority: p3
+    owner: platform-architecture
+    proof_required: none_required_unless_adopted
+
+  - feature: claude_ai_remote_sessions
+    current_state: unknown
+    target_state: optional
+    priority: p3
+    owner: platform-architecture
+    proof_required: none_required_unless_adopted
+
+  - feature: ghes_support
+    current_state: not_applicable
+    target_state: deferred
+    priority: p3
+    owner: platform-architecture
+    proof_required: none (IPAI is on Enterprise Cloud)
+
+  - feature: bypass_permissions
+    current_state: not_activated_by_default
+    target_state: do_not_enable_by_default
+    priority: p0
+    owner: platform-architecture
+    proof_required: managed_settings_explicitly_disables_bypass
+
+# -----------------------------------------------------------------------------
+# SMART success criteria
+# -----------------------------------------------------------------------------
+success_criteria:
+
+  repo_contract:
+    - selected_repos_have_claude_md: true
+    - selected_repos_have_skill_structure: true
+    - selected_repos_define_verification_commands: true
+
+  workflow:
+    - plan_mode_used_for_non_trivial_changes: true
+    - manual_approval_default_enabled: true
+    - verification_step_present_before_pr: true
+
+  integration:
+    - custom_github_app_configured: true
+    - claude_github_action_live_in_selected_repos: true
+    - no_hardcoded_credentials_in_workflows: true
+
+  productivity:
+    - worktree_pattern_documented: true
+    - subagents_used_for_research_and_review: true
+    - long_sessions_cleared_or_compacted_aggressively: true
+
+  governance:
+    - hooks_enforce_non_negotiable_rules: true
+    - auto_mode_limited_to_safe_lanes: true
+
+# -----------------------------------------------------------------------------
+# Mistakes to avoid (explicit anti-patterns)
+# -----------------------------------------------------------------------------
+mistakes_to_avoid:
+  - long_bloated_claude_md
+  - defaulting_to_auto_or_bypass_permissions
+  - treating_claude_like_a_general_chat_pane
+  - letting_one_session_accumulate_unrelated_context
+  - using_github_actions_integration_without_verification_and_auth_boundaries
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not activating every feature at once
+  - not enabling full auto mode outside sandboxes
+  - not replacing CLI-native automation with the VS Code extension
+  - not treating CLAUDE.md as the enforcement layer (hooks own enforcement)
+  - not committing provider secrets in any workflow or repo setting
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/governance/claude-code-activation-matrix.yaml
+  - ssot/governance/claude-code-operating-standard-authority.yaml
+  - ssot/governance/vscode-operating-profile.yaml
+  - ssot/governance/github-actions-azure-oidc-policy.yaml
+  - ssot/governance/mcp-allowlist.yaml
+  - docs/operating/CLAUDE_CODE_OPERATING_STANDARD.md
+  - docs/operating/HEADLESS_AGENT_WORKFLOWS.md
+  - docs/operating/SESSION_LIFECYCLE.md

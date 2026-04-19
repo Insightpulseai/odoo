@@ -1,0 +1,237 @@
+version: 1
+kind: power_platform_admin_surface
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture + identity-ops
+
+doctrine: >
+  Power Platform is a governed surface inside the IPAI tenant. Three admin
+  capabilities are enabled tenant-wide: (1) Power Platform inventory, (2)
+  admin center notifications, (3) admin center announcements. Together
+  they provide discovery, governance, and operational awareness without
+  replacing the Microsoft 365 Message center for major planned changes.
+
+# -----------------------------------------------------------------------------
+# Tenant context
+# -----------------------------------------------------------------------------
+tenant:
+  entra_tenant: insightpulseai.onmicrosoft.com (per entra_target_state.yaml)
+  is_sovereign_cloud: false   # inventory requires commercial cloud
+  power_platform_admin_role_holders: [Jake Tolentino]   # platform-architecture primary
+  fallback_admins: [to_be_designated]
+
+# -----------------------------------------------------------------------------
+# Capability 1 — Power Platform inventory
+# -----------------------------------------------------------------------------
+inventory:
+
+  purpose: tenant_wide_catalog_of_power_platform_built_resources
+  scope:
+    - agents (Copilot Studio + M365 Copilot Agent Builder)
+    - apps (Power Apps + M365 Copilot App Builder)
+    - flows (Copilot Studio + Power Automate + M365 Copilot Workflows)
+    - environments
+    - environment_groups
+
+  access_roles:
+    required_any_of:
+      - Power Platform Administrator
+      - Dynamics 365 Administrator
+    ipai_assigned_holders:
+      - Jake Tolentino (Power Platform Administrator)
+
+  access_surfaces:
+    admin_center_ui:
+      url: https://admin.powerplatform.microsoft.com
+      dedicated_views:
+        - overall_inventory
+        - copilot_studio
+        - power_apps
+        - power_automate
+    programmatic:
+      - Power Platform for Admins V2 connector (for Power Automate / Logic Apps)
+      - Power Platform API (REST)
+      - Azure Resource Graph (query across subscriptions)
+
+  capabilities:
+    - unified_inventory_view
+    - updates_within_~15_minutes
+    - filter_and_sort_on_any_attribute
+    - resource_counts_for_filtered_sets
+    - customizable_columns
+    - resource_details_view
+    - export_to_excel
+
+  governance_use_cases:
+    - identify_top_builders_and_champions
+    - detect_resources_in_nonapproved_regions
+    - rank_environments_by_resource_volume_for_governance_focus
+    - find_resources_owned_by_departing_users
+    - locate_specific_apps_agents_flows_for_support
+
+  important_nuance:
+    difference_from_m365_admin_center_agent_counts: >
+      Power Platform inventory shows only agents built on Power Platform
+      (including drafts). M365 admin center shows all agents available in
+      the tenant — first-party, ISV, and agents from other Microsoft
+      surfaces. Different counts are expected by design.
+
+  limitations:
+    - classic_chatbots_not_in_new_inventory_page
+    - ui_search_limited_to_first_1000_loaded_items
+    - some_columns_incomplete_or_misleading_for_certain_resource_types
+    - not_available_in_sovereign_clouds (GCC, DoD, 21Vianet)
+    - mfa_conditional_access_on_azure_resource_manager_can_block_loading_if_misconfigured
+
+  ipai_disposition:
+    enabled: target_state
+    priority: governance_discovery_high
+    alignment_with_existing_ssots:
+      - ssot/identity/entra_target_state.yaml (role holders)
+      - ssot/governance/agent-interop-matrix.yaml (Power Platform agents are a surface class)
+
+# -----------------------------------------------------------------------------
+# Capability 2 — Admin center notifications (preview)
+# -----------------------------------------------------------------------------
+notifications:
+
+  purpose: tenant_specific_operational_alerts_requiring_awareness_or_action
+
+  access_roles:
+    required_any_of:
+      - Power Platform Administrator
+      - Dynamics 365 Administrator
+      - Global Administrator
+
+  examples:
+    - licensing_shortfalls
+    - dataverse_storage_issues
+    - capacity_related_warnings
+
+  severity_levels: [Info, Warning, Critical]
+
+  admin_actions:
+    - open_notification_pane
+    - read_summaries_and_timestamps
+    - open_full_messages
+    - follow_links_to_relevant_admin_page
+    - mark_items_as_read
+    - dismiss_items
+
+  ui_behavior:
+    toast_notifications_for_new_alerts: true
+
+  current_preview_limitations:
+    - no_notification_customization
+    - no_teams_delivery_yet
+    - dismissed_items_effectively_removed
+    - visibility_depends_on_role
+    - items_remain_until_dismissed_or_expired
+
+  ipai_disposition:
+    enabled: target_state_preview
+    routing_expectation:
+      critical: route_to_platform_architecture_on_call
+      warning: platform_architecture_review_next_business_day
+      info: logged_only
+
+# -----------------------------------------------------------------------------
+# Capability 3 — Admin center announcements (preview)
+# -----------------------------------------------------------------------------
+announcements:
+
+  purpose: product_wide_informational_updates (not tenant-specific issues)
+
+  access_roles:
+    required_any_of:
+      - Power Platform Administrator
+      - Dynamics 365 Administrator
+      - Global Administrator
+
+  examples:
+    - ga_or_public_preview_announcements
+    - admin_center_ui_changes
+    - events_webinars_office_hours
+
+  primary_intent:
+    - product_awareness
+    - feature_rollout_communication
+    - educational_updates
+
+  ipai_disposition:
+    enabled: target_state_preview
+    review_cadence: weekly_platform_architecture_sync
+
+# -----------------------------------------------------------------------------
+# Relationship to Microsoft 365 Message center
+# -----------------------------------------------------------------------------
+relationship_to_m365_message_center:
+  m365_message_center:
+    role: authoritative_source_for_major_planned_changes_deprecations_feature_rollouts
+  power_platform_notifications:
+    role: tenant_specific_operational_compliance_capacity_issues
+  split: complement_not_replace
+
+# -----------------------------------------------------------------------------
+# Role + access verification (required before "enabled" = true)
+# -----------------------------------------------------------------------------
+access_verification:
+  checklist:
+    - confirm_at_least_one_named_Power_Platform_Administrator_in_tenant
+    - confirm_mfa_conditional_access_allows_admin_access_to_https://admin.powerplatform.microsoft.com
+    - confirm_tenant_is_commercial_cloud_not_sovereign
+    - confirm_no_blocking_ca_policy_on_azure_resource_manager_for_admin_identities
+    - confirm_programmatic_access_principals_exist_if_api_usage_planned
+
+# -----------------------------------------------------------------------------
+# Programmatic access contract
+# -----------------------------------------------------------------------------
+programmatic_access:
+
+  when_to_use_which:
+    ad_hoc_exploration: admin_center_ui
+    workflow_automation: power_platform_for_admins_v2_connector
+    custom_tools_or_scripts: power_platform_api
+    cross_subscription_reporting: azure_resource_graph
+
+  auth_pattern:
+    preferred: managed_identity_or_workload_identity_federation
+    forbidden:
+      - hardcoded_admin_credentials
+      - long_lived_secrets_stored_outside_keyvault
+      - interactive_admin_login_in_automation
+
+# -----------------------------------------------------------------------------
+# Enablement state
+# -----------------------------------------------------------------------------
+enablement_state:
+  inventory:
+    target: enabled
+    current: to_be_verified
+  notifications_preview:
+    target: enabled
+    current: to_be_verified
+  announcements_preview:
+    target: enabled
+    current: to_be_verified
+  last_verified: null
+  runbook_reference: docs/runbooks/power-platform-inventory-enablement.md
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not replacing M365 Message center for major planned changes
+  - not treating Power Platform inventory as the sole agent inventory (M365 admin center still relevant)
+  - not relying on UI search beyond 1000 items (use API for larger queries)
+  - not enabling in sovereign cloud scenarios (GCC/DoD/21Vianet) — not applicable to IPAI
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - docs/runbooks/power-platform-inventory-enablement.md
+  - ssot/identity/entra_target_state.yaml
+  - ssot/governance/copilot_release_stages.yaml
+  - ssot/governance/agent-interop-matrix.yaml
+  - ssot/governance/m365-admin-governance.yaml   # to-be-created if not present

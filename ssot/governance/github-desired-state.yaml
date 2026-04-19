@@ -1,0 +1,213 @@
+version: 1
+kind: github_desired_end_state_rollup
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+
+doctrine: >
+  One governed enterprise-backed operating org, cleanly named repos,
+  structured labels, deterministic workflows, environment-bound
+  deployments, tiered runner strategy, security features activated by
+  default, and agent participation constrained by repo policy.
+
+# -----------------------------------------------------------------------------
+# Index of specialized SSOTs that make up this rollup
+# -----------------------------------------------------------------------------
+index:
+  labels: ssot/governance/labels.yaml
+  repo_classes: ssot/governance/repo-classes.yaml
+  workflow_conventions: ssot/governance/workflow-conventions.yaml
+  runner_policy: ssot/governance/runner-policy.yaml
+  target_state_and_criteria: ssot/governance/github-target-state-success-criteria.yaml
+  operating_layers: ssot/governance/github-operating-layers.yaml
+  enterprise_org_target_state: ssot/governance/github-enterprise-org-target-state.yaml
+  enterprise_migration: ssot/governance/github-enterprise-migration.yaml
+  integration_model: ssot/governance/github-integration-model.yaml
+  markdown_conventions: ssot/governance/github-markdown-conventions.yaml
+  gha_scoped_exception: ssot/governance/gha-scoped-exception.yaml
+  gha_oidc_policy: ssot/governance/github-actions-azure-oidc-policy.yaml
+  gha_authoring_doctrine: ssot/governance/github-actions-workflow-authoring-doctrine.yaml
+  gha_deployment_environments: ssot/governance/github-actions-deployment-environments.yaml
+  gha_marketplace_publishing: ssot/governance/github-actions-marketplace-publishing.yaml
+  packages_topology: platform/ssot/org/package-and-artifact-topology.yaml
+  app_surface_topology: platform/ssot/org/app-surface-and-mcp-topology.yaml
+
+# -----------------------------------------------------------------------------
+# Scope hierarchy
+# -----------------------------------------------------------------------------
+scope_hierarchy:
+  enterprise:
+    name: ipai
+    role: governance_umbrella
+  organization:
+    name: Insightpulse-ai
+    role: primary_operating_org
+  repository:
+    role: bounded_execution_unit
+  branches_issues_workflows_environments_packages_runners: sub_scopes_of_repository
+
+# -----------------------------------------------------------------------------
+# Purpose statement
+# -----------------------------------------------------------------------------
+github_is:
+  - source_control_truth
+  - pr_and_code_review_truth
+  - deterministic_ci_cd_execution
+  - project_and_issue_tracking_at_repo_and_org_level
+  - governed_automation_and_agent_participation
+  - enterprise_access_audit_and_policy_enforcement
+
+github_is_not:
+  - undocumented_manual_release_logic
+  - duplicated_per_repo_governance_patterns
+  - long_lived_deployment_secrets_where_oidc_is_possible
+  - unbounded_agent_write_access_by_default
+
+# -----------------------------------------------------------------------------
+# Smart success criteria (flat — machine-readable)
+# -----------------------------------------------------------------------------
+github_desired_end_state:
+
+  enterprise:
+    enterprise_account_active: true
+    primary_operating_org_defined: true
+
+  governance:
+    domain_verification_enabled: true
+    audit_log_monitored: true
+    identity_integration_enabled: true
+
+  repos:
+    naming_convention_enforced: lowercase-kebab-case
+    branch_protection_on_main: true
+    pull_requests_required_for_substantive_change: true
+
+  planning:
+    github_issues_enabled: true
+    github_projects_enabled: true
+    standard_project_fields_defined: true
+
+  workflows:
+    ci_present_on_engineering_repos: true
+    cd_present_on_deploying_repos: true
+    workflow_jobs_named_by_responsibility: true
+
+  environments:
+    dev_staging_production_defined: true
+    production_reviewer_gate_enabled: true
+    production_environment_secrets_used: true
+    deployment_history_auditable: true
+
+  runners:
+    github_hosted_default: true
+    larger_runners_selective: true
+    self_hosted_or_arc_governed: true
+    runner_labels_standardized: true
+    runner_groups_standardized: true
+
+  security:
+    dependabot_enabled: true
+    dependency_graph_enabled: true
+    dependency_review_enabled: true
+    secret_scanning_enabled: true
+    code_scanning_enabled_on_critical_repos: true
+
+  agents:
+    copilot_governed: true
+    claude_governed: true
+    claude_md_required_where_claude_active: true
+
+  cloud_integration:
+    oidc_preferred_for_azure_auth: true
+    key_vault_used_for_sensitive_runtime_secrets: true
+
+# -----------------------------------------------------------------------------
+# Azure BOM for GitHub-integrated desired state
+# -----------------------------------------------------------------------------
+azure_bom:
+  identity_and_auth:
+    - microsoft_entra_id
+    - federated_identity_or_oidc_trust_for_github_actions
+  runtime_and_deployment_substrate:
+    - azure_container_apps
+    - azure_container_registry (for container images; note GHCR is IPAI default per package-and-artifact-topology.yaml)
+    - azure_app_service_or_aks (workload-specific)
+  secrets_and_config:
+    - azure_key_vault
+  data_and_telemetry:
+    - azure_monitor
+    - application_insights
+    - log_analytics
+  network:
+    - vnet
+    - private_endpoints
+    - private_dns
+    - optional: wireguard_overlay_for_private_self_hosted_runner_connectivity
+  optional_runner_substrate:
+    - kubernetes_cluster_if_arc_adopted
+    - vm_or_vmss_if_classic_self_hosted_adopted
+
+# -----------------------------------------------------------------------------
+# Activation matrix (high-level)
+# -----------------------------------------------------------------------------
+activation_matrix:
+  enterprise_account: active
+  primary_operating_org: active
+  organizations: structured_minimal_sprawl
+  repositories: named_by_product_or_domain_not_environment_noise
+  teams: aligned_to_actual_operating_model
+  projects: active_at_org_level
+  issues: active_in_all_engineering_repos
+  pull_requests: required_for_substantive_changes
+  actions: active
+  environments: active_on_deploy_repos
+  github_hosted_runners: default
+  larger_runners: selective
+  self_hosted_or_arc: selective
+  packages: selective
+  code_scanning: active_on_critical_repos
+  secret_scanning: active
+  dependabot: active
+  audit_log: monitored
+  custom_roles: selective
+  domain_verification: active
+  entra_or_saml_integration: active_where_plan_supports
+
+# -----------------------------------------------------------------------------
+# Canonical repo contract files
+# -----------------------------------------------------------------------------
+canonical_repo_contract_files:
+  required:
+    - README.md
+    - CODEOWNERS
+    - .github/workflows/
+    - .github/ISSUE_TEMPLATE/
+    - .github/PULL_REQUEST_TEMPLATE.md
+  required_where_claude_active:
+    - CLAUDE.md
+  required_where_docs_lane_exists:
+    - docs/
+  optional_recommended:
+    - .github/labels.yml (if label sync automation is used)
+    - .github/project-fields.md
+    - .github/repo-rules.md
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not collapsing bounded repo boundaries into a catch-all monorepo
+  - not enabling every feature everywhere without tier-based rollout
+  - not treating this rollup as the only SSOT (specialized SSOTs in index: block own their domains)
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/governance/github-target-state-success-criteria.yaml
+  - ssot/governance/github-enterprise-org-target-state.yaml
+  - ssot/governance/github-operating-layers.yaml
+  - ssot/governance/labels.yaml
+  - ssot/governance/repo-classes.yaml
+  - ssot/governance/workflow-conventions.yaml
+  - ssot/governance/runner-policy.yaml

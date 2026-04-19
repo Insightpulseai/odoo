@@ -1,0 +1,208 @@
+version: 1
+kind: github_operating_layers
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+
+doctrine: >
+  Repos define the unit of change. Copilot helps produce the change.
+  PRs review the change. Pipelines validate the change. Each layer
+  of the GitHub operating model has a fixed role and must not absorb
+  responsibilities from another.
+
+# -----------------------------------------------------------------------------
+# Canonical layer map
+# -----------------------------------------------------------------------------
+layers:
+
+  enterprise:
+    id: ipai
+    role: governance_umbrella
+    responsibilities:
+      - cross_org_policy (SSO, licensing, audit, retention)
+      - compliance_surface (SOC 2, ISO, PH data residency posture)
+      - security_baseline (GHAS, Defender for DevOps, secret scanning)
+      - org_lifecycle (create, rename, archive operating orgs)
+      - billing_roll_up
+    not_responsibilities:
+      - day_to_day_engineering_execution
+      - repo_level_access_decisions (delegated to org admins)
+      - code_review (belongs in repos + PRs)
+
+  organization:
+    id: Insightpulse-ai
+    role: operational_container
+    responsibilities:
+      - team_and_membership_management
+      - shared_github_apps (repo-level apps installed at org scope)
+      - shared_secrets_config (org-level variables, not secrets with blast radius)
+      - repo_creation_governance
+      - org_scoped_projects_v2 (cross-repo views)
+      - org_scoped_packages_and_artifacts (GHCR, npm, Actions)
+    not_responsibilities:
+      - governance_policy_authority (enterprise owns)
+      - architecture_decisions (repos + docs/architecture own)
+      - deployment_gating (Azure Pipelines owns)
+
+  repository:
+    role: bounded_execution_unit
+    responsibilities:
+      - source_code_truth
+      - docs_truth (READMEs, architecture, ADRs within scope)
+      - issues_and_pull_requests (engineering execution backlog)
+      - workflows_attached_here (GHA YAML lives in .github/workflows/)
+      - package_and_image_publishing_origin (per package-and-artifact-topology.yaml)
+      - settings_and_access_boundary
+    design_rules:
+      - one_repo_per_real_ownership_or_runtime_boundary
+      - avoid_mixing_unrelated_systems_in_one_repo
+      - repo_names_aligned_to_function_not_experiments
+    canonical_repos:
+      - odoo
+      - platform
+      - web
+      - infra
+      - data-intelligence
+      - agents
+      - agent-platform
+      - design
+      - automations
+      - docs
+
+  copilot_in_ide:
+    role: developer_assist_layer
+    capabilities:
+      - inline_code_suggestions
+      - generate_from_natural_language_comments
+      - alternative_suggestions_browsing
+      - multi_suggestion_tab
+      - partial_acceptance (next_word, next_line)
+      - next_edit_suggestions_navigation
+      - model_switching_for_suggestions
+    use_for:
+      - implementation_acceleration
+      - inline_coding_help
+      - edit_completion
+      - local_drafting_and_refactoring
+      - boilerplate_generation
+    do_not_use_as:
+      - architecture_source_of_truth
+      - spec_source_of_truth
+      - approval_mechanism
+      - release_gate
+      - repo_boundary_authority
+      - ci_replacement
+
+# -----------------------------------------------------------------------------
+# Relationship contract (the clean policy statement)
+# -----------------------------------------------------------------------------
+policy_statement:
+  - "Repos define the unit of change."
+  - "Copilot helps produce the change."
+  - "PRs review the change."
+  - "Pipelines validate the change."
+
+change_flow:
+  authored_in: copilot_in_ide_or_direct_edit
+  committed_to: repository
+  reviewed_via: pull_request
+  validated_by: azure_pipelines (per ci-cd-authority-matrix.yaml)
+  gated_to_production_by: azure_pipelines + approval_gates (per go-live-readiness.yaml)
+  deployed_to: azure_container_apps_or_equivalent_runtime
+
+# -----------------------------------------------------------------------------
+# Separation of authority (prevents scope drift)
+# -----------------------------------------------------------------------------
+authority_boundaries:
+
+  architecture_decisions:
+    owner: docs/architecture/ + spec/ + ssot/
+    not_owned_by: [copilot, github_projects_suggestions, issue_templates]
+
+  specifications:
+    owner: spec/ (spec-kit bundles)
+    not_owned_by: [copilot, ide_generated_snippets]
+
+  approvals:
+    owner: pull_request_reviewers + azure_pipelines_environment_gates
+    not_owned_by: [copilot, ide_actions]
+
+  release_gating:
+    owner: azure_pipelines (per ssot/release/go-live-readiness.yaml)
+    not_owned_by: [github_actions_scoped_exception, copilot, ide]
+
+  repo_boundary_decisions:
+    owner: platform-architecture + ssot/governance/
+    not_owned_by: [copilot, ad_hoc_repo_creation]
+
+# -----------------------------------------------------------------------------
+# IDE copilot usage guardrails
+# -----------------------------------------------------------------------------
+copilot_ide_guardrails:
+
+  allowed_patterns:
+    - accept_inline_suggestions_for_local_edits
+    - use_natural_language_comments_to_draft_functions
+    - browse_alternative_suggestions_before_commit
+    - partial_acceptance_for_precise_control
+    - switch_models_for_better_fit (per VS Code operating profile)
+
+  forbidden_patterns:
+    - treating_copilot_suggestion_as_architectural_decision
+    - skipping_pr_review_because_copilot_wrote_it
+    - skipping_pipeline_validation_because_suggestion_looked_clean
+    - committing_generated_code_without_reading_it
+    - relying_on_copilot_for_security_sensitive_code_without_review
+    - relying_on_copilot_for_compliance_or_finance_logic_without_validator_pass
+
+  duplication_detection:
+    requirement: enabled_for_org (Copilot Business / Enterprise policy)
+    rationale: avoids copy-paste of public code that may carry license risk
+
+# -----------------------------------------------------------------------------
+# Cross-layer interactions (clean seams)
+# -----------------------------------------------------------------------------
+seams:
+
+  copilot_to_repo:
+    contact_surface: file_edit + commit
+    contract: "All copilot-produced edits flow through the same PR + CI gates as human edits"
+
+  repo_to_org:
+    contact_surface: settings + teams + shared_apps
+    contract: "Org owns policy defaults; repo can tighten but not loosen"
+
+  org_to_enterprise:
+    contact_surface: policy_inheritance + billing + audit_log
+    contract: "Enterprise sets floors; org operates within"
+
+  repo_to_pipelines:
+    contact_surface: azure_pipelines_yaml + service_connections
+    contract: "Azure Pipelines is sole deploy authority per ci-cd-authority-matrix.yaml"
+
+  repo_to_github_actions:
+    contact_surface: .github/workflows/*.yml
+    contract: "GHA is scoped per ssot/governance/gha-scoped-exception.yaml AND github-actions-azure-oidc-policy.yaml"
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/governance/github-enterprise-org-target-state.yaml
+  - ssot/governance/github-integration-model.yaml
+  - ssot/governance/github-actions-azure-oidc-policy.yaml
+  - ssot/governance/gha-scoped-exception.yaml
+  - ssot/governance/platform-authority-split.yaml
+  - ssot/governance/ci-cd-authority-matrix.yaml
+  - ssot/governance/vscode-operating-profile.yaml
+  - platform/ssot/org/package-and-artifact-topology.yaml
+  - docs/architecture/PACKAGE_AND_ARTIFACT_TOPOLOGY.md
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not expanding Copilot scope to architecture or release authority
+  - not collapsing repo boundaries to shared monorepo for convenience
+  - not allowing org-level overrides of enterprise governance policy
+  - not letting IDE-generated code bypass PR review or pipeline validation

@@ -1,0 +1,104 @@
+version: 1
+kind: github_workflow_conventions
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+
+doctrine: >
+  Workflow file names, job names, trigger shapes, and environment names
+  are standardized across IPAI repos so any engineer can read any repo's
+  CI/CD lane without decoding local conventions.
+
+parent_ssots:
+  - ssot/governance/github-actions-workflow-authoring-doctrine.yaml
+  - ssot/governance/github-actions-deployment-environments.yaml
+
+workflow_file_names:
+  required_when_applicable:
+    - .github/workflows/ci.yml
+    - .github/workflows/cd.yml
+  optional:
+    - .github/workflows/release.yml
+    - .github/workflows/security.yml
+    - .github/workflows/dependency-update.yml
+    - .github/workflows/scheduled-audit.yml
+    - .github/workflows/preview-deploy.yml
+    - .github/workflows/package-publish.yml
+
+canonical_job_names:
+  validation_lane:
+    - validate
+    - lint
+    - test
+    - build
+    - scan
+  packaging_lane:
+    - package
+    - publish
+  deployment_lane:
+    - deploy_dev
+    - deploy_staging
+    - deploy_production
+  reporting_lane:
+    - report
+
+canonical_triggers:
+  ci:
+    - pull_request
+    - push
+  cd:
+    - push_to_default_branch
+    - workflow_dispatch
+    - release
+    - repository_dispatch
+  scheduled:
+    - schedule (cron, UTC)
+  agent_bounded:
+    - issue_comment (only when scope matches allowed gha-scoped-exception lane)
+    - pull_request_comment
+
+environment_names:
+  canonical: [dev, staging, production]
+  optional: [preview, sandbox, hotfix, demo]
+  forbidden: [prod2, real-prod, temp-stage, deploy-now]
+
+concurrency_groups:
+  pattern: "<workflow-name>-<ref-or-environment>"
+  cancel_in_progress:
+    non_deploy: true
+    deploy: false
+
+runner_selection:
+  default: ubuntu-latest (pinned major acceptable)
+  alternatives_require_justification:
+    - windows-latest
+    - macos-latest
+    - self_hosted (see runner-policy.yaml)
+
+reuse_locations:
+  reusable_workflows: Insightpulse-ai/.github/workflows/reusable-*.yml
+  composite_actions: Insightpulse-ai/.github/actions/<action-name>/action.yml
+  workflow_templates: Insightpulse-ai/.github/workflow-templates/
+  rule_of_three: promote_to_reusable_when_pattern_appears_in_3_or_more_repos
+
+required_headers:
+  name: required
+  description_comment: recommended
+  link_to_doctrine: ssot/governance/github-actions-workflow-authoring-doctrine.yaml
+
+required_permissions_block:
+  id-token: write
+  contents: read
+  forbidden: permissions_colon_write_all
+
+anchors:
+  - ssot/governance/github-actions-workflow-authoring-doctrine.yaml
+  - ssot/governance/github-actions-deployment-environments.yaml
+  - ssot/governance/github-actions-azure-oidc-policy.yaml
+  - ssot/governance/runner-policy.yaml
+  - ssot/governance/labels.yaml
+
+non_goals:
+  - not letting repos invent local workflow file names when a canonical name exists
+  - not bundling validation and deploy into one opaque job
+  - not defaulting to permissions:write-all

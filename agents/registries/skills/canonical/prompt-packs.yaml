@@ -1,0 +1,161 @@
+version: 1
+kind: canonical_prompt_packs_registry
+status: canonical
+last_updated: "2026-04-19"
+owner: agents
+
+doctrine: >
+  Role-based prompt packs (e.g. OpenAI Academy) are operator assets, not
+  agent runtime definitions. They enter IPAI as structured skill wrappers
+  under agents/, never as freeform prompt text. Each pack maps to a
+  Pulser domain pack or shared pack and is invoked through skill contracts.
+
+parent_ssot: ssot/ai/external-reference-authorities.yaml
+
+# -----------------------------------------------------------------------------
+# Ingestion contract
+# -----------------------------------------------------------------------------
+ingestion:
+  source: openai_academy_prompt_packs (reference) + internal_role_packs
+  required_wrapping:
+    - skill_manifest (skill.manifest.yaml)
+    - prompt_contract (input_schema, output_schema, evaluators)
+    - owner + last_updated
+  forbidden:
+    - raw_text_prompts_outside_skill_scope
+    - prompts_that_bypass_safe_outputs_middleware
+    - prompts_that_access_secrets_or_key_vault_directly
+
+# -----------------------------------------------------------------------------
+# Role → Pulser pack mapping
+# -----------------------------------------------------------------------------
+role_to_pack_mapping:
+
+  sales:
+    pulser_pack: agents/shared/sales
+    canonical_skills:
+      - pitch_draft
+      - discovery_question_generation
+      - objection_handling
+      - follow_up_email
+
+  customer_success:
+    pulser_pack: agents/shared/support
+    canonical_skills:
+      - ticket_triage
+      - qbr_summary_draft
+      - renewal_risk_briefing
+      - csat_response_draft
+
+  product:
+    pulser_pack: agents/shared/product
+    canonical_skills:
+      - prd_section_draft
+      - user_story_expansion
+      - release_note_draft
+      - discovery_synthesis
+
+  engineers:
+    pulser_pack: agents/shared/engineering
+    canonical_skills:
+      - code_review_summary
+      - test_case_draft
+      - refactor_rationale
+      - incident_timeline_draft
+
+  hr:
+    pulser_pack: agents/shared/people_ops   # optional; not yet created
+    optional: true
+    canonical_skills:
+      - jd_draft
+      - interview_question_set
+      - feedback_drafting
+      - policy_summary
+
+  it:
+    pulser_pack: agents/shared/it_ops       # optional; not yet created
+    optional: true
+    canonical_skills:
+      - runbook_draft
+      - sop_compile
+      - ticket_escalation_draft
+
+  managers:
+    pulser_pack: agents/shared/strategy
+    canonical_skills:
+      - status_report_draft
+      - okr_review_summary
+      - decision_log_entry
+
+  executives:
+    pulser_pack: agents/shared/strategy
+    canonical_skills:
+      - exec_briefing
+      - board_deck_outline
+      - scenario_summary
+
+  finance:
+    pulser_pack: agents/domain/finance
+    canonical_skills:
+      - variance_commentary
+      - forecast_assumption_draft
+      - reconciliation_summary
+      - bir_filing_narrative
+
+  marketing:
+    pulser_pack: agents/shared/marketing
+    canonical_skills:
+      - campaign_copy_draft
+      - landing_page_outline
+      - seo_meta_draft
+      - social_caption_set
+
+# -----------------------------------------------------------------------------
+# Skill wrapping contract
+# -----------------------------------------------------------------------------
+skill_wrapping_contract:
+
+  required_fields:
+    - skill_id
+    - owner_pack
+    - input_schema (json schema)
+    - output_schema (json schema)
+    - evaluators (optional, required if mutating)
+    - safe_outputs_policy (reference to middleware)
+    - model_preference (resolved via provider adapter)
+    - approval_band (read_only | assisted | mutating)
+
+  storage_location: agents/skills/<pack>/<skill_id>/skill.manifest.yaml
+
+  example_contract_shape:
+    skill_id: finance.variance_commentary
+    owner_pack: agents/domain/finance
+    approval_band: assisted
+    input_schema:
+      period: string
+      dimensions: array
+      thresholds: object
+    output_schema:
+      commentary: string
+      variance_table: array
+    evaluators:
+      - evals/finance/variance_commentary_rubric.yaml
+    model_preference: foundry_default (gpt-4.1)
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not importing raw prompt text into the repo
+  - not creating runtime agents for every role automatically
+  - not using prompt packs as evaluator substitutes
+  - not blending sales/marketing personas with finance/IT skills
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/ai/external-reference-authorities.yaml
+  - agents/docs/contracts/ROLE_BASED_PROMPT_PACKS.md
+  - agents/docs/contracts/COOKBOOK_PATTERN_ADOPTION_RULES.md
+  - platform/ssot/agents/pulser-pack-matrix.yaml

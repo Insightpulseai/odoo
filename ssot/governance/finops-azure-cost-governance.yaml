@@ -1,0 +1,198 @@
+version: 1
+kind: finops_azure_cost_governance
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture + fp_and_a
+
+doctrine: >
+  Azure spend is tagged, budgeted, alerted, and reviewed monthly. Every
+  resource carries the IPAI tag set. Every environment has a budget.
+  Cost anomalies route to platform-architecture + FP&A. FinOps is a
+  continuous practice, not a year-end reconciliation.
+
+# -----------------------------------------------------------------------------
+# Subscriptions in scope
+# -----------------------------------------------------------------------------
+subscriptions:
+  primary:
+    name: Microsoft Azure Sponsorship
+    id: eba824fb-332d-4623-9dfb-2c9f7ee83f4e
+    program: isv_sponsored (per project_isv_success memory)
+    cost_disposition: sponsored_credits_apply
+  secondary:
+    name: Azure subscription 1
+    id: 536d8cf6-89e1-4815-aef3-d5f2c5f4d070
+    current_usage: minimal
+    disposition: keep_as_secondary_or_consolidate (decision deferred)
+
+# -----------------------------------------------------------------------------
+# Required tag set (every resource)
+# -----------------------------------------------------------------------------
+required_tags:
+  environment: [dev, staging, production, preview, sandbox, shared]
+  workload: [odoo, agent_platform, data_intelligence, web, ops_console, shared_infra]
+  owner: entra_group_or_individual_upn
+  cost_center: [platform, product, rd, sales_gtm, shared]
+  created_by: iac_or_manual (prefer iac)
+  retention_class: [ephemeral, persistent, compliance_mandated]
+  data_classification: [public, internal, confidential, restricted]
+
+tag_enforcement:
+  policy: azure_policy_deny_missing_required_tags
+  scope: subscription_level
+  exemptions: managed_platform_resources_that_cannot_accept_tags (documented)
+  remediation: tag_backfill_runbook (to be written)
+
+# -----------------------------------------------------------------------------
+# Budgets
+# -----------------------------------------------------------------------------
+budgets:
+
+  monthly_budget_by_environment:
+    dev:
+      amount_usd: to_be_set_after_2_cycles_baseline (suggest $500 initial)
+      alert_thresholds: [50%, 80%, 100%]
+    staging:
+      amount_usd: to_be_set (suggest $800 initial)
+      alert_thresholds: [50%, 80%, 100%]
+    production:
+      amount_usd: to_be_set_before_first_paying_customer
+      alert_thresholds: [50%, 80%, 100%, 120%]
+      forecast_alert_enabled: true
+
+  monthly_budget_by_workload:
+    odoo: to_be_set
+    agent_platform: to_be_set
+    data_intelligence: to_be_set
+    web: to_be_set
+
+  meter_category_budgets:
+    github_actions_minutes_billed_via_azure:
+      amount_usd: $50
+      source: ssot/governance/gha-scoped-exception.yaml#hard_conditions.billing
+    foundry_model_inference:
+      amount_usd: to_be_set_after_first_production_traffic
+
+# -----------------------------------------------------------------------------
+# Alerts
+# -----------------------------------------------------------------------------
+alerts:
+  routing:
+    critical_overspend: action_group_ag-ipai-dev-sea + platform-architecture + fp_and_a
+    forecasted_overspend: email_and_teams_to_platform-architecture + fp_and_a
+  thresholds:
+    sev_0_critical: monthly_actual_exceeds_budget_by_20_percent
+    sev_1_warning: monthly_actual_exceeds_80_percent_budget
+    sev_2_info: forecasted_to_exceed_budget_at_month_end
+
+# -----------------------------------------------------------------------------
+# Review cadence
+# -----------------------------------------------------------------------------
+review_cadence:
+
+  daily:
+    automation: azure_cost_management_query_rollup
+    owner: platform-architecture
+
+  weekly:
+    meeting: platform_architecture_sync
+    agenda_item: top_5_cost_movers_week_over_week
+
+  monthly:
+    meeting: platform_architecture + fp_and_a
+    deliverable: cost_review_report
+    location: docs/evidence/<ts>/finops-monthly/
+    required_analysis:
+      - spend_by_environment
+      - spend_by_workload
+      - spend_by_owner
+      - top_10_resources_by_cost
+      - variance_vs_budget
+      - variance_vs_prior_month
+      - forecast_to_eoy
+      - optimization_candidates
+
+  quarterly:
+    meeting: leadership_review
+    deliverable: quarterly_cost_narrative + optimization_plan
+
+# -----------------------------------------------------------------------------
+# Cost optimization principles
+# -----------------------------------------------------------------------------
+optimization_principles:
+  - prefer_consumption_tiers_in_dev (serverless, basic, scale-to-zero)
+  - use_reserved_instances_or_savings_plans_only_for_steady_production_workloads
+  - right_size_before_reserving
+  - scale_to_zero_nonprod_outside_business_hours_where_possible
+  - delete_ephemeral_resources_on_pr_close (preview environments)
+  - monitor_egress_cost_on_data_intelligence_workloads
+  - cap_log_analytics_ingestion_per_environment
+  - use_app_insights_sampling_per_observability_ssot
+
+# -----------------------------------------------------------------------------
+# Anomaly detection
+# -----------------------------------------------------------------------------
+anomaly_detection:
+  azure_cost_management_smart_alerts:
+    enabled: target_state
+    scope: subscription_level
+  threshold: "greater_than_15_percent_deviation_from_14d_moving_average"
+  routing: platform-architecture + fp_and_a
+
+# -----------------------------------------------------------------------------
+# FinOps tiering by workload
+# -----------------------------------------------------------------------------
+workload_finops_tiering:
+  tier_A_cost_sensitive:
+    workloads: [odoo_production, agent_platform_production]
+    posture: reserved_or_savings_plan_after_baseline + strict_monitoring
+  tier_B_variable:
+    workloads: [data_intelligence, foundry_inference]
+    posture: consumption_with_forecasting + sampling
+  tier_C_ephemeral:
+    workloads: [dev, preview, sandbox]
+    posture: scale_to_zero + daily_cap + hard_delete_policies
+
+# -----------------------------------------------------------------------------
+# Success criteria
+# -----------------------------------------------------------------------------
+success_criteria:
+  - id: FIN-1
+    description: 100% of Azure resources carry the required tag set
+    target: 100%
+    measurement: azure_resource_graph_tag_coverage_query
+  - id: FIN-2
+    description: Every environment has a monthly budget with 3+ alert thresholds
+    target: 100% of envs
+    measurement: budget_inventory_audit
+  - id: FIN-3
+    description: Monthly cost review delivered on schedule
+    target: 100% on-time
+    measurement: docs/evidence/<ts>/finops-monthly/ presence
+  - id: FIN-4
+    description: GHA minutes billed via Azure subscription (not GitHub direct)
+    target: true
+    measurement: github_billing_config_check (per gha-scoped-exception.yaml)
+  - id: FIN-5
+    description: Cost anomalies routed to platform-architecture + FP&A within 24h
+    target: 100% acknowledged < 24h
+    measurement: alert_ack_log
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not waiting for year-end to reconcile cost
+  - not letting resources exist untagged
+  - not reserving before right-sizing
+  - not routing cost alerts to an individual instead of the team
+  - not treating ISV Sponsored credits as permanent (plan for post-sponsorship cost)
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/governance/observability-and-telemetry.yaml
+  - ssot/governance/gha-scoped-exception.yaml
+  - platform/ssot/azure/resource-inventory.dev.yaml
+  - ssot/governance/partner-program-authority.yaml

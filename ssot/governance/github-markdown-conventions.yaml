@@ -1,0 +1,229 @@
+version: 1
+kind: github_markdown_conventions
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+
+doctrine: >
+  All GitHub-native Markdown artifacts (READMEs, architecture docs,
+  runbooks, specs, issues, PRs) follow a shared authoring baseline.
+  Readable headings, relative links, typed code fences, task lists,
+  sparse alerts, minimal HTML.
+
+# -----------------------------------------------------------------------------
+# Scope
+# -----------------------------------------------------------------------------
+scope:
+  applies_to:
+    - readme_files
+    - docs/architecture/*.md
+    - docs/runbooks/*.md
+    - spec/**/*.md
+    - issue_and_pr_templates_where_applicable
+    - contributor_guides
+  does_not_apply_to:
+    - generated_markdown (e.g., OpenAPI-rendered docs, coverage reports)
+    - auto_exported_notebooks
+    - vendored_upstream_docs
+
+# -----------------------------------------------------------------------------
+# Core policy
+# -----------------------------------------------------------------------------
+policy:
+
+  headings:
+    max_depth_default: 3
+    require_stable_hierarchy: true
+    no_skip_levels: true
+    rationale: "Shallow, stable hierarchy keeps docs scannable and anchor-stable"
+
+  links:
+    in_repo: relative
+    external: absolute
+    heading_links: allowed
+    custom_anchors: only_when_heading_anchor_is_insufficient
+    forbidden:
+      - absolute_github_blob_urls_for_same_repo_files
+      - shortened_or_redirected_links_in_canonical_docs
+
+  code_blocks:
+    fenced: true
+    language_tag_required_when_known: true
+    inline_code_for:
+      - commands
+      - file_paths
+      - identifiers
+      - env_vars
+      - flags
+
+  task_lists:
+    allowed_for:
+      - rollout_checklists
+      - migration_tasks
+      - release_readiness
+      - spec_execution_tracking
+      - runbook_steps
+
+  alerts:
+    allowed_types:
+      - NOTE
+      - TIP
+      - IMPORTANT
+      - WARNING
+      - CAUTION
+    max_consecutive: 1
+    max_per_doc_preferred: 2
+    rationale: "Alerts are high-signal; stacking them trains readers to ignore them"
+
+  images:
+    prefer_relative_paths: true
+    alt_text_required: true
+    avoid:
+      - raw_screenshot_dumps_without_context
+      - images_of_text_where_text_would_work
+
+  formatting:
+    bold_for_emphasis_only: true
+    italics_minimal: true
+    tables_only_when_comparison_benefits: true
+    decorative_emoji_in_formal_docs: forbidden
+
+  mentions:
+    team_mentions_in_permanent_docs: forbidden
+    team_mentions_in_issues_and_prs: allowed
+    rationale: "Permanent docs outlive team structure; mentions rot"
+
+  footnotes:
+    use_only_when: note_would_otherwise_clutter_main_text
+
+  raw_html:
+    default: avoid
+    permitted_only_for:
+      - anchor_edge_cases_where_heading_anchor_insufficient
+      - layout_edge_cases_impossible_with_plain_markdown
+
+# -----------------------------------------------------------------------------
+# Per-artifact guidance
+# -----------------------------------------------------------------------------
+per_artifact_guidance:
+
+  readme_md:
+    purpose:
+      - purpose_of_repo
+      - repo_boundaries
+      - quickstart
+      - canonical_links
+      - key_commands
+      - service_or_runtime_topology_summary
+    avoid:
+      - tutorial_length_walkthroughs (move to docs/)
+      - full_architecture_dumps (link to docs/architecture/)
+
+  docs_architecture:
+    use:
+      - headings
+      - alerts_sparingly
+      - diagrams_or_images_with_relative_links
+      - code_fences_for_contracts_yaml_json_examples
+      - footnotes_for_caveats_or_source_nuance
+    avoid:
+      - speculative_roadmaps (belongs in spec/ or planning surfaces)
+
+  docs_runbooks:
+    use:
+      - task_lists_for_steps
+      - fenced_code_blocks_with_commands
+      - alerts_for_destructive_or_irreversible_steps
+    required_fields:
+      - owner
+      - last_updated
+      - preconditions
+      - postconditions
+      - rollback
+
+  spec_bundles:
+    use:
+      - task_lists
+      - stable_heading_hierarchy
+      - relative_links_across_constitution_prd_plan_tasks
+      - minimal_styling_maximum_scannability
+    avoid:
+      - marketing_language
+      - hypothetical_future_work_without_scope_gating
+
+  issues_prs:
+    use:
+      - task_lists
+      - team_mentions (@platform-engineering, etc.)
+      - issue_references (#123)
+      - alerts_if_template_renders_well
+    avoid:
+      - monolithic_descriptions_without_structure
+      - missing_acceptance_criteria
+
+# -----------------------------------------------------------------------------
+# Canonical examples
+# -----------------------------------------------------------------------------
+examples:
+
+  relative_link_correct: "[Architecture map](../architecture/REPO_SSOT_MAP.md)"
+  relative_link_wrong: "[Architecture map](https://github.com/Insightpulse-ai/odoo/blob/main/docs/architecture/REPO_SSOT_MAP.md)"
+
+  code_fence_correct: |
+    ```yaml
+    key: value
+    ```
+
+  alert_correct: |
+    > [!IMPORTANT]
+    > This repo is not the runtime authority. See `platform/ssot/...`.
+
+  task_list_correct: |
+    - [ ] Add OIDC federated credential
+    - [ ] Publish GHCR image
+    - [ ] Validate ACA revision health
+
+# -----------------------------------------------------------------------------
+# Enforcement
+# -----------------------------------------------------------------------------
+enforcement:
+
+  linting:
+    tool_primary: markdownlint-cli2
+    tool_secondary: remark-lint
+    config_location: .markdownlint.yaml (root) or per-repo override
+    ci_check_required: true
+
+  link_validation:
+    pre_merge:
+      - relative_link_resolution_check
+      - broken_external_link_audit (scheduled, not pre-merge blocker)
+    allowed_under_gha_scoped_exception: docs_link_check
+    cross_reference: ssot/governance/gha-scoped-exception.yaml
+
+  review_checklist:
+    - "Headings follow stable hierarchy (no skipped levels)"
+    - "In-repo links are relative"
+    - "Code fences have language tags"
+    - "Alerts used sparingly, none stacked back-to-back"
+    - "No team mentions in permanent docs"
+    - "No absolute GitHub blob URLs for in-repo files"
+    - "Images have alt text"
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not dictating prose style (voice, tone)
+  - not prescribing diagram tool (mermaid, drawio, figma — all acceptable)
+  - not enforcing line-length (reader viewport is the constraint)
+  - not blocking legitimate raw HTML for documented edge cases
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - docs/standards/GITHUB_MARKDOWN_CONVENTIONS.md
+  - ssot/governance/github-operating-layers.yaml
+  - ssot/governance/vscode-operating-profile.yaml
+  - ssot/governance/unified-capability-template-authority.yaml

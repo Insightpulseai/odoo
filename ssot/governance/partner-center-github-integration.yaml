@@ -1,0 +1,183 @@
+version: 1
+kind: partner_center_github_integration_model
+status: canonical
+last_updated: "2026-04-19"
+owner: gtm + platform-architecture
+
+doctrine: >
+  Partner Center and GitHub are not the same surface and one does not
+  run on the other. Partner Center is the commercial and admin source
+  of truth for partner identity, benefits, tax, payout, and marketplace
+  state. GitHub is the engineering and automation surface that hosts
+  the code, scripts, actions, and workflows that automate against
+  Partner Center state. Four integration lanes define the overlap.
+
+parent_ssots:
+  - ssot/governance/partner-program-authority.yaml
+  - ssot/governance/partner-center-account-management.yaml
+  - ssot/governance/partner-center-api-coverage.yaml
+  - ssot/governance/github-operating-layers.yaml
+
+# -----------------------------------------------------------------------------
+# The four integration lanes
+# -----------------------------------------------------------------------------
+lanes:
+
+  lane_1_benefits_and_entitlements:
+    purpose: Partner Center administers Microsoft partner benefits; some benefits (e.g. GitHub Enterprise seats) are delivered as entitlements redeemed into a GitHub tenant
+    partner_center_role: entitlement_admin_surface
+    github_role: entitlement_consumer (seats land in the GitHub enterprise)
+    flow_direction: partner_center -> github (entitlement grant)
+    ipai_application:
+      ipai_enterprise: ipai (GitHub enterprise umbrella)
+      ipai_seats_to_redeem: per_FY26_benefit_package
+      redemption_owner: platform-architecture + gtm
+    cross_reference:
+      - ssot/governance/partner-program-authority.yaml
+      - ssot/governance/github-enterprise-migration.yaml
+
+  lane_2_sdk_and_automation_source:
+    purpose: Microsoft maintains GitHub-hosted tooling for Partner Center automation (.NET SDK, PowerShell module, Java samples)
+    partner_center_role: downstream_target_system
+    github_role: source_and_distribution_surface_for_automation_tools
+    flow_direction: github -> partner_center (automation client targets API)
+    ipai_application:
+      adopted_sdks:
+        - microsoft/Partner-Center-DotNet-Samples (per partner-program-authority.yaml reference_repositories)
+      ipai_automation_lane: azure_pipelines (Partner Center API lane)
+      language_preference: python_first_dotnet_where_required
+    cross_reference:
+      - ssot/governance/partner-center-api-coverage.yaml
+      - ssot/governance/partner-program-authority.yaml#reference_repositories
+
+  lane_3_marketplace_publishing_automation:
+    purpose: Marketplace offer submissions can be driven from GitHub-based CI/CD; Partner Center remains the downstream commerce/publishing system
+    partner_center_role: commerce_and_publishing_system_of_record
+    github_role: ci_cd_entrypoint_for_offer_artifacts_and_submissions
+    flow_direction: github_ci_cd -> partner_center_submission_api
+    microsoft_assets_referenced:
+      - partner_center_submission_apis (canonical programmable surface)
+      - github_action_for_some_partner_center_offer_artifact_updates
+    ipai_application:
+      pipeline_home: azure_pipelines (per ci-cd-authority-matrix.yaml — not GHA for production writes)
+      gha_role: scoped_exception_only (e.g. docs/link-check of listing content)
+      phased_adoption: per ssot/governance/partner-center-api-coverage.yaml#automation_roadmap
+    cross_reference:
+      - ssot/governance/partner-center-api-coverage.yaml
+      - ssot/governance/ci-cd-authority-matrix.yaml
+      - ssot/governance/gha-scoped-exception.yaml
+
+  lane_4_narrow_sign_in:
+    purpose: Narrow developer-program sign-in flow — e.g. signing in with a GitHub account to publish Microsoft Edge extensions
+    partner_center_role: target_developer_program
+    github_role: identity_provider_for_that_specific_scenario_only
+    flow_direction: github_identity -> partner_center_edge_publisher_flow
+    is_generalizable: false (does not extend to Marketplace / benefits / tax / payout)
+    ipai_application: not_applicable (IPAI does not publish Edge extensions)
+    cross_reference: none
+
+# -----------------------------------------------------------------------------
+# Clean role split
+# -----------------------------------------------------------------------------
+role_split:
+
+  partner_center:
+    system_of_record_for:
+      - partner_program_state
+      - seller_and_publisher_ids
+      - marketplace_account_state
+      - benefits_state
+      - tax_and_payout_state
+      - legal_and_agreement_state
+    use_for:
+      - legal_identity
+      - publisher_identity
+      - program_enrollment
+      - benefits
+      - tax_and_payout
+      - marketplace_commerce
+    not_for:
+      - source_control
+      - ci_cd_execution
+      - developer_tooling
+
+  github:
+    execution_surface_for:
+      - partner_center_api_clients
+      - automation_scripts
+      - ci_cd_for_marketplace_assets
+      - internal_runbooks_and_evidence_capture
+    use_for:
+      - source_control
+      - ci_cd
+      - automation_entrypoint
+      - sdk_and_script_hosting
+      - operator_workflows
+    not_for:
+      - partner_program_state_ownership
+      - benefits_state_ownership
+      - tax_payout_state_ownership
+
+# -----------------------------------------------------------------------------
+# Realistic automation scope (GitHub-first)
+# -----------------------------------------------------------------------------
+github_first_automation_scope:
+
+  in_scope:
+    - marketplace_offer_and_submission_workflows
+    - analytics_and_report_extraction (via Partner Center Insights APIs)
+    - partner_operational_scripting_via_sdks_and_powershell
+    - artifact_update_and_publishing_steps_in_ci
+    - evidence_capture_on_every_api_mutation
+
+  out_of_scope_automation:
+    - full_admin_ui_parity (legal profile maintenance, billing profile UI, all account-settings screens)
+    - tax_or_payout_mutation_automation (regulated, human-in-loop)
+    - csp_customer_provisioning (until csp motion activates — see partner-program-authority.yaml)
+
+# -----------------------------------------------------------------------------
+# Boundary guardrails
+# -----------------------------------------------------------------------------
+guardrails:
+  - partner_center_state_never_mirrored_into_git (reference only)
+  - no_partner_center_credentials_in_github_repos (use managed_identity or workload_identity_federation)
+  - write_automation_runs_only_from_azure_pipelines (not github_actions per gha-scoped-exception.yaml)
+  - tracking_guid_discipline_enforced_per_partner-center-api-coverage.yaml#tracking_guid_discipline
+  - mfa_enforced_on_app_plus_user_api_principals_post_2026-04-01
+
+# -----------------------------------------------------------------------------
+# Operating recommendation (bottom line)
+# -----------------------------------------------------------------------------
+operating_recommendation:
+  principle: >
+    Partner Center is the commercial and admin source of truth.
+    GitHub is the engineering and automation surface around it.
+  anti_pattern: '"Partner Center runs on GitHub" — false, they are distinct systems'
+  correct_framing: >
+    Partner Center manages partner, commercial, and marketplace state.
+    GitHub hosts the code, scripts, actions, and workflows that
+    automate against that state.
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not treating GitHub as a Partner Center replacement
+  - not treating Partner Center as a git/CI substitute
+  - not extending lane_4 (Edge narrow sign-in) beyond its documented scope
+  - not automating lane_1 benefit redemption (one-time admin action per cycle)
+  - not bypassing azure_pipelines for write automation to Partner Center
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/governance/partner-program-authority.yaml
+  - ssot/governance/partner-center-account-management.yaml
+  - ssot/governance/partner-center-api-coverage.yaml
+  - ssot/governance/github-operating-layers.yaml
+  - ssot/governance/github-enterprise-migration.yaml
+  - ssot/governance/github-actions-azure-oidc-policy.yaml
+  - ssot/governance/gha-scoped-exception.yaml
+  - ssot/governance/ci-cd-authority-matrix.yaml
+  - docs/gtm/PARTNER_PROGRAM_MAP.md

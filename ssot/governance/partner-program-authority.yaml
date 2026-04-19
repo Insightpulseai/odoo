@@ -1,0 +1,307 @@
+version: 1
+kind: partner_program_authority
+status: canonical
+last_updated: "2026-04-19"
+owner: gtm + platform-architecture
+
+doctrine: >
+  Microsoft and GitHub expose three distinct partner tracks with
+  non-overlapping purposes. Partner Center owns benefits and commercial
+  motion. GitHub billing/partner surfaces own client enterprise
+  provisioning. Copilot Partner Program owns extension and integration
+  productization. Each track has a fixed authority and must not be
+  conflated with the others.
+
+# -----------------------------------------------------------------------------
+# The three tracks
+# -----------------------------------------------------------------------------
+tracks:
+
+  microsoft_partner_center:
+    label: "Microsoft AI Cloud Partner Program / Partner Center"
+    authority_for:
+      - partner_benefits (refreshed FY26 package, includes Microsoft GitHub)
+      - azure_credits
+      - github_entitlements (e.g. GitHub Enterprise seats in benefit packages)
+      - marketplace_motion (ISV co-sell, marketplace offers)
+      - microsoft_commercial_motion
+    use_for:
+      - ipai_own_company_benefits
+      - marketplace_and_gtm_motion
+      - azure_sponsored_sub_entitlements
+      - cosell_motion_with_microsoft
+    not_authority_for:
+      - client_github_enterprise_provisioning
+      - copilot_extension_productization
+      - technical_architecture
+    ipai_state:
+      ISV_Success_program: enrolled (2026-04-06)
+      engagement_manager: So Yeong Choi
+      publish_target: "Aug-Sep 2026"
+      sponsored_subscription: eba824fb
+
+  github_enterprise_partner_surfaces:
+    label: "GitHub Enterprise billing + CSP partner docs"
+    authority_for:
+      - client_enterprise_account_creation
+      - csp_customer_provisioning
+      - github_billing_for_clients
+      - github_as_microsoft_csp_partner_path
+    use_for:
+      - provisioning_github_enterprise_for_a_customer
+      - managing_github_on_behalf_of_a_client
+      - microsoft_commerce_flow_github_customer_provisioning
+    not_authority_for:
+      - ipai_internal_github_enterprise (that is own-company; billing via Azure subscription)
+      - marketplace_offer_structure
+      - copilot_extension_model
+    ipai_state:
+      current_need: own-company use (ipai enterprise + Insightpulse-ai org)
+      csp_motion_status: out_of_scope_for_now (no customer provisioning yet)
+
+  copilot_partner_program:
+    label: "GitHub Copilot Partner Program"
+    authority_for:
+      - copilot_chat_extension_development
+      - partner_integration_surface_in_copilot
+      - distribution_of_copilot_extensions
+    use_for:
+      - productizing_pulser_or_domain_skills_as_copilot_extensions
+      - building_customized_copilot_workflows_for_customers
+      - future_tooling_distribution_through_copilot_surface
+    not_authority_for:
+      - internal_runtime_architecture (agent-platform owns)
+      - pulser_agent_definitions (agents/ owns)
+      - marketplace_listing_content (Partner Center owns)
+    ipai_state:
+      exploration: reference_only
+      dependencies:
+        - pulser_productization_maturity
+        - copilot_chat_extension_sdk_familiarity
+        - evidence_of_ga_readiness
+      blocking_before_entry:
+        - ga_of_pulser_core_skills
+        - foundry_runtime_stability
+        - security_and_safe_outputs_hardening
+
+# -----------------------------------------------------------------------------
+# Authority split (prevents track-mixing)
+# -----------------------------------------------------------------------------
+authority_split:
+
+  benefits_and_commercial_motion:
+    owner: microsoft_partner_center
+    anchored_in:
+      - docs/gtm/partner_center_checklist.md
+      - docs/gtm/marketplace_research_brief.md
+      - memory project_isv_success (user memory)
+
+  client_github_provisioning:
+    owner: github_enterprise_partner_surfaces
+    anchored_in:
+      - future runbook: docs/runbooks/github-client-enterprise-provisioning.md (not yet created)
+
+  copilot_extensions:
+    owner: copilot_partner_program
+    anchored_in:
+      - future SSOT: ssot/governance/copilot-extension-productization.yaml (not yet created)
+
+# -----------------------------------------------------------------------------
+# Practical operating model
+# -----------------------------------------------------------------------------
+operating_model:
+
+  if_consuming_benefits_for_ipai:
+    route: microsoft_partner_center
+    next_actions:
+      - redeem_fy26_github_enterprise_seats_allocation_into_ipai_enterprise
+      - track_azure_credit_burn
+      - align_marketplace_offer_publish_target
+
+  if_provisioning_github_for_a_customer:
+    route: github_enterprise_partner_surfaces
+    prerequisite: csp_motion_activated
+    current_state: not_applicable_yet
+
+  if_building_copilot_extensions:
+    route: copilot_partner_program
+    prerequisite: pulser_ga_plus_copilot_chat_extension_sdk_ready
+    current_state: reference_only
+
+# -----------------------------------------------------------------------------
+# Near-term priorities for IPAI
+# -----------------------------------------------------------------------------
+near_term_priorities:
+
+  priority_1_partner_center_benefits:
+    rationale: IPAI is already enrolled in ISV Success; FY26 benefits refresh is active
+    actions:
+      - confirm_github_entitlement_in_current_benefit_package
+      - apply_benefit_to_ipai_enterprise_seats (consolidate with GitHub Enterprise Cloud migration)
+      - document_benefit_redemption_in_partner_center_checklist
+    cross_reference:
+      - docs/gtm/partner_center_checklist.md
+      - ssot/governance/github-enterprise-migration.yaml
+
+  priority_2_marketplace_publish:
+    rationale: Aug-Sep 2026 publish target requires Partner Center listing + ISV Success milestones
+    cross_reference:
+      - docs/gtm/MARKETPLACE_OFFER.md
+      - docs/gtm/marketplace_listing_draft.md
+
+  priority_3_csp_motion_gated:
+    status: out_of_scope_until_repeatable_customer_motion
+    trigger: first_paying_enterprise_customer_requesting_managed_github
+
+  priority_4_copilot_extension_gated:
+    status: reference_only_until_pulser_ga
+    trigger: pulser_core_skills_reach_ga_with_safe_outputs_coverage
+
+# -----------------------------------------------------------------------------
+# Reference repositories (verified 2026-04-19)
+# -----------------------------------------------------------------------------
+# Classification: reference_only (treat as pattern donors, do not mirror).
+# Active = recent commits in 2025-2026. Stale = last commit pre-2025.
+# -----------------------------------------------------------------------------
+reference_repositories:
+
+  track_1_microsoft_partner_center_and_marketplace:
+
+    active:
+      - url: https://github.com/Azure/Commercial-Marketplace-SaaS-Accelerator
+        purpose: Full-stack .NET reference impl of a transactable SaaS offer — fulfillment webhook, metered billing, subscription lifecycle
+        ipai_relevance: highest (closest fit to Pulser for Odoo SaaS motion)
+        last_activity: "2026-01-30"
+      - url: https://github.com/Azure/Microsoft-commercial-marketplace-transactable-SaaS-offer-SDK
+        purpose: SaaS Fulfillment API v2 + Metering Service SDK (superseded by Accelerator but still referenced)
+        ipai_relevance: medium
+        last_activity: "2026-01-30"
+      - url: https://github.com/microsoft/Partner-Center-DotNet-Samples
+        purpose: Partner Center API SDK samples — customer management, orders, subscriptions, CSP flows
+        ipai_relevance: medium (CSP motion is gated/out-of-scope for now)
+        last_activity: "2025-10-28"
+
+    stale_but_referenceable:
+      - url: https://github.com/microsoft/commercial-marketplace-resources
+        purpose: Marketplace scenario samples (ARM, managed apps, solution templates)
+        last_activity: "2023-10-30"
+      - url: https://github.com/microsoft/commercial-marketplace-offer-solution
+        purpose: Quick-start scaffold for publishing a marketplace offer
+        last_activity: "2024-07-04"
+      - url: https://github.com/microsoft/commercial-marketplace-client-java
+        purpose: Java SDK for SaaS Fulfillment API v2 + Metering
+        last_activity: "2024-06-11"
+      - url: https://github.com/Azure/isv-success-program-resources
+        purpose: ISV Success program workshop + webinar content for marketplace ISVs
+        last_activity: "2024-08-02"
+
+  track_2_github_enterprise_csp_provisioning:
+
+    note: no dedicated reference repo for GitHub-specific CSP enterprise-seat provisioning
+    closest_reference: microsoft/Partner-Center-DotNet-Samples (covers Partner Center orders + subscriptions, not GitHub seat provisioning handshake)
+    gap_flagged_in: notable_gaps.gap_2_github_csp_provisioning
+
+  track_3_copilot_partner_program_and_extensions:
+
+    active:
+      - url: https://github.com/copilot-extensions/preview-sdk.js
+        purpose: Official JS SDK — request verification, SSE response formatting, Copilot API auth
+        ipai_relevance: highest (baseline SDK for any extension we build later)
+        last_activity: "2026-01-28"
+      - url: https://github.com/copilot-extensions/blackbeard-extension
+        purpose: Minimal "Hello World" Copilot Chat extension skeleton in Node.js
+        ipai_relevance: high (starting scaffold)
+        last_activity: "2025-12-31"
+      - url: https://github.com/copilot-extensions/skillset-example
+        purpose: Skillset-mode extension (no agent loop) — fastest path to Copilot Chat tool surface
+        ipai_relevance: high (aligns with Pulser skill wrapper pattern)
+        last_activity: "2025-06-24"
+      - url: https://github.com/copilot-extensions/rag-extension
+        purpose: Go-based RAG extension with retrieval context injection
+        ipai_relevance: medium (IPAI runtime is Python; pattern only)
+        last_activity: "2025-07-18"
+      - url: https://github.com/copilot-extensions/function-calling-extension
+        purpose: Go-based extension using function calling + confirmation dialogs (approval pattern)
+        ipai_relevance: medium (pattern for mutating-tool approval UX)
+        last_activity: "2025-07-18"
+      - url: https://github.com/copilot-extensions/github-models-extension
+        purpose: Extension wiring Copilot Chat to GitHub Models inference endpoint
+        ipai_relevance: low (IPAI default provider is Foundry, not GitHub Models)
+        last_activity: "2025-04-11"
+
+# -----------------------------------------------------------------------------
+# Notable gaps (where no canonical Microsoft/GitHub repo exists)
+# -----------------------------------------------------------------------------
+notable_gaps:
+
+  gap_1_marketplace_listing_automation:
+    track: track_1_microsoft_partner_center_and_marketplace
+    description: >
+      No official Microsoft repo automates offer creation/update via the
+      Partner Center Ingestion API or Product Ingestion API from CI/CD.
+    ipai_build_opportunity: >
+      Thin Azure Pipelines + ARM/Bicep wrapper calling
+      https://graph.microsoft.com/rp/product-ingestion endpoints, scoped
+      to Pulser for Odoo offer lifecycle (publish, update, withdraw).
+    build_status: deferred_until_post_marketplace_publish (post Aug-Sep 2026)
+
+  gap_2_github_csp_provisioning:
+    track: track_2_github_enterprise_csp_provisioning
+    description: >
+      No sample repo covers the full CSP-partner flow for programmatically
+      provisioning a client's GitHub Enterprise account via Azure
+      Marketplace CSP + Partner Center API. Partner-Center-DotNet-Samples
+      covers billing/orders but not the GitHub-specific enterprise-seat
+      provisioning handshake.
+    ipai_build_opportunity: out_of_scope_until_csp_motion_activates
+
+  gap_3_copilot_extension_managed_identity:
+    track: track_3_copilot_partner_program_and_extensions
+    description: >
+      All copilot-extensions samples use static API keys or GitHub token
+      pass-through. No canonical sample demonstrates the zero-secret
+      Azure Managed Identity + OIDC pattern IPAI requires under its
+      agentic security doctrine.
+    ipai_build_opportunity: >
+      If IPAI enters the Copilot Partner Program, build a reference
+      extension that demonstrates: (a) Managed Identity auth to Azure
+      backend, (b) zero client-secret in the extension, (c) Safe
+      Outputs middleware, (d) Foundry-backed model provider lane.
+    build_status: gated_on_pulser_ga
+
+# -----------------------------------------------------------------------------
+# Reference ingestion rules
+# -----------------------------------------------------------------------------
+reference_ingestion_rules:
+  rules:
+    - treat_as_pattern_donors_not_architecture_truth
+    - do_not_mirror_or_vendor_these_repos
+    - record_specific_patterns_adopted_with_source_url_and_commit_sha
+    - strip_any_hardcoded_secrets_keys_or_test_endpoints_before_use
+    - adapt_to_ipai_stack (Python + Foundry, not .NET + direct OpenAI)
+    - keep_azure_managed_identity_as_auth_principal (never static keys)
+  cross_reference:
+    - agents/docs/contracts/COOKBOOK_PATTERN_ADOPTION_RULES.md
+    - ssot/ai/external-reference-authorities.yaml
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not conflating Partner Center benefits with GitHub customer provisioning
+  - not pursuing Copilot Partner Program before Pulser GA + safety coverage
+  - not treating marketplace content as architecture truth
+  - not duplicating benefit entitlement tracking outside Partner Center
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - docs/gtm/partner_center_checklist.md
+  - docs/gtm/marketplace_research_brief.md
+  - docs/gtm/MARKETPLACE_OFFER.md
+  - docs/gtm/microsoft_cosell_one_pager.md
+  - ssot/governance/github-enterprise-migration.yaml
+  - ssot/governance/github-enterprise-org-target-state.yaml
+  - ssot/governance/github-operating-layers.yaml
+  - docs/gtm/PARTNER_PROGRAM_MAP.md

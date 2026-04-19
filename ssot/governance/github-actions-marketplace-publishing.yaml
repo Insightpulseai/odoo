@@ -1,0 +1,188 @@
+version: 1
+kind: github_actions_marketplace_publishing_policy
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture + gtm
+
+doctrine: >
+  GitHub Actions Marketplace publishing is a distinct distribution surface
+  from Azure Marketplace. Azure Marketplace carries IPAI's commercial
+  SaaS offer (Pulser for Odoo). GitHub Actions Marketplace is reserved
+  for narrow, free, public-open-source Actions that extend developer
+  workflows — not for IPAI commercial product distribution.
+
+parent_ssots:
+  - ssot/governance/partner-program-authority.yaml
+  - ssot/governance/github-actions-azure-oidc-policy.yaml
+  - ssot/governance/gha-scoped-exception.yaml
+  - ssot/governance/github-target-state-success-criteria.yaml
+
+# -----------------------------------------------------------------------------
+# IPAI disposition
+# -----------------------------------------------------------------------------
+ipai_disposition:
+  default_posture: deferred (no IPAI Action currently published or planned)
+  rationale: >
+    IPAI's engineering authority is Azure Pipelines for deploys (per
+    ci-cd-authority-matrix.yaml). GHA usage inside IPAI is scoped
+    exception. Publishing an Action to the GitHub Marketplace is a
+    distribution motion separate from repo CI — we allow it only for
+    narrow open-source utilities, not for proprietary IPAI logic.
+
+# -----------------------------------------------------------------------------
+# Publishing gate (before any IPAI Action can ship to Marketplace)
+# -----------------------------------------------------------------------------
+publishing_gate:
+
+  commercial_vs_distribution_check:
+    is_this_a_commercial_offer: must_be_NO_for_gha_marketplace
+    rationale: commercial SaaS goes to Azure Marketplace; GHA Marketplace is not a commerce layer
+    if_commercial_route_to: partner_center_azure_marketplace (per partner-program-authority.yaml)
+
+  licensing_check:
+    required_license: permissive_open_source (MIT, Apache-2.0) preferred
+    rationale: GHA Marketplace items are expected to be freely usable by the community
+    forbidden:
+      - closed_source_proprietary_logic_in_published_action
+      - bundled_ipai_secrets_or_internal_endpoints
+      - bundled_customer_data_or_tenant_specific_config
+
+  security_review:
+    required_checks:
+      - no_secrets_in_repo
+      - no_hardcoded_tokens_or_keys
+      - dependency_pinned_by_sha_where_possible
+      - action_inputs_documented_and_validated
+      - action_outputs_documented
+      - no_shell_injection_in_composite_actions
+    reviewer: platform-architecture + security
+
+  naming_check:
+    rules_from_github:
+      - must_be_unique_in_marketplace
+      - cannot_match_existing_action_name
+      - cannot_match_github_user_or_org_name (unless that user/org is publishing)
+      - cannot_match_marketplace_category_name
+      - cannot_match_github_reserved_feature_name
+    ipai_naming_preference: 'ipai-<domain>-<verb> (e.g. ipai-odoo-deploy)'
+
+  repo_shape_check:
+    rules_from_github:
+      - public_repository_required
+      - exactly_one_action_yml_or_action_yaml_at_repo_root
+      - repo_must_not_contain_workflow_files (to keep the repo a clean Action distribution unit)
+      - additional_action_metadata_in_subfolders_is_allowed_but_not_auto_listed
+
+  agreement_and_2fa_check:
+    github_marketplace_developer_agreement_accepted: required
+    accepting_owner: owner_or_org_admin_of_publishing_account
+    two_factor_auth_enabled: required_for_publisher_identity
+
+# -----------------------------------------------------------------------------
+# Publishing flow (if an IPAI Action is approved)
+# -----------------------------------------------------------------------------
+publishing_flow:
+  - step_1: create_dedicated_public_repo_in_Insightpulse-ai_org (naming per naming_check)
+  - step_2: add_action_yml_at_root_with_inputs_outputs_description_author_branding
+  - step_3: add_LICENSE (permissive OSS), SECURITY.md, README with usage examples
+  - step_4: add_tests_and_ci (separate repo's own CI, following gha-scoped-exception.yaml rules)
+  - step_5: security_review_signoff
+  - step_6: open_pr_linking_to_this_ssot_for_doctrine_traceability
+  - step_7: cut_release_with_semver_tag (v1.0.0, etc.)
+  - step_8: tick_"Publish this Action to GitHub Marketplace"_on_release_draft
+  - step_9: assign_primary_category_plus_optional_secondary_category
+  - step_10: publish_release (2FA prompted)
+  - step_11: record_publication_in_ssot_exceptions_or_marketplace_registry
+  - step_12: capture_evidence_in_docs/evidence/<ts>/gha-marketplace-publish/
+
+# -----------------------------------------------------------------------------
+# Removal flow
+# -----------------------------------------------------------------------------
+removal_flow:
+  note: GitHub removes Marketplace listing by unchecking "Publish" on each published release
+  per_release_steps:
+    - navigate_to_releases
+    - edit_each_published_release
+    - uncheck_"Publish this Action to GitHub Marketplace"
+    - save_"Update release"
+  repo_deletion_effect:
+    - marketplace_listing_deleted
+    - unique_name_becomes_available_again
+  ipai_policy:
+    - removal_requires_platform-architecture_signoff
+    - reason_and_replacement_path_documented_before_removal
+
+# -----------------------------------------------------------------------------
+# Transfer flow
+# -----------------------------------------------------------------------------
+transfer_flow:
+  behavior:
+    - github_creates_redirect_from_previous_url_to_new_url
+    - marketplace_listing_persists_under_unique_name_identifier
+    - consumers_workflows_keep_working_without_update
+  ipai_policy:
+    - never_transfer_an_ipai_published_action_outside_Insightpulse-ai_org_without_signoff
+    - verified_creator_badge_loss_risk_documented_before_transfer
+
+# -----------------------------------------------------------------------------
+# Badges
+# -----------------------------------------------------------------------------
+badges:
+  verified_creator:
+    how_to_obtain: "Email partnerships@github.com; requires partner organization status"
+    distinct_from: organization_profile_verified_badge
+    ipai_application: deferred (pursue only after first Action is published + used)
+
+# -----------------------------------------------------------------------------
+# Interaction with IPAI's scoped-exception GHA doctrine
+# -----------------------------------------------------------------------------
+interaction_with_gha_scoped_exception:
+  clarification: >
+    Publishing an Action to the Marketplace is a distribution activity,
+    not a CI/CD activity inside IPAI's core repos. It does NOT count as
+    GHA adoption as a deploy authority. The Action repo itself is a
+    dedicated public OSS repo, not an IPAI production runtime.
+  implications:
+    - action_repo_is_exempt_from_gha_scoped_exception_limits (it is the product, not the consumer)
+    - action_repo_still_follows_github_markdown_conventions, security_baseline, and CODEOWNERS
+    - core_ipai_repos_do_not_consume_ipai-published_actions_unless_reviewed
+
+# -----------------------------------------------------------------------------
+# Registry (populate as IPAI Actions are published)
+# -----------------------------------------------------------------------------
+published_actions_registry:
+  entries: []
+  entry_schema:
+    required_fields:
+      - name
+      - repo_url
+      - marketplace_url
+      - license
+      - primary_category
+      - secondary_category
+      - publisher
+      - first_published_at
+      - current_version
+      - security_review_evidence_path
+      - owner
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not distributing IPAI commercial product via GHA Marketplace (Azure Marketplace is canonical)
+  - not publishing closed-source proprietary logic
+  - not bundling IPAI internal endpoints, secrets, or tenant config in any published Action
+  - not consuming IPAI-published Actions inside core IPAI repos without review
+  - not skipping security review on the assumption that GitHub auto-reviews (it does not)
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/governance/partner-program-authority.yaml
+  - ssot/governance/github-actions-azure-oidc-policy.yaml
+  - ssot/governance/gha-scoped-exception.yaml
+  - ssot/governance/github-target-state-success-criteria.yaml
+  - ssot/governance/github-markdown-conventions.yaml
+  - ssot/governance/github-operating-layers.yaml

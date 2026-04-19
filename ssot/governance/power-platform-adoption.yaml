@@ -1,0 +1,192 @@
+version: 1
+kind: power_platform_adoption
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+
+doctrine: >
+  Microsoft Power Platform is a low-code / agent / automation / BI / portal
+  suite adjacent to Dynamics 365 and Azure. IPAI adopts Power Platform as
+  a governed surface for specific capabilities (agent authoring via
+  Copilot Studio, admin governance via admin center). It does not replace
+  Odoo CE for business applications, Databricks for analytics engineering,
+  or agent-platform for the Pulser runtime.
+
+# -----------------------------------------------------------------------------
+# Power Platform capability map (Microsoft canonical, mirrored here)
+# -----------------------------------------------------------------------------
+capability_map:
+
+  products:
+    copilot_studio:
+      purpose: ai_agent_authoring
+      ipai_adoption: governed_bounded (M365-surface agents only; Pulser agents remain on agent-platform)
+    power_apps:
+      purpose: business_applications_low_code
+      ipai_adoption: case_by_case (Odoo CE is the business app SoR; Power Apps only for M365-integrated edge cases)
+    power_automate:
+      purpose: workflow_automation
+      ipai_adoption: permitted_for_m365_centric_flows (not a replacement for Azure Logic Apps / Functions in Odoo lane)
+    power_bi:
+      purpose: analytics_reporting_semantic_consumption
+      ipai_adoption: primary_bi_surface (per CLAUDE.md #12 Consumption rule)
+    power_pages:
+      purpose: external_facing_sites_and_portals
+      ipai_adoption: not_currently_adopted (Odoo website + Azure Container Apps own public surfaces)
+
+  shared_substrate:
+    ai_builder:
+      purpose: ai_templates_and_model_consumption_inside_power_platform
+      ipai_adoption: reference_only (IPAI default AI runtime is Foundry via agent-platform)
+    connectors:
+      purpose: prebuilt_integrations_across_saas
+      ipai_adoption: adopt_for_m365_automation; custom connectors for IPAI APIs allowed
+    copilots_and_generative_ai:
+      purpose: built_in_copilot_capabilities
+      ipai_adoption: bounded_to_m365_surface
+    dataverse:
+      purpose: managed_relational_store_for_power_platform
+      ipai_adoption: scoped_to_power_platform_resources_only (Odoo Postgres remains ERP data SoR; Unity Catalog remains analytics data SoR)
+    power_fx:
+      purpose: low_code_expression_language
+      ipai_adoption: permitted_inside_power_apps_and_automate_only
+
+  admin_and_engineering_layers:
+    admin_center:
+      purpose: tenant_administration
+      ipai_adoption: enabled (per power-platform-admin-surface.yaml)
+    alm_guide:
+      purpose: application_lifecycle_management
+      ipai_adoption: reference_for_power_platform_assets
+    guidance_center:
+      purpose: product_guidance
+      ipai_adoption: reference_only
+    extend_and_develop:
+      purpose: pro_dev_extension_guidance
+      ipai_adoption: reference_only
+    architecture_center:
+      purpose: architecture_patterns
+      ipai_adoption: reference_only (IPAI architecture SoT remains docs/architecture/ + ssot/)
+    well_architected_guidance:
+      purpose: pillar_guidance (reliability, security, cost, operations, performance)
+      ipai_adoption: align_to_azure_waf (IPAI already uses Azure WAF; Power Platform WAF pillars are subset)
+
+  related_ecosystem:
+    dynamics_365:
+      role: adjacent_enterprise_business_apps
+      ipai_stance: not_adopted (Odoo CE is the ERP SoR)
+    microsoft_azure:
+      role: adjacent_cloud_services
+      ipai_stance: primary_runtime (per CLAUDE.md)
+
+# -----------------------------------------------------------------------------
+# Boundary with IPAI canonical runtimes
+# -----------------------------------------------------------------------------
+boundaries:
+
+  erp_system_of_record:
+    authority: odoo_ce_18_plus_oca_plus_ipai
+    power_platform_is_not: erp_system_of_record
+    rationale: Odoo owns finance, PM, HR, CRM business logic; Power Apps is not the business app SoR
+
+  analytics_system_of_record:
+    authority: databricks_plus_unity_catalog
+    power_platform_is_not: analytics_engineering_plane
+    power_bi_role: consumption_surface_only (semantic models, reports); engineering remains in Databricks
+
+  agent_runtime_authority:
+    authority: agent_platform (MAF-on-Foundry)
+    power_platform_is_not: pulser_agent_runtime
+    copilot_studio_role: m365_surface_agents_only (declarative agents that sit beside Pulser, not inside it)
+
+  automation_runtime_authority:
+    primary: azure_logic_apps_and_functions (for IPAI-internal automation)
+    secondary: power_automate (for M365-centric flows where Logic Apps is heavier than needed)
+    rule: when_in_doubt_prefer_azure_native
+
+# -----------------------------------------------------------------------------
+# Adoption policy per product
+# -----------------------------------------------------------------------------
+adoption_policy:
+
+  copilot_studio:
+    allowed_use:
+      - declarative_agents_for_teams_copilot_surface
+      - bounded_bot_surfaces_for_hr_it_helpdesk_that_do_not_mutate_erp_data
+    forbidden_use:
+      - replacing_pulser_domain_agents
+      - finance_or_tax_mutation_without_fd_approval
+      - any_action_that_writes_to_odoo_prod
+    governance_tie_in: ssot/governance/agent-interop-matrix.yaml
+
+  power_apps:
+    allowed_use:
+      - thin_m365_integrated_forms (e.g. quick approvals inside Teams)
+      - sharepoint-backed_lightweight_workflows
+    forbidden_use:
+      - erp_replacement_surfaces
+      - mobile_apps_for_pulser (iOS wrapper + web surfaces own mobile)
+
+  power_automate:
+    allowed_use:
+      - approval_workflows_staying_inside_m365
+      - power_platform_admin_connector_tasks (inventory_reporting, bulk_ops)
+    forbidden_use:
+      - odoo_data_mutations_outside_ipai_automation_lane
+      - cross_tenant_automation_bypassing_managed_identity
+
+  power_bi:
+    allowed_use:
+      - primary_reporting_surface_over_unity_catalog_and_fabric_mirrored_data
+      - executive_dashboards_driven_by_governed_semantic_models
+    forbidden_use:
+      - direct_prod_odoo_queries_from_desktop_without_governance (use Fabric Mirrored DB instead)
+    governance_tie_in: platform/ssot/architecture/*.yaml (Fabric mirroring + Databricks)
+
+  power_pages:
+    status: not_currently_adopted
+    revisit_trigger: genuine_need_for_external_portal_that_odoo_cannot_satisfy
+
+# -----------------------------------------------------------------------------
+# Tenant controls (link to admin surface SSOT)
+# -----------------------------------------------------------------------------
+tenant_controls:
+  admin_surface_ssot: ssot/governance/power-platform-admin-surface.yaml
+  inventory_enabled: target_state
+  notifications_preview_enabled: target_state
+  announcements_preview_enabled: target_state
+  enablement_runbook: docs/runbooks/power-platform-inventory-enablement.md
+
+# -----------------------------------------------------------------------------
+# Licensing posture
+# -----------------------------------------------------------------------------
+licensing_posture:
+  current_state: to_be_catalogued
+  required_inventory:
+    - per_user_licenses_for_power_apps_and_power_automate_authors
+    - environments_and_capacity_allocations
+    - dataverse_storage_allocations
+    - copilot_studio_message_capacity
+  cross_reference: docs/gtm/partner_center_checklist.md (for benefits-driven seats)
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not replacing Odoo CE with Power Apps
+  - not replacing agent-platform with Copilot Studio
+  - not replacing Azure Logic Apps / Functions with Power Automate for IPAI-internal flows
+  - not replacing Databricks with Dataverse
+  - not adopting Power Pages before a clear external-portal need arises
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - docs/architecture/POWER_PLATFORM_CAPABILITY_MAP.md
+  - ssot/governance/power-platform-admin-surface.yaml
+  - docs/runbooks/power-platform-inventory-enablement.md
+  - ssot/governance/agent-interop-matrix.yaml
+  - ssot/agent-platform/agent_framework_adoption.yaml
+  - platform/ssot/ai/foundry-resource-model.yaml
+  - ssot/identity/entra_target_state.yaml

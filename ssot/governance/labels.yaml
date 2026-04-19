@@ -1,0 +1,155 @@
+version: 1
+kind: github_labels_taxonomy
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+
+doctrine: >
+  Labels are structured metadata, not decoration. All labels use
+  group:value format. Labels are portable across IPAI repos where
+  practical. Repo-local labels are reserved for genuinely local concerns.
+
+group_format:
+  pattern: "group:value"
+  lowercase_kebab_case_value: true
+  no_synonyms: true
+  no_decorative_emoji: true
+
+# -----------------------------------------------------------------------------
+# Groups
+# -----------------------------------------------------------------------------
+groups:
+
+  type:
+    - type:feature
+    - type:bug
+    - type:chore
+    - type:docs
+    - type:refactor
+    - type:test
+    - type:security
+    - type:infra
+    - type:data
+    - type:design
+    - type:agent
+    - type:identity
+    - type:access
+    - type:oauth
+    - type:saml
+    - type:scim
+
+  status:
+    - status:triage
+    - status:ready
+    - status:blocked
+    - status:in-progress
+    - status:review
+    - status:done
+    - status:deferred
+
+  priority:
+    - priority:p0
+    - priority:p1
+    - priority:p2
+    - priority:p3
+
+  risk:
+    - risk:low
+    - risk:medium
+    - risk:high
+    - risk:production
+    - risk:data
+    - risk:security
+    - risk:access
+    - risk:identity
+
+  area:
+    - area:odoo
+    - area:platform
+    - area:web
+    - area:infra
+    - area:design
+    - area:data-intelligence
+    - area:agent-platform
+    - area:docs
+    - area:automations
+    - area:agents
+
+  env:
+    - env:dev
+    - env:staging
+    - env:prod
+
+  release:
+    - release:hotfix
+    - release:minor
+    - release:major
+
+  needs:
+    - needs:spec
+    - needs:design
+    - needs:review
+    - needs:test
+    - needs:security-review
+    - needs:deployment
+    - needs:evidence
+    - needs:idp
+    - needs:oauth-approval
+
+  agent:
+    - agent:claude
+    - agent:copilot
+    - agent:foundry
+    - agent:sre
+
+  automation:
+    - automation:ci
+    - automation:cd
+    - automation:ops
+
+  strategic:
+    - okr
+    - kpi
+    - governance
+    - architecture
+    - finops
+    - compliance
+    - governance:iam
+
+# -----------------------------------------------------------------------------
+# Usage rules
+# -----------------------------------------------------------------------------
+usage_rules:
+  - use_group_colon_value_format
+  - do_not_create_synonymous_duplicates
+  - keep_labels_portable_across_repos_where_possible
+  - reserve_repo_specific_labels_only_for_true_local_needs
+  - strategic_group_does_not_use_group_colon_prefix (legacy exception)
+
+# -----------------------------------------------------------------------------
+# Sync and enforcement
+# -----------------------------------------------------------------------------
+sync_and_enforcement:
+  source_of_truth_file: .github/labels.yml (per repo) synced from this SSOT
+  automation:
+    tool: label_sync_action (per gha-scoped-exception.yaml docs/link-check scope)
+    trigger: on_push_to_main_of_org_labels_repo
+  drift_check:
+    frequency: weekly
+    report_location: docs/evidence/<ts>/label-drift/
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not using emoji-only or decorative labels
+  - not creating repo-local duplicates of org-canonical groups
+  - not letting teams invent new groups without platform-architecture review
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/governance/github-desired-state.yaml
+  - ssot/governance/github-target-state-success-criteria.yaml
+  - ssot/governance/github-projects-v2-scope.yaml

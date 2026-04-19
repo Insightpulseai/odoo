@@ -1,0 +1,209 @@
+version: 1
+kind: observability_and_telemetry_governance
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+
+doctrine: >
+  Every runtime in IPAI emits structured logs, metrics, and traces to a
+  single Azure Monitor family (Log Analytics + Application Insights).
+  Retention, alert routing, dashboard locations, and SLO definitions are
+  codified — not scattered across teams. Observability is a gate for
+  production: a workload without observability cannot reach production.
+
+# -----------------------------------------------------------------------------
+# Canonical Azure Monitor resources
+# -----------------------------------------------------------------------------
+resources:
+  log_analytics_workspace:
+    name: log-ipai-dev-runtime-sea
+    rg: rg-ipai-dev-mon-sea
+    region: southeastasia
+    current_state: exists (verified 2026-04-19)
+  app_insights:
+    name: appi-ipai-dev-runtime-sea
+    rg: rg-ipai-dev-mon-sea
+    linked_workspace: log-ipai-dev-runtime-sea
+    current_state: exists (verified 2026-04-19)
+  action_group:
+    name: ag-ipai-dev-sea
+    rg: rg-ipai-dev-mon-sea
+    purpose: primary_alert_routing_channel
+    current_state: exists
+  dashboards_and_workbooks:
+    location: workbooks_attached_to_appi-ipai-dev-runtime-sea
+    naming_pattern: "wb-<domain>-<purpose>"
+
+# -----------------------------------------------------------------------------
+# Emit contract (every runtime)
+# -----------------------------------------------------------------------------
+emit_contract:
+
+  logs:
+    format: structured_json
+    required_fields:
+      - timestamp_iso8601
+      - level (info|warn|error|critical)
+      - service
+      - environment
+      - correlation_id
+      - message
+    sink: log_analytics_workspace_via_app_insights_or_direct_dcr
+
+  metrics:
+    sink: app_insights_customMetrics_or_log_analytics_metrics
+    required_dimensions:
+      - service
+      - environment
+      - version
+
+  traces:
+    format: opentelemetry_w3c_trace_context
+    sink: app_insights
+    required_span_attributes:
+      - service.name
+      - deployment.environment
+      - pulser.agent_id (when agent runtime)
+      - foundry.project (when foundry runtime)
+
+# -----------------------------------------------------------------------------
+# Retention
+# -----------------------------------------------------------------------------
+retention:
+  dev: 30_days
+  staging: 60_days
+  production:
+    default: 90_days
+    compliance_mandated_override: per_regulation (PH BIR, SOC 2)
+  ipai_policy: retention_must_match_branch_environment_contract.yaml
+
+# -----------------------------------------------------------------------------
+# SLO catalog (minimum set)
+# -----------------------------------------------------------------------------
+slo_catalog:
+
+  odoo_erp_runtime:
+    availability_target: 99.5% (production)
+    latency_p95_target_ms: 1500
+    error_rate_target: < 1%
+    measurement_window: 30d_rolling
+
+  agent_platform_runtime:
+    availability_target: 99.0% (production)
+    tool_call_success_rate_target: 97%
+    agent_response_p95_target_ms: 3000
+    measurement_window: 30d_rolling
+
+  ops_console_ui:
+    availability_target: 99.0% (production)
+    page_load_p95_target_ms: 2500
+
+  databricks_jobs:
+    scheduled_job_success_rate_target: 98% (30d rolling)
+
+# -----------------------------------------------------------------------------
+# Alert routing
+# -----------------------------------------------------------------------------
+alert_routing:
+  action_group: ag-ipai-dev-sea
+  severity_map:
+    sev_0_critical: pages_platform-architecture + finance_director_for_finance
+    sev_1_warning: email + teams_channel (business_hours_escalation)
+    sev_2_info: logged_only
+
+  required_alerts_per_production_workload:
+    - availability_drop_below_slo
+    - error_rate_exceeds_1_percent
+    - latency_p95_exceeds_slo
+    - dependency_failure (database / key_vault / foundry)
+    - disk_or_memory_pressure
+    - security_finding_high_or_critical (GHAS + Defender)
+
+# -----------------------------------------------------------------------------
+# Dashboards (canonical)
+# -----------------------------------------------------------------------------
+dashboards:
+  canonical_set:
+    - wb-odoo-runtime-health
+    - wb-odoo-bir-compliance
+    - wb-agent-platform-health
+    - wb-agent-platform-tool-usage
+    - wb-ops-console-ux
+    - wb-databricks-job-health
+    - wb-release-evidence-rollup
+    - wb-cost-by-env-and-workload (links to FinOps SSOT)
+  access_control: entra_group_membership (per identity_matrix)
+  executive_summary:
+    consumer: power_bi (per CLAUDE.md #12)
+    delivery: scheduled_report_from_log_analytics + app_insights
+
+# -----------------------------------------------------------------------------
+# Production gate
+# -----------------------------------------------------------------------------
+production_gate:
+  rule: no_workload_reaches_production_without_observability_baseline
+  baseline_checklist:
+    - logs_emitted_structured_json
+    - metrics_emitted_with_required_dimensions
+    - traces_emitted_via_opentelemetry
+    - dashboards_exist_for_workload
+    - alerts_configured_for_workload
+    - slo_defined_and_recorded_in_this_ssot
+    - retention_aligned_with_branch_environment_contract
+  enforcement: azure_pipelines_release_gate (per feature-ship-readiness-gates.yaml)
+
+# -----------------------------------------------------------------------------
+# Cost controls
+# -----------------------------------------------------------------------------
+cost_controls:
+  log_analytics_daily_cap: "to_be_set_per_env — dev low, prod higher with budget alert"
+  app_insights_sampling:
+    dev: "adaptive_default"
+    staging: "50_percent"
+    production: "100_percent_errors_plus_25_percent_successful_traces_tunable"
+  cross_reference: ssot/governance/finops-azure-cost-governance.yaml
+
+# -----------------------------------------------------------------------------
+# Success criteria
+# -----------------------------------------------------------------------------
+success_criteria:
+  - id: OBS-1
+    description: 100% of production workloads emit structured logs to LA workspace
+    target: 100%
+    measurement: log_source_enumeration
+  - id: OBS-2
+    description: 100% of production workloads have SLO recorded in this SSOT
+    target: 100%
+    measurement: slo_catalog_completeness
+  - id: OBS-3
+    description: 100% of production workloads have at least 1 canonical dashboard
+    target: 100%
+    measurement: workbook_inventory
+  - id: OBS-4
+    description: 100% of production workloads have required alerts wired
+    target: 100%
+    measurement: alert_rule_audit
+  - id: OBS-5
+    description: Retention matches branch-environment-contract per environment
+    target: true
+    measurement: workspace_table_retention_audit
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not allowing a production workload without observability baseline
+  - not fragmenting telemetry across multiple unaligned sinks
+  - not tolerating unstructured logs in production
+  - not duplicating dashboards per team without governance
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - platform/ssot/runtime/branch-environment-contract.yaml
+  - platform/ssot/release/odoo-cloud-release-gates.yaml
+  - ssot/release/go-live-readiness.yaml
+  - ssot/release/feature-ship-readiness-gates.yaml
+  - ssot/governance/finops-azure-cost-governance.yaml
+  - platform/ssot/azure/resource-inventory.dev.yaml

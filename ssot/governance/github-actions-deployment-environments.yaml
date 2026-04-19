@@ -1,0 +1,359 @@
+version: 1
+kind: github_actions_deployment_environments_doctrine
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+
+doctrine: >
+  GitHub environments are the deployment control plane: workflows decide
+  how deployment runs, environments decide whether it is allowed to run,
+  protection rules decide what must be true first, and deployment history
+  provides after-the-fact auditability. Every real deployment job must be
+  environment-bound. In IPAI, GHA handles nonprod environments (dev,
+  staging, preview); production deployment authority remains with Azure
+  Pipelines (per ci-cd-authority-matrix.yaml + github-actions-azure-oidc-policy.yaml).
+
+parent_ssots:
+  - ssot/governance/github-actions-azure-oidc-policy.yaml
+  - ssot/governance/github-actions-workflow-authoring-doctrine.yaml
+  - ssot/governance/gha-scoped-exception.yaml
+  - ssot/governance/ci-cd-authority-matrix.yaml
+  - platform/ssot/runtime/branch-environment-contract.yaml
+
+# -----------------------------------------------------------------------------
+# Mental model
+# -----------------------------------------------------------------------------
+mental_model:
+  workflow: automation_graph
+  environment: governed_deployment_target
+  deployment_job: environment_bound_execution_unit
+  protection_rule: precondition_gate_before_execution
+  deployment_history: auditable_change_record_after_the_fact
+
+# -----------------------------------------------------------------------------
+# Environment inventory (IPAI canonical)
+# -----------------------------------------------------------------------------
+environment_inventory:
+
+  canonical:
+    - name: dev
+      purpose: integration_and_fast_feedback
+      deploy_authority: github_actions (per gha-scoped-exception.yaml)
+      ipai_runtime_target: ipai-odoo-dev (aca)
+
+    - name: staging
+      purpose: preprod_validation
+      deploy_authority: github_actions (per gha-scoped-exception.yaml nonprod lane)
+      ipai_runtime_target: ipai-odoo-staging (aca)
+
+    - name: production
+      purpose: customer_facing_release
+      deploy_authority: azure_pipelines (sole authority — NOT github_actions)
+      ipai_runtime_target: ipai-odoo-prod (aca)
+      rationale: >
+        Production deploys require approval gates, release evidence
+        capture, and cross-system coordination per
+        github-actions-azure-oidc-policy.yaml#scope_split and
+        platform/ssot/release/odoo-cloud-release-gates.yaml.
+
+  optional:
+    - name: preview
+      purpose: ephemeral_pr_validation
+      deploy_authority: github_actions
+      lifetime: per_pr (teardown on close/merge)
+
+    - name: sandbox
+      purpose: isolated_experimentation
+      deploy_authority: github_actions
+      lifetime: ad_hoc
+
+    - name: hotfix
+      purpose: urgent_patch_lane
+      deploy_authority: azure_pipelines
+      rationale: hotfix still touches production so Azure Pipelines owns
+
+    - name: demo
+      purpose: customer_or_investor_demo_instance
+      deploy_authority: github_actions
+      lifetime: scheduled_or_ad_hoc
+
+  forbidden_names:
+    - prod2
+    - real-prod
+    - temp-stage
+    - deploy-now
+
+# -----------------------------------------------------------------------------
+# Protection model by environment
+# -----------------------------------------------------------------------------
+protection_model:
+
+  dev:
+    required_reviewers: false
+    restricted_branches: false
+    environment_scoped_secrets: optional
+    custom_protection_rules: optional
+    concurrency_lock: recommended (per workflow_name-environment)
+
+  staging:
+    required_reviewers: optional (platform-architecture on risky changes)
+    restricted_branches: true
+    allowed_branches: [main, release/*]
+    environment_scoped_secrets: required_for_sensitive_creds
+    custom_protection_rules: recommended
+    concurrency_lock: required
+
+  production:
+    deploy_authority: azure_pipelines
+    notes: >
+      Environment exists in GitHub primarily as a record surface for
+      deployments triggered by Azure Pipelines; GitHub Actions is NOT
+      the deploy executor for production per existing doctrine.
+    required_reviewers: true
+    required_reviewer_count: ">= 1"
+    required_reviewer_list:
+      - platform-architecture
+      - finance_director_khalil (when finance-affecting; per branch-environment-contract.yaml)
+    restricted_branches: true
+    allowed_ref_types: [tag]
+    tag_pattern: "vX.Y.Z (immutable)"
+    environment_scoped_secrets: required
+    custom_protection_rules: required (external policy gate)
+    concurrency_lock: required (serialized)
+    deployment_history_retention: "at_least_1_year"
+
+  preview:
+    required_reviewers: false
+    lifetime_managed: auto_teardown_on_pr_close_or_merge
+    environment_scoped_secrets: minimal
+
+  sandbox:
+    required_reviewers: false
+    access_control: restricted_to_named_team
+    environment_scoped_secrets: none
+
+# -----------------------------------------------------------------------------
+# Secret scope model
+# -----------------------------------------------------------------------------
+secret_scope:
+
+  environment_scoped_secrets:
+    use_for:
+      - production_publish_credentials (managed via Azure Pipelines, not GHA)
+      - per_environment_api_endpoints
+      - staging_database_connection_strings
+      - deploy_target_resource_identifiers
+      - per_environment_signing_material
+    rule: >
+      If a secret should only be reachable during deployment to one
+      target, it belongs to the environment — not to repo/org secrets.
+
+  repo_or_org_secrets:
+    use_for:
+      - reusable_ci_auth (shared across jobs, non-environment-specific)
+      - package_registry_auth_for_ghcr_publish
+      - shared_non_environment_automation_tokens
+
+  ipai_hard_rule:
+    production_secrets_never_in_ghcr_scope: true
+    production_secrets_flow: azure_key_vault_via_managed_identity_in_azure_pipelines
+    cross_reference: ssot/governance/github-actions-azure-oidc-policy.yaml
+
+# -----------------------------------------------------------------------------
+# Custom deployment protection rules (external gates)
+# -----------------------------------------------------------------------------
+custom_protection_rules:
+
+  purpose: bridge_between_github_actions_deploy_execution_and_ipai_ops_control_plane
+
+  canonical_use_cases:
+    - cab_or_change_request_validation
+    - maintenance_window_enforcement
+    - freeze_window_enforcement
+    - sre_health_gate
+    - post_build_artifact_attestation_gate
+    - cost_or_quota_or_capacity_gate
+    - policy_as_code_gate
+    - external_control_plane_approval (e.g. ops-console)
+
+  implementation_path:
+    - github_app_with_deployment_protection_rule_permission
+    - app_registered_in_Insightpulse-ai_org
+    - app_scoped_to_specific_environments
+    - app_audit_trail_in_github_audit_log
+
+  ipai_candidates:
+    - ops_console_approval_gate (future)
+    - azure_policy_readiness_validation
+    - eval_gate_for_agent_mutations (per odoo-cloud-release-gates.yaml#G6)
+    - fd_approval_gate_for_finance_affecting_changes
+
+# -----------------------------------------------------------------------------
+# Canonical workflow shape
+# -----------------------------------------------------------------------------
+canonical_workflow_shape:
+
+  job_layout:
+    - build:
+    - test:
+    - package:
+    - deploy_dev:
+        environment: dev
+    - deploy_staging:
+        environment: staging
+        needs: [deploy_dev]
+    # deploy_production is NOT in GHA workflows for IPAI — Azure Pipelines owns
+
+  anti_pattern: >
+    One opaque deploy job with hand-rolled conditional branching for
+    dev/staging/prod. Split by environment and let GitHub enforce
+    protection rules per target.
+
+# -----------------------------------------------------------------------------
+# Naming conventions
+# -----------------------------------------------------------------------------
+naming_conventions:
+  environment_names:
+    allowed: [dev, staging, production, preview, sandbox, hotfix, demo]
+    rule: lowercase_single_word_or_dash_separated
+  job_names:
+    pattern: "deploy_<environment>"
+    examples: [deploy_dev, deploy_staging, deploy_preview]
+  workflow_files:
+    deploy: .github/workflows/cd.yml
+    release: .github/workflows/release.yml
+    preview: .github/workflows/preview-deploy.yml
+
+# -----------------------------------------------------------------------------
+# Auditability
+# -----------------------------------------------------------------------------
+deployment_auditability:
+  reviewable: true
+  rejectable: true
+  historically_visible: true
+  ipai_maturity_floor: >
+    If a deploy cannot be reconstructed from GitHub's environment /
+    deployment history, it is below target maturity.
+  minimum_record_fields:
+    - workflow_run_id
+    - environment_name
+    - ref (branch or tag)
+    - actor
+    - approver_list_when_gated
+    - timestamp
+    - duration
+    - outcome
+
+# -----------------------------------------------------------------------------
+# BOM (bill of materials)
+# -----------------------------------------------------------------------------
+bom:
+  github_features_in_play:
+    - environments
+    - deployment_jobs
+    - required_reviewers
+    - environment_secrets
+    - environment_variables
+    - deployment_history
+    - deployment_review_and_approval_ui
+    - custom_deployment_protection_rules
+    - concurrency_controls
+    - provider_specific_deploy_actions_or_scripts
+  external_integration_surface:
+    - github_apps_for_protection_rules
+    - cloud_provider_auth_actions (azure/login@v2 via OIDC)
+    - external_policy_approval_and_ops_systems (ops-console, azure_policy, etc.)
+
+# -----------------------------------------------------------------------------
+# SMART success criteria
+# -----------------------------------------------------------------------------
+success_criteria:
+
+  structure:
+    - id: DEPLOY-1
+      description: Environments defined for dev, staging, production (and preview where used)
+      target: 100% of delivery repos
+      measurement: environment_roster_audit
+
+  governance:
+    - id: DEPLOY-2
+      description: All mutating deploy jobs reference an environment
+      target: 100%
+      measurement: workflow_static_scan
+    - id: DEPLOY-3
+      description: Production environment uses required reviewers
+      target: ">= 1 reviewer (platform-architecture; + FD for finance)"
+      measurement: env_protection_rule_check
+    - id: DEPLOY-4
+      description: Production uses environment-scoped secrets only (no repo/org production secrets)
+      target: 100%
+      measurement: secret_scope_audit
+
+  control:
+    - id: DEPLOY-5
+      description: Restricted branches applied to staging + production
+      target: true
+      measurement: env_protection_rule_check
+    - id: DEPLOY-6
+      description: Custom protection rules supported for sensitive targets
+      target: at_least_1_custom_rule_wired_to_production
+      measurement: github_app_install_audit
+    - id: DEPLOY-7
+      description: Deployment rejection path exists and is tested
+      target: true
+      measurement: rejection_drill_evidence_in_docs_evidence
+
+  observability:
+    - id: DEPLOY-8
+      description: Deployment history visible in GitHub
+      target: 100% of deploy jobs recorded
+      measurement: github_api_deployment_list
+    - id: DEPLOY-9
+      description: Approvals and rejections are auditable
+      target: 100% with actor + timestamp
+      measurement: github_audit_log_correlation
+
+# -----------------------------------------------------------------------------
+# Alignment with IPAI's deploy authority split
+# -----------------------------------------------------------------------------
+authority_alignment:
+  gha_owns:
+    - dev_deploys
+    - staging_deploys
+    - preview_deploys
+    - sandbox_deploys
+    - demo_deploys
+  azure_pipelines_owns:
+    - production_deploys
+    - hotfix_deploys
+    - release_evidence_capture
+    - approval_gated_promotions
+  cross_reference:
+    - ssot/governance/github-actions-azure-oidc-policy.yaml
+    - ssot/governance/ci-cd-authority-matrix.yaml
+    - ssot/governance/gha-scoped-exception.yaml
+    - platform/ssot/release/odoo-cloud-release-gates.yaml
+    - platform/ssot/runtime/branch-environment-contract.yaml
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not making github_actions the production deploy authority (Azure Pipelines retains)
+  - not allowing opaque single deploy jobs with hand-rolled env branching
+  - not placing production secrets in repo/org scope
+  - not bypassing environment protection rules via fork PRs or unreviewed pushes
+  - not using forbidden environment names (prod2, real-prod, temp-stage, deploy-now)
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/governance/github-actions-azure-oidc-policy.yaml
+  - ssot/governance/github-actions-workflow-authoring-doctrine.yaml
+  - ssot/governance/gha-scoped-exception.yaml
+  - ssot/governance/github-actions-marketplace-publishing.yaml
+  - ssot/governance/ci-cd-authority-matrix.yaml
+  - ssot/governance/github-target-state-success-criteria.yaml
+  - platform/ssot/runtime/branch-environment-contract.yaml
+  - platform/ssot/release/odoo-cloud-release-gates.yaml

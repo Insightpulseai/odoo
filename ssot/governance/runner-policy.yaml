@@ -1,0 +1,97 @@
+version: 1
+kind: github_runner_policy
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+
+doctrine: >
+  GitHub-hosted runners are the default. Larger runners are used
+  selectively for performance. Self-hosted / ARC is used only for
+  explicit private-network or perf needs. All runners use standardized
+  labels and groups. OIDC is preferred for cloud auth across every lane.
+
+parent_ssots:
+  - ssot/governance/github-actions-azure-oidc-policy.yaml
+  - ssot/governance/gha-scoped-exception.yaml
+
+lanes:
+  default_ci:
+    runner_type: github_hosted
+    use_for:
+      - lint
+      - unit_test
+      - standard_build
+  heavy_ci:
+    runner_type: larger_github_hosted
+    use_for:
+      - heavy_builds
+      - integration_tests
+      - larger_packaging_jobs
+  private_lane:
+    runner_type: self_hosted_or_arc
+    use_for:
+      - private_networking
+      - custom_substrate
+      - controlled_deployment (where nonprod GHA is permitted)
+
+labels:
+  canonical:
+    - linux
+    - windows
+    - macos
+    - x64
+    - arm64
+    - docker
+    - gpu
+    - private-net
+    - azure
+    - heavy-build
+    - deploy
+
+groups:
+  canonical:
+    - shared-ci
+    - heavy-ci
+    - private-net
+    - deploy-prod
+    - sandbox
+  governance_rule: >
+    Every self-hosted runner joins exactly one canonical group.
+    Groups are scoped by the workflows / environments permitted to use them.
+
+rules:
+  - github_hosted_is_default
+  - larger_runners_only_for_measured_perf_wins
+  - self_hosted_only_for_explicit_private_or_custom_needs
+  - self_hosted_must_use_labels_and_groups
+  - oidc_preferred_for_cloud_auth_across_every_lane
+  - runner_lifecycle_monitored_and_documented
+
+billing:
+  rule: route_through_azure_subscription (per gha-scoped-exception.yaml#hard_conditions.billing)
+
+private_networking_preference:
+  preferred: azure_private_networking_for_github_hosted_runners
+  over: standing_up_self_hosted_runners
+  rationale: avoids self-host ops burden; aligns with github-actions-azure-oidc-policy.yaml#runners
+
+self_hosted_when_adopted:
+  substrate_options:
+    - arc_on_kubernetes (Actions Runner Controller)
+    - aca_event_driven_runners
+    - vm_or_vmss_classic
+  requirements:
+    - managed_identity_for_cloud_auth
+    - segregated_group_assigned_to_specific_workflows_only
+    - patch_and_update_runbook_documented
+
+anchors:
+  - ssot/governance/github-actions-azure-oidc-policy.yaml
+  - ssot/governance/gha-scoped-exception.yaml
+  - ssot/governance/github-actions-workflow-authoring-doctrine.yaml
+  - ssot/governance/workflow-conventions.yaml
+
+non_goals:
+  - not running self_hosted_default
+  - not skipping group assignment for self-hosted runners
+  - not using PAT or client_secret for cloud auth when OIDC is available

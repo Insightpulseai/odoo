@@ -1,0 +1,314 @@
+version: 1
+kind: github_actions_workflow_authoring_doctrine
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+
+doctrine: >
+  GitHub Actions is the repo-native deterministic automation layer for
+  IPAI. Every workflow is an event-driven automation graph: triggers
+  start jobs, jobs run steps on chosen runners, variables/contexts/
+  expressions drive behavior. Agent systems sit on top of or inside
+  selected workflows — never in place of them.
+
+parent_ssots:
+  - ssot/governance/github-actions-azure-oidc-policy.yaml
+  - ssot/governance/gha-scoped-exception.yaml
+  - ssot/governance/github-actions-marketplace-publishing.yaml
+  - ssot/governance/github-target-state-success-criteria.yaml
+
+# -----------------------------------------------------------------------------
+# Workflow capability map (authoring surface)
+# -----------------------------------------------------------------------------
+capability_map:
+
+  trigger_model:
+    role: entrypoint_contract_for_ci_cd_and_automation
+    available_trigger_classes:
+      - github_events
+      - scheduled_cron_runs
+      - manual_or_external_triggers
+      - filtered_event_based_runs
+
+  job_graph:
+    role: orchestration_layer
+    controls:
+      - one_or_many_jobs
+      - dependencies_between_jobs
+      - conditional_execution_of_jobs
+      - matrix_variations_for_repeated_jobs
+      - data_passing_between_jobs_via_outputs
+
+  execution_environment:
+    role: runtime_contract
+    controls:
+      - runner_type
+      - containerized_job_execution
+      - default_shell
+      - default_working_directory
+
+  step_behavior:
+    role: task_execution_layer
+    controls:
+      - run_shell_scripts
+      - use_prebuilt_actions
+      - call_github_cli
+      - emit_workflow_commands
+      - use_expressions_and_contexts
+
+  data_and_state:
+    role: workflow_data_plane
+    controls:
+      - variables (default + custom)
+      - contexts
+      - expressions
+      - artifacts
+      - workflow_outputs
+      - dependency_cache
+
+  control_and_safety:
+    role: coordination_and_governance_layer
+    controls:
+      - if_conditions
+      - concurrency_limits
+      - workflow_or_job_mutual_exclusion
+      - caching_policy
+      - controlled_branching_logic
+
+# -----------------------------------------------------------------------------
+# Canonical use vs forbidden use (IPAI positioning)
+# -----------------------------------------------------------------------------
+canonical_use:
+  - ci
+  - contract_checks
+  - lint_and_test_and_build
+  - packaging
+  - deploy_orchestration (per gha-scoped-exception.yaml + github-actions-azure-oidc-policy.yaml)
+  - pr_automation
+  - issue_automation
+  - scheduled_reports_or_audits
+  - artifact_publication
+  - cache_accelerated_builds
+
+forbidden_use:
+  - undocumented_manual_process_logic
+  - drifting_environment_assumptions
+  - hardcoded_secrets_in_yaml
+  - repo_specific_behavior_duplicated_across_workflows_without_templates_or_reuse
+
+# -----------------------------------------------------------------------------
+# Design doctrine (5 rules)
+# -----------------------------------------------------------------------------
+design_doctrine:
+
+  rule_1_standardize_triggers:
+    allowed_set:
+      - pull_request
+      - push
+      - workflow_dispatch
+      - schedule
+      - issue_or_pr_comment (only for intended agent workflows)
+    principle: small_predictable_explicit
+
+  rule_2_standardize_job_lanes:
+    canonical_lanes:
+      - validate
+      - test
+      - build
+      - package
+      - deploy
+      - report_or_postprocess
+    principle: most_repos_should_converge_on_these_lanes
+
+  rule_3_standardize_state_passing:
+    use_outputs_for: job_to_job_data
+    use_artifacts_for: durable_workflow_products
+    use_cache_only_for: reproducible_dependency_acceleration
+    forbidden: ad_hoc_file_sharing_via_runner_local_paths
+
+  rule_4_standardize_execution_control:
+    require:
+      - explicit_concurrency_groups
+      - job_level_if_when_branching
+      - clear_runner_selection
+      - explicit_default_shell_and_working_directory_when_non_default
+
+  rule_5_standardize_reuse:
+    prefer:
+      - reusable_workflows
+      - workflow_templates
+      - composite_or_custom_actions_for_repeated_primitives
+    avoid:
+      - copy_pasted_step_blocks_across_repos
+
+# -----------------------------------------------------------------------------
+# Desired-state checklist (scannable)
+# -----------------------------------------------------------------------------
+desired_state_checklist:
+  triggers: explicit_minimal_auditable
+  jobs: small_named_by_responsibility
+  conditions: deterministic_and_readable
+  variables: centralized_scoped_non_secret
+  secrets: stored_in_github_or_azure_secret_stores_only
+  outputs_and_artifacts: used_intentionally_not_ad_hoc
+  caching: only_where_measurably_improves_build_time
+  concurrency: enabled_for_deploy_and_mutable_workflows
+  runners: deliberately_chosen_and_documented
+  reuse: templates_or_reusable_workflows_for_shared_patterns
+
+# -----------------------------------------------------------------------------
+# Authoring contract (hard rules per workflow)
+# -----------------------------------------------------------------------------
+authoring_contract:
+
+  header:
+    name_required: true
+    description_comment_recommended: true
+    links_required:
+      - this_ssot (by path reference)
+      - sibling_azure_pipeline (if scoped_exception_requires)
+
+  permissions_block:
+    required_every_oidc_workflow:
+      id-token: write
+      contents: read
+    forbidden: permissions_colon_write_all
+
+  secrets:
+    rule: zero_secrets_hardcoded_in_yaml
+    source_of_record: github_secrets_or_azure_keyvault_via_managed_identity
+    auth_pattern: oidc_federation_preferred (per github-actions-azure-oidc-policy.yaml)
+
+  concurrency:
+    required_for:
+      - deploy_workflows
+      - any_mutating_workflow
+    pattern: 'group: <workflow-name>-<ref>'
+    cancel_in_progress: true_for_non_deploy_false_for_deploy
+
+  matrix:
+    allowed_when: genuine_cross_variant_testing
+    forbidden_when: simulating_parallelism_for_unrelated_work
+
+  runners:
+    default: ubuntu-latest (or pinned major)
+    alternatives_require_justification:
+      - windows-latest
+      - macos-latest
+      - self_hosted (see runner_strategy below)
+
+  caching:
+    rule: only_when_verified_to_improve_wall_time
+    key_discipline: content_hash_based_keys_not_timestamp_based
+
+  artifact_policy:
+    rule: intentional_artifacts_only
+    retention: align_with_retention_policy (default GitHub 90d; shorter for noisy artifacts)
+
+# -----------------------------------------------------------------------------
+# Reuse pattern
+# -----------------------------------------------------------------------------
+reuse_pattern:
+
+  reusable_workflows_location: Insightpulse-ai/.github/workflows/reusable-*.yml
+  composite_actions_location: Insightpulse-ai/.github/actions/<action-name>/action.yml
+  workflow_templates_location: Insightpulse-ai/.github/workflow-templates/
+
+  rule_of_three: >
+    If the same block appears in three or more repos, promote it to a
+    reusable workflow, composite action, or template.
+
+# -----------------------------------------------------------------------------
+# Runner strategy (defer to existing policy, clarify defaults)
+# -----------------------------------------------------------------------------
+runner_strategy:
+  default: github_hosted_runners
+  billing: azure_subscription (per gha-scoped-exception.yaml)
+  private_network_access: azure_private_networking_for_github_hosted_runners (preferred over self-hosted)
+  self_hosted_default: avoided
+  self_hosted_allowed_when: event_driven_aca_runner_with_clear_cost_or_perf_win
+
+# -----------------------------------------------------------------------------
+# Relationship to agent systems
+# -----------------------------------------------------------------------------
+relationship_to_agents:
+  principle: >
+    Agent systems (Claude Code, Copilot Coding Agent, Pulser) sit on
+    top of or inside selected workflows, not in place of them.
+  allowed_agent_hooks:
+    - issue_or_pr_comment_triggering_a_bounded_workflow
+    - scheduled_agent_assisted_report_generation
+    - plan_mode_driven_pr_draft_pipeline
+  forbidden_agent_hooks:
+    - free_form_agent_chat_mutating_production_state
+    - unverified_auto_merge_from_agent_action
+    - agent_bypass_of_required_status_checks
+
+# -----------------------------------------------------------------------------
+# Enforcement
+# -----------------------------------------------------------------------------
+enforcement:
+  ci_linter: yaml_lint + actionlint
+  policy_gate: azure-pipelines/gha-scoped-exception-guard.yml (per gha-scoped-exception.yaml)
+  required_review_for_new_workflow: platform-engineering
+  drift_detection:
+    - compare_workflow_permissions_block_to_required_defaults
+    - detect_missing_concurrency_on_mutating_workflows
+    - detect_hardcoded_secret_patterns
+
+# -----------------------------------------------------------------------------
+# Machine-readable desired state (flat form for dashboards)
+# -----------------------------------------------------------------------------
+github_actions_desired_state:
+  workflow_model:
+    event_driven: true
+    deterministic: true
+    yaml_defined: true
+  required_capabilities:
+    triggers:
+      - pull_request
+      - push
+      - workflow_dispatch
+      - schedule
+    jobs:
+      - validate
+      - test
+      - build
+      - package
+      - deploy
+    controls:
+      conditions: true
+      concurrency: true
+      outputs_between_jobs: true
+      artifacts: true
+      caching: selective
+      containers: selective
+      matrices: selective
+  conventions:
+    use_templates: true
+    use_reusable_workflows: true
+    use_named_concurrency_groups: true
+    avoid_hardcoded_secrets: true
+    prefer_explicit_runner_selection: true
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not turning workflows into general scripting dumping grounds
+  - not duplicating workflow logic across repos without reusable workflows
+  - not replacing Azure Pipelines as deploy authority (per ci-cd-authority-matrix.yaml)
+  - not letting agent integrations bypass verification or auth boundaries
+  - not embedding secrets or endpoints directly in YAML
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/governance/github-actions-azure-oidc-policy.yaml
+  - ssot/governance/gha-scoped-exception.yaml
+  - ssot/governance/github-actions-marketplace-publishing.yaml
+  - ssot/governance/github-target-state-success-criteria.yaml
+  - ssot/governance/github-operating-layers.yaml
+  - ssot/governance/ci-cd-authority-matrix.yaml
+  - ssot/governance/github-markdown-conventions.yaml

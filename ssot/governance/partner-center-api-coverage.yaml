@@ -1,0 +1,292 @@
+version: 1
+kind: partner_center_api_coverage
+status: canonical
+last_updated: "2026-04-19"
+owner: gtm + platform-architecture
+
+doctrine: >
+  Microsoft Partner Center exposes a structured programmatic surface for
+  Marketplace commercialization. Strong API coverage exists for offer
+  submissions, private offers, and insights/analytics/reporting. Weak or
+  portal-only coverage exists for account-settings, legal profile,
+  billing profile UI, and agreements. IPAI automation should focus on
+  the strong-API lanes and treat the portal lanes as manual admin.
+
+parent_ssot: ssot/governance/partner-program-authority.yaml
+
+# -----------------------------------------------------------------------------
+# Coverage matrix (strong API vs portal-only)
+# -----------------------------------------------------------------------------
+coverage_matrix:
+
+  strong_api_surface:
+
+    marketplace_offer_submissions:
+      api_family: Partner Center submission APIs
+      capabilities:
+        - query_offers
+        - create_submissions
+        - publish_microsoft_marketplace_offers
+        - update_offer_plans
+        - promote_draft_to_preview_to_live
+      status: expanding (Microsoft continues extending this surface)
+      ipai_relevance: high (Pulser for Odoo SaaS offer)
+      ipai_automation_target:
+        - ci_driven_offer_publish_from_azure_pipelines
+        - offer_state_sync_to_docs_evidence
+        - listing_content_validation_pre_submit
+
+    private_offers:
+      api_family: Private Offers API
+      capabilities:
+        - create_private_offers
+        - retrieve_private_offers_associated_with_account
+        - manage_products_and_plans_through_private_offer_api
+      status: stable
+      ipai_relevance: medium (private offers to TBWA\SMP or similar named customers)
+      ipai_automation_target:
+        - deal_specific_offer_generation_from_template
+        - expiry_and_renewal_tracking
+
+    insights_analytics_reporting:
+      api_family: Partner Center Insights + Analytics APIs
+      capabilities:
+        - create_report_templates
+        - schedule_reports
+        - download_report_data_for_analytics_workflows
+      status: stable
+      ipai_relevance: high (revenue + usage telemetry for FP&A and Pulser metrics)
+      ipai_automation_target:
+        - scheduled_report_delivery_to_powerbi_via_fabric_mirroring
+        - usage_attribution_by_tracking_guid_per_offer_plan_channel
+
+    customers_subscriptions_orders:
+      api_family: Partner Center REST APIs (core business entities)
+      capabilities:
+        - customer_management
+        - subscription_lifecycle
+        - order_creation_and_lookup
+      status: documented_stable
+      ipai_relevance: medium (operational entities; becomes critical if CSP motion activates)
+      ipai_automation_target:
+        - subscription_state_sync_to_finance_close
+        - order_lookup_for_revenue_attribution
+
+    referrals:
+      api_family: Partner Center Referrals REST APIs
+      capabilities:
+        - create_partner_referrals
+        - update_partner_referrals
+        - retrieve_partner_referrals
+      status: documented_stable
+      ipai_relevance: medium-high (co-sell motion with Microsoft field sellers per microsoft_cosell_one_pager.md)
+      ipai_automation_target:
+        - referral_ingestion_into_ipai_crm_or_odoo
+        - referral_status_sync_to_pipeline_dashboards
+
+    csp_business_operations:
+      api_family: Partner Center SDK (CSP surface)
+      capabilities:
+        - csp_customer_management
+        - csp_orders
+        - csp_subscriptions
+        - csp_lifecycle_operations
+      status: broad_but_role_gated
+      ipai_relevance: deferred (CSP motion not yet active — see partner-program-authority.yaml)
+      ipai_automation_target: out_of_scope_until_csp_activates
+
+    legacy_marketplace_profile_offer_ops:
+      api_family: Cloud Partner Portal APIs (legacy)
+      capabilities:
+        - retrieve_workloads
+        - manipulate_offers
+        - manipulate_publisher_profiles
+      status: legacy_superseded (Microsoft directs new products to Partner Center submission APIs)
+      ipai_relevance: low (IPAI is a new product; skip legacy)
+      ipai_automation_target: do_not_adopt
+
+  portal_only_or_weak_api_surface:
+
+    legal_profile_maintenance:
+      automation_status: portal_primary
+      ipai_stance: manual_admin_via_partner_center_ui
+      notes: No documented public API for full legal profile mutation
+
+    billing_profile_ui:
+      automation_status: portal_primary
+      ipai_stance: manual_admin_when_applicable
+      conditional_requirement: only_for_dynamics_365_ce_or_ops_offers (per partner-center-account-management.yaml)
+
+    account_settings_and_agreements:
+      automation_status: portal_primary (partial API read access)
+      ipai_stance: manual_acceptance_with_ssot_record
+      ssot_record_location: ssot/governance/partner-center-account-management.yaml#agreements
+
+    some_tax_and_payout_actions:
+      automation_status: portal_primary
+      rationale: regulated_financial_surfaces_deliberately_human_in_loop
+      ipai_stance: manual_admin_by_bookkeeper_controller_and_platform_architecture
+
+# -----------------------------------------------------------------------------
+# Tooling surfaces (SDK / CLI / PowerShell)
+# -----------------------------------------------------------------------------
+tooling_surfaces:
+
+  official_sdks:
+    dotnet:
+      source: microsoft/Partner-Center-DotNet-Samples
+      status: actively_maintained (per partner-program-authority.yaml#reference_repositories)
+      ipai_stance: reference_pattern (IPAI runtime is Python-first, not .NET)
+    java:
+      source: Microsoft commercial marketplace Java samples
+      status: stale_but_referenceable (last activity 2024)
+      ipai_stance: reference_only
+
+  azure_cli_extension:
+    name: Azure CLI Partner Center extension
+    status: preview
+    ipai_stance: opt_in_for_ad_hoc_admin_ops (not for CI write automation while preview)
+    risks:
+      - preview_contract_changes
+      - possibly_incomplete_command_coverage
+    cross_reference: azure_cli_bestpractices_for_extensions
+
+  powershell:
+    archived_original_repo:
+      source: microsoft/Partner-Center-PowerShell
+      status: archived_read_only
+      ipai_stance: do_not_adopt_as_ssot
+    newer_community_module:
+      source: PartnerCenterPowerShellModule
+      status: community_maintained_not_officially_supported
+      capabilities:
+        - customers
+        - offers
+        - subscriptions
+        - usage
+      ipai_stance: selective_use_with_caution (acceptable for ad-hoc ops; not acceptable as primary automation substrate)
+
+  legacy:
+    cloud_partner_portal_apis:
+      status: legacy_works_for_previously_integrated_products
+      guidance: new_products_use_partner_center_submission_apis (do_not_adopt_for_ipai)
+
+# -----------------------------------------------------------------------------
+# Priority tiers (IPAI automation focus)
+# -----------------------------------------------------------------------------
+priority_tiers:
+
+  tier_1_primary_automation:
+    - marketplace_offer_submission_automation
+    - private_offer_automation
+    - referrals_automation
+    - customer_subscription_order_ops (activated when CSP motion begins)
+    - reporting_and_insights_export
+
+  tier_2_supporting_usage:
+    - azure_cli_preview_usage_for_ad_hoc_admin_ops
+    - sdk_based_internal_tools (dotnet reference patterns adapted to python)
+    - selective_powershell_use_with_caution (newer community module only)
+
+  avoid_as_primary:
+    - archived_microsoft_partner_center_powershell_repo_as_ssot
+    - legacy_cloud_partner_portal_apis_for_new_products
+    - assuming_all_account_settings_are_api_manageable
+    - building_automation_on_preview_extensions_for_production_writes
+
+# -----------------------------------------------------------------------------
+# Default posture (safest rule)
+# -----------------------------------------------------------------------------
+default_posture: >
+  Partner Center is API-capable for commerce and operational entities,
+  but portal-first for identity / legal / account-configuration pages.
+  When in doubt, route read operations through stable REST APIs and
+  route write operations through Azure Pipelines with approval gates
+  and evidence capture.
+
+# -----------------------------------------------------------------------------
+# Auth + compliance constraints
+# -----------------------------------------------------------------------------
+auth_and_compliance:
+
+  app_plus_user_partner_center_api:
+    mfa_enforcement_date: "2026-04-01"
+    implication: automation_principals_must_support_mfa_compatible_flows
+    ipai_target: use_workload_identity_federation_or_managed_identity_where_possible
+
+  auth_patterns:
+    preferred:
+      - managed_identity (for Azure-hosted automation)
+      - workload_identity_federation (for GitHub Actions OIDC scenarios)
+    acceptable_narrow:
+      - service_principal_with_certificate (short-lived, rotated via Key Vault)
+    forbidden:
+      - long_lived_client_secrets_in_source
+      - hardcoded_partner_center_credentials
+      - shared_interactive_admin_login_for_automation
+
+  sandbox:
+    purpose: develop_and_test_against_partner_center_sdk_without_production_risk
+    ipai_target: stand_up_sandbox_environment_before_prod_api_integration
+
+# -----------------------------------------------------------------------------
+# IPAI automation roadmap (aligned to Aug-Sep 2026 publish target)
+# -----------------------------------------------------------------------------
+automation_roadmap:
+
+  phase_1_pre_publish (now to publish):
+    scope: manual_portal_ops_with_ssot_record_only
+    artifacts:
+      - docs/gtm/partner_center_checklist.md (keep current)
+      - ssot/governance/partner-center-account-management.yaml
+
+  phase_2_publish_to_ga (publish to ~90 days post):
+    scope: read_only_automation
+    targets:
+      - insights_analytics_report_scheduling
+      - offer_state_polling_for_evidence_capture
+      - usage_attribution_via_tracking_guids
+    pipeline_home: azure_pipelines (Partner Center API lane)
+
+  phase_3_mature (~90 days post-GA onward):
+    scope: write_automation_for_submissions_and_private_offers
+    targets:
+      - ci_driven_offer_update_flow
+      - private_offer_template_generation_from_crm_signal
+      - automated_plan_changes_with_approval_gate
+    guardrails:
+      - azure_pipelines_approval_gate_for_any_write_api_call
+      - evidence_capture_in_docs_evidence_on_every_submission
+      - no_direct_prod_api_writes_from_gha
+
+# -----------------------------------------------------------------------------
+# Tracking GUID discipline
+# -----------------------------------------------------------------------------
+tracking_guid_discipline:
+  microsoft_recommendation: use_distinct_guids_by_offer_and_optionally_by_channel_and_plan
+  ipai_policy:
+    guid_per: [offer, plan, channel]
+    registry_location: ssot/governance/partner-center-tracking-guids.yaml (to be created when first GUID is minted)
+    rotation: on_material_offer_changes_or_channel_split
+    audit_cadence: quarterly
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not automating legal/billing/agreements UI actions
+  - not using legacy Cloud Partner Portal APIs for new offers
+  - not committing any Partner Center credential or account identifier to git
+  - not enabling write automation before phase_3 guardrails are in place
+  - not skipping tracking GUID discipline for offer/channel/plan splits
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/governance/partner-program-authority.yaml
+  - ssot/governance/partner-center-account-management.yaml
+  - docs/gtm/partner_center_checklist.md
+  - docs/gtm/marketplace_research_brief.md
+  - docs/gtm/MARKETPLACE_OFFER.md
+  - ssot/governance/github-actions-azure-oidc-policy.yaml

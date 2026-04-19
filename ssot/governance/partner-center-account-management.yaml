@@ -1,0 +1,192 @@
+version: 1
+kind: partner_center_account_management
+status: canonical
+last_updated: "2026-04-19"
+owner: gtm + platform-architecture
+supersedes_interpretation: "billing_profile_missing_equals_purchases_blocked"
+
+doctrine: >
+  Microsoft Partner Center account readiness has two tiers. Universal
+  commerce-critical surfaces (legal, identifiers, tax, payout) apply to
+  all transactable marketplace offers. Billing profile is offer-type
+  specific — required only for Dynamics 365 Customer Engagement &
+  Power Apps offers or Dynamics 365 for Operations offers. For general
+  Marketplace publishing (including IPAI's Pulser for Odoo SaaS offer),
+  billing profile is not a prerequisite.
+
+parent_ssot: ssot/governance/partner-program-authority.yaml
+
+# -----------------------------------------------------------------------------
+# Correction of prior interpretation
+# -----------------------------------------------------------------------------
+correction_notice:
+  prior_interpretation: "billing profile missing blocks Marketplace publishing"
+  corrected_interpretation: "billing profile is required only for specific Dynamics 365 offer classes"
+  evidence_source: Partner Center billing profile screen text
+  implication_for_ipai: "Pulser for Odoo is a SaaS offer (not Dynamics 365 CE/Ops), so billing profile is NOT a prerequisite"
+
+# -----------------------------------------------------------------------------
+# Universal account surfaces (required for general Marketplace publishing)
+# -----------------------------------------------------------------------------
+universal_requirements:
+
+  account_settings:
+
+    partner_tab:
+      purpose: Microsoft AI Cloud Partner Program legal/business info
+      ipai_state: to_be_verified
+
+    reseller_tab:
+      purpose: CSP-related details
+      ipai_state: not_applicable_yet (CSP motion out of scope per partner-program-authority.yaml)
+
+    developer_tab:
+      purpose: Marketplace / developer program details
+      fields:
+        - account_type_and_status
+        - seller_id
+        - publisher_id
+        - mpn_partner_ids
+        - entra_tenants
+        - seller_contact
+        - company_approver
+      ipai_state: to_be_verified
+
+  identifiers:
+    fields:
+      - partner_ids
+      - seller_ids
+      - publisher_ids
+      - tracking_guids
+    tracking_guids_policy:
+      usage: Azure_usage_attribution_and_tracking
+      recommendation: use_distinct_guids_by_offer_and_optionally_by_channel_and_plan
+    ipai_state: to_be_verified
+
+  agreements:
+    purpose: publishing agreements accepted for the account
+    fields:
+      - agreement_name_and_version
+      - acceptance_date
+      - accepting_user
+    ipai_state: to_be_verified
+
+  tax_profile:
+    required_for: transactable_marketplace_offers
+    order_constraint: must_be_submitted_before_payout_profile
+    validation_window: up_to_48_hours
+    us_forms_required:
+      - W-9 (qualifying US entities)
+      - W-8 (non-US entities)
+    ipai_us_form_expected: W-8 (IPAI is a PH entity per project_legal_identifiers memory)
+    withholding_note: may_apply_especially_for_us_source_sales
+    treaty_benefits: possible_reduction_for_eligible_countries
+    ipai_state: to_be_verified
+
+  payout_profile:
+    purpose: bank_account_where_microsoft_sends_proceeds
+    country_constraint: payout_account_country_must_match_partner_center_registration_country
+    ipai_registration_country: Philippines (per project_legal_identifiers memory)
+    payout_hold_feature: available_globally_for_partner_center_paid_revenue_streams
+    ipai_state: to_be_verified
+
+  multiuser_management:
+    mechanism: microsoft_entra_id
+    ipai_tenant: insightpulseai.onmicrosoft.com (per entra_target_state.yaml)
+    policy: assign_roles_via_entra_groups_not_individual_principals
+
+# -----------------------------------------------------------------------------
+# Conditional requirement — billing profile
+# -----------------------------------------------------------------------------
+conditional_requirement:
+
+  billing_profile:
+    required_only_for:
+      - Dynamics 365 for Customer Engagement & Power Apps offers
+      - Dynamics 365 for Operations offers
+    required_for_general_marketplace_publishing: false
+    required_for_saas_offers: false
+    ipai_current_offer_class: saas_transactable (Pulser for Odoo)
+    ipai_state: not_required_at_this_time
+    revisit_trigger: if_ipai_ever_publishes_a_dynamics_365_ce_or_ops_offer
+
+# -----------------------------------------------------------------------------
+# Account lifecycle
+# -----------------------------------------------------------------------------
+account_lifecycle:
+
+  creation: already_completed (IPAI enrolled ISV Success 2026-04-06)
+
+  deletion:
+    self_service: not_available
+    requires: microsoft_support_request
+    preconditions:
+      - no_live_or_unpublished_offers_remain
+      - no_pending_payments_remain
+      - requester_is_owner_or_manager_and_explicitly_consents
+    ipai_stance: not_applicable (account is actively used)
+
+# -----------------------------------------------------------------------------
+# Submission order (prevents out-of-order blockers)
+# -----------------------------------------------------------------------------
+submission_order:
+  - step_1: legal_and_identifiers_verification
+  - step_2: tax_profile_submitted (up to 48h validation)
+  - step_3: payout_profile_submitted (must be AFTER tax profile)
+  - step_4: agreements_accepted
+  - step_5: offer_specific_prerequisites (billing_profile ONLY if Dynamics 365 CE/Ops)
+  - step_6: offer_listing_and_plans_configured
+  - step_7: submit_for_certification
+
+# -----------------------------------------------------------------------------
+# Near-term IPAI priorities (aligned with Aug-Sep 2026 publish target)
+# -----------------------------------------------------------------------------
+near_term_priorities:
+
+  priority_1_tax_profile:
+    form: W-8 (IPAI is PH entity)
+    dependency: legal_identifiers_verified_first
+    validation: up_to_48h
+
+  priority_2_payout_profile:
+    country: Philippines (must match registration)
+    dependency: tax_profile_submitted_first
+    bank_account: to_be_designated (coordinate with Bookkeeper/Controller)
+
+  priority_3_identifiers_audit:
+    confirm:
+      - seller_id_recorded_in_ssot
+      - publisher_id_recorded_in_ssot
+      - mpn_7097326 (per project_legal_identifiers memory)
+      - duns_719209694 (per project_legal_identifiers memory)
+      - tracking_guids_per_offer_plan_channel
+
+  priority_4_agreements:
+    action: accept_current_publishing_agreement_versions
+    record_in: ssot/governance/partner-center-account-management.yaml#agreements_accepted (to be added on acceptance)
+
+# -----------------------------------------------------------------------------
+# Cross-reference with existing IPAI artifacts
+# -----------------------------------------------------------------------------
+cross_reference:
+  gtm_docs:
+    - docs/gtm/partner_center_checklist.md
+    - docs/gtm/marketplace_research_brief.md
+    - docs/gtm/MARKETPLACE_OFFER.md
+  ssot:
+    - ssot/governance/partner-program-authority.yaml
+    - ssot/governance/github-enterprise-migration.yaml
+    - ssot/identity/entra_target_state.yaml
+  memory_anchors:
+    - project_legal_identifiers (D-U-N-S 719209694, MPN 7097326, DTI 2606431)
+    - project_isv_success (ISV Success program enrollment details)
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not adding billing profile as a prerequisite for SaaS offers
+  - not submitting payout profile before tax profile
+  - not self-deleting the Marketplace account
+  - not committing any secret, tax ID number, or bank account detail to this repo
+  - not duplicating Partner Center state in git (this SSOT references, does not mirror)

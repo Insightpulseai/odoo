@@ -1,0 +1,298 @@
+version: 1
+kind: github_target_state_success_criteria
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+
+doctrine: >
+  Insightpulse-ai operates on GitHub Enterprise Cloud as the governed
+  engineering operating system: repo-first, team-based, Azure-integrated,
+  security-enabled, agent-assisted. This SSOT records the desired end
+  state, SMART success criteria, and KPIs that determine whether the
+  target state has been reached.
+
+parent_ssots:
+  - ssot/governance/github-enterprise-org-target-state.yaml
+  - ssot/governance/github-operating-layers.yaml
+  - ssot/governance/github-enterprise-migration.yaml
+
+executive_one_liner: >
+  GitHub becomes the governed engineering operating system for
+  Insightpulse-ai: repo-first, team-based, Azure-integrated,
+  security-enabled, and agent-assisted, with measurable delivery,
+  traceability, and policy outcomes.
+
+# -----------------------------------------------------------------------------
+# Desired end state
+# -----------------------------------------------------------------------------
+github_target_state:
+
+  enterprise:
+    name: ipai
+    role: governance_umbrella
+
+  primary_operating_org:
+    name: Insightpulse-ai
+    role: engineering_operating_org
+
+  github_as_system:
+    source_control: true
+    pull_request_truth: true
+    repo_ci_cd_default: true
+    package_registry_default: ghcr_and_github_packages
+    project_tracking_default: github_projects
+    security_platform_default: github_advanced_security_for_tier0_and_tier1
+    developer_ai_surface: copilot_and_agent_workflows
+    audit_and_policy_surface: true
+
+  identity_and_access:
+    team_based_access: true
+    direct_repo_grants_exception_only: true
+    github_apps_preferred: true
+    oauth_apps_restricted: true
+    pat_usage_minimized: true
+
+  delivery_model:
+    default_runtime_target: azure
+    default_registry: ghcr
+    default_repo_automation: github_actions
+    governed_release_path: azure_pipelines_or_environment_gates_when_required
+    cross_reference:
+      - ssot/governance/github-actions-azure-oidc-policy.yaml
+      - ssot/governance/gha-scoped-exception.yaml
+      - ssot/governance/ci-cd-authority-matrix.yaml
+
+  repository_model:
+    bounded_repositories: true
+    canonical_repos:
+      - .github
+      - docs
+      - odoo
+      - platform
+      - web
+      - infra
+      - data-intelligence
+      - agents
+      - agent-platform
+      - automations
+      - design
+
+  app_surfaces:
+    total_primary_apps: 4
+    includes_mcp_global_considerations: true
+    cross_reference: platform/ssot/org/app-surface-and-mcp-topology.yaml
+
+# -----------------------------------------------------------------------------
+# SMART success criteria
+# -----------------------------------------------------------------------------
+success_criteria:
+
+  category_1_organization_and_access:
+    - id: AC-1
+      description: 100% of production and active engineering repos are under Insightpulse-ai
+      target_value: 100%
+      measurement: inventory_of_repos_by_org
+      due: by_target_cutover
+    - id: AC-2
+      description: 100% of repo access granted through teams or approved enterprise/org roles; 0 routine direct user-to-repo grants outside documented exceptions
+      target_value: 100% team-based; 0 ad-hoc direct grants
+      measurement: audit_of_repo_access_lists_vs_team_membership
+      due: by_target_cutover
+    - id: AC-3
+      description: 100% of approved automation/integration apps use GitHub Apps where supported; unapproved OAuth apps blocked or removed
+      target_value: 100% GitHub App where supported
+      measurement: inventory_of_installed_apps_vs_allowlist
+      due: by_target_cutover
+      cross_reference: ssot/governance/github-integration-model.yaml
+
+  category_2_repository_topology:
+    - id: RT-1
+      description: 100% of canonical repos exist in the target org with defined ownership, purpose, and top-level boundary docs
+      target_value: 100%
+      measurement: canonical_repo_roster_checklist
+      due: by_completion
+    - id: RT-2
+      description: 100% of Tier 0 / Tier 1 repos have README, branch protection/rules, CODEOWNERS or equivalent ownership mapping, and CI entry workflow
+      target_value: 100%
+      measurement: repo_hygiene_scan
+      due: by_completion
+    - id: RT-3
+      description: 0 deprecated "catch-all" repos remain as active system-of-record locations for cross-domain production work
+      target_value: 0
+      measurement: deprecation_registry_reconciliation
+      due: by_completion
+
+  category_3_ci_cd_and_delivery:
+    - id: CI-1
+      description: 100% of active deployable repos publish through GitHub Actions for build/test/package stages
+      target_value: 100%
+      measurement: deployable_repo_ci_audit
+      due: within_first_production_wave
+    - id: CI-2
+      description: 100% of containerized deployables publish images to GHCR with traceable tags tied to commit SHA and/or release
+      target_value: 100%
+      measurement: ghcr_image_metadata_audit
+      due: within_first_production_wave
+      cross_reference: platform/ssot/org/package-and-artifact-topology.yaml
+    - id: CI-3
+      description: Median PR-to-nonprod deploy time for standard changes < 30 minutes (excluding manual approval waits)
+      target_value: "< 30 min median"
+      measurement: deploy_pipeline_metric_rollup
+      due: within_first_production_wave
+
+  category_4_security_and_compliance:
+    - id: SEC-1
+      description: 100% of Tier 0 repos have secret scanning and dependency visibility enabled
+      target_value: 100%
+      measurement: security_feature_enablement_scan
+      due: by_rollout_completion
+    - id: SEC-2
+      description: 100% of Tier 0 / Tier 1 repos have code scanning or equivalent approved static analysis enabled where language support exists
+      target_value: 100%
+      measurement: code_scanning_enablement_scan
+      due: by_rollout_completion
+    - id: SEC-3
+      description: Open critical/high security findings in Tier 0 repos reduced by >80% from baseline or covered by accepted documented exceptions
+      target_value: ">80% reduction or documented exception"
+      measurement: security_finding_trend_report
+      due: within_90_days_of_enablement
+
+  category_5_work_management:
+    - id: WM-1
+      description: 100% of active engineering initiatives trackable in GitHub Projects or linked GitHub issues/PRs with visible status
+      target_value: 100%
+      measurement: initiative_traceability_audit
+      due: by_operating_model_completion
+      cross_reference: ssot/governance/github-projects-v2-scope.yaml
+    - id: WM-2
+      description: 100% of merged PRs link to a tracked issue/work item or documented exception path
+      target_value: 100%
+      measurement: pr_to_issue_link_audit
+      due: for_active_delivery_work
+    - id: WM-3
+      description: Status reporting for the primary engineering portfolio generated from GitHub-native artifacts in <15 minutes without manual spreadsheet reconciliation
+      target_value: "< 15 min report generation"
+      measurement: reporting_cycle_time
+      due: by_operating_model_completion
+
+  category_6_copilot_and_agent_workflows:
+    - id: AI-1
+      description: 100% of engineering users with assigned seats have Copilot enabled in at least one supported environment
+      target_value: 100% seat activation
+      measurement: copilot_seat_activation_audit
+      due: by_adoption_milestone
+    - id: AI-2
+      description: At least 3 governed agent-assisted workflows live (PR drafting/review assist, issue triage, docs/spec generation)
+      target_value: ">= 3 governed workflows"
+      measurement: governed_workflow_registry_count
+      due: by_adoption_milestone
+    - id: AI-3
+      description: At least 50% of active engineering contributors use Copilot/agent workflows weekly (seat activity or approved proxy metrics)
+      target_value: ">= 50% weekly active"
+      measurement: copilot_activity_report
+      due: within_60_days_of_rollout
+
+  category_7_enterprise_governance:
+    - id: GOV-1
+      description: 100% of organization-level standards (workflows, permissions, repo defaults, branch/ruleset policies) represented in the .github governance repo
+      target_value: 100%
+      measurement: policy_as_code_coverage_audit
+      due: by_governance_completion
+    - id: GOV-2
+      description: Changes to org-wide workflow templates or policy baselines are reproducible through versioned code; 0 UI-only undocumented policy drift for critical controls
+      target_value: 0 UI-only drift on critical controls
+      measurement: drift_detection_report
+      due: ongoing
+    - id: GOV-3
+      description: All critical changes to access, rules, and production-bound repos recoverable from GitHub audit logs and code history within 1 business day
+      target_value: "< 1 business day audit recovery"
+      measurement: audit_log_drill_time
+      due: ongoing
+
+# -----------------------------------------------------------------------------
+# KPI table
+# -----------------------------------------------------------------------------
+kpis:
+  - area: Access
+    kpi: Direct repo grants outside exceptions
+    target: 0
+    linked_criteria: [AC-2]
+  - area: Repo hygiene
+    kpi: Canonical repos with baseline docs + CI
+    target: 100%
+    linked_criteria: [RT-1, RT-2]
+  - area: Delivery
+    kpi: Active deployables publishing via GitHub Actions
+    target: 100%
+    linked_criteria: [CI-1]
+  - area: Registry
+    kpi: Containerized deployables publishing to GHCR
+    target: 100%
+    linked_criteria: [CI-2]
+  - area: Security
+    kpi: Tier 0 repos with secret scanning enabled
+    target: 100%
+    linked_criteria: [SEC-1]
+  - area: Traceability
+    kpi: Merged PRs linked to tracked work
+    target: 100%
+    linked_criteria: [WM-2]
+  - area: AI adoption
+    kpi: Weekly active Copilot/agent users
+    target: ">= 50% of active contributors"
+    linked_criteria: [AI-3]
+  - area: Governance
+    kpi: Critical org policies represented as code
+    target: 100%
+    linked_criteria: [GOV-1]
+
+# -----------------------------------------------------------------------------
+# Tiering definition (referenced throughout)
+# -----------------------------------------------------------------------------
+repo_tiering:
+  tier_0:
+    description: production_critical_systems_of_record (odoo, agent-platform, infra, platform)
+    security_posture: maximum (GHAS, secret scanning, code scanning, dependency review, branch protection, required reviewers)
+  tier_1:
+    description: active_production_and_shared_runtime (web, data-intelligence, automations, agents, design)
+    security_posture: high (GHAS, secret scanning, code scanning, branch protection)
+  tier_2:
+    description: docs_config_tooling (.github, docs)
+    security_posture: standard (secret scanning, branch protection)
+
+# -----------------------------------------------------------------------------
+# Measurement governance
+# -----------------------------------------------------------------------------
+measurement_governance:
+  owner: platform-architecture
+  cadence:
+    monthly: AC-1, AC-2, CI-1, CI-2, WM-2, SEC-1, GOV-1
+    quarterly: all remaining criteria + KPI rollup
+  evidence_location: docs/evidence/<ts>/github-target-state/
+  reporting_surface: github_projects_board (per WM-1) + power_bi_rollup (per CLAUDE.md #12)
+  exceptions_registry: ssot/governance/github-target-state-exceptions.yaml (to be created on first exception)
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not measuring success solely by velocity (traceability and governance carry equal weight)
+  - not allowing undocumented direct grants or ad-hoc OAuth app installs as "normal"
+  - not permitting UI-only policy drift on critical controls
+  - not collapsing repo boundaries to shared monorepo for short-term convenience
+  - not treating AI adoption as a vanity metric (linked to governed workflows, not just seat counts)
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/governance/github-enterprise-org-target-state.yaml
+  - ssot/governance/github-enterprise-migration.yaml
+  - ssot/governance/github-operating-layers.yaml
+  - ssot/governance/github-integration-model.yaml
+  - ssot/governance/github-projects-v2-scope.yaml
+  - ssot/governance/github-actions-azure-oidc-policy.yaml
+  - ssot/governance/gha-scoped-exception.yaml
+  - ssot/governance/github-markdown-conventions.yaml
+  - platform/ssot/org/package-and-artifact-topology.yaml
+  - platform/ssot/org/app-surface-and-mcp-topology.yaml

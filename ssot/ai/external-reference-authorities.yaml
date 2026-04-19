@@ -1,0 +1,162 @@
+version: 1
+kind: ai_external_reference_authorities
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+
+doctrine: >
+  External AI engineering sources have fixed, non-overlapping roles in
+  this monorepo. Cookbooks are pattern donors. Prompt packs are operator
+  assets. Microsoft Foundry is the governed runtime and control plane.
+  None of them are architecture truth.
+
+# -----------------------------------------------------------------------------
+# Authoritative role split
+# -----------------------------------------------------------------------------
+authoritative_roles:
+
+  claude_cookbooks:
+    source_label: "Anthropic Claude Cookbooks"
+    source_type: implementation_recipes
+    role:
+      - claude_pattern_library
+      - managed_agent_patterns
+      - tool_use_and_observability_patterns
+    absorb_into_repo: agent-platform
+    absorb_into_docs_path: agent-platform/docs/architecture/
+    not_authoritative_for:
+      - runtime_design
+      - rbac_or_policy
+      - deployment_shape
+
+  openai_cookbook:
+    source_label: "OpenAI Cookbook"
+    source_type: implementation_recipes
+    role:
+      - openai_pattern_library
+      - api_usage_examples
+      - implementation_recipes
+    absorb_into_repo: agent-platform
+    absorb_into_docs_path: agent-platform/docs/architecture/
+    not_authoritative_for:
+      - runtime_design
+      - rbac_or_policy
+      - deployment_shape
+
+  openai_prompt_packs:
+    source_label: "OpenAI Academy Prompt Packs"
+    source_type: role_based_prompt_assets
+    role:
+      - role_based_prompt_libraries
+      - operator_enablement
+      - business_function_prompt_assets
+    absorb_into_repo: agents
+    absorb_into_docs_path: agents/docs/contracts/
+    skill_registry_location: agents/registries/skills/canonical/prompt-packs.yaml
+    not_authoritative_for:
+      - agent_runtime
+      - model_provider_choice
+      - orchestration_policy
+
+  microsoft_foundry:
+    source_label: "Microsoft Foundry (Azure AI platform)"
+    source_type: governed_runtime_and_control_plane
+    role:
+      - enterprise_ai_runtime
+      - agent_model_tool_control_plane
+      - azure_governed_ai_platform
+    absorb_into_repo: platform
+    absorb_into_docs_path: platform/docs/architecture/
+    ssot_location: platform/ssot/ai/foundry-resource-model.yaml
+    is_authoritative_for:
+      - project_and_resource_model
+      - rbac_networking_policy
+      - tracing_monitoring_evaluations
+      - model_deployments_within_governed_scope
+
+# -----------------------------------------------------------------------------
+# Practical operating model
+# -----------------------------------------------------------------------------
+operating_model:
+
+  model_providers:
+    anthropic:
+      use_for:
+        - claude_specific_patterns
+        - managed_agent_recipes
+        - coding_and_tool_use_patterns
+    openai:
+      use_for:
+        - api_examples
+        - business_role_prompt_libraries
+        - generalized_prompt_and_workflow_recipes
+    foundry_hosted_models:
+      use_for:
+        - enterprise_governed_model_deployments
+        - default_ipai_model_provider (per agent_framework_adoption.yaml)
+
+  runtime_and_governance:
+    microsoft_foundry:
+      use_for:
+        - deployment
+        - project_scoping
+        - tracing
+        - monitoring
+        - evaluations
+        - enterprise_rbac
+        - networking_policy
+
+# -----------------------------------------------------------------------------
+# Adoption rules (prevents source-mixing)
+# -----------------------------------------------------------------------------
+adoption_rules:
+
+  cookbook_pattern_ingestion:
+    allowed_targets: [agent-platform/]
+    required_fidelity: adapt_not_copy
+    required_attribution: source_url_in_module_header
+    forbidden:
+      - pasting_cookbook_code_verbatim_without_adaptation
+      - treating_cookbook_recipe_as_canonical_architecture
+      - importing_cookbook_dependencies_wholesale
+
+  prompt_pack_ingestion:
+    allowed_targets: [agents/]
+    required_form: structured_pack_manifest (per pack.manifest.yaml schema)
+    required_mapping:
+      - role → pulser_domain_pack_or_shared_pack
+      - prompt → skill + prompt_contract
+    forbidden:
+      - freeform_prompt_text_without_skill_wrapping
+      - embedding_prompts_outside_agents_tree
+
+  foundry_resource_ingestion:
+    allowed_targets: [platform/]
+    required_form: ssot_yaml_aligned_to_foundry_resource_model
+    forbidden:
+      - duplicating_foundry_governance_inside_agents_or_agent-platform
+      - hard_coding_foundry_endpoints_outside_platform_ssot
+
+# -----------------------------------------------------------------------------
+# Cross-reference
+# -----------------------------------------------------------------------------
+cross_reference:
+  - ssot/agent-platform/agent_framework_adoption.yaml
+  - platform/ssot/ai/foundry-resource-model.yaml
+  - agents/registries/skills/canonical/prompt-packs.yaml
+  - agents/docs/contracts/ROLE_BASED_PROMPT_PACKS.md
+  - agents/docs/contracts/COOKBOOK_PATTERN_ADOPTION_RULES.md
+  - agent-platform/docs/architecture/MODEL_PROVIDER_ADAPTERS.md
+  - agent-platform/docs/architecture/FOUNDRY_RUNTIME_ALIGNMENT.md
+  - platform/docs/architecture/FOUNDRY_CONTROL_PLANE.md
+  - docs/architecture/AI_ENGINEERING_REFERENCE_BUNDLE.md
+  - docs/architecture/MULTI_MODEL_RUNTIME_AND_PROMPT_STRATEGY.md
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not making any single external source the architecture source of truth
+  - not blending cookbook recipes with governed runtime code
+  - not allowing prompt packs to bypass skill wrappers
+  - not letting provider SDKs leak outside agent-platform boundaries
