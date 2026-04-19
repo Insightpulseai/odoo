@@ -166,6 +166,100 @@ promotion_rule: >
   the start. Migrate it; do not entrench the anti-pattern.
 
 # -----------------------------------------------------------------------------
+# Azure Boards ↔ GitHub integration (hybrid model)
+# -----------------------------------------------------------------------------
+azure_boards_github_integration:
+  doctrine: >
+    Azure Boards = planning authority (SoR). GitHub Projects = execution/
+    read-model layer. GitHub Repos/PRs = engineering truth. Azure Pipelines
+    = release traceability. All four layers coexist; none replaces another.
+
+  install_pattern:
+    preferred: azure_boards_app_for_github
+    reason: >
+      Microsoft explicitly recommends the Azure Boards app for GitHub.
+      It authenticates and operates AS THE APP rather than as an
+      individual PAT, providing a streamlined connection model.
+    not_preferred: per_user_PAT_based_integration
+
+  one_repo_one_project_constraint:
+    rule: "A GitHub repository can be connected to ONLY ONE Azure DevOps organization and project for Azure Boards integration."
+    failure_mode: connecting_same_repo_to_multiple_ado_orgs_projects_causes_unexpected_AB_linking_behavior
+    ipai_ado_project: ipai-platform
+    enforcement: document_in_repo_CODEOWNERS_and_README_so_team_does_not_cross_wire
+
+  linking_from_github_to_ado_work_items:
+    syntax: "AB#<work_item_id>"
+    example: "AB#123 Fix approval workflow state machine"
+    auto_transition_commands:
+      - fix
+      - fixes
+      - fixed
+    example_with_transition: "Fixed AB#123"
+    linking_surfaces:
+      - commit_message
+      - pr_title
+      - pr_description
+      - issue_description
+    comment_sync: github_comment_to_ado_workitem (via Azure Boards app)
+
+  pipeline_traceability:
+    azure_pipelines_reads_github_repo: true
+    work_items_link_to_builds: via AB# in commits / PRs
+    release_traceability: azure_pipelines_canonical
+
+# -----------------------------------------------------------------------------
+# GitHub Projects automation
+# -----------------------------------------------------------------------------
+github_projects_automation:
+  rest_api_availability: 2025-09 (Projects V2 REST endpoints)
+  graphql_preferred_for_mutations: true
+  supported_operations:
+    - list_projects
+    - read_fields_and_items
+    - add_remove_issues_and_prs
+    - update_field_values
+  ipai_usage_examples:
+    - scheduled_kanban_status_rollup_from_issues_to_custom_field
+    - auto_add_issue_to_project_on_label_applied
+    - nightly_sync_of_milestone_progress_to_project_status
+  forbidden_patterns:
+    - bidirectional_sync_to_ado_boards (one-way only per clean_split rule)
+    - pat_tokens_in_workflows (use GitHub App + OIDC federation to Azure)
+
+# -----------------------------------------------------------------------------
+# GitHub Projects template patterns (what views to offer)
+# -----------------------------------------------------------------------------
+template_patterns:
+  rule: "Create org-level templates; reuse across repos. Avoid one-off project views drifting per repo."
+  canonical_templates:
+    engineering_execution:
+      views: [board (Todo/In Progress/In Review/Done), table (filter by sprint), roadmap]
+      custom_fields: [status, priority, sprint, effort_estimate]
+      automation: [auto-add on label:ready, auto-move to Done on PR merge]
+    release_train:
+      views: [roadmap (per release), table (blocked items)]
+      custom_fields: [release_version, gate_status]
+    incident_remediation:
+      views: [board (Detected/Triaging/Mitigating/Resolved), table with severity]
+      custom_fields: [severity, detection_source, affected_surface]
+    product_surface_delivery:
+      views: [kanban per surface (ERP / IPAI Main / W9 / PrismaLab), roadmap]
+      custom_fields: [surface, launch_priority]
+
+# -----------------------------------------------------------------------------
+# Final hybrid model summary
+# -----------------------------------------------------------------------------
+hybrid_model_summary: |
+  planning_model:
+    code_truth: github
+    pr_truth: github
+    repo_automation_truth: github_actions  (scoped exception only; canonical CI/CD = Azure Pipelines)
+    team_operational_views: github_projects
+    portfolio_and_backlog_truth: azure_boards
+    release_traceability_truth: azure_pipelines
+
+# -----------------------------------------------------------------------------
 # Anchors
 # -----------------------------------------------------------------------------
 anchors:
@@ -174,4 +268,7 @@ anchors:
   platform_authority_split: ssot/governance/platform-authority-split.yaml
   claude_md_authority_section: CLAUDE.md (Engineering & Delivery Authority)
   notion_scope_decision: ssot/governance/notion-scope-decision.yaml
+  github_enterprise_migration: ssot/governance/github-enterprise-migration.yaml
+  github_enterprise_org_target_state: ssot/governance/github-enterprise-org-target-state.yaml
   upstream_api_docs: https://docs.github.com/en/rest/projects
+  upstream_ado_boards_github_app: https://learn.microsoft.com/azure/devops/boards/github/
