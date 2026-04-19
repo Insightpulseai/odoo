@@ -1612,3 +1612,88 @@ addenda_2026_04_15:
       - verify_plugin_skill_set_against_ipai_skill_gap_list_in_claude-code-activation-matrix
       - document_in_mcp_runtime_state_yaml_when_active
       - evidence: docs/evidence/<ts>/azure-skills-plugin-adoption/
+
+
+  # ───── Added 2026-04-19 — Azure governance references (naming + tagging) ─────
+
+  - upstream: microsoft/azure-caf-resource-naming
+    url: https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming
+    purpose: "Azure Cloud Adoption Framework canonical resource naming best practices — recommended abbreviations per resource type, naming component order, length + character constraints"
+    adopt_mode: consume_directly
+    internal_owner: platform-engineering
+    scope: |
+      Use CAF abbreviations table as the naming authority for IPAI
+      Azure resources. Already in partial compliance (rg-*, acae-*,
+      kv-*, log-*, id-*, pe-*, appi-*). Formalize the convention for
+      new resources going forward and flag exceptions.
+
+    ipai_current_compliance_snapshot:
+      compliant_patterns:
+        resource_groups: "rg-ipai-<env>-<workload>-<region> (e.g. rg-ipai-dev-ai-sea)"
+        container_app_envs: "acae-ipai-<env>-<region>"
+        key_vaults: "kv-ipai-<env>-<region>"
+        log_analytics_workspaces: "log-ipai-<env>-<workload>-<region>"
+        managed_identities: "id-ipai-<env>-<role>"
+        private_endpoints: "pe-ipai-<env>-<target>"
+        app_insights: "appi-ipai-<env>-<workload>-<region>"
+        search_services: "srch-ipai-<env>-<region>"
+        redis: "redis-ipai-<env>-<region>"
+        signalr: "sigr-ipai-<env>-<region>"
+        cognitive_services: "docai-ipai-<env>"
+        databricks: "dbw-ipai-<env>"
+        postgres_flexible_server: "pg-ipai-<workload>"
+      constraint_driven_exceptions:
+        acr: "acripaiodoo — ACR requires 5-50 alphanumeric chars no separators (intentional exception)"
+        storage_accounts: "stipaidev<purpose> — 3-24 lowercase alphanumeric no separators"
+      non_compliant_to_remediate_on_next_touch:
+        status: none_critical
+        note: remaining items are Microsoft-managed or Databricks-managed resources
+    canonical_naming_ssot_target: platform/ssot/azure/naming-convention.yaml (to be created when first new resource is provisioned post-Foundry)
+
+    cross_reference:
+      - ssot/governance/repo-classes.yaml#naming_rules (repo-level lowercase-kebab)
+      - ssot/governance/azure-sku-bom-sufficiency.yaml (live inventory)
+      - ssot/governance/finops-azure-cost-governance.yaml#tag_enforcement
+      - ssot/governance/observability-and-telemetry.yaml#resources
+
+  - upstream: microsoft/azure-tag-policies
+    url: https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/tag-policies
+    purpose: "Azure Policy built-in definitions for tag governance — require tags, inherit from RG/subscription, append default, deny missing tags"
+    adopt_mode: consume_directly
+    internal_owner: platform-engineering + finops
+    scope: |
+      Use Azure Policy tag definitions as enforcement layer for IPAI's
+      required tag set per finops-azure-cost-governance.yaml. Tag policy
+      is currently documented but not enforced — this closes the gap.
+
+    ipai_target_tag_set: (aligned with finops-azure-cost-governance.yaml)
+      - environment
+      - workload
+      - owner
+      - cost_center
+      - created_by
+      - retention_class
+      - data_classification
+
+    recommended_policy_assignment_order:
+      step_1: audit_missing_tags (non-blocking discovery phase — 2 weeks)
+      step_2: append_default_tags_to_new_resources (auto-populate from RG/sub inheritance)
+      step_3: modify_existing_untagged_resources (bulk remediation pass)
+      step_4: deny_create_without_required_tags (enforcement phase — after 2-week audit)
+
+    canonical_policy_initiative_target: platform/ssot/azure/tag-policy-initiative.yaml (to be created when ALZ phase 2 activates OR when first paid subscription arrives)
+
+    immediate_practical_step: |
+      Run initial audit now with existing 2-sub footprint:
+        az policy assignment create --name ipai-require-tags-audit \
+          --policy /providers/Microsoft.Authorization/policyDefinitions/871b6d14-10aa-478d-b590-94f262ecfa99 \
+          --params '{"tagName":{"value":"environment"}}' \
+          --scope /subscriptions/eba824fb-332d-4623-9dfb-2c9f7ee83f4e \
+          --enforcement-mode DoNotEnforce
+      (audit mode only — no resource creation blocks during dev phase)
+
+    cross_reference:
+      - ssot/governance/finops-azure-cost-governance.yaml#required_tags + tag_enforcement
+      - ssot/governance/azure-sku-bom-sufficiency.yaml (baseline inventory)
+      - upstream: Azure/Enterprise-Scale (ALZ default tag policies will subsume this when phase 2 activates)
+      - upstream: microsoft/azure-skills (plugin likely includes tag-management skills)
