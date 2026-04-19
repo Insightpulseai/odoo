@@ -1,0 +1,239 @@
+version: 1
+kind: github_actions_azure_oidc_policy
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+
+doctrine: >
+  GitHub Actions is the default repo-level Azure automation surface
+  using OIDC + azure/login for authentication. Azure Pipelines retains
+  governed release orchestration, sensitive promotions, approval gates,
+  and release evidence. Long-lived Azure secrets in GitHub are
+  forbidden.
+
+# -----------------------------------------------------------------------------
+# Scope split (revised from prior "GHA scoped exception only" posture)
+# -----------------------------------------------------------------------------
+scope_split:
+
+  github_actions_role:
+    - repo_builds
+    - package_publish (npm to GHCR + container images to GHCR per package-and-artifact-topology.yaml)
+    - image_builds
+    - nonprod_deploys (dev + staging only)
+    - repo_scoped_policy_checks
+    - pr_validation
+    - scheduled_maintenance_workflows (drift detection, SSO health)
+
+  azure_pipelines_role:
+    - governed_release_orchestration
+    - sensitive_promotions (any change hitting production)
+    - approval_gates (platform-architecture + FD for finance)
+    - release_evidence_capture
+    - cross_system_deploy_coordination
+    - odoo_cloud_platform_promotions
+    - production_infrastructure_changes
+
+  never_in_github_actions:
+    - production_deploys_requiring_human_approval_gates
+    - odoo_erp_prod_promotions
+    - finance_affecting_mutations_without_fd_approval
+    - any_workflow_using_long_lived_client_secrets
+
+# -----------------------------------------------------------------------------
+# Authentication hierarchy (canonical)
+# -----------------------------------------------------------------------------
+authentication:
+
+  preferred_default:
+    pattern: oidc_federated_identity
+    flow: github_actions → oidc_token → azure_ad_federated_credential → short_lived_azure_token
+    action: azure/login@v2 (with client-id + tenant-id + subscription-id inputs; no client-secret)
+    rule: "Recommended for all new workflows. Zero long-lived Azure secrets in GitHub."
+
+  acceptable_narrow_cases:
+    service_principal_with_secret:
+      when: legacy_workflow_pending_oidc_migration
+      deprecation_target: must_migrate_to_oidc_within_90_days
+    app_service_publish_profile:
+      when: app_service_deployment_where_oidc_not_yet_supported
+      ipai_relevance: low (IPAI uses ACA, not App Service)
+
+  avoided:
+    long_lived_client_secrets_in_github_secrets:
+      forbidden_rule: absolute
+      exception: none
+
+# -----------------------------------------------------------------------------
+# OIDC configuration contract
+# -----------------------------------------------------------------------------
+oidc_configuration:
+
+  azure_ad_federated_credential:
+    issuer: https://token.actions.githubusercontent.com
+    audiences: [api://AzureADTokenExchange]
+    subject_patterns:
+      pr_workflow: "repo:Insightpulse-ai/<repo>:pull_request"
+      branch_workflow: "repo:Insightpulse-ai/<repo>:ref:refs/heads/<branch>"
+      environment_workflow: "repo:Insightpulse-ai/<repo>:environment:<env-name>"
+      tag_workflow: "repo:Insightpulse-ai/<repo>:ref:refs/tags/<tag-pattern>"
+
+  service_principal_pattern:
+    naming: sp-github-actions-<repo>-<purpose>-<env>
+    examples:
+      - sp-github-actions-web-ops-console-nonprod
+      - sp-github-actions-web-ipai-landing-nonprod
+      - sp-github-actions-web-prismalab-nonprod
+    rbac_scope:
+      dev_env: contributor_on_resource_group_or_scoped_role
+      staging_env: contributor_on_resource_group_or_scoped_role
+      prod_env: NOT_granted_to_github_actions (Azure Pipelines only)
+    managed_in: infra/ via IaC (Bicep/Terraform); never manual portal
+
+  workflow_permissions_block:
+    required_every_oidc_workflow: |
+      permissions:
+        id-token: write
+        contents: read
+    rationale: "id-token: write is required for OIDC token minting"
+
+# -----------------------------------------------------------------------------
+# Canonical workflow shape
+# -----------------------------------------------------------------------------
+canonical_workflow_shape:
+
+  minimum_required_blocks:
+    - name_and_description_comment
+    - "on: trigger definition (scoped: pull_request, push to main/release, workflow_dispatch)"
+    - "permissions: id-token write + minimum contents scope"
+    - concurrency_group (prevent parallel runs that race)
+    - environment_scoping (for deploys)
+    - "jobs: steps with azure/login@v2 using OIDC"
+
+  forbidden_in_workflows:
+    - client_secret_input_to_azure_login
+    - echoing_azure_tokens_or_credentials
+    - using_pat_for_cross_repo_operations (use GitHub App)
+    - deploy_to_production_without_azure_pipelines_intermediary
+    - skipping_contract_checks_or_security_scans
+    - embedding_key_vault_secret_names_in_clear_text (use Key Vault reference syntax)
+
+# -----------------------------------------------------------------------------
+# Target-specific guidance
+# -----------------------------------------------------------------------------
+target_guidance:
+
+  azure_container_apps:
+    status: ghc_actions_primary_for_nonprod
+    pattern:
+      - azure/login@v2 (OIDC)
+      - az containerapp update --image ghcr.io/insightpulse-ai/<image>:<tag>
+      - az containerapp revision list (verify new revision)
+    production: via_azure_pipelines_only (approval gate)
+
+  azure_cli_operations:
+    status: github_actions_primary
+    pattern:
+      - azure/login@v2 (OIDC)
+      - azure/cli@v2 OR direct az commands
+
+  azure_bicep_deploy:
+    status: github_actions_for_nonprod_azure_pipelines_for_prod
+    pattern:
+      - azure/login@v2
+      - az deployment group create (for RG-scoped)
+      - az deployment sub create (for subscription-scoped, rare)
+
+  azure_databricks:
+    status: github_actions_allowed_for_non_production_notebooks_and_jobs
+    pattern:
+      - databricks/setup-cli@main
+      - databricks bundles deploy (for dev environment)
+    production: via_azure_pipelines
+
+  azure_sql:
+    status: github_actions_for_schema_migrations_dev_only
+    production: azure_pipelines_with_approval
+
+  azure_functions_or_app_service:
+    status: ghc_actions_allowed_but_not_primary_for_ipai (IPAI uses ACA primarily)
+
+  azure_key_vault_operations:
+    status: read_via_oidc_scoped_sp
+    forbidden: writing_secrets_from_github_actions (secrets managed in infra/ IaC only)
+
+# -----------------------------------------------------------------------------
+# Runner strategy
+# -----------------------------------------------------------------------------
+runners:
+
+  default:
+    type: github_hosted_runners
+    cost: billed_to_azure_subscription_per_gha_scoped_exception (per CLAUDE.md)
+
+  private_network_access:
+    when_needed: workflow_must_reach_private_azure_resources (PE-fronted KV, PE PG, PE Search)
+    options:
+      - azure_private_networking_for_github_hosted_runners (per ssot/governance/github-enterprise-migration.yaml phase_7)
+      - self_hosted_runners_on_aca (event-driven)
+    ipai_preferred: azure_private_networking_for_github_hosted_runners (avoids self-host ops burden)
+
+  self_hosted_runners_avoided_default: true
+  rationale: >
+    Self-hosted adds operational burden + patching + scaling. Only
+    adopt when IaC-deployed ACA event-driven runners have a clear
+    cost/perf win OR when private_network_access pattern doesn't fit.
+
+# -----------------------------------------------------------------------------
+# Migration from prior doctrine
+# -----------------------------------------------------------------------------
+migration_from_prior_doctrine:
+
+  prior_posture:
+    claude_md_says: azure_pipelines_sole_deploy_authority_gha_scoped_exception_only
+    ssot_gha_scoped_exception_yaml: allowed_scopes_narrow
+    allowed_scopes_were: [copilot_coding_agent_pr_validation, ghas_codeql_break_glass, dependabot_pr_checks, docs_readme_link_validation]
+
+  revised_posture:
+    ghas_role_expands_to: [repo_builds, package_publish, image_builds, nonprod_deploys, pr_validation, scheduled_maintenance]
+    azure_pipelines_retains: [governed_release_orchestration, sensitive_promotions, approval_gates, release_evidence, production_deploys]
+
+  required_claude_md_update:
+    section: "Engineering & Delivery Authority (REVISED 2026-04-16)"
+    change: >
+      Revise invariant wording: GHA is default for CI + nonprod +
+      package/image publish; Azure Pipelines remains sole authority
+      for production + approval-gated promotions + release evidence.
+      Keep billing-through-Azure-subscription rule. Keep zero-secrets-
+      in-GHA rule.
+    who_applies_the_change: next_session_targeted_edit_to_claude_md
+
+  gha_scoped_exception_yaml_disposition:
+    action: extend_allowed_scopes_not_replace
+    new_scopes_to_add: repo_builds, package_publish, image_builds, nonprod_deploys, scheduled_maintenance
+    preserve: billing_rules, sibling_pipeline_rule, zero_secrets_rule
+
+  breaking_changes: none (new default is additive + permissive; production still gated)
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not allowing production deploys directly from GHA without Azure Pipelines gate
+  - not using PAT-based auth where OIDC is supported
+  - not embedding Key Vault secret values in workflow env vars
+  - not removing Azure Pipelines for sensitive promotions
+  - not standing up self-hosted runners without clear private-network or perf justification
+
+# -----------------------------------------------------------------------------
+# Related SSOTs (to update in follow-up commits)
+# -----------------------------------------------------------------------------
+related_to_update:
+  - ssot/governance/gha-scoped-exception.yaml (extend allowed scopes)
+  - CLAUDE.md (revise Engineering & Delivery Authority section)
+  - ssot/governance/github-integration-model.yaml (reconcile github_is_not "sole deploy authority" wording)
+  - platform/ssot/architecture/github-azure-chain.yaml (keep Azure Pipelines as release_truth; add GHA as nonprod deploy lane)
+
+related_preserved:
+  - ssot/governance/github-enterprise-migration.yaml#phase_7_azure_private_networking_for_runners
+  - platform/ssot/org/package-and-artifact-topology.yaml (GHCR publish via GHA remains canonical)
