@@ -1315,3 +1315,67 @@ addenda_2026_04_15:
       - ssot/governance/azure-sku-bom-sufficiency.yaml
       - docs/runbooks/github-correct-setup-sequence.md
       - upstream: microsoft/Deploy-Your-AI-Application-In-Production (sibling reference; same SELECTIVE EXTRACTION warning)
+
+
+  # ───── Added 2026-04-19 — Azure Enterprise-Scale ALZ ─────
+
+  - upstream: Azure/Enterprise-Scale (Azure Landing Zones / ALZ)
+    url: https://github.com/Azure/Enterprise-Scale/wiki/Deploying-ALZ
+    purpose: "Microsoft canonical enterprise landing zone reference — management groups, policy-as-code, subscription placement, hub-spoke VNet, naming conventions for large Azure tenants"
+    adopt_mode: clone_as_reference
+    internal_owner: platform-engineering
+    scope: |
+      SELECTIVE EXTRACTION ONLY. Full ALZ is designed for enterprise
+      multi-subscription multi-BU tenants with hundreds of resources.
+      IPAI currently has 2 subscriptions (Sponsored + Azure subscription 1)
+      and ~52 resources per azure-sku-bom-sufficiency.yaml. Full ALZ
+      adoption would be dramatic overengineering.
+
+      Extract only:
+        - management_group_hierarchy_concept (2-3 tier for IPAI: tenant root → ipai → dev/prod)
+        - policy_as_code_patterns (naming, tagging, region, SKU allowlist)
+        - subscription_placement_strategy (workload-to-subscription mapping)
+        - hub_spoke_vnet_topology_baseline (already partially in place)
+        - naming_convention_schema (complement repo-classes + Azure resource naming)
+        - rbac_role_assignment_at_mg_level (PIM integration per entra-governance)
+    do_not_extract:
+      - full_alz_default_policy_initiatives (overkill for IPAI's 2-sub footprint)
+      - whole_bicep_module_tree_as_ipai_baseline
+      - opinionated_mg_hierarchy_naming_that_conflicts_with_ipai
+      - deployment_stacks_expecting_enterprise_agreement_scale
+
+    ipai_relevance_context:
+      current_state:
+        - 2 subscriptions (one Sponsored, one unused)
+        - 12 resource groups (mostly single-env: rg-ipai-dev-*)
+        - no management group hierarchy visible
+        - no enterprise-scale policy initiatives applied
+      target_state:
+        - management_group_hierarchy_when_second_paid_subscription_arrives
+        - policy_as_code_baseline_aligned_to_repo-classes_and_finops
+        - mg_level_rbac_integrated_with_entra_p2 (100 seats available)
+      trigger_for_deeper_adoption: post_sponsorship_azure_subscription_expansion (per finops-azure-cost-governance.yaml + m365-mca-billing-account.yaml#distinction_from_azure_subscription)
+
+    rationale: |
+      ALZ is the canonical enterprise reference. For IPAI's current
+      scale (pre-GA, 2 subs, single-tenant), the full ALZ deployment
+      is not appropriate — naming, policies, and module overhead would
+      drown operational capacity. BUT the conceptual patterns (MG
+      hierarchy, policy-as-code, subscription placement) are the right
+      target shape when IPAI grows past the Sponsorship-only phase or
+      adds per-tenant Azure subs per saas-tenancy-model.
+
+    plane: infra + governance
+    see_also:
+      - ssot/governance/azure-sku-bom-sufficiency.yaml
+      - ssot/governance/finops-azure-cost-governance.yaml
+      - ssot/identity/m365-mca-billing-account.yaml
+      - upstream: Azure/AI-Landing-Zones (AI-specific subset that sits on top of ALZ)
+      - upstream: Azure/bicep-registry-modules (AVM — the module standard ALZ uses)
+      - upstream: microsoft/Deploy-Your-AI-Application-In-Production (sibling reference with same SELECTIVE EXTRACTION posture)
+
+    phased_adoption_ladder:
+      phase_1_now: consume ALZ naming + tagging vocabulary in infra/ composition; no structural changes
+      phase_2_post_sponsorship: evaluate MG hierarchy + policy-as-code baseline when moving to paid Azure commitment
+      phase_3_post_first_paying_tenant: per-tenant subscription strategy aligned to ALZ patterns (per saas-tenancy-model)
+      phase_4_at_scale: full ALZ-aligned MG + policy + subscription vending when IPAI operates >10 subscriptions
