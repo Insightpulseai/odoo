@@ -1,0 +1,253 @@
+version: 1
+kind: github_well_architected_framework_alignment
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+source: "GitHub Well-Architected (wellarchitected.github.com) — 5 pillars, 4 layers"
+
+doctrine: >
+  IPAI's governance substrate is aligned to GitHub's Well-Architected
+  framework as a self-assessment lens. The framework has 5 pillars
+  (Productivity, Collaboration, Application Security, Governance,
+  Architecture) and 4 layers (Pillars → Design Principles → Checklists
+  → Recommendations). Every IPAI governance SSOT maps to one or more
+  pillars. Unmapped areas are coverage gaps.
+
+parent_ssots:
+  - ssot/governance/github-desired-state.yaml
+  - ssot/governance/github-target-state-success-criteria.yaml
+
+# -----------------------------------------------------------------------------
+# Framework structure (GitHub Well-Architected canonical)
+# -----------------------------------------------------------------------------
+framework_structure:
+  pillars:
+    - productivity
+    - collaboration
+    - application_security
+    - governance
+    - architecture
+  layers:
+    - pillars (the foundation)
+    - design_principles (the "how" behind each pillar)
+    - checklists (operationalized tasks)
+    - recommendations (scenario-based prescriptive guidance)
+
+# -----------------------------------------------------------------------------
+# Pillar 1 — Productivity
+# -----------------------------------------------------------------------------
+productivity:
+  scope: strategies_and_tools_to_enhance_team_efficiency_and_streamline_workflows
+
+  ipai_covered_by:
+    - ssot/governance/claude-code-activation-matrix.yaml
+    - platform/ssot/agentic/claude-code-operating-model.yaml
+    - ssot/governance/vscode-operating-profile.yaml
+    - ssot/governance/github-actions-workflow-authoring-doctrine.yaml
+    - ssot/governance/workflow-conventions.yaml
+    - ssot/governance/runner-policy.yaml
+
+  ipai_gaps:
+    - pr_template_library_not_yet_centralized
+    - issue_template_library_not_yet_centralized
+    - codespaces_policy_not_yet_codified
+    - developer_onboarding_runbook_not_yet_written
+
+  key_metrics:
+    - time_to_first_pr_for_new_engineer
+    - ci_pipeline_p50_duration
+    - pr_merge_lead_time
+
+# -----------------------------------------------------------------------------
+# Pillar 2 — Collaboration
+# -----------------------------------------------------------------------------
+collaboration:
+  scope: best_practices_for_using_github_to_foster_collaboration_within_and_across_teams
+
+  ipai_covered_by:
+    - ssot/governance/github-projects-v2-scope.yaml
+    - ssot/governance/labels.yaml
+    - ssot/governance/repository-best-practices.yaml
+    - ssot/governance/github-markdown-conventions.yaml
+    - ssot/governance/repository-lifecycle-operations.yaml
+
+  ipai_gaps:
+    - discussion_board_policy_not_yet_codified
+    - review_etiquette_guide_not_yet_written
+    - codeowners_population_verification_not_yet_run_on_live_repos
+
+  key_metrics:
+    - percent_prs_with_linked_issue
+    - codeowner_review_coverage
+    - cross_team_pr_participation
+
+# -----------------------------------------------------------------------------
+# Pillar 3 — Application Security
+# -----------------------------------------------------------------------------
+application_security:
+  scope: guidelines_for_integrating_security_into_every_phase_of_the_development_process
+
+  ipai_covered_by:
+    - ssot/governance/repository-best-practices.yaml#pillar_2_security
+    - ssot/governance/github-actions-azure-oidc-policy.yaml
+    - ssot/governance/gha-scoped-exception.yaml
+    - ssot/governance/github-identity-and-oauth.yaml
+    - ssot/governance/github-actions-deployment-environments.yaml
+    - CLAUDE.md §Agentic Workflow Security Doctrine
+    - .claude/rules/security-baseline.md
+
+  ipai_gaps:
+    - security_incident_response_runbook_not_yet_written
+    - secrets_rotation_schedule_ssot_not_yet_written
+    - vulnerability_disclosure_policy_file_not_yet_in_every_repo
+    - signed_commits_enforcement_not_yet_live_on_tier_0_repos
+
+  key_metrics:
+    - secret_scanning_coverage
+    - code_scanning_coverage_tier_0_tier_1
+    - time_to_remediate_critical_findings
+    - open_critical_findings_count
+
+# -----------------------------------------------------------------------------
+# Pillar 4 — Governance
+# -----------------------------------------------------------------------------
+governance:
+  scope: principles_for_managing_access_compliance_and_governance_within_github_projects
+
+  ipai_covered_by:
+    - ssot/governance/github-desired-state.yaml
+    - ssot/governance/github-target-state-success-criteria.yaml
+    - ssot/governance/github-operating-layers.yaml
+    - ssot/governance/github-enterprise-org-target-state.yaml
+    - ssot/governance/github-enterprise-migration.yaml
+    - ssot/governance/github-enterprise-current-state-snapshot.yaml
+    - ssot/governance/github-identity-and-oauth.yaml
+    - ssot/governance/github-org-admin-api-matrix.yaml
+    - ssot/governance/repo-classes.yaml
+    - ssot/governance/partner-program-authority.yaml
+    - ssot/governance/finops-azure-cost-governance.yaml
+
+  ipai_gaps:
+    - compliance_posture_ssot_for_soc2_and_ph_dpa_not_yet_written
+    - audit_log_review_cadence_not_yet_codified
+    - entra_github_scim_provisioning_not_yet_live
+
+  key_metrics:
+    - percent_repo_access_via_teams_vs_direct_grants
+    - percent_critical_controls_represented_as_code
+    - audit_log_drill_time
+
+# -----------------------------------------------------------------------------
+# Pillar 5 — Architecture
+# -----------------------------------------------------------------------------
+architecture:
+  scope: approaches_for_designing_scalable_resilient_and_efficient_github_based_development_environments
+
+  ipai_covered_by:
+    - ssot/governance/github-desired-state.yaml
+    - ssot/governance/github-operating-layers.yaml
+    - ssot/governance/reference-platform-doctrine.yaml
+    - ssot/governance/repo-classes.yaml
+    - ssot/governance/azure-sku-bom-sufficiency.yaml
+    - ssot/governance/observability-and-telemetry.yaml
+    - ssot/governance/saas-tenancy-model-pulser-for-odoo.yaml
+    - platform/ssot/org/package-and-artifact-topology.yaml
+    - platform/ssot/org/app-surface-and-mcp-topology.yaml
+    - platform/ssot/ai/foundry-resource-model.yaml
+    - platform/ssot/runtime/branch-environment-contract.yaml
+
+  ghes_applicability: not_applicable (IPAI is on GitHub Enterprise Cloud, not GHES)
+
+  ipai_gaps:
+    - dr_bcp_ssot_not_yet_written
+    - network_and_private_endpoints_ssot_not_yet_canonical
+    - azure_front_door_not_yet_provisioned (routing authority missing — see azure-sku-bom-sufficiency.yaml)
+
+  key_metrics:
+    - production_slo_attainment
+    - deployment_success_rate
+    - mean_time_to_recovery
+    - repo_boundary_adherence_score
+
+# -----------------------------------------------------------------------------
+# 4-Layer application at IPAI
+# -----------------------------------------------------------------------------
+layer_application:
+
+  pillars:
+    state: all_5_mapped_to_ipai_ssots
+    ownership: platform-architecture
+
+  design_principles:
+    state: embedded_in_individual_ssot_doctrine_blocks
+    recommendation: publish_explicit_per_pillar_design_principles_index when cross-pillar gaps accumulate
+
+  checklists:
+    state: per_ssot_review_checklists_exist (repository-best-practices, repo-contract-checklist, etc.)
+    recommendation: consolidate_into_single_assessment_checklist_when_ready_for_external_audit
+
+  recommendations:
+    state: per_domain_recommendations_embedded_in_ssots_and_runbooks
+    recommendation: harvest_opinionated_recommendations_into_docs/architecture/recommendations/ as the library grows
+
+# -----------------------------------------------------------------------------
+# Self-assessment posture
+# -----------------------------------------------------------------------------
+self_assessment:
+  frequency: quarterly
+  owner: platform-architecture
+  evidence_location: docs/evidence/<ts>/wellarchitected-assessment/
+  output_artifact: scorecard_with_pillar_score_and_gap_list
+  cadence_trigger:
+    - quarterly_review
+    - major_architectural_change (e.g. new primary runtime or identity provider)
+    - external_audit_preparation (SOC 2, customer requests, marketplace certification)
+
+# -----------------------------------------------------------------------------
+# Rollup gap list (derived from per-pillar gaps)
+# -----------------------------------------------------------------------------
+consolidated_gap_list:
+
+  high_priority:
+    - azure_front_door_not_provisioned (blocks routing authority — see azure-sku-bom-sufficiency.yaml)
+    - entra_github_scim_provisioning_not_yet_live (blocks IAM automation)
+    - signed_commits_enforcement_on_tier_0_repos_not_yet_live
+    - dr_bcp_ssot_not_yet_written
+
+  medium_priority:
+    - secrets_rotation_schedule_ssot
+    - security_incident_response_runbook
+    - compliance_posture_ssot (soc2 + ph_dpa)
+    - network_and_private_endpoints_ssot
+    - developer_onboarding_runbook
+
+  low_priority_or_enhancement:
+    - pr_and_issue_template_library_centralization
+    - codespaces_policy
+    - discussion_board_policy
+    - review_etiquette_guide
+    - audit_log_review_cadence_ssot
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not adopting GHES-specific recommendations (IPAI is on Enterprise Cloud)
+  - not duplicating content across pillars — each SSOT anchored in one primary pillar, cross-linked elsewhere
+  - not treating this framework as the architecture source of truth (it's a lens, not a spec)
+  - not letting the gap list stay static — gaps close via new SSOTs or explicit acceptance
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/governance/github-desired-state.yaml
+  - ssot/governance/github-target-state-success-criteria.yaml
+  - ssot/governance/github-operating-layers.yaml
+  - ssot/governance/repository-best-practices.yaml
+
+source_references:
+  - https://wellarchitected.github.com/
+  - https://wellarchitected.github.com/library/overview/layers-of-github-well-architected/
+  - https://wellarchitected.github.com/library/overview/about-the-assessment/
+  - https://wellarchitected.github.com/library/overview/getting-started-checklist/
