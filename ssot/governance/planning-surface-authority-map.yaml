@@ -148,6 +148,28 @@ methodology:
     adopted: informally (1-2 week sprints per azure-boards-taxonomy)
     ceremonies_of_record: none_mandatory (solo ops for now)
 
+    ado_scrum_process_evaluation:
+      upstream_reference: https://learn.microsoft.com/azure/devops/boards/sprints/scrum-overview
+      decision: not_adopted_stay_on_basic_process
+      ado_scrum_hierarchy: Epic → Feature → Product Backlog Item → Task (+ Bug)
+      ipai_basic_hierarchy: Epic → Issue → Task (simpler)
+      rationale: >
+        ADO Scrum process adds Product Backlog Item + Feature layer +
+        mandatory sprint ceremonies (sprint planning, daily standup,
+        sprint review, retrospective) + velocity/burndown tracking.
+        For solo-ops scale this is ceremonial overhead without material
+        value. Basic process + 1-2 week iterations captured per
+        azure-boards-taxonomy.yaml is sufficient.
+      when_to_revisit:
+        - team_grows_beyond_3_active_engineers
+        - client_engagement_contractually_requires_scrum
+        - velocity_forecasting_becomes_a_real_business_need
+      migration_path_if_needed: >
+        ADO supports process inheritance. If Scrum is later adopted, the
+        monorepo spec/<slug>/ pattern (github spec-kit) maps to
+        Feature/PBI granularity; existing Epics/Issues/Tasks can be
+        converted via process change without losing history.
+
   six_sigma_or_lean:
     adopted: not_applicable (too process-heavy for current scale)
 
