@@ -1,0 +1,432 @@
+version: 1
+kind: github_feature_leverage_matrix
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+source: "GitHub Features page (github.com/features) — 7 categories"
+
+doctrine: >
+  Every GitHub feature is classified against IPAI's existing governance
+  substrate. States: ADOPTED (already codified), TARGET-STATE (should
+  adopt, not yet live), EVALUATE (research needed), DEFER (not now,
+  specific trigger), EXCLUDED (doctrine conflict). Leverage score:
+  HIGH / MEDIUM / LOW.
+
+parent_ssots:
+  - ssot/governance/github-well-architected-framework.yaml
+  - ssot/governance/github-desired-state.yaml
+  - ssot/governance/github-target-state-success-criteria.yaml
+
+# -----------------------------------------------------------------------------
+# 1. Collaborative Coding
+# -----------------------------------------------------------------------------
+collaborative_coding:
+  - feature: codespaces
+    state: adopted
+    leverage: high
+    why: devcontainer_contract_is_canonical_dev_runtime
+    action: enforce_dot_devcontainer_as_only_dev_entry
+  - feature: copilot_coding_assistance
+    state: target_state
+    leverage: high
+    why: coding_agent_replaces_boilerplate_prs_with_foundry_model_authority
+    action: enroll_enterprise_copilot_confirm_foundry_routing
+  - feature: pull_requests
+    state: adopted
+    leverage: high
+    why: branch_protection_plus_azure_pipelines_merge_gate_codified
+    action: none
+  - feature: discussions
+    state: defer
+    leverage: low
+    why: slack_is_comms_authority_no_doctrine_role_for_discussions
+    action: trigger_community_or_oss_launch
+  - feature: code_search_and_code_view
+    state: adopted
+    leverage: medium
+    why: useful_for_355_workflow_plus_69_module_repo_scale
+    action: none
+  - feature: code_review
+    state: adopted
+    leverage: high
+    why: pr_review_gate_codified_copilot_code_review_in_scope
+    action: add_copilot_review_when_copilot_enrolled
+  - feature: draft_pull_requests
+    state: adopted
+    leverage: medium
+    why: already_used_in_delivery_workflow
+    action: none
+  - feature: protected_branches
+    state: adopted
+    leverage: high
+    why: tier_0_repo_branch_rules_codified
+    action: none
+
+# -----------------------------------------------------------------------------
+# 2. Automation & CI/CD
+# -----------------------------------------------------------------------------
+automation_and_ci_cd:
+  - feature: github_actions
+    state: adopted
+    leverage: high
+    why: default_ci_plus_nonprod_deploy_authority_via_oidc_scoped_exception
+    action: enforce_billing_through_azure_subscription
+  - feature: github_packages
+    state: evaluate
+    leverage: medium
+    why: container_registry_alternative_to_acr_for_internal_images
+    action: evaluate_acr_vs_ghcr_consolidation
+  - feature: apis_rest_graphql
+    state: adopted
+    leverage: high
+    why: coding_agent_plus_claude_code_consume_github_api_via_mcp
+    action: none
+  - feature: github_marketplace
+    state: defer
+    leverage: low
+    why: not_distribution_channel_for_ipai_offer_azure_marketplace_is
+    action: trigger_oss_tooling_to_publish
+  - feature: webhooks
+    state: adopted
+    leverage: medium
+    why: azure_logic_apps_consumes_repo_events
+    action: none
+  - feature: github_hosted_runners
+    state: adopted
+    leverage: medium
+    why: gha_scoped_exception_uses_hosted_runners_zero_self_hosted_doctrine
+    action: none
+  - feature: self_hosted_runners
+    state: excluded
+    leverage: none
+    why: deprecated_2026-03-15_azure_devops_pool_is_replacement
+    action: remove_any_residual_self_hosted_configs
+  - feature: workflow_visualization
+    state: adopted
+    leverage: low
+    why: useful_for_355_workflow_audit
+    action: none
+  - feature: workflow_templates
+    state: evaluate
+    leverage: medium
+    why: org_level_starter_workflows_reduce_drift_across_repos
+    action: define_3_to_4_canonical_org_level_templates
+
+# -----------------------------------------------------------------------------
+# 3. Application Security
+# -----------------------------------------------------------------------------
+application_security:
+  - feature: code_scanning_codeql
+    state: adopted
+    leverage: high
+    why: ghas_trial_active_tier_0_max_ghas_codified
+    action: confirm_codeql_runs_on_all_tier_0_repos
+  - feature: copilot_autofix
+    state: target_state
+    leverage: high
+    why: reduces_sast_remediation_cycle_on_odoo_agent_platform_prs
+    action: enable_when_copilot_enrolled
+  - feature: security_campaigns
+    state: evaluate
+    leverage: medium
+    why: useful_for_backlog_cve_remediation_at_scale
+    action: evaluate_post_ghas_trial_scope_to_tier_0
+  - feature: secret_scanning
+    state: adopted
+    leverage: high
+    why: push_block_on_144_commits_proves_it_works_rotation_is_blocker
+    action: complete_google_oauth_rotation_immediately
+  - feature: copilot_secret_scanning
+    state: target_state
+    leverage: high
+    why: ai_pattern_detection_beyond_regex_complements_foundry_lane
+    action: enable_with_copilot_enrollment
+  - feature: dependency_graph
+    state: adopted
+    leverage: high
+    why: required_for_dependabot_and_oca_submodule_audit
+    action: none
+  - feature: dependabot_alerts
+    state: adopted
+    leverage: high
+    why: gha_scoped_exception_explicitly_covers_dependabot_prs
+    action: none
+  - feature: dependabot_security_updates
+    state: adopted
+    leverage: high
+    why: auto_pr_generation_for_cves_allowed_under_scoped_exception
+    action: none
+  - feature: dependabot_version_updates
+    state: evaluate
+    leverage: medium
+    why: useful_for_pnpm_python_risk_of_noise_on_pinned_odoo_deps
+    action: enable_for_apps_and_packages_exclude_addons
+  - feature: dependency_review
+    state: adopted
+    leverage: medium
+    why: pr_level_diff_of_dep_changes_complements_dependabot
+    action: none
+  - feature: github_security_advisories
+    state: evaluate
+    leverage: low
+    why: relevant_only_when_ipai_publishes_oss_modules
+    action: trigger_public_oca_contributions
+  - feature: private_vulnerability_reporting
+    state: evaluate
+    leverage: low
+    why: same_trigger_as_advisories
+    action: trigger_public_module_releases
+  - feature: github_advisory_database
+    state: adopted
+    leverage: low
+    why: consumed_passively_via_dependabot
+    action: none
+
+# -----------------------------------------------------------------------------
+# 4. Client apps
+# -----------------------------------------------------------------------------
+client_apps:
+  - feature: github_mobile
+    state: evaluate
+    leverage: low
+    why: useful_for_pr_approvals_on_the_go
+    action: personal_decision_no_org_action
+  - feature: github_cli
+    state: adopted
+    leverage: medium
+    why: claude_code_and_scripts_use_gh_cli
+    action: none
+  - feature: github_desktop
+    state: defer
+    leverage: low
+    why: cli_first_doctrine_no_gui_tooling_in_ssot
+    action: trigger_non_engineering_contributors
+
+# -----------------------------------------------------------------------------
+# 5. Project management
+# -----------------------------------------------------------------------------
+project_management:
+  - feature: projects
+    state: target_state
+    leverage: high
+    why: azure_boards_is_portfolio_authority_github_projects_for_eng_backlog
+    action: codify_issues_to_projects_sync_with_ado_boards
+  - feature: issues
+    state: adopted
+    leverage: high
+    why: engineering_execution_backlog_is_github_issues_ssot
+    action: none
+  - feature: milestones
+    state: adopted
+    leverage: medium
+    why: used_for_release_gates_tied_to_ship_readiness_checklist
+    action: none
+  - feature: charts_and_insights
+    state: evaluate
+    leverage: medium
+    why: velocity_cycle_time_data_useful_for_isv_success_reporting
+    action: evaluate_for_isv_success_delivery_evidence
+  - feature: org_dependency_insights
+    state: evaluate
+    leverage: medium
+    why: cross_repo_dep_map_useful_at_43_ssot_scale
+    action: review_quarterly
+  - feature: repository_insights
+    state: adopted
+    leverage: low
+    why: passive_consumption
+    action: none
+  - feature: wikis
+    state: excluded
+    leverage: none
+    why: docs_in_repo_is_ssot_wikis_create_drift
+    action: disable_on_new_repos
+
+# -----------------------------------------------------------------------------
+# 6. Governance & administration
+# -----------------------------------------------------------------------------
+governance_and_administration:
+  - feature: organizations
+    state: adopted
+    leverage: high
+    why: enterprise_ipai_plus_primary_org_Insightpulse-ai_codified
+    action: none
+  - feature: teams
+    state: adopted
+    leverage: high
+    why: scim_provisioned_teams_are_target_state
+    action: complete_scim_provisioning
+  - feature: team_sync
+    state: target_state
+    leverage: high
+    why: entra_id_to_github_team_sync_via_scim_saml
+    action: provision_after_saml_sso_goes_live
+  - feature: custom_roles
+    state: evaluate
+    leverage: medium
+    why: fine_grained_org_roles_useful_for_contractor_access
+    action: define_2_to_3_custom_org_roles
+  - feature: custom_repository_roles
+    state: target_state
+    leverage: medium
+    why: tier_0_repos_need_restricted_write_access_beyond_defaults
+    action: define_per_tier_0_repo
+  - feature: domain_verification
+    state: adopted
+    leverage: high
+    why: insightpulseai_com_must_be_verified_at_org_level
+    action: verify_if_not_already_done
+  - feature: compliance_reports
+    state: evaluate
+    leverage: medium
+    why: soc2_iso_artifacts_useful_for_isv_success_security_review
+    action: pull_during_marketplace_readiness_gate
+  - feature: audit_log
+    state: adopted
+    leverage: high
+    why: required_for_agentic_workflow_security_doctrine
+    action: stream_to_azure_monitor_log_analytics
+  - feature: repository_rules
+    state: adopted
+    leverage: high
+    why: codified_for_tier_0_in_github_governance_ssot
+    action: extend_ruleset_to_tier_1_repos
+  - feature: enterprise_accounts
+    state: adopted
+    leverage: high
+    why: enterprise_ipai_is_the_governance_anchor
+    action: none
+  - feature: github_connect
+    state: defer
+    leverage: low
+    why: no_github_com_to_ghes_topology
+    action: trigger_ghes_adoption
+  - feature: saml
+    state: target_state
+    leverage: high
+    why: entra_id_as_idp_saml_sso_is_target_state
+    action: provision_entra_saml_app_for_github_enterprise
+  - feature: ldap
+    state: excluded
+    leverage: none
+    why: azure_ad_entra_only_no_on_prem_ldap
+    action: none
+  - feature: enterprise_managed_users_emu
+    state: evaluate
+    leverage: high
+    why: full_entra_managed_identity_strongest_posture_for_isv
+    action: evaluate_emu_migration_path_before_saml_goes_live
+  - feature: bring_your_own_idp_for_emu
+    state: evaluate
+    leverage: high
+    why: entra_is_the_idp_pairs_with_emu_evaluation
+    action: decide_emu_vs_saml_sso_before_provisioning
+
+# -----------------------------------------------------------------------------
+# 7. Community
+# -----------------------------------------------------------------------------
+community:
+  - feature: github_sponsors
+    state: defer
+    leverage: low
+    why: not_a_revenue_channel_for_b2b_saas
+    action: trigger_oss_project_launch
+  - feature: github_skills
+    state: defer
+    leverage: low
+    why: deakin_sig787_is_formal_learning_track
+    action: trigger_onboarding_new_engineers
+  - feature: electron
+    state: excluded
+    leverage: none
+    why: no_desktop_app_in_ipai_roadmap
+    action: none
+  - feature: education
+    state: defer
+    leverage: low
+    why: deakin_enrollment_covers_formal_education_track
+    action: none
+
+# -----------------------------------------------------------------------------
+# Prioritized adoption ladder — top 10 actions in order
+# -----------------------------------------------------------------------------
+prioritized_adoption_ladder:
+  - priority: 1
+    action: secret_scanning_rotation
+    rationale: 144-commit push-block is an active production blocker; unblock immediately
+    blocks: all_push_based_work
+  - priority: 2
+    action: foundry_project_ipai_copilot_resource_provisioning
+    rationale: go-live blocker; unlocks Copilot Autofix and Copilot secret scanning
+    cross_reference: platform/ssot/ai/foundry-resource-model.yaml
+  - priority: 3
+    action: saml_sso_vs_emu_decision
+    rationale: decide before provisioning — sets identity posture for downstream team sync and SCIM
+    cross_reference: ssot/governance/github-identity-and-oauth.yaml
+  - priority: 4
+    action: team_sync_entra_to_github_via_scim
+    rationale: depends on SAML/EMU decision; eliminates manual access management across 43+ SSOTs
+  - priority: 5
+    action: copilot_enterprise_enrollment
+    rationale: unlocks Autofix + Copilot secret scanning + Coding Agent PR generation
+    cross_reference: ssot/governance/github-enterprise-current-state-snapshot.yaml (Copilot training opt-out by 2026-04-24)
+  - priority: 6
+    action: codeql_confirmation_on_tier_0
+    rationale: GHAS trial is active; prove coverage before trial expires (30d window)
+    cross_reference: ssot/governance/github-enterprise-current-state-snapshot.yaml
+  - priority: 7
+    action: audit_log_streaming_to_azure_monitor
+    rationale: agentic workflow security doctrine requires who-acted-when traceability
+    cross_reference: CLAUDE.md §Agentic_Workflow_Security_Doctrine
+  - priority: 8
+    action: extend_repository_rules_to_tier_1
+    rationale: tier_0 is covered; tier_1 (web, data-intelligence, agents, design, automations) needs same gates
+    cross_reference: ssot/governance/repo-classes.yaml
+  - priority: 9
+    action: gha_billing_wired_to_azure_subscription
+    rationale: doctrine requires it; no new GHA workflows until billing confirmed
+    cross_reference: ssot/governance/gha-scoped-exception.yaml
+  - priority: 10
+    action: github_projects_to_ado_boards_sync_contract
+    rationale: Issues is the engineering backlog; Projects surfacing needs a sync contract with Azure Boards portfolio authority
+    cross_reference: ssot/governance/github-projects-v2-scope.yaml
+
+# -----------------------------------------------------------------------------
+# Tallies
+# -----------------------------------------------------------------------------
+tallies:
+  by_state:
+    adopted: 25
+    target_state: 6
+    evaluate: 13
+    defer: 8
+    excluded: 4
+  by_leverage:
+    high: 26
+    medium: 14
+    low: 12
+    none: 4
+  total_features: 56
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not adopting every feature marked target_state at once
+  - not reopening excluded features without doctrine revision
+  - not tracking defer items as active work
+  - not treating this matrix as a static snapshot (re-score quarterly or on feature launch)
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/governance/github-well-architected-framework.yaml
+  - ssot/governance/github-desired-state.yaml
+  - ssot/governance/github-target-state-success-criteria.yaml
+  - ssot/governance/github-enterprise-current-state-snapshot.yaml
+  - ssot/governance/github-identity-and-oauth.yaml
+  - ssot/governance/gha-scoped-exception.yaml
+  - ssot/governance/repo-classes.yaml
+  - ssot/governance/github-developer-program-and-integrations.yaml
+  - platform/ssot/ai/foundry-resource-model.yaml

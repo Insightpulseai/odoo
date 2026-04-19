@@ -106,17 +106,23 @@ github_developer_program:
 
   ipai_eligibility_status:
     integration_in_development: true
-    support_email_candidate: platform@insightpulseai.com (to be confirmed)
-    registration_pending: true
+    support_email_current: jgtolentino_rn@yahoo.com (personal — see remediation below)
+    support_email_target: platform@insightpulseai.com (org-owned, monitored alias)
+    registered: true
+    enrolled_as: jgtolentino (personal account shows "Developer Program Member" badge)
+    verified_on: "2026-04-19"
 
-  ipai_decision_gate:
-    enroll_when:
-      - first_ipai_published_github_app_or_action_lands
-      - support_email_is_live_and_monitored
-      - gtm_aligns_program_benefits_with_marketplace_motion
-    do_not_enroll_prematurely_because:
-      - program_kudos_are_tied_to_shipped_integrations_not_planned_ones
-      - support_email_commitment_implies_responsiveness_sla
+  ipai_remediation_required:
+    actions:
+      - update_developer_program_support_email_from_yahoo_personal_to_insightpulseai_alias
+      - stand_up_platform_at_insightpulseai_com_as_monitored_alias
+      - ensure_support_email_is_org_owned_not_individual_owned
+      - register_ipai_first_published_app_under_Insightpulse-ai_org_not_personal_jgtolentino
+    rationale: >
+      Personal developer account enrollment is fine for initial benefits,
+      but organizational commitments (support SLA, published integrations,
+      marketplace listings) must flow from an org-owned identity and email.
+      Yahoo personal account is not a production-grade org support channel.
 
   cross_reference:
     - ssot/governance/partner-program-authority.yaml (3-track partner model)
