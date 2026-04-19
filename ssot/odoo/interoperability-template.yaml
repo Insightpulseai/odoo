@@ -1,0 +1,267 @@
+# =============================================================================
+# Odoo CE 18 + OCA — Unified Interoperability Template (SSOT)
+# =============================================================================
+# Authority: canonical template every Odoo-adjacent feature / module /
+#            surface MUST fill out to declare how it interoperates with
+#            Odoo CE 18 + OCA. Enforces Config → Property Fields → OCA →
+#            Adjacent OCA → Composition → ipai_* doctrine (CLAUDE.md).
+#
+# Purpose: one shape, applied to all integrations (Pulser chat, mobile
+#          PWA, Databricks pipelines, Foundry tool adapters, rate card
+#          workflow, asset ops, expense mobile, external portal users,
+#          MCP tools, OCA modules, third-party bridges).
+#
+# Usage:  Copy this template into the module / spec / SSOT, fill in every
+#         section, and commit alongside the integration. A new
+#         interoperability surface is NOT approved unless this template
+#         is completed.
+#
+# Related: CLAUDE.md (Odoo extension and customization doctrine)
+#          ssot/odoo/ce18_oca_uc_semantic_odata_binding.yaml (layer model)
+#          ssot/odoo/package-classification.yaml (ipai_* rules)
+#          ssot/odoo/business_dimensions.yaml (branch/trade-name/tenant)
+#          ssot/odoo/settings_catalog.yaml (toggle model)
+# =============================================================================
+
+schema_version: "1.0"
+template_name: odoo_interoperability_template_v1
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: canonical
+
+# =============================================================================
+# TEMPLATE — fill in every section for each Odoo-adjacent surface
+# =============================================================================
+
+interoperability_declaration:
+
+  # ---------------------------------------------------------------------------
+  # 1. Surface identity
+  # ---------------------------------------------------------------------------
+  surface:
+    name: "<unique_surface_name>"                 # e.g., pulser_chat_on_erp
+    kind: "<module | external_service | pwa | pulser_pack | mcp_tool | pipeline | portal_surface>"
+    code_path: "<repo_relative_path>"             # e.g., addons/ipai/ipai_odoo_copilot/
+    canonical_spec_bundle: "<spec_path_if_applicable>"   # e.g., spec/commercial-controls-rate-card/
+    business_owner: "<role_or_named_person>"
+    technical_owner: "<role_or_team>"
+    version: "<semver_if_applicable>"
+
+  # ---------------------------------------------------------------------------
+  # 2. Odoo layer classification (CE 18 extension doctrine)
+  # ---------------------------------------------------------------------------
+  odoo_layer_classification:
+    # Pick ONE primary classification. CE 18 extension order is canonical.
+    primary_layer: "<ce_native | property_fields | oca_same_domain | adjacent_oca | composition_of_ce_oca | ipai_delta>"
+    rationale_for_not_using_higher_layer: |
+      "<why CE + property fields + OCA same domain + adjacent OCA + composition
+       was INSUFFICIENT. Required only if primary_layer is ipai_delta>"
+    ipai_module_type_if_delta: "<bridge | overlay | adapter | extension | null>"
+    ipai_mandatory_docs_if_delta:
+      - README.md: required | present | absent
+      - docs/MODULE_INTROSPECTION.md: required | present | absent
+      - docs/TECHNICAL_GUIDE.md: required | present | absent
+
+  # ---------------------------------------------------------------------------
+  # 3. Integration pattern
+  # ---------------------------------------------------------------------------
+  integration_pattern:
+    transport: "<xml_rpc | rest_api | graphql | oauth_oidc | webhook | bus | mail_server | ir_attachment | queue_job | odata | a2a_envelope | mcp>"
+    read_write_mode: "<read_only | guarded_write | full_write>"
+    transaction_scope: "<stateless | single_odoo_txn | cross_system_saga>"
+    idempotency: "<yes_with_idempotency_key | retry_safe | not_idempotent>"
+    batch_or_streaming: "<single | batch | streaming>"
+    inbound_or_outbound: "<inbound_to_odoo | outbound_from_odoo | bidirectional>"
+
+  # ---------------------------------------------------------------------------
+  # 4. Authorization + RBAC
+  # ---------------------------------------------------------------------------
+  authorization:
+    identity_authority: "<entra_workforce | entra_b2b_guest | entra_agent_id | managed_identity | service_principal | portal_user | none>"
+    odoo_user_binding: "<named_internal_user | odoo_portal_user | api_user | service_account>"
+    odoo_groups_required: []                      # e.g., [account.group_account_invoice]
+    record_rules_respected: true | false
+    field_acls_respected: true | false
+    multi_company_awareness: "<aware | not_aware | n/a>"
+    branch_awareness: "<aware | not_aware | n/a>"   # per business_dimensions.yaml
+    trade_name_awareness: "<aware | not_aware | n/a>"
+    client_tenant_awareness: "<aware | not_aware | n/a>"
+
+  # ---------------------------------------------------------------------------
+  # 5. Data contract
+  # ---------------------------------------------------------------------------
+  data_contract:
+    odoo_models_read: []                          # e.g., [account.move, res.partner]
+    odoo_models_written: []                       # must be [] if read_write_mode=read_only
+    odoo_models_inherited: []                     # for ipai_* modules
+    fields_added: []                              # for ipai_* modules
+    property_fields_used: []                      # when using CE property_fields layer
+    oca_modules_depended_on: []                   # e.g., [sale_order_line_menu, purchase_request]
+    verified_on_18_0: true | false | pending       # for OCA deps (see oca verification)
+    data_classification: "<public | internal | confidential | restricted | pii>"
+
+  # ---------------------------------------------------------------------------
+  # 6. Event + audit
+  # ---------------------------------------------------------------------------
+  events_and_audit:
+    emits_chatter_events: true | false
+    emits_bus_messages: true | false
+    uses_mail_server: true | false
+    mail_server_authority: "zoho_smtp_only"       # CLAUDE.md: Zoho SMTP canonical
+    mail_sender_addresses_authorized: []          # must all be on insightpulseai.com via Zoho
+    audit_events_emitted: []                      # e.g., [request_submitted, request_approved]
+    audit_retention_required: true | false
+    evidence_pack_location: "docs/evidence/<ts>/<surface_name>/"
+
+  # ---------------------------------------------------------------------------
+  # 7. Security + secrets
+  # ---------------------------------------------------------------------------
+  security_and_secrets:
+    sso_flow: "<entra_single_tenant_oauth | entra_b2b_guest | none>"
+    managed_identity_used: "<id-ipai-dev | id-ipai-dev-runtime | id-ipai-dev-agent | id-ipai-dev-data | id-ipai-dev-pipeline | none>"
+    key_vault_references: []                      # Key Vault secret names, never values
+    api_key_fallback: "<none | allowed_only_when_unavoidable>"
+    https_required: true                           # always true
+    private_endpoint_used: true | false
+    keyless_auth_compliant: true | false           # per azure-ai-governance-baseline.yaml
+
+  # ---------------------------------------------------------------------------
+  # 8. Mobile / PWA considerations
+  # ---------------------------------------------------------------------------
+  mobile_considerations:
+    mobile_exposed: true | false
+    delivery_mode_if_mobile: "<pwa | existing_ios_native_wrapper | both | n/a>"
+    pwa_manifest_present: true | false | n/a
+    service_worker_present: true | false | n/a
+    getusermedia_camera_needed: true | false | n/a
+    web_push_vapid: true | false | n/a
+    offline_queue_service_worker_background_sync: true | false | n/a
+    ios_safari_push_caveat_documented: true | false | n/a
+
+  # ---------------------------------------------------------------------------
+  # 9. Cross-layer projection (if analytics/semantic/OData relevant)
+  # ---------------------------------------------------------------------------
+  cross_layer_projection:
+    unity_catalog_projection_required: true | false
+    uc_target_path: "ipai_<env>.<domain>.<schema>.<object>"  # if true
+    semantic_view_target: "semantic.<domain>.<entity>"        # if exposed to BI
+    power_bi_consumption: true | false
+    odata_entity_set_exposed: true | false                    # expose only via gold/silver, never raw
+    databricks_vector_search_target: true | false
+    foundry_grounding_target: true | false
+
+  # ---------------------------------------------------------------------------
+  # 10. Pulser interaction
+  # ---------------------------------------------------------------------------
+  pulser_interaction:
+    exposed_as_pulser_tool: true | false
+    pack_binding: "<pulser_finance | pulser_erp | pulser_asset_ops | pulser_expense_mobile_companion | null>"
+    judges_applied: []                             # e.g., [finance_correctness_judge, grounding_judge]
+    mutation_policy: "<read_only | guarded_write | null>"
+    pulser_can_commit_without_approval: false     # must be false for anything mutating finance/erp
+    approval_band: "<none | required | dual_control>"
+
+  # ---------------------------------------------------------------------------
+  # 11. Testing contract
+  # ---------------------------------------------------------------------------
+  testing_contract:
+    test_db_pattern: "test_<module_or_surface>"
+    unit_tests_location: "<module>/tests/"
+    integration_tests_location: "<repo>/tests/integration/"
+    contract_tests_location: "<repo>/tests/contract/"
+    ci_gate: "<azure_pipelines_lane | azure-pipelines-contract-checks.yml | azure-pipelines-eval-gate.yml>"
+    regression_dataset_location: "<if applicable>"
+    eval_harness_if_ai_surface: "databricks_mlflow"
+
+  # ---------------------------------------------------------------------------
+  # 12. Migration posture (Odoo 18 → 19 eventual upgrade)
+  # ---------------------------------------------------------------------------
+  migration_posture:
+    ported_to_19_0: not_yet | tested | compatible | incompatible | n/a
+    oca_port_tool_applicable: true | false
+    migration_risk: "<low | medium | high>"
+    migration_window_required: true | false
+    rollback_criteria: "<what triggers rollback>"
+
+  # ---------------------------------------------------------------------------
+  # 13. Mail transport (non-negotiable)
+  # ---------------------------------------------------------------------------
+  mail_transport:
+    outbound_host: smtp.zoho.com                  # CLAUDE.md: Zoho canonical
+    outbound_port: 587                             # STARTTLS
+    credentials_source: azure_key_vault (kv-ipai-dev)
+    secret_names_used: [zoho-smtp-user, zoho-smtp-password]
+    mailgun_or_sendgrid_forbidden: true           # deprecated
+    port_25_forbidden: true                       # blocked by Azure
+
+  # ---------------------------------------------------------------------------
+  # 14. Non-goals (explicit)
+  # ---------------------------------------------------------------------------
+  non_goals:
+    - not_duplicating_oca_capability_as_ipai_star_when_oca_exists
+    - not_introducing_enterprise_dependencies
+    - not_using_odoo_com_iap
+    - not_bypassing_multi_company_context
+    - not_storing_secrets_in_module_data_files
+    - not_using_port_25_for_mail
+    - not_using_deprecated_transports (no Mailgun, no Supabase, no n8n)
+    - not_inventing_modules_without_verified_18_0_presence
+
+# =============================================================================
+# ACCEPTANCE CHECKLIST (review gate)
+# =============================================================================
+
+acceptance_checklist:
+  all_required:
+    - surface_identity_completed
+    - odoo_layer_classification_completed_with_rationale
+    - integration_pattern_declared
+    - rbac_and_authorization_declared
+    - data_contract_declared_including_read_write_mode
+    - events_and_audit_declared
+    - security_declared_with_managed_identity_and_key_vault
+    - mobile_considerations_declared_even_if_not_mobile
+    - cross_layer_projection_declared
+    - pulser_interaction_declared_even_if_none
+    - testing_contract_declared
+    - migration_posture_declared
+    - mail_transport_declared_if_mail_used
+    - non_goals_declared
+  review_owners:
+    - platform-architecture
+    - security_reviewer (if auth/secrets/PII touched)
+    - finance_owner (if finance/erp data touched)
+    - data-intelligence (if UC/semantic/OData touched)
+
+# =============================================================================
+# SCOPED-OUT ITEMS (this template does NOT replace)
+# =============================================================================
+
+scoped_out:
+  - full_module_introspection_doc (see docs/MODULE_INTROSPECTION.md pattern per CLAUDE.md for ipai_*)
+  - technical_guide (see docs/TECHNICAL_GUIDE.md pattern per CLAUDE.md for ipai_*)
+  - go_live_readiness_gate (see ssot/release/go-live-readiness.yaml)
+  - persona_definitions (see agents/ repo)
+  - pulser_pack_manifest (see agents/domain/<domain>/pack.manifest.yaml)
+
+# =============================================================================
+# RELATED SSOTs
+# =============================================================================
+
+anchors:
+  odoo_extension_doctrine: CLAUDE.md (Odoo extension and customization doctrine)
+  cross_layer_binding: ssot/odoo/ce18_oca_uc_semantic_odata_binding.yaml
+  package_classification: ssot/odoo/package-classification.yaml
+  settings_catalog: ssot/odoo/settings_catalog.yaml
+  business_dimensions: ssot/odoo/business_dimensions.yaml
+  odoo_18_vs_19_decision: ssot/odoo/odoo-18-vs-19-adoption-decision.yaml
+  oca_must_have_base: infra/ssot/oca/must_have_base.yaml
+  mail_transport_authority: ssot/identity/mailbox-authority.yaml
+  identity_authorities: ssot/identity/entra-identity-matrix.yaml
+  directory_authority: platform/ssot/identity/directory-authority-matrix.yaml
+  pulser_pack_matrix: platform/ssot/agents/pulser-pack-matrix.yaml
+  ai_governance_baseline: platform/ssot/policy/azure-ai-governance-baseline.yaml
+  go_live_readiness: ssot/release/go-live-readiness.yaml
+  unity_catalog_map: ssot/lakehouse/unity-catalog-map.yaml
+  semantic_layer: ssot/semantic/semantic-layer.yaml
+  odata_entity_map: platform/ssot/semantic/odata-entity-map.yaml
