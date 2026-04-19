@@ -102,6 +102,108 @@ repo_mapping:
       - github_mcp_tool_adapters (when github MCP is wired)
 
 # -----------------------------------------------------------------------------
+# GitHub App lifecycle operational details
+# -----------------------------------------------------------------------------
+github_app_lifecycle:
+
+  authentication_flows:
+    authenticate_as_app:
+      purpose: "Identify your app (not a user or installation) — e.g., listing installations"
+      mechanism: jwt_signed_with_private_key
+      ipai_usage: "agent-platform backend + platform webhook consumer"
+    authenticate_as_installation:
+      purpose: "Act on behalf of an installed app in a specific repo/org"
+      mechanism: installation_access_token_from_jwt
+      token_expiry: "1 hour"
+      ipai_usage: "normal webhook-driven automation + repo policy enforcement"
+    authenticate_on_behalf_of_user:
+      purpose: "Act as a GitHub user for user-scoped actions"
+      mechanism: user_access_token_via_oauth_flow
+      ipai_usage: "avoid unless genuinely user-scoped (prefer installation auth)"
+    authenticate_in_actions_workflows:
+      purpose: "Use GitHub App from within Actions without embedded secrets"
+      mechanism: generate_installation_token_action + OIDC federation
+      ipai_rule: "Never embed PATs. Use GitHub App + OIDC federation to Azure."
+
+  private_key_and_token_management:
+    private_key_storage:
+      ipai_canonical: azure_key_vault (kv-ipai-dev-sea)
+      secret_name_pattern: github-app-<app-slug>-private-key
+      rotation_policy: at_least_annually_or_on_compromise
+    jwt_generation:
+      validity: 10_minutes_max
+      alg: RS256
+      issuer_claim: github_app_id
+    installation_access_token:
+      expiry: 1_hour
+      refresh_strategy: generate_new_on_expiry_via_jwt
+      cache_strategy: in_memory_with_expiry_margin (not persistent)
+    user_access_token:
+      refresh: via_refresh_token_flow
+      rule: "Use only when genuinely user-scoped; prefer installation auth"
+
+  app_manifest_registration:
+    rule: "Use app manifest flow for reproducible app creation across environments"
+    ipai_storage: platform/github/apps/<app-slug>/manifest.yaml
+    enables_reproducible_install: true
+
+  permissions_and_scope:
+    rule: least_privilege
+    default_permissions: read_only
+    write_grants: explicit_per_scope_with_justification
+    forbidden_default: admin_repo + admin_org (require explicit business justification)
+
+  rate_limits:
+    per_installation: 5000_requests_per_hour (standard)
+    ipai_strategy: "Monitor rate limit usage in App Insights; implement backoff + caching in agent-platform webhook consumer"
+    rate_limit_header_monitoring: required
+
+  allowed_ip_addresses:
+    policy: ipai_optional_per_app
+    recommended_when: production_app_with_sensitive_data_access
+    source_ip_list: ACA outbound IPs (document in infra/ IaC)
+    not_adopted_default: true (start without IP allowlist; add when app goes to production)
+
+  suspend_and_delete:
+    suspend_installation:
+      purpose: "Temporarily disable without losing configuration"
+      use_case: [incident_response, compromised_credentials, emergency_throttle]
+    transfer_ownership:
+      policy: "Only between IPAI-controlled orgs; never to external party without written approval"
+    delete_app:
+      irreversible: true
+      requires: platform_architecture_approval + evidence_pack
+
+# -----------------------------------------------------------------------------
+# Marketplace commercialization (deferred until offer lands)
+# -----------------------------------------------------------------------------
+marketplace_commercialization:
+  status: deferred_until_marketplace_offer_lands
+  prerequisites:
+    - github_app_published_and_stable_for_at_least_90_days
+    - security_best_practices_audit_passed
+    - customer_experience_best_practices_documented
+    - privacy_policy_and_tos_published
+    - support_contact_operational
+  listing_components:
+    - listing_requirements
+    - pricing_plan
+    - billing_integration
+    - payment_processor
+  ipai_preparation_posture: monitor_requirements_in_background_not_prioritize_now
+
+# -----------------------------------------------------------------------------
+# OAuth App migration (if legacy OAuth apps exist)
+# -----------------------------------------------------------------------------
+oauth_app_migration:
+  rule: migrate_oauth_apps_to_github_apps_when_they_touch_ipai_control_plane
+  rationale: >
+    OAuth apps act as the authorizing user and have broader permissions
+    than necessary. GitHub Apps have scoped, installation-based
+    permissions and a separate identity — safer default.
+  current_ipai_oauth_apps: none_known_inventory_if_found
+
+# -----------------------------------------------------------------------------
 # GitHub Developer Program qualifications
 # -----------------------------------------------------------------------------
 developer_program_qualifications:
