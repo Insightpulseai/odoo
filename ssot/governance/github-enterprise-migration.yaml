@@ -1,0 +1,239 @@
+# =============================================================================
+# GitHub Enterprise Migration — SSOT
+# =============================================================================
+# Authority: canonical migration target to https://github.com/enterprises/ipai
+#            as the enterprise account URL. Consolidates existing
+#            GitHub Enterprise Cloud SAML SSO posture + sets forward path
+#            for GHAS, Enterprise Managed Users (EMU), policy inheritance,
+#            and billing consolidation.
+# Related:   ssot/identity/entra_target_state.yaml#enterprise_applications
+#            ssot/governance/github-entra-target-state.yaml
+#            ssot/governance/platform-authority-split.yaml
+#            ssot/governance/ado_github_authority_map.yaml
+#            CLAUDE.md (Engineering & Delivery Authority)
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: canonical_target_not_yet_migrated
+
+enterprise_target:
+  url: https://github.com/enterprises/ipai
+  slug: ipai
+  name: InsightPulseAI
+  classification: github_enterprise_cloud
+  not_ghes_self_hosted: true
+
+current_state:
+  existing_saml_sso_app: "GitHub Enterprise Cloud - Insightpulseai SAML SSO"
+  ssot_reference: ssot/identity/entra_target_state.yaml#enterprise_applications.keep_strategic
+  source_control_authority: github (unchanged)
+  engineering_backlog_authority: github_issues (unchanged)
+  deploy_authority: azure_pipelines (unchanged per CLAUDE.md)
+
+# -----------------------------------------------------------------------------
+# Migration scope (what moves)
+# -----------------------------------------------------------------------------
+migration_scope:
+
+  enterprise_account:
+    action: confirm_or_create
+    target_url: https://github.com/enterprises/ipai
+    owner_primary: "Jake Tolentino (Admin)"
+    billing_contact: finance@insightpulseai.com (mailbox alias; per mailbox-authority.yaml)
+
+  orgs_under_enterprise:
+    primary_org:
+      login: Insightpulseai
+      role: canonical_monorepo_org
+    additional_orgs_if_needed:
+      - evaluate_if_separate_public_org_needed_for_open_source
+      - evaluate_if_separate_client_org_needed_per_engagement
+
+  sso_binding:
+    identity_provider: microsoft_entra_id
+    tenant_id: 402de71a-87ec-4302-a609-fb76098d1da7
+    protocol: saml_2_0
+    existing_enterprise_app: "GitHub Enterprise Cloud - Insightpulseai SAML SSO"
+    scim_provisioning:
+      decision: evaluate_for_automated_lifecycle
+      when_required: team_growth_beyond_3_engineers OR compliance_requires
+      initial_target: manual_for_now
+    session_duration: default (24h) — revisit if stricter needed
+
+  enterprise_managed_users_emu:
+    decision: evaluate_later_not_day_one
+    current_posture: standard_github_users_with_saml_sso
+    adopt_when:
+      - need_to_enforce_identity_provider_only_auth
+      - need_centralized_user_management
+      - multi_client_isolation_requires_separate_identity_namespace
+    emu_tradeoffs:
+      pro: [strong_enterprise_isolation, required_idp_auth, forced_saml_on_all_users]
+      con: [users_cannot_contribute_to_public_repos_with_emu_account, separate_emu_identity_required, cannot_link_to_personal_github]
+
+  advanced_security_ghas:
+    decision: adopt_when_billed_through_enterprise
+    components:
+      secret_scanning:
+        status: enable_immediately_when_enterprise_confirmed
+        ipai_relevance: high
+      push_protection:
+        status: enable_immediately_when_enterprise_confirmed
+        ipai_relevance: high
+      code_scanning_codeql:
+        status: evaluate_per_repo
+        current_alternative: Defender for DevOps (per CLAUDE.md GHA scoped exception)
+      dependency_review:
+        status: enable
+        ipai_relevance: high
+      private_vulnerability_reporting:
+        status: enable
+    cost_consideration: ghas_licenses_billed_per_committer_per_active_repo
+
+  audit_log_streaming:
+    decision: enable_stream_to_azure_log_analytics
+    target_workspace: log-ipai-dev-sea (or dedicated enterprise log workspace)
+    retention: per_compliance_requirement (default 90d; escalate if SOC 2 adopted)
+
+  ip_allow_list:
+    decision: not_adopted_initially
+    adopt_when: specific_client_engagement_requires OR threat_model_escalates
+
+  policy_inheritance:
+    org_policies_set_at_enterprise_level:
+      - required_2fa: true
+      - email_verification_required: true
+      - forking_policy: disabled_by_default_per_repo
+      - default_branch_name: main
+      - no_public_repos_without_approval (unless explicit open source)
+      - required_status_checks_enforcement
+      - required_reviewers_on_pr_approval
+
+# -----------------------------------------------------------------------------
+# Authority preservation (unchanged)
+# -----------------------------------------------------------------------------
+authority_preservation:
+  source_control: github (under enterprises/ipai)
+  engineering_execution_backlog: github_issues (per planning-surface-authority-map)
+  visual_projection: github_projects_v2 (per github-projects-v2-scope)
+  portfolio_planning_system_of_record: azure_devops_boards (UNCHANGED per CLAUDE.md)
+  deploy_authority: azure_pipelines (UNCHANGED; GHA scoped exception only)
+  identity_authority: microsoft_entra_id (UNCHANGED)
+  cicd_billing: azure_subscription_not_github_billing (per GHA scoped exception conditions)
+
+# -----------------------------------------------------------------------------
+# Migration phases
+# -----------------------------------------------------------------------------
+migration_phases:
+
+  phase_1_confirm_enterprise_exists:
+    steps:
+      - verify_enterprise_slug_ipai_at_github_com_enterprises_ipai
+      - confirm_billing_account_under_ipai_enterprise
+      - confirm_Insightpulseai_org_is_under_this_enterprise
+    evidence: screenshot_to_docs_evidence_github_enterprise_confirmation
+
+  phase_2_sso_baseline:
+    steps:
+      - verify_existing_saml_sso_app_in_entra_resolves_to_enterprise_login
+      - test_login_flow_for_jake_admin_account
+      - document_session_duration_and_reauth_cadence
+    evidence: sso_login_verification_screenshots
+
+  phase_3_enterprise_policies:
+    steps:
+      - enable_required_2fa_at_enterprise_level
+      - enforce_email_verification
+      - set_default_branch_name_policy
+      - disable_forking_unless_explicitly_needed
+      - set_repo_creation_policy_private_by_default
+    evidence: enterprise_policy_settings_exports
+
+  phase_4_advanced_security:
+    steps:
+      - enable_secret_scanning_enterprise_wide
+      - enable_push_protection_enterprise_wide
+      - enable_dependency_review
+      - evaluate_codeql_per_repo
+      - enable_private_vulnerability_reporting
+    evidence: ghas_enablement_screenshots_per_feature
+
+  phase_5_audit_stream:
+    steps:
+      - configure_audit_log_streaming_to_log_analytics
+      - verify_events_ingesting
+      - define_retention_policy
+    evidence: kql_query_returning_github_audit_events
+
+  phase_6_scim_provisioning_optional:
+    adopt_when: team_growth_or_compliance
+    steps:
+      - enable_scim_on_entra_saml_app
+      - test_user_provisioning_deprovisioning
+    evidence: scim_provisioning_logs
+
+# -----------------------------------------------------------------------------
+# Decisions deferred
+# -----------------------------------------------------------------------------
+decisions_deferred:
+  enterprise_managed_users_emu: "Evaluate when multi-client identity isolation
+    becomes a hard requirement. Current posture (standard users + SAML) is
+    sufficient for solo/small-team scale."
+  ip_allow_list: "Adopt only if client engagement or threat model demands."
+  codeql_enterprise_wide: "Adopt per-repo first; evaluate enterprise-wide
+    after 90d of per-repo data."
+  github_copilot_enterprise_vs_business: "Depends on whether team exists
+    with per-seat licenses. Current IPAI posture is solo/small-team;
+    Copilot Business sufficient."
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not moving deploy authority from Azure Pipelines to GitHub Actions
+    (per CLAUDE.md — GHA scoped exception only)
+  - not moving portfolio planning from Azure DevOps Boards to GitHub Projects
+    (per ssot/governance/planning-surface-authority-map.yaml)
+  - not migrating to GitHub Enterprise Server (self-hosted) — Cloud only
+  - not adopting GitHub Sponsors / Discussions as authoritative surfaces
+  - not enabling Enterprise Managed Users on day one
+
+# -----------------------------------------------------------------------------
+# Risks + mitigations
+# -----------------------------------------------------------------------------
+risks:
+  saml_lockout_during_migration:
+    severity: high
+    mitigation: verify_break_glass_account_admin_access_before_enforcing_saml
+  billing_surprise_from_ghas:
+    severity: medium
+    mitigation: ghas_licensed_per_committer_per_active_repo; audit committers first
+  emu_adoption_reversal:
+    severity: high
+    mitigation: DO_NOT_enable_emu_day_one; evaluate first
+  audit_log_volume_cost:
+    severity: low
+    mitigation: route_to_log_analytics_with_retention_policy
+
+# -----------------------------------------------------------------------------
+# Execution boundary
+# -----------------------------------------------------------------------------
+execution_boundary:
+  this_ssot_is: migration_plan_and_target_state
+  this_ssot_is_not: live_enterprise_state_mirror
+  execution_required_human_approval_per_phase: true
+  runbook_to_be_created: docs/runbooks/github-enterprise-migration.md
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  entra_target_state: ssot/identity/entra_target_state.yaml
+  github_entra_target_state: ssot/governance/github-entra-target-state.yaml
+  ado_github_authority_map: ssot/governance/ado_github_authority_map.yaml
+  planning_authority_map: ssot/governance/planning-surface-authority-map.yaml
+  platform_authority_split: ssot/governance/platform-authority-split.yaml
+  claude_md_authority_section: CLAUDE.md (Engineering & Delivery Authority)
+  upstream_enterprise_docs: https://docs.github.com/en/enterprise-cloud@latest
