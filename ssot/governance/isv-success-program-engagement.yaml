@@ -105,11 +105,19 @@ benefits:
     terms_and_conditions_ref: "Azure Sponsorship Offer | Microsoft Azure"
 
   azure_standard_support_plan:
-    duration: tied_to_isv_success_period (12 months)
-    activation_path: partner_center_benefits_workspace
+    sku_label_from_partner_center: "Azure Standard Support Plan"
+    quantity: unlimited_incidents (verified 2026-04-19 via Technical support & consultation page)
+    activation_deadline: "2027-04-30"
+    status_in_partner_center: unknown_not_activated
+    activation_path: partner_center_benefits_workspace > technical_support_and_consultation
     ticket_tag: "Partner ISV Success Azur Std"
     priority_routing: yes_with_severity_selection
-    status: not_yet_activated
+    important_distinction: >
+      "Unlimited incidents" here is the actual benefit value (NOT the
+      50/year cap that applies to SPD Partner Cloud Support per policy
+      change effective June 23 2025). IPAI is on ISV Success not SPD,
+      so the unlimited benefit holds.
+    status: ready_to_activate_low_risk_high_value
 
   dynamics_365_partner_sandbox_sales_fs_cs:
     sku_label_from_partner_center: "Dynamics 365 Partner Sandbox – Sales, Field Service and Customer Service"
@@ -211,19 +219,33 @@ benefits:
     status: ongoing_access
 
   technical_enablement_sessions:
-    total_sessions: 4
-    session_types:
-      - d_and_p (design and planning)
-      - architecture_design
-      - architecture_review
-      - marketplace_publishing_consultation
-    activation_path: partner_center_benefits_workspace
+    verified_in_partner_center: 2026-04-19
+    visible_sessions_in_technical_support_and_consultation_tab:
+      - name: Application architecture design session (ADS)
+        quantity: 1 consultation
+        activate_by: "2027-04-30"
+        status: unknown_not_activated
+      - name: Application design review (ADR)
+        quantity: 1 consultation
+        activate_by: "2027-04-30"
+        status: unknown_not_activated
+      - name: Application publishing consultation
+        quantity: 1 consultation
+        activate_by: "2027-04-30"
+        status: unknown_not_activated
+    discrepancy_note: >
+      EM email listed "D&P, Arch Design, Arch Review & Mkt Publish Consult"
+      as 4 sessions. Partner Center shows 3 consultation sessions (ADS,
+      ADR, Publishing) + Azure Standard Support (unlimited). The "D&P"
+      referenced by EM may have been rolled into ADS or is surfaced
+      elsewhere. Ask EM to clarify if the 4th session is missing or
+      reclassified.
+    total_visible_consultations: 3
     ipai_priority:
-      first_session: marketplace_publishing_consultation (closest to Aug-Sep publish target)
-      second_session: architecture_review (validate foundry + agent-platform + AFD topology)
-      third_session: architecture_design (if new scope emerges)
-      fourth_session: d_and_p (reserve for post-GA expansion)
-    status: 0_of_4_used
+      first_session: application_publishing_consultation (closest to Aug-Sep publish target)
+      second_session: application_design_review_adr (validate foundry + agent-platform + AFD topology)
+      third_session: application_architecture_design_session_ads (if new scope emerges)
+    status: 0_of_3_visible_used
 
 # -----------------------------------------------------------------------------
 # Templates requested by EM
