@@ -1,0 +1,140 @@
+version: 1
+kind: fabric_mirroring_role_split
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+
+doctrine: >
+  Fabric Mirroring is an ANALYTICS BRIDGE, not a transactional
+  replacement. It brings external operational data into OneLake for
+  near-real-time analytics (Power BI, Direct Lake, Spark, SQL endpoint)
+  without hand-built ETL. It does NOT replace Odoo (transactional),
+  Azure PostgreSQL (app/operational), or Databricks Unity Catalog
+  (governed engineering plane).
+
+# -----------------------------------------------------------------------------
+# 4-layer role split (authoritative)
+# -----------------------------------------------------------------------------
+four_layer_role_split:
+  transactional_truth: odoo (via pg-ipai-odoo Flexible Server)
+  app_and_platform_operational_truth: azure_postgresql (pg-ipai-odoo + future platform PG)
+  governed_analytics_and_data_intelligence_plane: databricks_plus_unity_catalog
+  selective_analytics_replication_and_access_layer: fabric_mirroring
+
+# -----------------------------------------------------------------------------
+# Three Fabric Mirroring modes (per Microsoft)
+# -----------------------------------------------------------------------------
+mirroring_modes:
+
+  database_mirroring:
+    description: copies_data_into_onelake_as_delta_tables
+    replication_mode: near_real_time
+    supported_sources_ipai_relevant:
+      - azure_database_for_postgresql (IPAI pg-ipai-odoo eligible)
+    ipai_use_case: bi_reporting_and_direct_lake_consumption_of_operational_data
+    ipai_decision: adopt_selectively_when_fabric_native_bi_on_operational_data_is_needed
+
+  metadata_mirroring:
+    description: mirrors_catalog_schema_table_metadata_only_via_onelake_shortcuts
+    data_stays_in_source: true
+    supported_sources_ipai_relevant:
+      - azure_databricks (IPAI dbw-ipai-dev eligible)
+    ipai_use_case: expose_governed_databricks_data_to_fabric_users_without_copying
+    ipai_decision: adopt_when_fabric_users_need_databricks_data_without_dual_storage
+    reinforces_claude_md_13: fabric_is_mirroring_complement_databricks_stays_primary_engineering_plane
+
+  open_mirroring:
+    description: external_apps_write_change_data_into_fabric_landing_zone_via_open_mirroring_spec_and_apis
+    extensibility_point: true
+    ipai_use_case: application_or_platform_change_data_landed_directly_in_fabric_analytics_surfaces
+    ipai_decision: evaluate_only_if_platform_or_app_intentionally_wants_to_push_cdc_to_fabric
+    caution: >
+      Open mirroring lets an app bypass Databricks as the governed
+      engineering plane. Use only with explicit approval and audit
+      wiring. Default is NO — route through Databricks UC instead.
+
+# -----------------------------------------------------------------------------
+# IPAI use-case matrix
+# -----------------------------------------------------------------------------
+use_case_matrix:
+
+  mirror_azure_postgresql_operational_data_to_fabric:
+    mode: database_mirroring
+    source: pg-ipai-odoo (or future platform PG)
+    target: fabric_onelake
+    consumer: power_bi_and_direct_lake
+    decision: allowed_selectively
+    governance:
+      - rls_and_ols_per_mirroring_controls
+      - scope_to_non_pii_fields_by_default
+      - explicit_review_if_including_sensitive_fields
+
+  mirror_databricks_metadata_to_fabric:
+    mode: metadata_mirroring
+    source: dbw-ipai-dev (via Unity Catalog)
+    target: fabric_onelake_shortcuts
+    consumer: fabric_users_without_databricks_access
+    decision: allowed_selectively
+    governance:
+      - uc_row_level_security_preserved_via_shortcut
+      - no_data_copy (metadata_only)
+
+  open_mirror_from_ipai_app_into_fabric:
+    mode: open_mirroring
+    source: ipai_app_via_public_open_mirroring_api
+    target: fabric_landing_zone
+    decision: default_no_evaluate_only_with_explicit_approval
+    reason: >
+      Bypasses Databricks governed engineering plane. Only adopt if
+      there is a clear analytical reason that Databricks UC can't
+      serve, and attach audit + policy wiring.
+
+# -----------------------------------------------------------------------------
+# Forbidden uses
+# -----------------------------------------------------------------------------
+forbidden_uses:
+  - replacing_odoo_as_transactional_truth
+  - replacing_azure_postgresql_as_app_or_platform_operational_truth
+  - replacing_databricks_unity_catalog_as_governed_engineering_plane
+  - using_open_mirroring_as_default_path_instead_of_databricks_projection
+  - mirroring_unredacted_pii_to_fabric_without_policy_approval
+
+# -----------------------------------------------------------------------------
+# Governance
+# -----------------------------------------------------------------------------
+governance:
+  access_control_in_fabric:
+    - rls_row_level_security_preserved
+    - ols_object_level_security_preserved
+    - fabric_workspace_role_assignments_per_consumer_class
+  audit:
+    - mirroring_jobs_audited
+    - open_mirroring_cdc_writes_audited
+    - shortcut_access_logged
+  pii_handling:
+    - default_no_pii_in_mirrored_tables
+    - masking_or_redaction_applied_at_source_or_semantic_view_level
+    - alignment_with_platform_ssot_policy_azure_ai_governance_baseline
+
+# -----------------------------------------------------------------------------
+# Cross-references
+# -----------------------------------------------------------------------------
+related:
+  databricks_plane_charter: ssot/data-intelligence/databricks-plane-charter.yaml
+  unity_catalog_map: ssot/lakehouse/unity-catalog-map.yaml
+  fabric_consumer_map: ssot/lakehouse/fabric-consumer-map.yaml
+  existing_fabric_mirroring_odoo: ssot/data-intelligence/fabric-mirroring.odoo.yaml
+  claude_md_invariant_13: CLAUDE.md (Fabric = mirroring/complement)
+  claude_md_invariant_9: CLAUDE.md (Databricks = primary engineering plane)
+  ai_governance_baseline: platform/ssot/policy/azure-ai-governance-baseline.yaml
+  odoo_cross_layer: ssot/odoo/ce18_oca_uc_semantic_odata_binding.yaml
+  odoo_cloud_platform_bom: platform/ssot/architecture/odoo-cloud-platform-bom.yaml
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not treating Fabric as primary analytics engineering plane
+  - not using database mirroring as substitute for Databricks UC pipelines
+  - not defaulting to open mirroring (requires explicit evaluation)
+  - not mirroring transactional writes back from Fabric to Odoo or PG
