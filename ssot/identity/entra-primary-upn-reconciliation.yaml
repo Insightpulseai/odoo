@@ -1,0 +1,240 @@
+version: 1
+kind: entra_primary_upn_reconciliation
+status: canonical
+last_updated: "2026-04-19"
+verified_against_live_state: true
+verification_source: "myaccount.microsoft.com Account manager (Jake's Entra self-service portal)"
+owner: platform-architecture + identity-ops
+
+doctrine: >
+  Jake's actual Entra ID primary UPN is admin@insightpulseai.com, NOT
+  jake.tolentino@insightpulseai.com as assumed in earlier SSOTs.
+  Multiple SSOTs across this session referenced jake.tolentino@ as
+  the primary work identity — those references are incorrect against
+  live state. This SSOT records ground truth and proposes the
+  remediation path.
+
+# -----------------------------------------------------------------------------
+# Observed state (verified 2026-04-19)
+# -----------------------------------------------------------------------------
+observed_state:
+  account_manager_url: https://myaccount.microsoft.com
+  display_name: "Jake Tolentino"
+  primary_upn: admin@insightpulseai.com
+  editable_by_user: false (tenant-managed per "Why can't I edit this?" prompt)
+  indicates: entra_managed_member_identity (not self-service editable)
+
+# -----------------------------------------------------------------------------
+# Discrepancy with prior SSOTs
+# -----------------------------------------------------------------------------
+discrepancy:
+
+  ssots_that_assumed_wrong_upn:
+    - ssot/identity/saas-multitenant-identity-matrix.yaml (A1 example uses jake.tolentino@)
+    - ssot/identity/m365-mca-billing-account.yaml (primary_billing_contact shows jake.tolentino@)
+    - ssot/identity/m365-tenant-license-inventory-and-capability-map.yaml (P2 assignment priority lists jgtolentino)
+    - ssot/governance/isv-success-program-engagement.yaml (em_contact recipient is jake.tolentino@)
+    - ssot/governance/github-correct-setup-sequence.md (multiple references)
+    - ssot/governance/fasttrack-m365-engagement.yaml
+    - ssot/governance/foundry-to-m365-publish-path.yaml
+    - docs/gtm/partner_center_checklist.md (technical contact)
+
+  likely_explanations:
+    explanation_1_billing_email_separate_from_upn:
+      theory: jake.tolentino@insightpulseai.com is set as the MCA billing contact EMAIL (which can differ from UPN)
+      upn_is_still: admin@insightpulseai.com
+      implication: most references to jake.tolentino@ as "primary work identity" should be read as "billing/contact alias"
+    explanation_2_two_upns_coexist:
+      theory: jake.tolentino@ exists as a secondary Entra identity or was deprecated
+      verification_needed: az ad user show --id jake.tolentino@insightpulseai.com
+    explanation_3_historical_naming_drift:
+      theory: admin@ was provisioned first; jake.tolentino@ planned but never deployed
+      likely_given: mailbox-authority.yaml lists jake.tolentino@ as alias on business@ (Zoho), not as a separate mailbox
+
+# -----------------------------------------------------------------------------
+# Anti-pattern acknowledgement
+# -----------------------------------------------------------------------------
+anti_pattern_finding:
+  issue: admin@insightpulseai.com as a human user's primary UPN is a doctrine violation
+  doctrine_that_forbids_it: mailbox-authority.yaml#prohibitions
+  specifically:
+    - "mailbox_aliases_MUST_NOT_be_entra_members_with_standing_privilege"
+  reality: admin@ IS Jake's Entra member identity (with role + privilege)
+  severity: medium
+  rationale: >
+    Role-style UPNs (admin@, ceo@, finance@) create audit ambiguity when
+    the person using them leaves or the role is reassigned. Personal UPNs
+    (firstname.lastname@) keep identity tied to a specific human.
+    Microsoft best practice + IPAI mailbox-authority SSOT both prefer
+    personal UPNs for human identities.
+
+# -----------------------------------------------------------------------------
+# Three remediation paths
+# -----------------------------------------------------------------------------
+remediation_paths:
+
+  path_a_status_quo_accept_admin_as_upn:
+    description: Accept admin@insightpulseai.com as Jake's canonical UPN; update all SSOTs to reflect reality
+    pros: zero migration risk; immediate doctrine-reality alignment
+    cons: violates mailbox-authority doctrine (role UPN for human); all downstream SSOTs need sweep
+    estimated_work: 1 day sweep across ~15 SSOTs + CLAUDE.md
+    cross_identity_risk: persists (role UPN for human)
+
+  path_b_migrate_to_jake_tolentino_as_upn:
+    description: Rename UPN from admin@ to jake.tolentino@ in Entra
+    mechanism: az ad user update --id admin@insightpulseai.com --user-principal-name jake.tolentino@insightpulseai.com
+    pros: fixes the doctrine violation; SSOTs that assumed jake.tolentino@ become correct
+    cons:
+      - UPN rename has cascading effects (sign-in changes, app SSO may break, MFA re-register)
+      - admin@ may be retained as an alias in Zoho + Entra for legacy flows
+      - requires careful cutover with 24-48h monitoring window
+    estimated_work: 2-4 hours of Entra admin + 1 week monitoring
+
+  path_c_create_jake_tolentino_as_new_upn_deprecate_admin:
+    description: Provision jake.tolentino@insightpulseai.com as a new Entra member; disable admin@ once migration complete
+    mechanism: az ad user create ... + gradual cutover
+    pros: cleaner separation; admin@ can be deleted or converted to non-human ops identity
+    cons:
+      - most invasive; 2 parallel identities during cutover
+      - requires re-assigning all roles, licenses, group memberships
+
+  recommendation:
+    chosen_path: path_b_migrate_to_jake_tolentino_as_upn
+    rationale: >
+      Path B gives the best long-term posture with bounded risk.
+      UPN rename is a supported Entra operation; sign-in aliases
+      can retain admin@ for legacy flows. Aligns with the existing
+      corpus of SSOTs that assumed jake.tolentino@ is the UPN.
+    execution_gate: >
+      Must NOT execute UPN rename during go-live cutover window.
+      Schedule for low-risk maintenance window (not during
+      marketplace publish preparation).
+
+# -----------------------------------------------------------------------------
+# Verification results (executed 2026-04-19)
+# -----------------------------------------------------------------------------
+verification_results:
+
+  check_1_jake_tolentino_upn_existence:
+    command_run: "az ad user show --id jake.tolentino@insightpulseai.com"
+    result: ERROR_Resource_does_not_exist
+    conclusion: NO Entra identity exists at jake.tolentino@insightpulseai.com
+    implication: All SSOT references to jake.tolentino@ as Jake's Entra UPN are ASPIRATIONAL, not current reality
+
+  check_2_jake_identity_enumeration:
+    command_run: "az ad user list --filter \"startsWith(displayName, 'Jake')\""
+    result:
+      total_jake_identities: 1
+      identity:
+        upn: admin@insightpulseai.com
+        id: 1ee9e10b-c962-4f25-9aea-6bcd20322018
+        displayName: "Jake Tolentino"
+    conclusion: Exactly ONE Jake Entra identity exists; no duplicates or historical drift
+
+  check_3_admin_identity_details:
+    command_run: "az ad user show --id admin@insightpulseai.com"
+    result:
+      upn: admin@insightpulseai.com
+      id: 1ee9e10b-c962-4f25-9aea-6bcd20322018
+      displayName: "Jake Tolentino"
+      mail: null
+      otherMails: null
+    findings:
+      - no_mail_attribute_set (expected since Zoho owns mail routing)
+      - no_otherMails_backup (potential recovery risk — no alternative recovery address)
+      - displayName correctly reflects Jake the person, not admin role
+    gap_flagged:
+      issue: otherMails is null — no alternative recovery email configured
+      risk: if admin@insightpulseai.com becomes inaccessible, no self-service recovery path
+      remediation: set otherMails to a recovery address (ideally jake.tolentino@insightpulseai.com once created, or another verified alias)
+
+  check_4_zoho_side_reconciliation:
+    status: previously_verified
+    result: admin@insightpulseai.com IS an alias on business@insightpulseai.com per mailbox-authority.yaml
+    mail_routing: mail to admin@insightpulseai.com lands in business@insightpulseai.com Zoho mailbox
+
+  synthesis:
+    confirmed_reality: Jake has exactly ONE Entra identity — admin@insightpulseai.com (object id 1ee9e10b-c962-4f25-9aea-6bcd20322018)
+    confirmed_anti_pattern: role-UPN for human identity (mailbox-authority SSOT forbids this)
+    confirmed_routing: mail-to-admin@ goes to business@ Zoho mailbox
+    confirmed_no_duplicates: no stale Jake identities lurking
+    confirmed_no_separate_jake_tolentino: jake.tolentino@ has never been provisioned as an Entra user
+
+# -----------------------------------------------------------------------------
+# Downstream SSOT sweep required
+# -----------------------------------------------------------------------------
+downstream_ssot_sweep:
+  scope: ~15 SSOTs + CLAUDE.md reference jake.tolentino@insightpulseai.com as primary identity
+  approach: do_not_mass_edit_until_remediation_path_chosen
+  rationale: >
+    If Path A (keep admin@) is chosen, sweep jake.tolentino@ → admin@ across all SSOTs.
+    If Path B (rename to jake.tolentino@) is chosen, SSOTs become correct automatically
+    after UPN rename — no sweep needed.
+    If Path C (dual identity migration) is chosen, both references remain temporarily valid.
+
+  files_to_update_if_path_a_chosen:
+    - ssot/identity/saas-multitenant-identity-matrix.yaml
+    - ssot/identity/m365-mca-billing-account.yaml
+    - ssot/identity/m365-tenant-license-inventory-and-capability-map.yaml
+    - ssot/governance/isv-success-program-engagement.yaml
+    - ssot/governance/fasttrack-m365-engagement.yaml
+    - ssot/governance/foundry-to-m365-publish-path.yaml
+    - ssot/governance/github-correct-setup-sequence.md (in docs/runbooks/)
+    - docs/gtm/partner_center_checklist.md
+    - (plus any others matching admin@ or jake.tolentino@)
+
+# -----------------------------------------------------------------------------
+# Temporary doctrine (until remediation executes)
+# -----------------------------------------------------------------------------
+temporary_doctrine:
+  until: remediation_path_chosen_and_executed
+  rule: >
+    Treat admin@insightpulseai.com as Jake's live operational UPN.
+    References to jake.tolentino@insightpulseai.com in existing SSOTs
+    are TARGET STATE (not current reality). When issuing commands that
+    target Jake's Entra identity, use admin@insightpulseai.com in
+    execution but record the intent in SSOTs using the target UPN.
+  exceptions:
+    - MCA billing contact: likely set to jake.tolentino@ as an email alias for invoicing — verify in admin portal
+    - Partner Center seller contact: verify which address is registered
+    - Microsoft ISV Success EM correspondence: confirmed reaches jake.tolentino@
+
+# -----------------------------------------------------------------------------
+# Success criteria
+# -----------------------------------------------------------------------------
+success_criteria:
+  - id: UPN-1
+    description: Verification checks 1-4 completed
+    target: all 4 executed with evidence captured
+    measurement: docs/evidence/<ts>/upn-reconciliation/
+  - id: UPN-2
+    description: Remediation path decision recorded with rationale
+    target: path_a_or_b_or_c selected + rationale documented
+    measurement: this SSOT remediation_paths.recommendation.chosen_path updated post-decision
+  - id: UPN-3
+    description: Zero other Entra identities exist for Jake besides admin@ and target (jake.tolentino@)
+    target: 0 duplicate Jake identities
+    measurement: az ad user list filter confirms
+  - id: UPN-4
+    description: All downstream SSOT references consistent post-remediation
+    target: 100% aligned
+    measurement: grep audit
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not executing UPN rename during go-live cutover window
+  - not mass-editing SSOTs until remediation path chosen
+  - not maintaining both admin@ and jake.tolentino@ as separate human identities long-term
+  - not exposing this reconciliation gap publicly (internal governance only)
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/identity/mailbox-authority.yaml
+  - ssot/identity/entra_target_state.yaml
+  - ssot/identity/saas-multitenant-identity-matrix.yaml
+  - ssot/identity/w9studio-google-workspace-identity-plane.yaml
+  - CLAUDE.md
