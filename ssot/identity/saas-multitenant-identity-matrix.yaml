@@ -1,0 +1,440 @@
+version: 1
+kind: saas_multitenant_identity_matrix
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture + identity-ops
+
+doctrine: >
+  IPAI operates as multi-tenant B2B SaaS. Every identity touching IPAI
+  assets is classified into one of 8 actor classes, authenticated via
+  one of 5 identity provider lanes, operating under one of 9 canonical
+  scenarios with explicit domain handling. Personal Microsoft Accounts
+  (MSA) must NOT be Primary Owner of any IPAI business asset. Emulation
+  strategies mirror production identity shapes with zero production-data
+  leakage.
+
+parent_ssots:
+  - ssot/identity/entra_target_state.yaml
+  - ssot/identity/entra-identity-matrix.yaml
+  - ssot/identity/entra-governance-policy.yaml
+  - ssot/identity/guest-invite-registry.yaml
+  - ssot/identity/m365-tenant-license-inventory-and-capability-map.yaml
+  - ssot/governance/saas-tenancy-model-pulser-for-odoo.yaml
+  - ssot/governance/github-identity-and-oauth.yaml
+
+# -----------------------------------------------------------------------------
+# Posture change from deep research (2026-04-19)
+# -----------------------------------------------------------------------------
+posture_change_flags:
+  msa_vs_entra_separation:
+    rule: Personal MSA jgtolentino_rn@yahoo.com MUST NOT be Primary Owner of any IPAI business asset
+    enforcement:
+      - reassign_visual_studio_enterprise_seat_to_jake.tolentino@insightpulseai.com_in_manage.visualstudio.com
+      - migrate_github_developer_program_enrollment_from_msa_to_entra_path_or_keep_bounded_to_personal_use
+      - confirm_isv_success_partner_center_marketplace_azure_devops_all_resolve_to_entra_identity
+      - msa_can_remain_as_b2b_guest_into_entra_tenant_for_personal_scenarios_only
+    rationale: >
+      Microsoft does NOT provide MSA-to-Entra merge. Business continuity,
+      audit, and ISV publishing all require Entra-backed organizational
+      identities. MSA retains narrow personal use only.
+    verification: docs/evidence/<ts>/msa-vs-entra-cleanup/
+
+# -----------------------------------------------------------------------------
+# Actor classes (8 canonical)
+# -----------------------------------------------------------------------------
+actor_classes:
+
+  A1_ipai_workforce:
+    description: IPAI employees + core contractors with long-term IPAI identity
+    identity_source: insightpulseai.com Entra tenant (member)
+    license_required: entra_id_p2 (per m365-tenant-license-inventory)
+    examples:
+      - jake.tolentino@insightpulseai.com (platform-architecture, billing owner)
+      - finance_director_khalil@insightpulseai.com (to be onboarded as member)
+      - future_engineer_or_designer_leads
+    privileged_role_eligibility: via_pim (not permanent)
+    access_scope: ipai_assets + optional_access_to_specific_customer_tenants_under_csp
+
+  A2_ipai_extended_guests:
+    description: External collaborators with time-bound Entra guest access to specific IPAI resources
+    identity_source: insightpulseai.com Entra tenant (userType=Guest)
+    identity_origin: B2B (invited from source email)
+    license_required: typically_none (guest counts against Azure free tier)
+    examples:
+      - 11 TBWA/SMP finance team guests (per guest-invite-registry.yaml)
+      - future_contract_reviewers
+      - ms_em_so_yeong_choi_if_temporary_collaboration_needed
+    access_scope: scoped_to_specific_apps_or_groups_only
+    review_cadence: quarterly_access_reviews_per_m365-tenant-license-inventory#access_reviews
+
+  A3_customer_admin:
+    description: Admin user of an IPAI-provisioned customer tenant
+    identity_source: per-tenant_entra_external_id_scope (tenant-owned)
+    license_required: per_tenant_seat_allocation (varies by plan tier)
+    examples:
+      - admin@acme.com (Customer A admin)
+      - ceo@biglaw.ph (Customer B admin)
+      - it_admin@tbwaphilippines.com (Customer C admin)
+    access_scope: all_resources_within_their_own_tenant_only
+    cross_tenant_access: denied_by_default_per_saas-tenancy-model
+    privilege_management: customer_side_not_ipai_controlled
+
+  A4_customer_user:
+    description: Standard user within a customer tenant
+    identity_source: per-tenant_entra_external_id_scope OR customer's_own_idp_via_federation
+    license_required: per_tenant_seat (counted against plan)
+    sub_roles:
+      - finance_user (AP, AR, GL posting rights)
+      - project_manager (project lifecycle + budgets)
+      - hr_user (employee records access)
+      - sales_user (CRM + quotes)
+      - read_only_user (reports + dashboards only)
+    access_scope: scoped_to_tenant_plus_role_assignments
+
+  A5_customer_multi_company_user:
+    description: Customer user spanning multiple Odoo companies within one customer tenant
+    identity_source: same as A4 (single identity)
+    companies_spanned: multiple_odoo_company_records_same_tenant
+    example: parent_co_cfo_with_access_to_3_subsidiary_books
+    access_rule: odoo_multi_company_res_groups_controls_which_companies_visible
+    critical_distinction: NOT_the_same_as_multi_tenant (single tenant, multiple internal companies)
+
+  A6_customer_external_collaborator:
+    description: Customer's external contractor/partner invited into customer's tenant
+    identity_source: customer's_entra_external_id_scope (B2B guest into customer tenant)
+    invited_by: customer_admin (A3) — NOT IPAI
+    example: external_accountant_invited_by_customer_to_review_books
+    access_scope: narrow_per_customer_invite
+    ipai_governance: customer_owns_this_flow; IPAI exposes the capability but doesn't manage the invites
+
+  A7_cross_tenant_collaborator:
+    description: User from Customer A collaborating on shared project with Customer B
+    identity_source: each_user_remains_in_their_own_customer_tenant
+    mechanism: shared_link_or_federation (future feature, not enabled at launch)
+    default_state: disabled_at_launch
+    rationale: per-tenant isolation is the default per saas-tenancy-model#isolation_model
+
+  A8_anonymous_or_unauthenticated:
+    description: Visitors without authenticated session
+    identity_source: none
+    use_cases:
+      - marketing_site_visitors (insightpulseai.com, prismalab.insightpulseai.com)
+      - marketplace_listing_previewers
+      - support_ticket_submitters (email-based, pre-auth)
+      - trial_signup_requesters (before tenant provisioning)
+    access_scope: public_content_and_signup_flows_only
+    never_exposed_to: tenant_data_of_any_kind
+
+# -----------------------------------------------------------------------------
+# Identity provider lanes (5 canonical)
+# -----------------------------------------------------------------------------
+identity_provider_lanes:
+
+  lane_1_ipai_entra_workforce:
+    purpose: IPAI staff + core contractors
+    tenant: insightpulseai.com
+    directory_id: 402de71a-87ec-4302-a609-fb76098d1da7
+    serves_actor_classes: [A1, A2]
+    authentication_protocols: [saml_2_0, oidc, oauth_2_0]
+    mfa_enforced: yes (CA baseline per m365-tenant-license-inventory#conditional_access_baseline)
+    cross_reference: ssot/identity/entra_target_state.yaml
+
+  lane_2_ipai_external_id_b2c:
+    purpose: Customer users without their own IdP
+    tenant: per-tenant Entra External ID scope (one directory scope per Pulser tenant)
+    serves_actor_classes: [A3, A4, A5]
+    authentication_protocols: [oidc, oauth_2_0, social_logins]
+    social_providers_allowed:
+      - google
+      - apple (mobile first-class)
+      - microsoft_consumer (for MSA-holding SMB users)
+      - linkedin (deferred)
+      - facebook (forbidden — privacy posture)
+    sign_up_flow: self_service_with_email_verification
+    mfa_enforced: optional_at_signup_required_at_first_privileged_action
+
+  lane_3_customer_own_idp_federation:
+    purpose: Enterprise customers with their own Entra tenant or 3rd-party IdP
+    federation_patterns:
+      - entra_to_entra_b2b (Customer Entra → Pulser tenant as claims provider)
+      - saml_2_0_inbound (Okta, Google Workspace, Ping, OneLogin, etc.)
+      - oidc_inbound (any OIDC-compliant IdP)
+    serves_actor_classes: [A3, A4, A5]
+    available_on: enterprise_plan_only (per marketplace plan tier)
+    configuration_surface: customer_self_service_in_pulser_admin_portal_with_ipai_support_consultation
+
+  lane_4_odoo_local_auth_fallback:
+    purpose: Legacy/emergency fallback for tenants during IdP outage
+    mechanism: per-tenant_odoo_res_users_table_password_hashed
+    serves_actor_classes: [A3_admin_only_break_glass, A4_legacy_migration_only]
+    mfa_enforced: yes_via_odoo_2fa_module (oca)
+    ipai_doctrine: discouraged_for_new_tenants (push customers to lane 1-3)
+    use_case_examples:
+      - initial_admin_bootstrap_before_idp_config_completes
+      - break_glass_during_external_id_outage
+
+  lane_5_personal_msa:
+    purpose: Personal Microsoft Account (consumer identity)
+    serves_actor_classes:
+      - A8_anonymous (for anonymous marketplace preview — but MSA is authenticated so semi-exception)
+      - A1_only_as_msa_guest (per posture change: MSA must NOT own IPAI business assets)
+    ipai_use_cases_permitted:
+      - b2b_guest_invitation_into_entra_for_personal_scenarios
+      - individual_customer_accessing_trial (if lane_2_b2c_not_enabled)
+    ipai_use_cases_forbidden:
+      - primary_owner_of_any_ipai_business_asset
+      - isv_publisher_identity
+      - mca_billing_account_owner
+      - azure_subscription_owner
+      - partner_center_or_developer_program_canonical_identity
+
+# -----------------------------------------------------------------------------
+# Canonical scenarios (9)
+# -----------------------------------------------------------------------------
+scenarios:
+
+  S1_ipai_internal_engineer_workflow:
+    actors: [A1_ipai_workforce]
+    identity_lane: lane_1_ipai_entra_workforce
+    domain: "*.insightpulseai.com (with pim activation for privileged access)"
+    apps_accessed: azure_portal + partner_center + github_enterprise + ipai_ops_console
+    governance: ssot/identity/entra-governance-policy.yaml
+
+  S2_tbwa_smp_finance_contractor_access:
+    actors: [A2_ipai_extended_guests]
+    identity_lane: lane_1_ipai_entra_workforce (as B2B guest)
+    source_domain: "*.tbwa.com.ph (11 named guests per guest-invite-registry)"
+    apps_accessed: ipai_finance_close_surface + shared_evidence_docs
+    review_cadence: quarterly
+    governance: ssot/identity/guest-invite-registry.yaml
+
+  S3_smb_customer_no_idp_selfservice_signup:
+    actors: [A3_customer_admin, A4_customer_user]
+    identity_lane: lane_2_ipai_external_id_b2c
+    source_domain: "any — e.g. acme.com, gmail.com (social login), custom SMB domains"
+    tenant_provisioning: self_service_via_marketplace_subscribe + fulfillment_webhook
+    example: "3-person PH agency signs up on Foundational plan"
+    isolation: per_tenant_database_plus_aca_container_app_per_saas-tenancy-model
+
+  S4_enterprise_customer_with_own_entra:
+    actors: [A3_customer_admin, A4_customer_user]
+    identity_lane: lane_3_customer_own_idp_federation
+    source_domain: "customer's verified entra domain (e.g. biglaw.ph, tbwa.com.ph)"
+    plan_tier: enterprise
+    federation_type: entra_to_entra_b2b_claims_provider
+    setup_flow: customer_admin_consent + pulser_service_principal_registered_in_customer_entra
+    audit_trail: flows_through_customer_entra_then_reflected_in_pulser_audit_log
+
+  S5_enterprise_customer_with_okta_or_google_workspace:
+    actors: [A3_customer_admin, A4_customer_user]
+    identity_lane: lane_3_customer_own_idp_federation (saml/oidc inbound)
+    source_domain: "customer's verified domain (e.g. acme.com with Okta)"
+    plan_tier: enterprise
+    federation_type: saml_2_0_or_oidc_inbound
+    setup_flow: ipai_provides_sp_metadata + customer_configures_saml_app_in_okta
+    ipai_support: technical_enablement_session_recommended (ADR or ADS per isv-success benefits)
+
+  S6_customer_multi_company_within_single_tenant:
+    actors: [A5_customer_multi_company_user]
+    identity_lane: same_as_primary_S3_or_S4_or_S5
+    pattern: odoo_multi_company_res_groups_within_single_pulser_tenant
+    example: "Parent Co with 3 subsidiaries; CFO sees all 3 books; each subsidiary CFO sees only their own"
+    data_plane: single_postgres_database_per_pulser_tenant_with_multi_company_records_inside
+    auth_simplicity: single_sign_on_event_multiple_company_contexts
+
+  S7_customer_inviting_external_collaborator:
+    actors: [A6_customer_external_collaborator]
+    identity_lane: customer's_own_entra_external_id_scope (NOT IPAI's — customer owns this flow)
+    source_domain: "external contractor's own email/domain"
+    example: "Customer admin invites external_auditor@deloitte.ph as guest to review year-end books"
+    ipai_role: expose_the_capability_via_pulser_admin_ui; customer_admin_executes_invites
+    audit_requirement: all_actions_by_external_guests_logged_in_tenant_audit_log
+
+  S8_pulser_trial_signup_anonymous_to_authenticated:
+    actors: [A8_anonymous → A3_customer_admin]
+    identity_lane_at_signup: lane_2_ipai_external_id_b2c (with bounded self-signup)
+    flow:
+      step_1: visitor_on_pulser.insightpulseai.com hits Start Trial
+      step_2: trial_tenant_provisioned_with_14_day_sandbox
+      step_3: verification_email_activates_tenant
+      step_4: user_becomes_A3_customer_admin_of_trial_tenant
+    guardrails:
+      - trial_tenant_auto_decommissions_at_day_15_if_not_converted
+      - trial_data_retention_zero_days_after_decommission
+      - no_credit_card_required_but_verified_email_required
+
+  S9_cross_customer_collaboration_future:
+    actors: [A7_cross_tenant_collaborator]
+    identity_lane: bridged_via_shared_link_or_federation (future)
+    state_at_launch: DISABLED
+    enable_trigger: two_customers_explicitly_requesting_cross_tenant_collab_with_signed_dpa
+    isolation_guarantee: even_when_enabled_cross_tenant_data_access_is_scoped_to_explicit_share
+
+# -----------------------------------------------------------------------------
+# Domain handling matrix
+# -----------------------------------------------------------------------------
+domain_handling:
+
+  ipai_owned_domains:
+    primary: insightpulseai.com (Entra verified)
+    deprecated_never_use: insightpulseai.net (per CLAUDE.md)
+    subdomains_canonical:
+      - erp.insightpulseai.com (Odoo runtime entrypoint)
+      - prismalab.insightpulseai.com (PrismaLab surface)
+      - pulser.insightpulseai.com (Pulser product portal target)
+      - docs.insightpulseai.com (docs, future)
+      - platform.insightpulseai.com (ops console, future)
+
+  customer_owned_domains:
+    pattern_at_launch: customer_supplies_own_domain_if_they_want_custom_url
+    default_pattern_if_customer_uses_shared: <tenant-slug>.pulser-app.com (or equivalent service domain — TBD)
+    custom_domain_path_for_enterprise: ipai_adds_cname_and_managed_cert_per_customer
+
+  federation_domains_verified:
+    ipai_enterprise_entra: insightpulseai.com (owns tenant)
+    customer_entra_example: biglaw.ph (customer owns their tenant)
+    customer_saml_metadata_example: sso.acme.com (customer's okta endpoint)
+
+  forbidden_domains_for_identity_use:
+    - insightpulseai.net (deprecated)
+    - any_domain_with_unverified_ownership
+    - any_domain_in_the_deprecated_list (per CLAUDE.md: supabase, cloudflare, vercel, digitalocean, mg.insightpulseai.com)
+
+# -----------------------------------------------------------------------------
+# Emulation / simulation strategy (for dev, UAT, demo, load test)
+# -----------------------------------------------------------------------------
+emulation_strategies:
+
+  dev_tenant_emulation:
+    purpose: engineer_testing_new_features_without_touching_prod
+    identity_source: synthetic_entra_external_id_scope_in_dev_tenant
+    user_count: 5-10 synthetic users per dev engineer
+    data: synthetic_or_scrubbed_staging_snapshot (per branch-environment-contract)
+    naming: "dev-tenant-<engineer-alias>"
+
+  uat_tenant_emulation:
+    purpose: stakeholder_acceptance_testing_pre_prod_promotion
+    identity_source: real_named_stakeholders_as_entra_external_id_users
+    user_count: per_stakeholder_list
+    data: prod_like_masked_snapshot (per branch-environment-contract#staging)
+    naming: "uat-tenant-<release-id>"
+
+  demo_tenant_emulation:
+    purpose: sales_and_investor_demos_without_exposing_real_customer_data
+    identity_source: fictional_demo_personas_in_entra_external_id
+    example_personas:
+      - "demo-cfo@acme-demo.ipai-demo.com (Acme Agency CFO persona)"
+      - "demo-pm@acme-demo.ipai-demo.com (Acme Agency Project Manager)"
+    data: 100%_synthetic_scripted_for_narrative (per demo_storyboard)
+    naming: "demo-tenant-<scenario>"
+    lifecycle: refresh_before_each_major_demo_session
+    governance: never_use_real_customer_data_in_demo
+
+  load_test_tenant_emulation:
+    purpose: validate_tenant_isolation_performance_at_scale
+    identity_source: programmatically_generated_synthetic_identities
+    user_count: 100-10000 per test tenant (tuned to plan tier)
+    data: generated_data_adhering_to_odoo_schemas
+    naming: "loadtest-tenant-<timestamp>"
+    lifecycle: destroyed_after_test_results_captured
+
+  training_sandbox_emulation:
+    purpose: customer_training_without_risk_to_their_prod_tenant
+    identity_source: ipai_provides_training_specific_entra_external_id_scope
+    user_count: per_training_cohort
+    data: training_scenario_dataset (not customer's real data)
+    naming: "training-tenant-<customer>-<date>"
+    lifecycle: 30-day_retention_post_training_then_destroyed
+
+  cross_tenant_simulation:
+    purpose: test_that_Customer_A_user_CANNOT_access_Customer_B_data
+    execution: penetration_test_or_automated_isolation_test
+    required_before: every_production_release_affecting_tenant_boundary
+    evidence_location: docs/evidence/<ts>/cross-tenant-isolation-test/
+
+# -----------------------------------------------------------------------------
+# Governance controls per scenario (enforcement layer)
+# -----------------------------------------------------------------------------
+governance_controls:
+
+  conditional_access_policies_scope:
+    applies_to_lane_1_ipai_workforce:
+      - block_legacy_auth
+      - require_mfa_for_all_users
+      - restrict_admin_portal_to_compliant_devices
+      - require_compliant_device_for_privileged_roles
+    applies_to_lane_2_customer_b2c:
+      - require_mfa_on_first_privileged_action
+      - block_risky_signins (identity_protection)
+    applies_to_lane_3_customer_own_idp:
+      - customer_owns_their_own_ca_policies
+      - ipai_enforces_minimum_baseline_for_federation_acceptance
+
+  pim_activation_required_for:
+    - global_administrator_in_ipai_entra (lane 1)
+    - privileged_authentication_administrator_in_ipai_entra
+    - customer_admin_in_ipai_control_plane_when_accessing_customer_tenant_via_csp
+
+  access_review_cadence:
+    ipai_workforce: annual
+    ipai_guests: quarterly (per guest-invite-registry)
+    privileged_role_members: monthly
+    customer_admin_access_by_ipai_support: per_session_with_evidence
+
+  audit_log_streaming:
+    all_lanes_stream_to: log-ipai-dev-runtime-sea (per observability-and-telemetry.yaml)
+    retention_per_environment: per branch-environment-contract
+
+# -----------------------------------------------------------------------------
+# Success criteria
+# -----------------------------------------------------------------------------
+success_criteria:
+  - id: IDENT-1
+    description: Zero personal MSAs are Primary Owner of IPAI business assets
+    target: 0 violations
+    measurement: msa-vs-entra-cleanup audit
+  - id: IDENT-2
+    description: Every actor class has a documented identity lane + scenario binding
+    target: 100% coverage
+    measurement: this SSOT completeness review
+  - id: IDENT-3
+    description: Cross-tenant isolation test passes on every production release
+    target: true
+    measurement: penetration_test_evidence
+  - id: IDENT-4
+    description: Access reviews run on cadence for guests + privileged roles
+    target: 100% on-time
+    measurement: access_review_report_presence
+  - id: IDENT-5
+    description: No federation to unverified domains
+    target: 0
+    measurement: saml_app_audit
+  - id: IDENT-6
+    description: All 9 scenarios have at least one automated integration test
+    target: 9/9
+    measurement: test_coverage_report
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not supporting personal MSAs as primary identity for IPAI business assets
+  - not enabling cross-tenant collaboration (S9) at launch
+  - not supporting Facebook social login (privacy posture)
+  - not allowing federation to unverified domains
+  - not mixing demo data with real customer data
+  - not allowing customer admins to see other customers' data under any scenario
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/identity/entra_target_state.yaml
+  - ssot/identity/entra-identity-matrix.yaml
+  - ssot/identity/entra-governance-policy.yaml
+  - ssot/identity/guest-invite-registry.yaml
+  - ssot/identity/m365-tenant-license-inventory-and-capability-map.yaml
+  - ssot/governance/saas-tenancy-model-pulser-for-odoo.yaml
+  - ssot/governance/github-identity-and-oauth.yaml
+  - platform/ssot/runtime/branch-environment-contract.yaml
+  - ssot/governance/observability-and-telemetry.yaml
