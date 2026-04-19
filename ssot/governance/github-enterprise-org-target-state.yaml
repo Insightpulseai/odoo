@@ -200,6 +200,92 @@ organizations:
           enough_seats_for_core_internal_members: true
           enterprise_managed_assignment: true
 
+      # -------------------------------------------------------------------
+      # Application surfaces (4 canonical apps under web/ multi-app root)
+      # -------------------------------------------------------------------
+      application_surfaces:
+        canonical_count: 4
+        owned_by_repo: web
+        structural_note: >
+          web/ must be treated as a multi-app repo family or workspace
+          root, NOT a single-site repo. Each app has its own bundle
+          under web/apps/<app_id>/ with shared design/ tokens + shared
+          agent-platform backend.
+        apps:
+          - app_id: erp
+            primary_domain: erp.insightpulseai.com
+            class: transactional_app
+            app_path: addons/ (Odoo native; no web/apps/erp separate)
+            backend_dependencies:
+              - odoo
+              - platform
+              - agent-platform
+          - app_id: insightpulseai_main
+            primary_domain: www.insightpulseai.com
+            class: flagship_web_app
+            app_path: web/apps/ipai-landing
+            backend_dependencies:
+              - web
+              - platform
+              - agent-platform
+              - data-intelligence_optional
+          - app_id: w9studio
+            primary_domain: www.w9studio.net
+            class: business_unit_app
+            app_path: web/apps/w9studio-site (planned)
+            backend_dependencies:
+              - web
+              - platform
+              - agent-platform_optional
+          - app_id: prismalab
+            primary_domain: prismalab.insightpulseai.com
+            class: domain_app
+            app_path: web/apps/prismalab (evolve from prismalab-gateway)
+            backend_dependencies:
+              - web
+              - platform
+              - agent-platform
+              - data-intelligence_optional
+
+      # -------------------------------------------------------------------
+      # MCP global considerations (cross-cutting; NOT a separate app)
+      # -------------------------------------------------------------------
+      mcp_global_considerations:
+        classification: cross_cutting_platform_capability_not_an_app
+        ownership:
+          control_plane_repo: platform
+          runtime_repo: agent-platform
+          definitions_repo: agents
+        rules:
+          - tools_must_be_scoped_per_app_and_environment
+          - tools_must_respect_tenant_and_domain_boundaries
+          - secrets_must_be_brokered_or_vaulted
+          - no_plaintext_credentials_in_tool_runtime
+          - every_side_effecting_tool_call_must_be_audited
+          - external_connectors_must_be_explicitly_allowed
+          - prod_tools_and_nonprod_tools_must_be_separable
+        per_app_expectations:
+          erp:
+            likely_mcp_usage:
+              - odoo_tools
+              - approval_workflows
+              - document_ai
+          insightpulseai_main:
+            likely_mcp_usage:
+              - public_content_tools
+              - analytics_read_tools
+              - assistant_tools
+          w9studio:
+            likely_mcp_usage:
+              - content_ops_tools
+              - booking_or_asset_ops_optional
+          prismalab:
+            likely_mcp_usage:
+              - domain_specific_research_tools
+              - document_ai
+              - analytics_read_tools
+        detailed_topology_ssot: platform/ssot/org/app-surface-and-mcp-topology.yaml
+
 # -----------------------------------------------------------------------------
 # Assertions that must hold
 # -----------------------------------------------------------------------------

@@ -1,0 +1,261 @@
+version: 1
+kind: app_surface_and_mcp_topology
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+
+doctrine: >
+  Four canonical application surfaces under the Insightpulse-ai org.
+  MCP is a cross-cutting platform capability: owned centrally by
+  platform (policy + contracts), executed by agent-platform (runtime),
+  and defined through agents/ (pack contracts). Tools are scoped per
+  app + environment. Never blanket access.
+
+# -----------------------------------------------------------------------------
+# The 4 canonical application surfaces
+# -----------------------------------------------------------------------------
+apps:
+
+  erp:
+    app_id: erp
+    primary_domain: erp.insightpulseai.com
+    class: transactional_app
+    owning_repo: addons (Odoo native; NOT web/apps/erp)
+    tenant_scope:
+      primary_tenant: insightpulseai
+      multi_company_active: true
+      branch_scope: bir_branch + trade_name
+    backend_dependencies:
+      required: [odoo, platform, agent-platform]
+      optional: [data-intelligence]
+    mcp_scope:
+      allowed_connectors:
+        - azure
+        - azure-devops
+        - foundry
+        - microsoft-learn
+        - odoo_tool_adapter (agent-platform/src/agent_platform/tools/odoo/)
+      forbidden_connectors:
+        - public_cms_connectors (no public CMS write from ERP)
+      environment_separation:
+        dev: read_and_guarded_write
+        staging: read_and_guarded_write
+        prod: read_and_guarded_write_with_approval_bands
+    pulser_pack_bindings:
+      - pulser_erp
+      - pulser_finance (shared with insightpulseai_main)
+
+  insightpulseai_main:
+    app_id: insightpulseai_main
+    primary_domain: www.insightpulseai.com
+    class: flagship_web_app
+    owning_repo: web/apps/ipai-landing
+    tenant_scope:
+      primary_tenant: insightpulseai
+      public_surface: true
+      authenticated_workspace_optional: true
+    backend_dependencies:
+      required: [web, platform, agent-platform]
+      optional: [data-intelligence]
+    mcp_scope:
+      allowed_connectors:
+        - microsoft-learn
+        - foundry
+        - public_docs_retrieval
+        - platform_metadata_read
+      forbidden_connectors:
+        - direct_erp_write
+        - identity_admin_write
+        - finance_posting_actions
+      environment_separation:
+        dev: broad_read
+        staging: broad_read_plus_preview_writes
+        prod: read_only_default_plus_guarded_demo_workspace_writes
+    pulser_pack_bindings:
+      - pulser_platform
+      - pulser_web
+      - optional: pulser_finance, pulser_identity_ops
+
+  w9studio:
+    app_id: w9studio
+    primary_domain: www.w9studio.net
+    class: business_unit_app
+    owning_repo: web/apps/w9studio-site (planned)
+    tenant_scope:
+      primary_tenant: w9studio
+      mailbox_authority: google_workspace (w9studio.net)
+      public_surface: true
+    backend_dependencies:
+      required: [web, platform]
+      optional: [agent-platform]
+    mcp_scope:
+      allowed_connectors:
+        - crm_read_and_lead_write
+        - notifications (Zoho via platform broker)
+        - scheduling_optional
+      forbidden_connectors:
+        - accounting_write
+        - identity_admin
+        - direct_odoo_write
+      environment_separation:
+        dev: read_and_sandboxed_write
+        prod: read_and_guarded_write_for_leads_only
+    pulser_pack_bindings:
+      - pulser_w9studio
+      - shared: pulser_marketing, pulser_sales, pulser_support
+
+  prismalab:
+    app_id: prismalab
+    primary_domain: prismalab.insightpulseai.com
+    class: domain_app
+    owning_repo: web/apps/prismalab (evolve from prismalab-gateway)
+    tenant_scope:
+      primary_tenant: insightpulseai
+      authenticated_workspace_required: true
+      evidence_heavy: true
+    backend_dependencies:
+      required: [web, platform, agent-platform]
+      optional: [data-intelligence]
+    mcp_scope:
+      allowed_connectors:
+        - foundry
+        - document_intelligence
+        - ai_search (srch-ipai-dev-sea)
+        - databricks_vector_search_optional
+        - citation_export_tools
+      forbidden_connectors:
+        - public_cms_write
+        - finance_posting_actions
+        - identity_admin
+        - uncited_generation_from_raw_model
+      environment_separation:
+        dev: read_and_staging_doc_ingest
+        prod: read_and_guarded_doc_ingest_with_citation_required
+    pulser_pack_bindings:
+      - pulser_prismalab_research
+      - pulser_prismalab_screening
+      - pulser_prismalab_extraction
+      - pulser_prismalab_synthesis
+
+# -----------------------------------------------------------------------------
+# MCP global considerations (cross-cutting)
+# -----------------------------------------------------------------------------
+mcp_global_considerations:
+
+  ownership_split:
+    control_plane:
+      repo: platform
+      owns:
+        - mcp_policy
+        - per_app_allowlists
+        - tenant_boundary_rules
+        - secret_brokering_contracts
+    runtime:
+      repo: agent-platform
+      path: agent-platform/src/agent_platform/tools/mcp/
+      owns:
+        - mcp_tool_invocation
+        - session_and_tool_orchestration
+        - hook_lifecycle_integration (PreToolUse / PostToolUse)
+        - audit_event_emission
+    definitions:
+      repo: agents
+      owns:
+        - tool_contracts_per_pack
+        - judge_rubrics_for_tool_output
+        - skill_pack_tool_metadata
+
+  cross_cutting_rules:
+    scoping:
+      - tools_must_be_scoped_per_app_and_environment
+      - tools_must_respect_tenant_and_domain_boundaries
+      - no_blanket_tool_access_across_apps
+    security:
+      - secrets_must_be_brokered_or_vaulted
+      - no_plaintext_credentials_in_tool_runtime
+      - managed_identity_preferred_over_api_keys
+      - keyless_entra_auth_when_azure_openai_involved
+    audit:
+      - every_side_effecting_tool_call_must_be_audited
+      - audit_events_stored_with_correlation_id
+      - retention_per_azure_ai_governance_baseline
+    external_policy:
+      - external_connectors_must_be_explicitly_allowed_per_app
+      - third_party_connectors_require_review_before_allowlist_entry
+    environment_separation:
+      - prod_tools_and_nonprod_tools_must_be_separable
+      - staging_tools_must_not_hit_prod_data_by_default
+      - env_switching_must_be_explicit_not_implicit
+
+  per_app_tool_scope_matrix:
+    erp:
+      odoo_tools: allowed (guarded_write)
+      approval_workflows: allowed
+      document_ai: allowed
+      public_cms_write: forbidden
+      identity_admin: forbidden
+    insightpulseai_main:
+      public_content_tools: allowed
+      analytics_read_tools: allowed
+      assistant_tools: allowed
+      direct_erp_write: forbidden
+      finance_posting: forbidden
+      identity_admin: forbidden
+    w9studio:
+      content_ops_tools: allowed
+      booking_or_asset_ops: optional
+      accounting_write: forbidden
+      direct_odoo_write: forbidden
+      identity_admin: forbidden
+    prismalab:
+      domain_research_tools: allowed
+      document_ai: allowed
+      analytics_read_tools: allowed
+      public_cms_write: forbidden
+      finance_posting: forbidden
+      uncited_generation: forbidden
+
+# -----------------------------------------------------------------------------
+# Cross-app shared resources (not duplicated per app)
+# -----------------------------------------------------------------------------
+shared_resources:
+  identity: entra (per ssot/identity/entra-identity-matrix.yaml)
+  secrets: key_vault (kv-ipai-dev-sea)
+  managed_identities:
+    - id-ipai-dev-runtime (apps)
+    - id-ipai-dev-agent (agent-platform)
+    - id-ipai-dev-data (analytics)
+    - id-ipai-dev-pipeline (CI/CD)
+  hosting_substrate: acae-ipai-dev-sea (shared ACA environment)
+  container_registry: acripaiodoo
+  monitoring:
+    - appi-ipai-dev-runtime-sea
+    - appi-ipai-dev-agent-sea
+    - log-ipai-dev-runtime-sea
+    - log-ipai-dev-agent-sea
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not treating MCP as a separate application surface
+  - not granting blanket MCP tool access across apps
+  - not duplicating MCP tool code per app (shared runtime in agent-platform)
+  - not running agent runtime inside any of the 4 apps (all 4 call
+    agent-platform via HTTP A2A)
+  - not mixing production and non-production tool endpoints
+
+# -----------------------------------------------------------------------------
+# Related SSOTs
+# -----------------------------------------------------------------------------
+related:
+  org_target_state: ssot/governance/github-enterprise-org-target-state.yaml
+  github_azure_chain: platform/ssot/architecture/github-azure-chain.yaml
+  site_template_adoption: ssot/web/site-template-adoption.yaml
+  surface_bindings: platform/ssot/agents/surface-bindings.yaml
+  pulser_pack_matrix: platform/ssot/agents/pulser-pack-matrix.yaml
+  mcp_allowlist: ssot/governance/mcp-allowlist.yaml
+  mcp_runtime_state: ssot/tooling/mcp-runtime-state.yaml
+  ai_governance_baseline: platform/ssot/policy/azure-ai-governance-baseline.yaml
+  skill_pack_pattern_unified: ssot/agent-platform/skill-pack-pattern-unified.yaml
+  resource_inventory: platform/ssot/azure/resource-inventory.dev.yaml
