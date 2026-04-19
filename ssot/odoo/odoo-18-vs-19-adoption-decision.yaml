@@ -1,0 +1,178 @@
+# =============================================================================
+# Odoo 18 vs 19 Adoption Decision — SSOT
+# =============================================================================
+# Authority: canonical decision on IPAI's Odoo major-version baseline.
+#            Odoo 19 was released September 2025 with significant feature
+#            additions. IPAI stays on CE 18 for now per CLAUDE.md baseline.
+#            This SSOT documents the rationale and the forward-path
+#            criteria for a future 19 upgrade.
+# Related:   ssot/odoo/ce18_oca_uc_semantic_odata_binding.yaml
+#            ssot/odoo/settings_catalog.yaml
+#            ssot/odoo/package-classification.yaml
+#            infra/ssot/oca/must_have_*.yaml
+#            platform/ssot/agents/pulser-pack-matrix.yaml#pulser_expense_mobile_companion (PWA decision)
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: canonical
+
+decision: stay_on_odoo_ce_18_0_until_forward_path_criteria_met
+upstream_release_reference: "Odoo 19 release notes — September 2025"
+
+rationale: >
+  CLAUDE.md baseline is CE 18 + OCA. Odoo 19 is a significant release
+  (native PWA improvements, new Gmail/Outlook integrations, new Tax
+  Declaration engine, redesigned UI elements, many country localization
+  updates, many new industry packages). BUT: upgrading a production
+  ERP stack in-flight to the first go-live gate is a high-risk change.
+  OCA 18.0 branches remain the verified baseline for the IPAI canonical
+  module set (per verification commit e7974915e). Stay on 18 until (a)
+  OCA 19.0 branches reach maturity for our must-have modules, (b) first
+  go-live has stabilized, and (c) a dedicated migration window is
+  planned.
+
+# -----------------------------------------------------------------------------
+# Stay-on-18 conditions
+# -----------------------------------------------------------------------------
+stay_on_18_valid_while:
+  - first_go_live_gate_not_yet_passed
+  - ipai_odoo_copilot_on_18_0_4_0_0_or_later
+  - oca_must_have_modules_verified_on_18_0_branches
+  - no_material_business_feature_blocked_by_staying_on_18
+  - no_regulatory_requirement_forcing_19_specifically
+  - migration_window_and_freeze_not_yet_scheduled
+
+# -----------------------------------------------------------------------------
+# Odoo 19 features most relevant to IPAI priorities
+# -----------------------------------------------------------------------------
+odoo_19_features_relevant_to_ipai:
+
+  pwa_pull_to_refresh:
+    upstream_note: "En la aplicación web progresiva de Odoo, tira la pantalla para actualizar los datos."
+    ipai_relevance: HIGH
+    rationale: >
+      IPAI locked mobile expense companion as PWA (commit 0ba6a4ebc).
+      Odoo 19 natively supports PWA pull-to-refresh. On Odoo 18 we
+      implement this in the Pulser-branded PWA ourselves via standard
+      touch-event handlers. Not a blocker; the PWA runs on top of Odoo
+      18 APIs.
+
+  gmail_outlook_personal_account_linking:
+    upstream_note: "Conecta tu cuenta personal de Gmail u Outlook para enviar correos a través de cuenta."
+    ipai_relevance: MEDIUM
+    ipai_policy: Zoho SMTP is canonical outbound (CLAUDE.md). Gmail/
+      Outlook personal linking is an Odoo 19 convenience, not a
+      canonical path for IPAI.
+
+  tax_declaration_engine:
+    upstream_note: "Se ha introducido una nueva función de declaración de impuestos..."
+    ipai_relevance: HIGH for PH BIR compliance
+    rationale: >
+      BIR 23-filings/year compliance could benefit from a newer tax
+      declaration engine. PH-specific features in Odoo 19 release notes
+      deserve targeted review before upgrade — but not a blocker on
+      18+OCA today.
+
+  restore_invoice_as_draft_separated_from_generated_invoice:
+    ipai_relevance: LOW
+    rationale: "Workflow nicety; not blocking."
+
+  audit_reports_via_knowledge_app:
+    ipai_relevance: MEDIUM
+    rationale: "Useful for auditable evidence flow; IPAI currently uses
+      docs/evidence/ as SSOT. Knowledge-app integration is Odoo-internal
+      and may not be preferred path."
+
+  odoo_19_industry_packages:
+    ipai_relevance: LOW_unless_specific_business_need
+    rationale: "Many new industry packs (bakery, escape rooms, craft
+      brewery, etc). IPAI's primary verticals (finance, marketing, media,
+      retail) already covered by CE 18 + OCA. Only adopt specific new
+      packs if a client engagement demands it."
+
+  cached_data_translations:
+    ipai_relevance: LOW
+    rationale: "Performance nicety; not a blocker."
+
+  dun_bradstreet_autocomplete:
+    upstream_note: "Hemos renovado el servicio de autocompletado de contactos para utilizar datos de un nuevo proveedor: Dun & Bradstreet."
+    ipai_relevance: LOW
+    rationale: "IPAI already has D-U-N-S 719209694 (per memory); not
+      a material dependency on the autocomplete feature."
+
+  twilio_sms_integration:
+    ipai_relevance: LOW
+    rationale: "SMS is not a canonical IPAI notification path; Web Push
+      + Zoho email + Slack are primary channels."
+
+  ph_specific_updates:
+    upstream_note: "BIR form 2550Q refresh, SLSP/QAP/SAWT improvements, .dat export"
+    ipai_relevance: HIGH_for_bir_compliance_eventually
+    rationale: >
+      Philippines localization in Odoo 19 has material updates (2550Q
+      redesigned; SLSP/QAP/SAWT improved; .dat export for BIR Alphalist/
+      ReLiEf modules). Note for the eventual Odoo 19 migration window:
+      this may accelerate BIR-compliant reporting. On Odoo 18, current
+      BIR compliance is handled via OCA l10n_ph + ipai_ph_* delta.
+
+# -----------------------------------------------------------------------------
+# Forward-path criteria (when to revisit Odoo 19 adoption)
+# -----------------------------------------------------------------------------
+forward_path_criteria_for_odoo_19:
+  all_required:
+    - first_go_live_gate_passed_and_stable
+    - oca_must_have_modules_verified_on_19_0_branches (new verification run)
+    - ipai_odoo_copilot_ported_to_19_0 (or confirmed compatible)
+    - regression_test_suite_passing_on_19_0
+    - migration_window_scheduled_with_rollback_path
+    - business_value_of_19_features_quantified (PH BIR, PWA, etc.)
+  any_of_these_accelerate:
+    - regulatory_change_requires_19
+    - client_engagement_requires_19_only_feature
+    - material_bug_on_18_fixed_only_on_19
+
+# -----------------------------------------------------------------------------
+# Module migration strategy when upgrade is approved
+# -----------------------------------------------------------------------------
+migration_strategy:
+  approach: oca_port_tool + test_db_per_module + staged_rollout
+  ordering:
+    - 1_base_core_modules (res.company, res.users, res.partner)
+    - 2_finance_core (account, account_move, account_payment)
+    - 3_oca_must_have_reverified_on_19_0
+    - 4_ipai_star_delta_modules
+    - 5_ipai_odoo_copilot (agent adapter)
+    - 6_vertical_packs (finance, tax, payroll)
+  test_db_naming: test_migration_18_to_19_<module_name>
+  rollback_criteria: unresolved_sev1_within_72h
+  evidence_pack: docs/evidence/<YYYYMMDD-HHMM>/odoo-18-to-19-migration/
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not migrating to Odoo 19 in-flight to first go-live
+  - not adopting individual Odoo 19 features by backporting into 18
+    (too risky; wait for full upgrade window)
+  - not conflating Odoo 19 release availability with IPAI readiness
+  - not re-verifying OCA modules against 19.0 until a migration window
+    is scheduled
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  claude_md_baseline: CLAUDE.md (Odoo CE 18.0 + OCA + ipai_*)
+  cross_layer: ssot/odoo/ce18_oca_uc_semantic_odata_binding.yaml
+  settings_catalog: ssot/odoo/settings_catalog.yaml
+  package_classification: ssot/odoo/package-classification.yaml
+  oca_must_have_base: infra/ssot/oca/must_have_base.yaml
+  oca_must_have_sales: infra/ssot/oca/must_have_sales.yaml
+  oca_must_have_purchases: infra/ssot/oca/must_have_purchases.yaml
+  oca_must_have_projects: infra/ssot/oca/must_have_projects.yaml
+  oca_must_have_accounting: infra/ssot/oca/must_have_accounting.yaml
+  pulser_expense_mobile_pwa: platform/ssot/agents/pulser-pack-matrix.yaml
+  go_live_scope: ssot/release/go-live-scope-matrix.yaml
+  upstream_odoo_19_release_notes: https://www.odoo.com/odoo-19-release-notes
