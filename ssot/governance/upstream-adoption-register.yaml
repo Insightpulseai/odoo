@@ -1379,3 +1379,66 @@ addenda_2026_04_15:
       phase_2_post_sponsorship: evaluate MG hierarchy + policy-as-code baseline when moving to paid Azure commitment
       phase_3_post_first_paying_tenant: per-tenant subscription strategy aligned to ALZ patterns (per saas-tenancy-model)
       phase_4_at_scale: full ALZ-aligned MG + policy + subscription vending when IPAI operates >10 subscriptions
+
+
+  # ───── Added 2026-04-19 — ALZ IaC Accelerator (deployment tool) ─────
+
+  - upstream: Azure/ALZ-IaC-Accelerator (Azure Landing Zones Infrastructure-as-Code Accelerator)
+    url: https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/implementation-options
+    purpose: "Microsoft's recommended ALZ deployment tool — automated platform landing zone deployment via Bicep or Terraform (AVM-based), integrated with Azure DevOps and/or GitHub"
+    adopt_mode: clone_as_reference
+    internal_owner: platform-engineering
+    scope: |
+      SELECTIVE EXTRACTION ONLY. This is the deployment tooling that
+      sits on top of Azure/Enterprise-Scale ALZ (already classified in
+      this register). Full accelerator deployment is premature for
+      IPAI's current 2-subscription + ~52-resource footprint.
+
+      Extract only:
+        - 4_phase_deployment_flow (planning → prerequisites → bootstrap → run)
+        - bootstrap_powershell_module_concept (for future use when ALZ activates)
+        - avm_based_bicep_module_composition_patterns
+        - ci_cd_pipeline_integration_patterns_for_azure_devops_and_github_actions
+        - continuous_delivery_environment_bootstrap_workflow
+
+    do_not_extract:
+      - full_bootstrap_deployment_of_unused_management_groups
+      - full_policy_initiative_set (same rejection as Enterprise-Scale ALZ)
+      - opinionated_subscription_vending_at_2_subscription_scale
+
+    ipai_chosen_implementation_path:
+      path: iac_accelerator_via_bicep_and_avm (NOT portal accelerator)
+      rationale: |
+        IPAI already has IaC expertise (infra/ uses Bicep + AVM per
+        existing register entry Azure/bicep-registry-modules). Portal
+        accelerator is for orgs lacking IaC expertise — not IPAI.
+        Microsoft docs also explicitly recommend IaC over portal for
+        version control + reproducibility.
+      version_control_surface: github (per github-desired-state.yaml
+        + github-target-state-success-criteria.yaml)
+      deployment_pipeline_surface: azure_pipelines (per
+        github-actions-azure-oidc-policy.yaml — GHA is scoped exception,
+        Azure Pipelines owns production deploys)
+      language: bicep (primary) + terraform (allowed per
+        azure-sku-bom-sufficiency but not preferred)
+
+    phased_activation:
+      phase_1_now: do not activate accelerator; document the intended path in this SSOT (DONE by this entry)
+      phase_2_post_sponsorship: evaluate bootstrap script when moving to paid Azure commitment
+      phase_3_post_first_paying_tenant: activate bootstrap for multi-tenant subscription layout
+
+    rationale: |
+      ALZ IaC Accelerator is the canonical Microsoft deployment tool
+      for landing zone patterns. The IaC path (not the portal path)
+      aligns with IPAI's existing Bicep + AVM + GitHub + Azure
+      Pipelines stack. For now, keep the accelerator as a reference
+      and activate in phases as IPAI's subscription footprint grows.
+
+    plane: infra + governance
+    see_also:
+      - upstream: Azure/Enterprise-Scale (parent ALZ reference — see above)
+      - upstream: Azure/bicep-registry-modules (AVM — module standard the accelerator uses)
+      - upstream: Azure/AI-Landing-Zones (AI-specific subset)
+      - ssot/governance/azure-sku-bom-sufficiency.yaml
+      - ssot/governance/finops-azure-cost-governance.yaml
+      - ssot/governance/github-actions-azure-oidc-policy.yaml (scoped GHA role in ALZ CI/CD)
