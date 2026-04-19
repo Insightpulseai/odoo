@@ -1,0 +1,112 @@
+version: 1
+kind: odoo_cloud_release_gates
+status: canonical_stub
+last_updated: "2026-04-19"
+owner: platform-architecture
+
+doctrine: >
+  Every Odoo Cloud Platform promotion passes machine-readable gates.
+  Gates fail closed. Evidence required per gate. Inherits from parent
+  go-live-readiness doctrine.
+
+parent_doctrine: ssot/release/go-live-readiness.yaml
+
+# -----------------------------------------------------------------------------
+# Gate stack (applied in order during pipeline)
+# -----------------------------------------------------------------------------
+gates:
+
+  G1_unit_tests:
+    scope: odoo_modules_changed
+    ci_lane: azure-pipelines-pr.yml
+    fail_closed: true
+
+  G2_contract_checks:
+    scope: ssot_yaml_load + import_boundary (no agent_framework outside agent-platform)
+    ci_lane: azure-pipelines-contract-checks.yml
+    fail_closed: true
+
+  G3_integration_smoke:
+    scope: odoo_boot + module_install + sso_login_flow
+    env: dev
+    fail_closed: true
+
+  G4_regression_tests:
+    scope: odoo_test_suite + ipai_module_tests
+    env: dev
+    fail_closed: true
+
+  G5_security_scan:
+    scope: secrets_scan + dependency_review
+    fail_closed: true
+
+  G6_eval_gate:
+    scope: pulser_erp_pack_evals + pulser_finance_pack_evals (if affected)
+    ci_lane: azure-pipelines-eval-gate.yml
+    threshold: per ssot/agent-platform/agent_framework_adoption.yaml
+    fail_closed: true
+
+  G7_staging_acceptance:
+    scope: uat_smoke + stakeholder_signoff
+    env: staging
+    required_signoff:
+      - platform-architecture
+    fail_closed: true
+
+  G8_go_live_readiness_report:
+    scope: full readiness review per spec/_templates/go-live-readiness-template.md
+    required: true
+    fail_closed: true
+
+  G9_fd_approval_for_finance:
+    scope: any_change_affecting_finance_module_accounting_payment_pos
+    required_approver: finance_director_khalil
+    fail_closed: true
+    affects_gate_only_when_applicable: true
+
+  G10_rollback_drill:
+    scope: tested rollback in staging within 30 days prior to prod promotion
+    fail_closed: true
+
+# -----------------------------------------------------------------------------
+# Gate sequence per environment
+# -----------------------------------------------------------------------------
+gate_sequence:
+  dev:
+    required: [G1_unit_tests, G2_contract_checks, G3_integration_smoke]
+  staging:
+    required: [G1, G2, G3, G4_regression_tests, G5_security_scan, G7_staging_acceptance]
+    optional: [G6_eval_gate]
+  production:
+    required: [G1, G2, G3, G4, G5, G6, G7, G8_go_live_readiness_report, G10_rollback_drill]
+    conditional: [G9_fd_approval_for_finance]
+
+# -----------------------------------------------------------------------------
+# Evidence per gate
+# -----------------------------------------------------------------------------
+evidence_artifacts:
+  G1_unit_tests: pytest_or_odoo_test_junit_xml
+  G2_contract_checks: contract_checks_summary.md
+  G3_integration_smoke: smoke_output.txt + sso_login_screenshot
+  G4_regression_tests: regression_summary.md
+  G5_security_scan: secrets_scan_report.txt + dependency_review.md
+  G6_eval_gate: scorecard.json
+  G7_staging_acceptance: signoff.md with named approver + timestamp
+  G8_go_live_readiness_report: readiness-review-report.md
+  G9_fd_approval_for_finance: fd_approval_email.pdf_or_signed_md
+  G10_rollback_drill: rollback_drill_log.md with duration and outcome
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not allowing G8/G9/G10 to be waived for production
+  - not auto-approving gates from agent action (pulser is advisory)
+  - not using dev as substitute for staging
+  - not storing evidence outside docs/evidence/<ts>/
+
+related:
+  parent_go_live: ssot/release/go-live-readiness.yaml
+  feature_ship_gates: ssot/release/feature-ship-readiness-gates.yaml
+  branch_env_contract: platform/ssot/runtime/branch-environment-contract.yaml
+  platform_bom: platform/ssot/architecture/odoo-cloud-platform-bom.yaml

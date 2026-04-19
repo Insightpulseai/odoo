@@ -1,0 +1,85 @@
+version: 1
+kind: odoo_cloud_platform_bom
+status: canonical_stub
+last_updated: "2026-04-19"
+owner: platform-architecture
+
+# -----------------------------------------------------------------------------
+# Bill of Materials — Odoo.sh-equivalent on Azure
+# -----------------------------------------------------------------------------
+
+spec_bundle: spec/odoo-cloud-platform/
+
+repo_split:
+  spec_and_control_plane: platform/
+  infrastructure: infra/
+  application_runtime: addons/ (Odoo CE 18 + OCA + ipai_*)
+  agent_runtime: agent-platform/
+  agent_definitions: agents/
+
+azure_components:
+  runtime:
+    container_apps_environment: acae-ipai-dev-sea
+    container_registry: acripaiodoo
+    container_app: ipai-odoo-dev (+ staging / prod counterparts)
+  data:
+    postgres: pg-ipai-odoo
+    backup_vault: bvault-ipai-dev-sea
+  security:
+    key_vault: kv-ipai-dev-sea
+    managed_identity: id-ipai-dev-runtime
+    private_endpoints:
+      - pe-ipai-dev-pg
+      - pe-ipai-dev-kv
+  network:
+    vnet: vnet-ipai-dev-sea
+    dns_zone: insightpulseai.com
+    private_dns: privatelink.postgres.database.azure.com
+  observability:
+    app_insights: appi-ipai-dev-runtime-sea
+    log_analytics: log-ipai-dev-runtime-sea
+    action_group: ag-ipai-dev-sea
+  delivery:
+    ci_cd: azure_pipelines
+    pipeline_for_promote: azure-pipelines-odoo-promote.yml (planned)
+
+application_components:
+  odoo_version: 18.0
+  edition: community
+  oca_repos_must_have:
+    - infra/ssot/oca/must_have_base.yaml
+    - infra/ssot/oca/must_have_accounting.yaml
+    - infra/ssot/oca/must_have_sales.yaml
+    - infra/ssot/oca/must_have_purchases.yaml
+    - infra/ssot/oca/must_have_projects.yaml
+  ipai_delta_classification: ssot/odoo/package-classification.yaml
+
+environments:
+  - name: dev
+    branch: main (or feature branches)
+    data_mode: synthetic_or_staging_snapshot
+  - name: staging
+    branch: main (or release/*)
+    data_mode: prod_like_masked
+  - name: production
+    branch: release tag (immutable)
+    data_mode: live
+
+promotion_path: dev → staging → production
+
+capability_contract_source: platform/ssot/odoo/ee-capability-target-map.yaml
+
+not_included:
+  - odoo_sh_hosted_service (we are self-hosted on Azure)
+  - odoo_enterprise_source
+  - cross_region_ha (future consideration)
+
+related:
+  constitution: spec/odoo-cloud-platform/constitution.md
+  prd: spec/odoo-cloud-platform/prd.md
+  plan: spec/odoo-cloud-platform/plan.md
+  tasks: spec/odoo-cloud-platform/tasks.md
+  branch_env_contract: platform/ssot/runtime/branch-environment-contract.yaml
+  release_gates: platform/ssot/release/odoo-cloud-release-gates.yaml
+  resource_inventory: platform/ssot/azure/resource-inventory.dev.yaml
+  ee_capability_target: platform/ssot/odoo/ee-capability-target-map.yaml

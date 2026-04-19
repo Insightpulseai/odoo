@@ -1,0 +1,109 @@
+version: 1
+kind: reference_pattern_adoption
+status: canonical_reference_only
+last_updated: "2026-04-19"
+owner: platform-architecture
+
+doctrine: >
+  Agentic Platform Engineering upstream references validate IPAI's
+  direction but do NOT replace IPAI's canonical architecture. Borrow
+  framing and language; never authority or runtime model.
+
+# -----------------------------------------------------------------------------
+# Upstream references
+# -----------------------------------------------------------------------------
+upstream_references:
+
+  microsoft_devblogs_agentic_platform_engineering:
+    classification: conceptual_narrative_reference
+    value: framing_for_platform_as_product_and_self_service
+    not_adopted_as: authority_or_runtime_model
+
+  Azure_git_ape:
+    url: https://github.com/Azure/git-ape
+    classification: demo_pattern_of_github_copilot_plus_azure_mcp
+    value:
+      - proves_agentic_platform_engineering_is_practical
+      - validates_mcp_as_tool_bridge
+      - validates_github_copilot_vs_code_as_developer_surface
+      - validates_azure_as_action_plane
+    not_adopted_as:
+      - full_operating_model
+      - production_enterprise_substrate
+    notable_constraints:
+      - azureMcp_readOnly_false_in_demo_means_write_capable
+      - IPAI_must_keep_write_gating_through_policy_engine_not_just_mcp_flag
+
+  broader_reference_repo_platform_as_product_agentic:
+    classification: narrative_and_pattern_reference_not_deployable_platform
+    value:
+      - platform_as_product_framing
+      - self_service_golden_path_language
+      - legacy_to_modern_bridge_narrative
+      - ai_augmented_platform_team_operating_model
+    where_ipai_already_stronger:
+      - truth_plane_separation (6-plane model per planning-surface-authority-map)
+      - odoo_erp_domain_depth
+      - managed_agent_brain_session_hands_separation
+      - release_readiness_doctrine
+      - pim_gated_privileged_access
+
+# -----------------------------------------------------------------------------
+# Pattern mapping — where it lands
+# -----------------------------------------------------------------------------
+pattern_mapping:
+  developer_surface: github_copilot_in_repo + vs_code_with_mcp
+  tool_bridge: mcp
+  action_plane: azure (acr + aca + postgres + kv + monitor)
+  governance_above_it:
+    - azure_boards (planning)
+    - azure_pipelines (release)
+    - ssot_files_in_monorepo (intended state)
+    - approval_and_audit (per azure-ai-governance-baseline)
+    - go_live_readiness (per go-live-readiness.yaml)
+
+# -----------------------------------------------------------------------------
+# Where to use these references
+# -----------------------------------------------------------------------------
+reference_use:
+  docs_repo:
+    use_for:
+      - platform_as_product_language_in_readme
+      - executive_narrative
+      - solution_pattern_reference
+  platform_repo:
+    use_for:
+      - control_plane_contracts
+      - odoo_cloud_platform_spec (see spec/odoo-cloud-platform/)
+      - mcp_policy
+      - app_surface_topology
+  infra_repo:
+    use_for:
+      - azure_iac_realization
+      - terraform_or_bicep_patterns
+      - runtime_substrate
+  agent_platform_repo:
+    use_for:
+      - actual_runtime_harness
+      - session_and_tool_execution
+
+# -----------------------------------------------------------------------------
+# Do-not adopt
+# -----------------------------------------------------------------------------
+do_not_adopt_from_references:
+  - repo_structure_wholesale
+  - naming_conventions_that_conflict_with_ipai
+  - assumption_that_github_copilot_is_the_only_agent_surface
+  - generic_platform_patterns_where_ipai_ssot_is_stronger
+  - writable_mcp_flag_without_policy_engine_above_it
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  odoo_cloud_platform_spec: spec/odoo-cloud-platform/
+  planning_authority_map: ssot/governance/planning-surface-authority-map.yaml
+  mcp_allowlist: ssot/governance/mcp-allowlist.yaml
+  ai_governance_baseline: platform/ssot/policy/azure-ai-governance-baseline.yaml
+  app_surface_topology: platform/ssot/org/app-surface-and-mcp-topology.yaml
+  upstream_git_ape: https://github.com/Azure/git-ape

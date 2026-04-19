@@ -1,0 +1,118 @@
+version: 1
+kind: branch_environment_contract
+status: canonical_stub
+last_updated: "2026-04-19"
+owner: platform-architecture
+
+doctrine: >
+  Branch-to-environment mapping is machine-readable, not operator
+  tribal knowledge. Each environment has explicit data mode, mutation
+  policy, approval requirements, and rollback criteria.
+
+environments:
+
+  dev:
+    azure_container_app: ipai-odoo-dev
+    branch_pattern: "main or feature/*"
+    data_mode: synthetic_or_staging_snapshot
+    mutation_policy: full_write
+    evidence_required: false
+    approval_required: false
+    auto_deploy_on_commit: true
+    hypercare_window_hours: 0
+
+  staging:
+    azure_container_app: ipai-odoo-staging
+    branch_pattern: "release/* or main"
+    data_mode: prod_like_masked
+    mutation_policy: guarded_write
+    evidence_required: true
+    approval_required: platform-architecture
+    auto_deploy_on_commit: false
+    hypercare_window_hours: 0
+    gates:
+      - smoke_tests_pass
+      - regression_tests_pass
+      - security_scan_pass
+
+  production:
+    azure_container_app: ipai-odoo-prod
+    branch_pattern: "tag: vX.Y.Z (immutable)"
+    data_mode: live
+    mutation_policy: read_only (app); guarded_write (operator via pipeline)
+    evidence_required: true
+    approval_required:
+      - platform-architecture
+      - finance_director_khalil (for finance-affecting releases)
+    auto_deploy_on_commit: false
+    auto_deploy_on_tag: false (manual trigger with approval)
+    hypercare_window_hours: 72
+    gates:
+      - all_staging_gates_passed
+      - rollback_plan_tested
+      - go_live_readiness_report_signed
+      - eval_gate_passed
+      - fd_approval_for_finance_affecting_changes
+
+# -----------------------------------------------------------------------------
+# Promotion rules
+# -----------------------------------------------------------------------------
+promotion:
+  path: dev → staging → production
+  skip_staging_forbidden: true
+  rollback_criteria:
+    - sev1_unresolvable_within_hypercare_window
+    - data_integrity_regression_detected
+    - critical_security_vulnerability_introduced
+  rollback_authority: platform-architecture + finance_director (for finance)
+
+# -----------------------------------------------------------------------------
+# Evidence requirements per env
+# -----------------------------------------------------------------------------
+evidence:
+  dev:
+    not_required: true
+  staging:
+    location: docs/evidence/<ts>/odoo-staging-deploy/<commit_sha>/
+    required_artifacts:
+      - smoke_test_results.txt
+      - regression_summary.md
+  production:
+    location: docs/evidence/<ts>/odoo-production-deploy/<tag>/
+    required_artifacts:
+      - go_live_readiness_report.md
+      - cutover_plan_signed.md
+      - rollback_plan_tested.md
+      - eval_gate_scorecard.json
+      - fd_approval_email_or_signed_decision.md
+
+# -----------------------------------------------------------------------------
+# Observability per env
+# -----------------------------------------------------------------------------
+observability:
+  dev:
+    app_insights: appi-ipai-dev-runtime-sea (shared)
+    log_analytics: log-ipai-dev-runtime-sea
+    retention_days: 30
+  staging:
+    app_insights: appi-ipai-dev-runtime-sea (shared) or dedicated
+    retention_days: 60
+  production:
+    app_insights: appi-ipai-dev-runtime-sea or dedicated
+    retention_days: 90_or_compliance_mandated
+    alerts_routed_to: ag-ipai-dev-sea
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not auto-deploying to production on tag push
+  - not allowing branch-to-prod skip-staging
+  - not running production against synthetic data
+  - not duplicating environment state outside this contract
+
+related:
+  platform_bom: platform/ssot/architecture/odoo-cloud-platform-bom.yaml
+  release_gates: platform/ssot/release/odoo-cloud-release-gates.yaml
+  go_live_readiness: ssot/release/go-live-readiness.yaml
+  resource_inventory: platform/ssot/azure/resource-inventory.dev.yaml
