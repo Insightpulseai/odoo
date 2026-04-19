@@ -1,0 +1,361 @@
+version: 1
+kind: isv_success_program_engagement
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture + gtm
+source: "Orientation call follow-up email from So Yeong Choi (Microsoft EM, 2026-04)"
+
+doctrine: >
+  Microsoft ISV Success is IPAI's funded runway to Azure Marketplace
+  transactable publish. Up to $126k USD benefits / 12 months from
+  enrollment. Every benefit has an activation path and an expiry.
+  Critical stacking conflicts exist between ISV Success Azure credit
+  and IPAI's existing MCA + Azure Sponsorship — must be reconciled.
+
+parent_ssots:
+  - ssot/governance/partner-program-authority.yaml
+  - ssot/governance/partner-center-account-management.yaml
+  - ssot/governance/microsoft-365-e7-and-agent-365-opportunity.yaml
+  - ssot/identity/m365-mca-billing-account.yaml
+  - ssot/identity/m365-tenant-license-inventory-and-capability-map.yaml
+  - ssot/governance/finops-azure-cost-governance.yaml
+  - docs/gtm/partner_center_checklist.md
+
+# -----------------------------------------------------------------------------
+# Program facts
+# -----------------------------------------------------------------------------
+program:
+  name: Microsoft ISV Success
+  enrollment_date: "2026-04-06"
+  duration: 12_months_from_enrollment
+  benefits_total_usd: up_to_126k
+  primary_goal: publish_transactable_offer_in_ms_commercial_marketplace + grow_with_microsoft
+
+# -----------------------------------------------------------------------------
+# Microsoft contacts
+# -----------------------------------------------------------------------------
+contacts:
+  primary_em:
+    name: So Yeong Choi
+    role: ISV Success & Marketplace Rewards Engagement Manager
+    org: International Supplier, contracted with Microsoft
+    booking_link_available: true
+  cc_team:
+    - Zaidan Fikri Zainal (v-zzainal@microsoft.com)
+    - Mielan Mahindran (v-mielanm@microsoft.com)
+    - Krati Khandelwal (v-kratikh@microsoft.com)
+
+# -----------------------------------------------------------------------------
+# Registered business entity at Microsoft
+# -----------------------------------------------------------------------------
+registered_business_entity:
+  microsoft_partner_center_display_name: Dataverse IT Consultancy
+  ipai_canonical_name: InsightPulseAI (IPAI)
+  reconciliation_needed: true
+  action_required: >
+    Decide whether to align Partner Center display name to
+    "InsightPulseAI" for brand consistency, or keep "Dataverse IT
+    Consultancy" as the formal business entity name with IPAI as
+    the brand. Record the decision.
+  cross_reference: ssot/identity/m365-mca-billing-account.yaml
+
+# -----------------------------------------------------------------------------
+# Orientation call outcome
+# -----------------------------------------------------------------------------
+orientation_call:
+  scheduled_attempts:
+    - "2026-04-07 10:00 SGT (missed)"
+    - "2026-04-09 10:30 SGT (missed)"
+    - "2026-04-13 15:00 SGT (held — confirmed by follow-up email)"
+  attended_on: "2026-04-13 (approx)"
+  outcome: program_officially_kicked_off
+  em_follow_up_email_dated: 2026-04 (orientation follow-up with templates + benefits checklist)
+
+# -----------------------------------------------------------------------------
+# Benefits checklist
+# -----------------------------------------------------------------------------
+benefits:
+
+  azure_credit:
+    sku: Azure Sponsorship Credit
+    duration: 12_months_from_activation_date
+    activation_path: partner_center_benefits_workspace
+    critical_stacking_rule: >
+      "We cannot combine free Azure credits with existing sponsorships
+      from other programs, such as CSP or MCA. If you have Azure
+      through CSP or MCA, consider setting up a new PAYG Azure
+      subscription to access the free Azure sponsorship."
+    ipai_conflict:
+      existing_ipai_subscriptions:
+        - microsoft_azure_sponsorship (eba824fb-332d-4623-9dfb-2c9f7ee83f4e) — already_sponsored
+        - microsoft_customer_agreement_mca (active per m365-mca-billing-account.yaml)
+      implication: >
+        ISV Success Azure credit CANNOT be applied to the existing
+        eba824fb sponsorship subscription. A NEW PAYG subscription
+        must be provisioned to receive the ISV credit, OR the credit
+        is deferred until the existing sponsorship expires.
+      decision_required_by: platform-architecture + fp_and_a
+      recommended_disposition: >
+        Option A (preferred): provision new PAYG subscription under
+        MCA billing, redeem ISV Success credit there, use for Pulser
+        Marketplace publish workloads (preview tenant, eval env).
+        Option B: defer until current sponsorship expires.
+    status: not_yet_activated
+    action: decide_subscription_target_before_activation
+    terms_and_conditions_ref: "Azure Sponsorship Offer | Microsoft Azure"
+
+  azure_standard_support_plan:
+    duration: tied_to_isv_success_period (12 months)
+    activation_path: partner_center_benefits_workspace
+    ticket_tag: "Partner ISV Success Azur Std"
+    priority_routing: yes_with_severity_selection
+    status: not_yet_activated
+
+  dynamics_365_sales_fs_cs_partner_sandbox:
+    seats: 25
+    duration: 1_year_from_activation_date
+    activation_status: already_visible_in_tenant_license_inventory
+    cross_reference: ssot/identity/m365-tenant-license-inventory-and-capability-map.yaml
+    ipai_disposition: hold_unassigned (Odoo is canonical ERP; sandbox is discretionary)
+
+  m365_e5_subscription:
+    duration: tied_to_isv_success_period
+    activation_path: partner_center_benefits_workspace (Developer Program | Microsoft 365 Dev Center)
+    six_month_reuse_restriction: >
+      "If a user has previously activated the M365 sandbox and has not
+      utilized it, they will be unable to use it for the next six months.
+      As an alternative, activate a different domain or email."
+    status: not_yet_activated
+    priority_for_ipai: medium (potential M365 E7 evaluation per microsoft-365-e7-and-agent-365-opportunity.yaml)
+
+  github_enterprise_subscription:
+    coupon_code_ref: stored_in_email_and_partner_center_benefits_workspace_not_in_this_ssot
+    coupon_code_value: NOT_RECORDED_HERE (see email; ISV-Success-Program-12months-* format — keep out of git per secrets-policy)
+    seats: 20
+    duration: 12_months_from_activation_date
+    renewal: not_eligible_for_2nd_year
+    public_preview: yes
+    upgrades_over_free_or_team:
+      - 50_gb_package_storage
+      - 50000_automation_minutes_per_month
+    critical_conflict:
+      rule: "If you have Enterprise, this benefit is not available."
+      ipai_existing_state:
+        - ipai enterprise already exists at github.com/enterprises/ipai
+          (per github-enterprise-current-state-snapshot.yaml)
+      implication: >
+        IPAI likely cannot redeem the 20-seat ISV Success GitHub
+        Enterprise benefit because IPAI already has a GitHub Enterprise
+        account. This must be verified with EM before attempting redemption.
+      action_required: >
+        Ask So Yeong Choi to confirm whether IPAI's existing
+        `ipai` enterprise disqualifies this benefit OR whether
+        the 20 seats can be added to the existing enterprise.
+    redemption_flow_if_eligible:
+      - launch_activation_url_in_incognito_on_correct_tenant
+      - create_org_or_sign_into_existing
+      - if_personal_account_convert_to_org (not applicable — IPAI has org)
+      - redirect_to_redeem_your_coupon_page
+      - provide_payment_instrument (no charge until expiry)
+    status: pending_eligibility_confirmation
+
+  visual_studio:
+    duration: tied_to_isv_success_period (12 months)
+    activation_path: partner_center_benefits_workspace
+    bundle_notes: "Visual Studio + GitHub benefit activation combined per MS docs"
+    status: not_yet_activated
+
+  curated_resources:
+    location: https://aka.ms/isvsuccessresources
+    composition: mix_of_curated_resources_and_isv_success_specific_content
+    status: ongoing_access
+
+  technical_enablement_sessions:
+    total_sessions: 4
+    session_types:
+      - d_and_p (design and planning)
+      - architecture_design
+      - architecture_review
+      - marketplace_publishing_consultation
+    activation_path: partner_center_benefits_workspace
+    ipai_priority:
+      first_session: marketplace_publishing_consultation (closest to Aug-Sep publish target)
+      second_session: architecture_review (validate foundry + agent-platform + AFD topology)
+      third_session: architecture_design (if new scope emerges)
+      fourth_session: d_and_p (reserve for post-GA expansion)
+    status: 0_of_4_used
+
+# -----------------------------------------------------------------------------
+# Templates requested by EM
+# -----------------------------------------------------------------------------
+em_requested_templates:
+
+  solution_info_template:
+    fields_requested:
+      - solution_or_app_name
+      - short_description_and_technologies_involved
+      - main_challenges_priorities_and_roadblocks_with_microsoft_technologies
+      - is_it_transactable_or_not
+      - approximate_publication_month_and_year
+    ipai_prefilled_answers:
+      solution_or_app_name: Pulser for Odoo
+      short_description: >
+        AI operating copilot for Odoo — custom-engine, multi-agent,
+        policy-gated enterprise copilot orchestrating finance, project
+        management, identity ops, and ERP workflows inside Odoo CE 18.
+        Runs on Azure Container Apps + Microsoft Foundry (gpt-4.1)
+        + Unity Catalog + Entra ID. Delivered as a SaaS transactable
+        marketplace offer.
+      main_challenges:
+        - foundry_project_provisioning_pending (rg-ipai-dev-ai-sea)
+        - azure_front_door_routing_authority_provisioning_pending
+        - azure_credit_stacking_conflict_with_existing_sponsorship (see benefits.azure_credit)
+        - scim_saml_enterprise_identity_provisioning_pending
+      is_transactable: yes_saas_transactable
+      approximate_publication: Aug-Sep 2026
+
+  business_summary_template:
+    fields_requested:
+      - company_overview_size_markets
+      - current_offers_and_services
+      - typical_customer
+      - listings_in_non_microsoft_marketplaces
+      - markets_and_countries_today
+    ipai_prefilled_answers:
+      company_overview: >
+        InsightPulseAI (IPAI, legal entity Dataverse IT Consultancy)
+        is a Philippines-registered ISV building governed AI copilots
+        for ERP and enterprise operations. Currently pre-revenue,
+        Microsoft ISV Success-enrolled, Azure-first.
+      current_offers:
+        - Pulser for Odoo (in development, Marketplace target Aug-Sep 2026)
+        - Advisory engagements (TBWA\SMP finance close + BIR compliance)
+      typical_customer:
+        - mid_market_to_enterprise_odoo_adopters (50 to 5000 employees)
+        - ph_and_sea_first_then_gcc_and_apac_expansion
+        - industries: services, creative agencies, finance-heavy SMEs
+      non_microsoft_marketplace_listings: none (Azure Marketplace is first)
+      markets_today: Philippines (primary), SEA (expanding)
+
+# -----------------------------------------------------------------------------
+# Immediate next steps
+# -----------------------------------------------------------------------------
+next_steps:
+
+  this_week:
+    - decide_azure_credit_subscription_target (new PAYG vs defer)
+    - verify_github_enterprise_benefit_eligibility_with_em (likely ineligible due to existing enterprise)
+    - activate_azure_standard_support_plan (low-risk, high-value)
+    - fill_out_em_templates_and_send_back (solution info + business summary)
+
+  within_2_weeks:
+    - schedule_first_technical_enablement_session (marketplace publishing consultation)
+    - activate_visual_studio_benefit
+    - activate_m365_e5_subscription_benefit (trial path)
+
+  within_30_days:
+    - complete_partner_center_legal_profile (registration number DTI 2606431, tax ID BIR TIN)
+    - submit_partner_center_tax_profile (W-8 form since IPAI is PH entity)
+    - provide_em_with_pulser_for_odoo_demo (per "I would be grateful if you could provide demo")
+
+  before_aug_sep_2026_publish:
+    - complete_partner_center_payout_profile
+    - complete_technical_enablement_session_2 (architecture review)
+    - complete_marketplace_offer_listing
+    - pass_microsoft_certification_review
+
+# -----------------------------------------------------------------------------
+# Critical stacking conflicts (must be resolved)
+# -----------------------------------------------------------------------------
+stacking_conflicts:
+
+  conflict_1_azure_credit_vs_existing_sponsorship:
+    affected_benefit: ISV Success Azure Sponsorship Credit
+    conflicts_with: existing Microsoft Azure Sponsorship (eba824fb)
+    resolution_options:
+      - provision_new_payg_subscription_under_mca_and_redeem_credit_there (recommended)
+      - defer_isv_credit_until_current_sponsorship_expires
+    blocker_for: ISV credit activation
+
+  conflict_2_github_enterprise_vs_existing_enterprise:
+    affected_benefit: 20-seat GitHub Enterprise (12 months, Public Preview)
+    conflicts_with: existing `ipai` GitHub Enterprise account
+    resolution_options:
+      - ask_em_to_confirm_ineligibility
+      - ask_em_whether_seats_can_add_to_existing_enterprise
+    blocker_for: GitHub benefit activation (likely ineligible)
+
+  conflict_3_partner_center_display_name_vs_brand:
+    issue: Microsoft knows IPAI as "Dataverse IT Consultancy"
+    resolution_options:
+      - rename_partner_center_display_to_InsightPulseAI
+      - keep_current_and_document_brand_vs_entity_distinction
+    blocker_for: marketing consistency
+
+# -----------------------------------------------------------------------------
+# Success criteria
+# -----------------------------------------------------------------------------
+success_criteria:
+  - id: ISV-1
+    description: All applicable ISV Success benefits activated within 12-month window
+    target: 6 of 7 (or reason for skipped ones documented)
+    measurement: partner_center_benefits_workspace_audit
+  - id: ISV-2
+    description: Azure credit stacking conflict resolved before activation
+    target: decision_recorded_and_executed
+    measurement: finops-azure-cost-governance.yaml cross-check
+  - id: ISV-3
+    description: Technical enablement sessions 1-4 scheduled and used
+    target: 4/4 used by 2026-04-06 + 12 months
+    measurement: evidence_in_docs_evidence
+  - id: ISV-4
+    description: EM templates (solution info + business summary) submitted
+    target: true within 14 days of orientation call
+    measurement: email_evidence
+  - id: ISV-5
+    description: Demo provided to EM as requested
+    target: delivered within 30 days
+    measurement: calendar_invite_evidence
+  - id: ISV-6
+    description: Marketplace publish executed on schedule (Aug-Sep 2026)
+    target: published by end of benefits window
+    measurement: partner_center_offer_status
+
+# -----------------------------------------------------------------------------
+# Security notes
+# -----------------------------------------------------------------------------
+security_notes:
+  this_ssot_does_not_record:
+    - github_enterprise_coupon_code_value (lives in email + partner center only)
+    - partner_center_credentials
+    - any_payment_instrument_details
+    - em_direct_email_addresses_or_phone_numbers_beyond_what_is_already_public
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not committing the GitHub coupon code to git
+  - not activating Azure credit on existing sponsored subscription (stacking blocked)
+  - not skipping the Partner Center legal/tax profile before marketplace publish
+  - not activating all 4 technical enablement sessions too early (save arch review for near-publish)
+  - not assuming the 20-seat GitHub benefit is redeemable until EM confirms
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/governance/partner-program-authority.yaml
+  - ssot/governance/partner-center-account-management.yaml
+  - ssot/governance/microsoft-365-e7-and-agent-365-opportunity.yaml
+  - ssot/identity/m365-mca-billing-account.yaml
+  - ssot/identity/m365-tenant-license-inventory-and-capability-map.yaml
+  - ssot/governance/finops-azure-cost-governance.yaml
+  - docs/gtm/partner_center_checklist.md
+  - docs/gtm/marketplace_research_brief.md
+
+source_references:
+  - https://www.microsoft.com/en-us/isv/success
+  - https://learn.microsoft.com/en-us/partner-center/marketplace-offers/commercial-marketplace-what-is
+  - https://aka.ms/isvsuccessresources
+  - https://azure.microsoft.com/offers/ms-azr-0036p/ (Azure Sponsorship Offer T&C)

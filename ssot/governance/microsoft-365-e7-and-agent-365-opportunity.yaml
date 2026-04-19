@@ -1,0 +1,255 @@
+version: 1
+kind: microsoft_365_e7_and_agent_365_opportunity
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture + gtm
+source: "Microsoft Partner Blog — Leading Frontier Firm transformation with M365 E7 (Nicole Dezen, 2026-03-09)"
+
+doctrine: >
+  Microsoft 365 E7 (GA 2026-05-01) is the new integrated bundle for
+  human-led agent-operated enterprises. Microsoft Agent 365 is its
+  control plane for governed agent deployment. For IPAI, the
+  strategic fit is as a Software Development partner — specifically
+  an Agent Factory provider shipping Pulser agents via the Agent 365
+  SDK into customer tenants. This is complementary to (not a
+  replacement for) the Azure Marketplace SaaS transactable offer.
+
+parent_ssots:
+  - ssot/governance/partner-program-authority.yaml
+  - ssot/governance/saas-tenancy-model-pulser-for-odoo.yaml
+  - platform/ssot/ai/foundry-resource-model.yaml
+  - ssot/identity/m365-tenant-license-inventory-and-capability-map.yaml
+  - ssot/agent-platform/agent_framework_adoption.yaml
+
+# -----------------------------------------------------------------------------
+# Product bundle facts (Microsoft canonical)
+# -----------------------------------------------------------------------------
+m365_e7_bundle:
+  ga_date: "2026-05-01"
+  announcement_date: "2026-03-09"
+  integrated_savings: "up_to_15_percent_vs_separate_skus"
+  components:
+    - microsoft_365_e5 (secure productivity baseline)
+    - entra_suite (identity and access control)
+    - microsoft_365_copilot (AI in the flow of work)
+    - microsoft_agent_365 (agent control plane)
+  ipai_relevance: partner-facing distribution + licensing signal
+
+microsoft_agent_365:
+  role: control_plane_to_govern_and_scale_agents_inside_m365_tenants
+  capabilities:
+    - unified_governance_of_first_party_and_partner_agents
+    - security_and_compliance_baked_in
+    - admin_visibility_across_agent_inventory
+    - tenant_approved_deployment_flow
+  access_model: consumed_by_enterprise_admins_via_m365_admin_center
+
+microsoft_agent_factory:
+  role: build_deploy_and_scale_custom_agents_with_comprehensive_tooling
+  pre_purchase_plan_p3:
+    covers_licensing_flexibility_across:
+      - microsoft_copilot_studio
+      - microsoft_foundry
+      - microsoft_fabric
+      - github
+    ipai_relevance: high — Foundry + GitHub are already IPAI core; P3 aligns buying to existing lanes
+
+agent_365_sdk:
+  role: make_partner_agents_governable_secure_and_manageable_inside_m365_customer_tenants
+  distribution_flow: partner_builds_agent → publishes_via_sdk → admin_approves → users_consume_in_flow_of_work
+  surfaces_reachable_from_sdk:
+    - microsoft_teams
+    - microsoft_word + other_m365_productivity_apps
+    - microsoft_copilot
+    - computer_use_with_compute_from_windows_365_for_agents
+
+# -----------------------------------------------------------------------------
+# IPAI partner track positioning
+# -----------------------------------------------------------------------------
+ipai_partner_track:
+  primary_track: software_development_partner (agent factory provider)
+  secondary_track: channel_or_csp_partner (not active yet; deferred per partner-program-authority.yaml)
+  tertiary_track: services_and_solutions_partner (not active yet)
+
+  rationale: >
+    IPAI is building Pulser as a governed enterprise agent platform
+    on Azure + Foundry. The Agent 365 SDK distribution path lets
+    Pulser agents land inside customer M365 tenants with admin-governed
+    deployment — directly complementing the Azure Marketplace SaaS
+    transactable offer (Pulser for Odoo).
+
+  distribution_surfaces_for_pulser:
+    surface_1_azure_marketplace_saas:
+      status: primary_commercial_motion (per partner-program-authority.yaml)
+      offer: Pulser for Odoo
+      publish_target: Aug-Sep 2026
+      commercial_flow: customer_subscribes_via_marketplace → fulfillment_webhook → tenant_provisioning
+    surface_2_m365_agent_365_sdk:
+      status: complementary_motion (new opportunity from this blog)
+      offer: pulser_agents_inside_m365_tenants
+      commercial_flow: customer_admin_approves_via_m365_admin_center → users_invoke_agents_in_teams_word_copilot
+      requires: agent_365_sdk_integration_with_agent-platform
+    surface_3_github_copilot_partner_program:
+      status: gated_on_pulser_ga (per partner-program-authority.yaml)
+      offer: pulser_as_copilot_chat_extension
+      note: distinct from Agent 365 SDK; different distribution surface
+
+# -----------------------------------------------------------------------------
+# Strategic decisions required
+# -----------------------------------------------------------------------------
+decisions:
+
+  pursue_agent_factory_provider_status:
+    decision_needed_before: ga_2026-05-01 (to capture early partner incentives)
+    prerequisites:
+      - pulser_core_skills_reach_preview_quality
+      - foundry_project_provisioned (per foundry-resource-model.yaml — currently blocker)
+      - agent-platform_runtime_stable (per agent_framework_adoption.yaml)
+      - agent_365_sdk_learned_and_pulser_integration_scoped
+    decision_owner: platform-architecture + gtm
+    recommended_disposition: pursue_selectively
+    justification: >
+      Agent 365 SDK is strategically complementary. Don't dilute Azure
+      Marketplace focus, but reserve the option by starting SDK
+      familiarization now. First SDK-shipped agent should be after
+      Pulser GA on the Marketplace offer, not before.
+
+  adopt_m365_e7_internally:
+    decision_needed_before: renewal_or_new_seat_purchase
+    cost_impact: M365 E7 bundle is 15% cheaper than component SKUs
+    ipai_current_state:
+      - entra_id_p2: already_licensed (100 seats, 3 assigned per m365-tenant-license-inventory)
+      - m365_e5_or_copilot: not_verified_yet
+      - agent_365: not_yet_ga
+    recommended_disposition: evaluate_after_ga_on_2026-05-01
+    decision_owner: platform-architecture + fp_and_a
+
+  opt_into_copilot_plus_power_accelerate_for_agent_365:
+    effective_date: "2026-04-01"
+    ipai_eligibility:
+      - requires_csp_partner_program_enrollment (IPAI not enrolled yet)
+      - or_direct_customer_engagement_as_solutions_partner (not active yet)
+    recommended_disposition: defer_until_csp_motion_activates
+
+  pursue_frontier_partner_badge:
+    recognition: "organizations leading AI transformation through AI-first human-led approach"
+    ipai_eligibility_path: demonstrate_customer_impact_with_governed_agents_at_scale
+    recommended_disposition: track_as_aspirational_badge (post first paying customer)
+
+# -----------------------------------------------------------------------------
+# Competitive + landscape context
+# -----------------------------------------------------------------------------
+landscape_signals:
+  partner_peer_positioning:
+    - kpmg_endorsed_agent_365_as_governance_layer (Cherie Gartner, KPMG US)
+    - atea_sweden_position_agent_365_as_governance_plus_innovation (Mattias Bruhn)
+    - genspark_ceo_position_agent_365_as_trust_layer_for_m365_integration (Eric Jing)
+  pattern_implication_for_ipai: >
+    The quoted partners all frame Agent 365 as the governance/trust
+    layer that enterprises require to deploy AI agents. IPAI's
+    agent-platform + foundry + odoo governance stack maps naturally
+    to this narrative. Competing on trust posture is an option.
+
+# -----------------------------------------------------------------------------
+# License / SKU watch list (additions to m365-tenant-license-inventory)
+# -----------------------------------------------------------------------------
+sku_watch_list:
+  - sku: microsoft_365_e7
+    ga_date: "2026-05-01"
+    ipai_disposition: evaluate_after_ga
+  - sku: microsoft_agent_365
+    ga_date: "2026-05-01"
+    ipai_disposition: critical_to_understand_for_agent_factory_track
+  - sku: microsoft_agent_factory_p3
+    ga_date: "2026-05-01"
+    ipai_disposition: evaluate (Foundry + GitHub already core; P3 consolidates billing)
+  - sku: entra_suite
+    ga_date: already_ga
+    ipai_disposition: evaluate_as_upgrade_from_entra_id_p2 (current 100 seats)
+
+# -----------------------------------------------------------------------------
+# Integration roadmap
+# -----------------------------------------------------------------------------
+integration_roadmap:
+
+  phase_0_learning (now to 2026-05-01):
+    - read_official_microsoft_blog_announcements
+    - attend_frontier_transformation_digital_event (2026-03-09; register for any replays)
+    - register_for_digital_partner_airlift_2026-03-31 (CSP authorized + SI partners)
+    - review_agent_365_sdk_documentation_when_released
+    - evaluate_m365_copilot_tenant_enablement
+
+  phase_1_sdk_familiarization (2026-05-01 to pulser_ga):
+    - stand_up_agent_365_sdk_sample_in_sandbox_tenant
+    - prototype_one_pulser_skill_as_agent_365_surface (read_only_surface, e.g. finance_variance_commentary)
+    - cross_reference_with_agent_framework_adoption.yaml (ensure no MAF boundary violations)
+
+  phase_2_first_shipped_agent_365_agent (after pulser marketplace ga):
+    - scope_one_finance_or_ops_skill_for_agent_365_publishing
+    - implement_sdk_integration_in_agent-platform
+    - submit_for_microsoft_governance_review
+    - list_in_agent_showcase_and_copilot_partner_directory
+
+  phase_3_scale_and_recognition (post first customer adopting IPAI agent):
+    - pursue_frontier_partner_badge
+    - pursue_support_services_designation
+    - consider_digital_sovereignty_specialization (PH compliance positioning)
+
+# -----------------------------------------------------------------------------
+# Risks + non-goals
+# -----------------------------------------------------------------------------
+risks:
+  - distraction_from_azure_marketplace_publish_motion_if_sdk_is_over_prioritized
+  - agent_365_sdk_early_limitations_that_block_pulser_odoo_use_cases
+  - license_complexity_increase_if_multiple_e7_plus_agent_365_skus_attach_to_same_customer
+  - sponsorship_period_may_not_cover_new_m365_skus (see finops-azure-cost-governance.yaml)
+
+non_goals:
+  - not replacing Azure Marketplace as primary commercial motion
+  - not delaying Foundry provisioning to pursue Agent 365 SDK first
+  - not adopting M365 E7 internally before confirming cost vs already-owned Entra P2
+  - not pursuing Frontier Partner badge before first customer traction
+  - not treating Agent 365 SDK as a substitute for the agent-platform runtime (MAF on Foundry remains canonical)
+
+# -----------------------------------------------------------------------------
+# Success criteria
+# -----------------------------------------------------------------------------
+success_criteria:
+  - id: M365E7-1
+    description: Agent 365 SDK evaluated and prototype built in sandbox after GA
+    target: prototype by 2026-06-30
+    measurement: evidence_in_docs_evidence
+  - id: M365E7-2
+    description: Decision on Agent Factory Provider status recorded
+    target: decision_before_2026-05-15
+    measurement: this_ssot_decisions_block_updated
+  - id: M365E7-3
+    description: M365 E7 cost evaluation completed vs current E5/Copilot component mix
+    target: cost_model_in_docs_evidence
+    measurement: fp_and_a_sign_off
+  - id: M365E7-4
+    description: No Agent 365 SDK work blocks Azure Marketplace publish path
+    target: true
+    measurement: marketplace_milestone_review
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/governance/partner-program-authority.yaml
+  - ssot/governance/partner-center-account-management.yaml
+  - ssot/governance/saas-tenancy-model-pulser-for-odoo.yaml
+  - ssot/governance/reference-platform-doctrine.yaml
+  - ssot/identity/m365-tenant-license-inventory-and-capability-map.yaml
+  - ssot/identity/m365-mca-billing-account.yaml
+  - platform/ssot/ai/foundry-resource-model.yaml
+  - ssot/agent-platform/agent_framework_adoption.yaml
+  - docs/gtm/partner_center_checklist.md
+  - docs/gtm/microsoft_cosell_one_pager.md
+
+source_references:
+  - "https://partner.microsoft.com/en-us/blog/article/leading-frontier-firm-transformation-with-microsoft-365-e7-the-partner-opportunity"
+  - "https://www.microsoft.com/en-us/microsoft-365/blog/"
+  - "Frontier Firm Partner GTM page"
+  - "Agent 365 SDK documentation (to be released)"
+  - "Copilot Partner Directory"
