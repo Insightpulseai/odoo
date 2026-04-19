@@ -1,0 +1,182 @@
+version: 1
+kind: fasttrack_m365_engagement
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture + gtm
+source: "Microsoft Learn — FastTrack for Microsoft 365 Benefit"
+
+doctrine: >
+  FastTrack is a free Microsoft engineering-backed deployment service
+  included with qualifying M365 licenses. Covers Copilot, Security,
+  and M365 deployment with remote Specialist assistance + data
+  migration + digital guidance. For IPAI, FastTrack is distinct from
+  ISV Success Technical Enablement (which is ISV-product-publishing
+  focused); FastTrack addresses tenant operational deployment
+  (identity, security, adoption). Eligibility must be verified
+  before request submission.
+
+parent_ssots:
+  - ssot/governance/isv-success-program-engagement.yaml
+  - ssot/identity/m365-tenant-license-inventory-and-capability-map.yaml
+  - ssot/identity/m365-mca-billing-account.yaml
+  - ssot/governance/github-identity-and-oauth.yaml
+
+# -----------------------------------------------------------------------------
+# What FastTrack covers
+# -----------------------------------------------------------------------------
+scope:
+
+  services_covered:
+    - microsoft_365_copilot_deployment
+    - entra_id_configuration_and_conditional_access
+    - security_and_compliance_workload_deployment
+    - data_migration_into_m365
+    - teams_deployment
+    - sharepoint_onedrive_exchange_deployment
+
+  delivery_modes:
+    - remote_specialist_assistance (highest touch)
+    - digital_guidance_via_copilot_in_admin_center (self-service)
+    - web_guides (self-service)
+    - fasttrack_ready_partners (external delivery)
+
+  languages: [english, french, german, italian, japanese, korean, portuguese, spanish, mandarin_chinese]
+
+# -----------------------------------------------------------------------------
+# IPAI eligibility check (to be verified before RFA)
+# -----------------------------------------------------------------------------
+ipai_eligibility_check:
+
+  ipai_current_license_inventory:
+    verified_on: "2026-04-19"
+    entra_id_p2: "100 seats (3 assigned)"
+    m365_e5_developer_subscription: "25 seats (NOT production — developer sandbox SKU)"
+    dynamics_365_partner_sandbox: "25 seats (redeemed)"
+    dynamics_365_discounted_and_free_licenses: "25 seats (not redeemed)"
+    microsoft_fabric_free: "1M seats (free tier)"
+
+  likely_eligibility_assessment:
+    entra_id_p2_standalone:
+      status: unclear_verify_with_account_rep
+      rationale: "Standalone Entra ID P2 eligibility is not universally documented; some FastTrack scenarios may apply even without full M365 SKU"
+    m365_e5_developer:
+      status: likely_ineligible
+      rationale: "FastTrack is generally tied to paid production M365 SKUs; developer subscriptions are sandbox/dev SKUs — likely not counted"
+    dynamics_365_sandbox:
+      status: likely_ineligible
+      rationale: "Sandbox licenses are non-production and typically excluded"
+
+  verification_path:
+    primary: "ask Microsoft account representative per Microsoft guidance"
+    secondary: "submit RFA anyway — Microsoft routes to appropriate resource even if ineligible"
+    fallback: "use Copilot in Admin Center for self-service guidance (available to all tenants)"
+
+# -----------------------------------------------------------------------------
+# IPAI go-live blockers potentially addressable via FastTrack
+# -----------------------------------------------------------------------------
+go_live_blocker_mapping:
+
+  if_eligible_fasttrack_can_help_with:
+    - blocker_B-03_ca_baseline_deployment (CA-001 + CA-003 minimum for go-live)
+    - blocker_B-04_odoo_sso_verification (Entra-side configuration)
+    - entra_p2_immediate_actions: pim_configuration + access_reviews + identity_protection (per m365-tenant-license-inventory.yaml#immediate_actions_unlocked_by_p2)
+    - saml_sso_and_scim_provisioning_for_github (per github-identity-and-oauth.yaml)
+
+  fasttrack_does_not_address:
+    - foundry_project_provisioning (Azure-side, not M365)
+    - azure_front_door_provisioning (Azure-side)
+    - pulser_marketplace_listing (covered by ISV Success Application Publishing Consultation)
+    - odoo_runtime_or_business_logic (not an M365 service)
+    - github_enterprise_setup (GitHub product, not M365)
+
+# -----------------------------------------------------------------------------
+# Distinction from ISV Success Technical Enablement
+# -----------------------------------------------------------------------------
+distinction_from_isv_success_technical_enablement:
+
+  fasttrack:
+    focus: tenant_operational_deployment_of_m365_services (customer-operational)
+    engagement_model: remote_specialist_assistance_ongoing
+    cost: free_with_eligible_m365_license
+    duration: typically_extends_through_deployment_lifecycle
+
+  isv_success_technical_enablement:
+    focus: isv_product_publishing_to_marketplace (product-creation)
+    engagement_model: 3_consultations_ads_adr_publishing (per Partner Center Technical support & consultation tab)
+    cost: free_with_isv_success_enrollment
+    duration: bounded_to_1_consultation_each
+    cross_reference: ssot/governance/isv-success-program-engagement.yaml#technical_enablement_sessions
+
+  complementarity:
+    fasttrack_owns: IPAI tenant's own M365 deployment (Entra CA + SSO + SCIM)
+    isv_success_owns: Pulser for Odoo product publish path + architecture review
+    both_are_free_if_eligible: true
+    use_both_if_eligible: true — they don't overlap in scope
+
+# -----------------------------------------------------------------------------
+# Action items
+# -----------------------------------------------------------------------------
+action_items:
+
+  step_1_verify_eligibility:
+    how: contact Microsoft account representative OR submit RFA at aka.ms/fasttrack
+    when: this_week (before activating other benefits that might consume tokens)
+    responsible: platform-architecture
+    evidence: docs/evidence/<ts>/fasttrack-eligibility/
+
+  step_2_if_eligible_submit_rfa_for_identity_stack:
+    scope: Entra P2 CA baseline + SCIM + SAML SSO configuration
+    rationale: directly clears go-live blockers B-03 and B-04
+    priority: high
+
+  step_3_if_ineligible_use_self_service:
+    tooling: Copilot in Admin Center (available to all tenants)
+    supplement_with: ISV Success Technical Enablement sessions (Application Design Review covers Entra-side architecture)
+
+  step_4_evaluate_fasttrack_ready_partners:
+    when: if_eligible_but_self_service_insufficient
+    rationale: partner-delivered FastTrack for deep customization
+    cost_model: partner_engagement_fee (NOT free)
+
+# -----------------------------------------------------------------------------
+# Success criteria
+# -----------------------------------------------------------------------------
+success_criteria:
+  - id: FT-1
+    description: FastTrack eligibility verified
+    target: yes_or_no_confirmation_from_account_rep_or_rfa_routing
+    measurement: email_or_partner_center_evidence
+  - id: FT-2
+    description: If eligible, RFA submitted for identity stack deployment
+    target: rfa_submitted_and_routed
+    measurement: partner_center_rfa_ticket_reference
+  - id: FT-3
+    description: Identity go-live blockers (B-03, B-04) resolved via FastTrack OR alternative path
+    target: both_blockers_cleared
+    measurement: docs/evidence/<ts>/identity-go-live/
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not treating FastTrack as a substitute for ISV Success Technical Enablement (different scope)
+  - not submitting RFA for services Microsoft doesn't cover (Odoo, GitHub Enterprise, Foundry provisioning)
+  - not blocking go-live on FastTrack response time (Microsoft SLA varies; have backup path ready)
+  - not engaging partner-delivered FastTrack without cost/benefit review
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/governance/isv-success-program-engagement.yaml
+  - ssot/identity/m365-tenant-license-inventory-and-capability-map.yaml
+  - ssot/identity/m365-mca-billing-account.yaml
+  - ssot/governance/github-identity-and-oauth.yaml
+  - ssot/release/go-live-readiness.yaml
+
+source_references:
+  - https://learn.microsoft.com/en-us/microsoft-365/fasttrack/fasttrack-benefit
+  - https://learn.microsoft.com/en-us/microsoft-365/fasttrack/eligibility
+  - https://learn.microsoft.com/en-us/microsoft-365/fasttrack/microsoft-365-copilot
+  - https://learn.microsoft.com/en-us/microsoft-365/fasttrack/microsoft-entra-id
+  - https://aka.ms/fasttrack
