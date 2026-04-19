@@ -1,0 +1,228 @@
+# =============================================================================
+# Planning / Spec / Roadmap Surface Authority Map — SSOT
+# =============================================================================
+# Authority: canonical map of every planning, spec, roadmap, and task
+#            surface IPAI uses. One authority per concern. Projections
+#            allowed. No parallel systems of record.
+# Related:   ssot/governance/azure-boards-taxonomy.yaml
+#            ssot/governance/github-projects-v2-scope.yaml
+#            ssot/governance/notion-scope-decision.yaml
+#            ssot/governance/platform-authority-split.yaml
+#            CLAUDE.md (Engineering & Delivery Authority section)
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: canonical
+
+doctrine: >
+  One authority per concern. Parallel systems of record are forbidden.
+  View surfaces (FigJam, GitHub Projects V2, Notion, Kanban tools) are
+  allowed as projections over their authoritative source. Everything
+  load-bearing must trace to one of the canonical SoRs below.
+
+# -----------------------------------------------------------------------------
+# Canonical systems of record
+# -----------------------------------------------------------------------------
+systems_of_record:
+
+  spec_prd_plan_tasks:
+    authority: monorepo_spec_folder
+    path: spec/<slug>/{constitution,prd,plan,tasks}.md
+    format: markdown
+    methodology: github_spec_kit_pattern (spec/<slug>/ bundle shape)
+    skills:
+      - speckit.specify
+      - speckit.constitution
+      - speckit.clarify
+      - speckit.plan
+      - speckit.tasks
+      - speckit.analyze
+      - speckit.checklist
+      - speckit.implement
+    rationale: >
+      GitHub's spec-kit pattern (github/spec-kit) matches IPAI's existing
+      spec/<slug>/ bundle structure. The pattern is adopted; the CLI
+      tool is a reference implementation — IPAI uses the monorepo
+      directly via .claude/skills/speckit.*.
+    current_bundles:
+      - spec/adls-etl-reverse-etl
+      - spec/agent-factory
+      - spec/agent-platform
+      - spec/commercial-controls-rate-card
+      - 76+ others (see spec/ listing)
+
+  portfolio_planning:
+    authority: azure_devops_boards
+    project: ipai-platform
+    taxonomy: ssot/governance/azure-boards-taxonomy.yaml
+    hierarchy: Epic → Issue → Task
+    rule: portfolio_and_planning_system_of_record (per CLAUDE.md)
+
+  engineering_execution_backlog:
+    authority: github_issues
+    rule: engineering_execution_level_of_granularity
+    linked_to_ado_boards: one_way_reference_allowed_no_bidirectional_sync
+
+  operational_project_tracking_in_production:
+    authority: odoo_project_module
+    scope: projects_that_are_transactional_business_operations
+    rule: customer_project_data_stays_in_odoo_not_parallel_tools
+
+  source_code: github (public + private repos under Insightpulseai org)
+
+  cicd_deploy: azure_pipelines (per CLAUDE.md — sole deploy authority)
+
+# -----------------------------------------------------------------------------
+# View / projection surfaces (non-authoritative; allowed as complements)
+# -----------------------------------------------------------------------------
+view_surfaces:
+
+  github_projects_v2:
+    role: visual_projection_over_github_issues
+    authority_level: projection_only_not_sor
+    allowed_use: kanban + roadmap + sprint views of GitHub Issues
+    forbidden_use: parallel planning SoR, client-facing tracking
+    ssot: ssot/governance/github-projects-v2-scope.yaml
+
+  figjam:
+    role: whiteboarding_visual_planning_workshop_surface
+    authority_level: drafting_only_not_sor
+    allowed_use:
+      - brainstorming_sessions
+      - visual_roadmap_posters
+      - workshop_facilitation_templates (e.g., Product Development Roadmap Template)
+      - diagramming
+    forbidden_use:
+      - project_management_system_of_record
+      - task_assignment_of_record
+      - deliverable_dates_of_record
+    migration_rule: >
+      Outputs of FigJam workshops must be transcribed to the matching
+      authoritative surface (spec/ bundle, ADO Boards Epic, Odoo
+      project task) before they become load-bearing.
+
+  notion:
+    role: personal_drafting_and_non_ssot_content
+    authority_level: drafting_only_not_sor
+    ssot: ssot/governance/notion-scope-decision.yaml
+    forbidden_for: projects_system_of_record, tasks_system_of_record,
+      roadmap_system_of_record, ssot_content, evidence_packs, runbooks
+
+  plane:
+    role: projection_of_roadmap_for_visualization
+    authority_level: projection_only
+    source_authority: odoo (roadmap SSOT per ssot-platform.md)
+    rule: plane_is_read_projection_of_odoo_authority_not_ssot
+
+  supabase:
+    role: fully_deprecated (per CLAUDE.md 2026-03-26)
+    authority_level: forbidden
+
+# -----------------------------------------------------------------------------
+# Methodology decisions
+# -----------------------------------------------------------------------------
+methodology:
+
+  spec_driven_development:
+    adopted: true
+    pattern: github_spec_kit (https://github.com/github/spec-kit)
+    ipai_implementation: monorepo spec/<slug>/ bundles via .claude/skills/speckit.*
+    enforce: every_significant_change_references_a_spec_bundle (per CLAUDE.md)
+
+  prince2:
+    adopted: false
+    classification: reference_only_not_methodology_of_record
+    rationale: >
+      PRINCE2 is a heavyweight UK-government project-management
+      methodology. IPAI is a small governed delivery platform — PRINCE2's
+      stage gates and formal role set would add process weight without
+      material benefit. IPAI uses lightweight spec-kit + ADO Boards +
+      go-live readiness doctrine instead. Adopt specific PRINCE2 concepts
+      (business case, product-based planning, stage gates) only if a
+      client engagement contractually requires it.
+    when_to_revisit: client_or_regulatory_contract_requires_prince2_formally
+
+  agile_or_scrum:
+    adopted: informally (1-2 week sprints per azure-boards-taxonomy)
+    ceremonies_of_record: none_mandatory (solo ops for now)
+
+  six_sigma_or_lean:
+    adopted: not_applicable (too process-heavy for current scale)
+
+# -----------------------------------------------------------------------------
+# Authority-to-view projection rules
+# -----------------------------------------------------------------------------
+projection_rules:
+  one_way_allowed:
+    - spec_folder → ado_boards_issue_creation_from_tasks_md (via script or manual)
+    - github_issues → github_projects_v2 (native)
+    - odoo_project → plane (read-only projection)
+  bidirectional_forbidden:
+    - ado_boards ↔ github_projects_v2
+    - ado_boards ↔ notion
+    - odoo ↔ notion
+    - odoo ↔ github_projects_v2
+  migration_direction:
+    - any_load_bearing_content_in_figjam_or_notion → migrate_to_monorepo_or_ado
+    - NEVER migrate_ado_sor_out_to_figjam_or_notion
+
+# -----------------------------------------------------------------------------
+# Surface selection algorithm (decision tree)
+# -----------------------------------------------------------------------------
+surface_selection:
+  q1_is_the_content_system_of_record:
+    yes:
+      q2_what_kind:
+        spec_prd_plan_tasks: monorepo_spec_folder
+        portfolio_epic_or_roadmap: ado_boards
+        engineering_issue: github_issues
+        operational_project: odoo_project
+        code: github_repo
+    no:
+      q3_what_surface_kind:
+        kanban_view_of_issues: github_projects_v2
+        workshop_or_diagram: figjam
+        scratch_or_draft: notion
+        external_drafting_then_migrate: notion_then_migrate_to_sor
+
+# -----------------------------------------------------------------------------
+# Tools evaluated and their role
+# -----------------------------------------------------------------------------
+tools_evaluated:
+  - name: github/spec-kit
+    decision: pattern_adopted (IPAI monorepo is compatible; no CLI clone needed)
+  - name: figjam_product_development_roadmap_template
+    decision: allowed_as_workshop_template (outputs must migrate to ADO Boards / spec/)
+  - name: notion_projects_tasks
+    decision: forbidden_as_sor (see notion-scope-decision.yaml)
+  - name: prince2
+    decision: not_adopted_reference_only (see methodology.prince2 above)
+  - name: github_projects_v2
+    decision: projection_only (see github-projects-v2-scope.yaml)
+  - name: plane
+    decision: read_projection_of_odoo (existing doctrine)
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not adopting PRINCE2 as methodology of record
+  - not creating parallel planning systems
+  - not treating FigJam, Notion, or GitHub Projects V2 as SoR
+  - not bidirectional syncing between any two planning surfaces
+  - not replacing ADO Boards, spec/, GitHub Issues, or Odoo project as SoR
+  - not adopting heavyweight process for solo-ops scale
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  claude_md_authority_section: CLAUDE.md (Engineering & Delivery Authority)
+  ado_boards_taxonomy: ssot/governance/azure-boards-taxonomy.yaml
+  github_projects_v2: ssot/governance/github-projects-v2-scope.yaml
+  notion_scope: ssot/governance/notion-scope-decision.yaml
+  platform_authority_split: ssot/governance/platform-authority-split.yaml
+  ssot_platform_rules: .claude/rules/ssot-platform.md
+  upstream_github_spec_kit: https://github.com/github/spec-kit
