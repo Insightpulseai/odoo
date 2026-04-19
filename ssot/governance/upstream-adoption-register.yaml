@@ -1176,3 +1176,66 @@ addenda_2026_04_15:
       10 design areas: application design, application platform, training data,
       grounding data, data platform, MLOps/GenAIOps, operations, testing, personas,
       responsible AI. IPAI covers 8/10 via existing SSOT contracts.
+
+
+  # ───── Added 2026-04-19 — classifications for recent doc-dumps ─────
+
+  - upstream: microsoft/learn-dynamics365-finance (Dynamics 365 Finance docs + product)
+    purpose: "Microsoft's own ERP financial module — competes with Odoo"
+    adopt_mode: do_not_adopt
+    internal_owner: gtm
+    rationale: |
+      IPAI's canonical ERP is Odoo CE 18 + OCA + ipai_* per CLAUDE.md.
+      D365 Finance is excluded from IPAI's stack and from Pulser's
+      offer surface. This register entry prevents future drift where
+      someone might try to pull D365 Finance assets or patterns into
+      Pulser as an ERP adapter.
+    see_also:
+      - ssot/governance/marketplace-offer-listing-decisions.yaml#forbidden_category_selections
+      - ssot/governance/microsoft-partner-marketing-campaign-relevance.yaml#business_central_for_smb
+
+  - upstream: microsoft/copilot-for-finance (M365 Copilot add-on for finance)
+    purpose: "Microsoft's finance-specific Copilot add-on integrated with D365 Finance"
+    adopt_mode: do_not_adopt
+    internal_owner: gtm
+    rationale: |
+      Copilot for Finance targets D365 Finance customers. IPAI's
+      finance surface is Pulser's finance domain pack running against
+      Odoo. No cross-integration planned.
+    conflict_guardrail: do_not_imply_pulser_is_a_copilot_for_finance_equivalent_in_marketing
+
+  - upstream: microsoft/dynamics-365-project-operations (D365 Project Operations)
+    purpose: "Microsoft's project-based business module (sales + resourcing + PM + finance)"
+    adopt_mode: do_not_adopt
+    internal_owner: gtm
+    rationale: |
+      D365 Project Operations overlaps conceptually with Pulser's
+      project_management shared pack. But Pulser runs against Odoo,
+      not D365. Keep separate; do not imply Pulser is a D365 PO
+      alternative in marketing.
+    see_also: platform/ssot/agents/pulser-pack-matrix.yaml
+
+  - upstream: Azure/azure-mainframe-landing-zone-public (Mainframe + Midrange modernization)
+    purpose: "Azure landing zone accelerator for mainframe/midrange workload modernization"
+    adopt_mode: do_not_adopt
+    internal_owner: platform-engineering
+    rationale: |
+      Targets COBOL / mainframe / midrange workload modernization
+      (Raincode, Stromasys, Opentext, TmaxSoft, Luminex, Tidal).
+      IPAI has no mainframe footprint; customers also unlikely
+      (SMB-to-midmarket Odoo adopters). Reference only if a
+      future enterprise customer brings mainframe to the engagement.
+    reference_only_value: "hub-and-spoke VNet + Load Balancer + premium SSD + private link pattern is reusable at concept level; implementation is overkill for Pulser"
+
+  - upstream: Microsoft.Marketplace_Overview_doc (Partner Center Marketplace overview)
+    purpose: "Foundational doc about Microsoft Marketplace global reach + commerce model"
+    adopt_mode: consume_directly
+    internal_owner: gtm
+    rationale: |
+      Already fully codified. See marketplace-offer-listing-decisions.yaml
+      for IPAI's offer-type + category + in-product surface decisions.
+      Keep this entry as a pointer so future additions don't duplicate.
+    see_also:
+      - ssot/governance/marketplace-offer-listing-decisions.yaml
+      - ssot/governance/partner-program-authority.yaml
+      - ssot/governance/isv-success-program-engagement.yaml
