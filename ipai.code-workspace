@@ -1,0 +1,101 @@
+{
+  "_comment": "Canonical IPAI multi-root workspace. Source: ssot/governance/vscode-workspaces-and-devcontainers.yaml. All 12 canonical repos per repo-classes.yaml.",
+
+  "folders": [
+    { "name": "odoo", "path": "odoo" },
+    { "name": "platform", "path": "platform" },
+    { "name": "infra", "path": "infra" },
+    { "name": "web", "path": "web" },
+    { "name": "data-intelligence", "path": "data-intelligence" },
+    { "name": "agent-platform", "path": "agent-platform" },
+    { "name": "automations", "path": "automations" },
+    { "name": "agents", "path": "agents" },
+    { "name": "docs", "path": "docs" },
+    { "name": "design", "path": "design" },
+    { "name": "templates", "path": "templates" },
+    { "name": ".github", "path": ".github" }
+  ],
+
+  "settings": {
+    "files.eol": "\n",
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "files.exclude": {
+      "**/.git": true,
+      "**/.venv": true,
+      "**/node_modules": true,
+      "**/dist": true,
+      "**/.next": true,
+      "**/.turbo": true,
+      "**/.pytest_cache": true,
+      "**/__pycache__": true,
+      "**/.odoo": true
+    },
+    "search.exclude": {
+      "**/.git": true,
+      "**/.venv": true,
+      "**/node_modules": true,
+      "**/dist": true,
+      "**/.next": true,
+      "**/.turbo": true,
+      "**/artifacts": true,
+      "**/.odoo": true,
+      "**/.pytest_cache": true,
+      "**/coverage": true,
+      "**/*.lock": true,
+      "**/pnpm-lock.yaml": true
+    },
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2,
+    "editor.detectIndentation": false,
+    "editor.rulers": [100],
+    "editor.wordWrap": "off",
+    "editor.minimap.enabled": false,
+
+    "github.copilot.chat.codeGeneration.useInstructionFiles": true,
+    "github.copilot.advanced": { },
+
+    "workbench.editor.labelFormat": "medium",
+
+    "python.analysis.typeCheckingMode": "basic",
+    "python.defaultInterpreterPath": "${workspaceFolder:odoo}/.venv/bin/python",
+
+    "[python]": { "editor.tabSize": 4 },
+    "[yaml]": { "editor.tabSize": 2, "editor.formatOnSave": false },
+    "[markdown]": { "editor.wordWrap": "on", "editor.formatOnSave": false }
+  },
+
+  "extensions": {
+    "recommendations": [
+      "ms-azuretools.vscode-azure-github-copilot",
+      "github.copilot",
+      "github.copilot-chat",
+      "github.vscode-github-actions",
+      "ms-azuretools.vscode-bicep",
+      "ms-azuretools.vscode-docker",
+      "ms-python.python",
+      "ms-python.vscode-pylance",
+      "dbaeumer.vscode-eslint",
+      "esbenp.prettier-vscode",
+      "redhat.vscode-yaml",
+      "davidanson.vscode-markdownlint",
+      "ms-vscode-remote.remote-containers"
+    ],
+    "unwantedRecommendations": [
+      "supabase.vscode-supabase",
+      "cloudflare.cloudflare-workers",
+      "vercel.vercel"
+    ]
+  },
+
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [],
+    "compounds": []
+  },
+
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": []
+  }
+}

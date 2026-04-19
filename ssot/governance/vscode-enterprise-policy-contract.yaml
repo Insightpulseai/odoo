@@ -1,0 +1,314 @@
+version: 1
+kind: vscode_enterprise_policy_contract
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+source_refs:
+  - "VS Code docs — Multi-root Workspaces"
+  - "VS Code docs — Advanced container configuration"
+  - "VS Code docs — Manage AI settings in enterprise environments"
+
+doctrine: >
+  IPAI runs VS Code with one canonical multi-root workspace, one
+  canonical devcontainer (per Odoo Docker Dev Contract in CLAUDE.md),
+  and a strict AI enterprise-policy set. Policies override user
+  settings on managed devices. No ad-hoc workspace files, no
+  permissive AI defaults, no disabled sandboxing outside the Odoo
+  devcontainer.
+
+parent_ssots:
+  - ssot/governance/vscode-operating-profile.yaml
+  - ssot/governance/claude-code-activation-matrix.yaml
+  - platform/ssot/agentic/claude-code-operating-model.yaml
+  - ssot/governance/mcp-allowlist.yaml
+
+# -----------------------------------------------------------------------------
+# 1. Canonical workspace
+# -----------------------------------------------------------------------------
+canonical_workspace:
+  file: ipai.code-workspace (repo root)
+  folders: 12 (all canonical repos per repo-classes.yaml)
+  contract:
+    - includes_workspace_level_settings (formatOnSave, rulers, exclude globs)
+    - declares_recommended_extensions
+    - declares_unwantedRecommendations (supabase, cloudflare, vercel)
+    - empty_launch_and_tasks_ready_for_per_folder_addition
+
+  deprecated_workspace_files_to_remove:
+    - .vscode/ipai_workspace.code-workspace (single-folder, superseded)
+    - .vscode/mcp-dev.code-workspace (references deprecated insightpulseai.net + Supabase)
+    - .vscode/mcp-prod.code-workspace (references deprecated insightpulseai.net + Supabase)
+    - InsightPulseAI-Core.code-workspace (partial subset, superseded)
+    - InsightPulseAI-DataAI.code-workspace (partial subset, superseded)
+    - InsightPulseAI-Platform.code-workspace (superseded by canonical ipai.code-workspace)
+  deprecated_file_disposition:
+    action: delete_in_dedicated_pr
+    approval: platform-architecture
+    rationale: reduce drift; two of the six files reference explicitly deprecated domains + Supabase
+
+# -----------------------------------------------------------------------------
+# 2. Devcontainer doctrine (existing — reaffirmed)
+# -----------------------------------------------------------------------------
+devcontainer:
+  canonical_location: .devcontainer/
+  subcontainers:
+    - .devcontainer/erp (Odoo 18 + OCA + ipai_*)
+    - .devcontainer/platform
+    - .devcontainer/infra
+    - .devcontainer/backup
+  host_environment: macos_or_linux_with_docker_desktop_or_orbstack
+  forbidden:
+    - running_odoo_on_host
+    - modifying_opt_odoo_on_host
+    - using_production_dbs_for_tests
+  cross_reference:
+    - CLAUDE.md §Odoo_Docker_Dev_Contract
+    - .claude/rules/infrastructure.md
+
+# -----------------------------------------------------------------------------
+# 3. VS Code enterprise AI policy set (managed device overrides)
+# -----------------------------------------------------------------------------
+enterprise_ai_policies:
+
+  deployment:
+    mechanism: device_management_solution (Intune / JAMF for managed Macs)
+    scope: all_engineering_workstations
+    override_behavior: policies_override_user_settings
+
+  agent_mode:
+    policy_name: ChatAgentMode
+    setting: chat.agent.enabled
+    ipai_value: true
+    rationale: agent mode is core to Pulser workflows; keep enabled under approval-mode
+
+  hooks:
+    policy_name: ChatHooks
+    setting: chat.useHooks
+    ipai_value: true
+    rationale: hooks are the deterministic enforcement layer per claude-code-operating-model.yaml
+
+  extension_language_tools:
+    policy_name: ChatAgentExtensionTools
+    setting: chat.extensionTools.enabled
+    ipai_value: true (constrained by allowlist)
+    cross_reference: ssot/governance/mcp-allowlist.yaml
+
+  browser_chat_tools:
+    policy_name: BrowserChatTools
+    setting: workbench.browser.enableChatTools
+    ipai_value: false
+    rationale: integrated browser chat tools not in IPAI approved agent surface
+
+  chat_plugins:
+    policy_name: ChatPluginsEnabled
+    setting: chat.plugins.enabled
+    ipai_value: false
+    rationale: no ad-hoc plugin surface outside MCP allowlist
+
+  mcp_access:
+    policy_name: ChatMCP
+    setting: chat.mcp.access
+    ipai_value: registry
+    rationale: only approved MCP servers from IPAI registry; blocks public GitHub MCP registry
+    custom_registry_policy_name: McpGalleryServiceUrl
+    custom_registry_url: to_be_provisioned (ACA-hosted MCP registry service; flagged as target state)
+    cross_reference: ssot/governance/mcp-allowlist.yaml
+
+  global_tool_auto_approve:
+    policy_name: ChatToolsAutoApprove
+    setting: chat.tools.global.autoApprove
+    ipai_value: false
+    rationale: IPAI doctrine requires plan-mode + manual approval; never global auto-approve
+    hides_in_ui: [Bypass_Approvals, Autopilot]
+
+  tool_auto_approve_eligibility:
+    policy_name: ChatToolsEligibleForAutoApproval
+    setting: chat.tools.eligibleForAutoApproval
+    ipai_value:
+      runTask: false
+      fetch: false
+      runInTerminal: false
+      editFiles: false
+      executeCommand: false
+    rationale: every mutating-class tool requires manual approval per claude-code-operating-model.yaml#governance
+
+  terminal_auto_approve:
+    policy_name: ChatToolsTerminalEnableAutoApprove
+    setting: chat.tools.terminal.enableAutoApprove
+    ipai_value: false
+    rationale: terminal always asks before running
+
+  agent_sandbox:
+    policy_name: ChatAgentSandboxEnabled
+    setting: chat.agent.sandbox.enabled
+    ipai_value: true
+    rationale: OS-level sandboxing required when agent tools run; enforce even inside devcontainer
+
+  network_filter_enabled:
+    policy_name: ChatAgentNetworkFilter
+    setting: chat.agent.networkFilter
+    ipai_value: true
+    rationale: only allowlisted domains reachable from agent tools
+
+  network_filter_allowed_domains:
+    policy_name: ChatAgentAllowedNetworkDomains
+    setting: chat.agent.allowedNetworkDomains
+    ipai_value:
+      - "*.insightpulseai.com"
+      - "*.azure.com"
+      - "*.microsoftonline.com"
+      - "*.github.com"
+      - "*.githubusercontent.com"
+      - "api.anthropic.com"
+      - "*.databricks.com"
+      - "*.applicationinsights.azure.com"
+      - "*.openai.azure.com"
+      - "*.cognitiveservices.azure.com"
+    rationale: scoped to IPAI operational domains + approved provider endpoints
+    forbidden_domains_by_doctrine:
+      - "*.supabase.*"
+      - "*.cloudflare.*"
+      - "*.vercel.*"
+      - "*.digitalocean.*"
+      - "*.mailgun.*"
+      - "*.n8n.*"
+      - "*.mattermost.*"
+
+  network_filter_denied_domains:
+    policy_name: ChatAgentDeniedNetworkDomains
+    setting: chat.agent.deniedNetworkDomains
+    ipai_value:
+      - "*.supabase.co"
+      - "*.supabase.com"
+      - "*.cloudflare.com"
+      - "*.cloudflareworkers.com"
+      - "*.vercel.app"
+      - "*.vercel.com"
+      - "*.digitalocean.com"
+      - "mg.insightpulseai.com"
+    rationale: explicitly deny deprecated platforms per CLAUDE.md Deprecated list
+
+  copilot_review_selection:
+    policy_name: CopilotReviewSelection
+    setting: github.copilot.chat.reviewSelection.enabled
+    ipai_value: true
+    rationale: code review assist is high-leverage per feature-leverage-matrix
+
+  copilot_review_agent:
+    policy_name: CopilotReviewAgent
+    setting: github.copilot.chat.reviewAgent.enabled
+    ipai_value: true
+    rationale: PR review agent approved for tier_0/tier_1 repos
+
+  copilot_next_edit_suggestions:
+    policy_name: CopilotNextEditSuggestions
+    setting: github.copilot.nextEditSuggestions.enabled
+    ipai_value: true
+    rationale: NES is productivity win; no governance concern
+
+  claude_agent_integration:
+    policy_name: Claude3PIntegration
+    setting: github.copilot.chat.claudeAgent.enabled
+    ipai_value: true
+    rationale: Claude Agent in VS Code is primary agentic execution per claude-code-activation-matrix
+
+# -----------------------------------------------------------------------------
+# 4. Organization-level AI customizations (GitHub side, surfaced in VS Code)
+# -----------------------------------------------------------------------------
+org_level_ai_customizations:
+
+  organization_instructions:
+    setting: github.copilot.chat.organizationInstructions.enabled
+    ipai_user_default: true
+    source_of_truth: github.com/Insightpulse-ai organization instructions
+    rationale: centralize doctrine; already ties to CLAUDE.md layering
+
+  organization_and_enterprise_custom_agents:
+    setting: github.copilot.chat.customAgents.showOrganizationAndEnterpriseAgents
+    ipai_user_default: true
+    source_of_truth: github.com/Insightpulse-ai custom agents registry
+    ipai_first_agent_candidates:
+      - doctrine_guardrails (flags Supabase / @vercel/ / Cloudflare / n8n / Mailgun / Wix / DigitalOcean imports)
+      - odoo_module_introspection_reviewer
+      - pulser_finance_ppm_analyst
+    cross_reference: agents/skills/code_review/doctrine_guardrails.md (to be written)
+
+# -----------------------------------------------------------------------------
+# 5. Data residency + Copilot training posture
+# -----------------------------------------------------------------------------
+data_residency_and_training:
+  local_agents_and_copilot_cli: data_processed_locally
+  cloud_agents: data_subject_to_github_copilot_data_handling_policies
+
+  ipai_copilot_training_data_opt_out:
+    decision: opt_out_for_all_engineering_members
+    deadline: "2026-04-24"
+    enforcement:
+      - enterprise_owner_opts_out_at_enterprise_level_in_github_enterprise_settings
+      - each_engineer_verifies_personal_opt_out_toggle
+    evidence_location: docs/evidence/<ts>/copilot-training-optout/
+    cross_reference: ssot/governance/github-enterprise-current-state-snapshot.yaml
+
+# -----------------------------------------------------------------------------
+# 6. Policy deployment artifacts
+# -----------------------------------------------------------------------------
+policy_deployment:
+  preferred_mechanism: intune_configuration_profile (mac devices; managed via Entra)
+  fallback_mechanism: jamf_configuration_profile
+  policy_artifact_location: infra/azure/device-policies/vscode-ai-policies.<plist|json> (to be generated)
+  rollout_order:
+    - apply_to_platform-architecture_devices_first (canary)
+    - apply_to_engineering_devices_after_24h_canary
+    - apply_to_contractor_devices_after_7d_monitoring
+
+# -----------------------------------------------------------------------------
+# Success criteria
+# -----------------------------------------------------------------------------
+success_criteria:
+  - id: VSEP-1
+    description: Single canonical ipai.code-workspace at repo root
+    target: 1 canonical + 0 deprecated
+    measurement: workspace_file_audit
+  - id: VSEP-2
+    description: All engineering devices under managed AI policies
+    target: 100%
+    measurement: device_compliance_report
+  - id: VSEP-3
+    description: chat.mcp.access = registry enforced
+    target: true
+    measurement: policy_verification_scan
+  - id: VSEP-4
+    description: chat.tools.global.autoApprove = false enforced
+    target: true
+    measurement: policy_verification_scan
+  - id: VSEP-5
+    description: Agent sandbox + network filter enabled
+    target: both true
+    measurement: policy_verification_scan
+  - id: VSEP-6
+    description: Copilot training data opt-out verified for all engineers by 2026-04-24
+    target: 100% by deadline
+    measurement: evidence_in_docs_evidence
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not allowing multiple workspace files to coexist
+  - not permitting global auto-approve anywhere
+  - not allowing agent access to deprecated platform domains
+  - not deploying policies without canary phase
+  - not leaving Copilot training opt-out to default
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/governance/vscode-operating-profile.yaml
+  - ssot/governance/claude-code-activation-matrix.yaml
+  - platform/ssot/agentic/claude-code-operating-model.yaml
+  - ssot/governance/mcp-allowlist.yaml
+  - ssot/governance/repo-classes.yaml
+  - ssot/governance/github-enterprise-current-state-snapshot.yaml
+  - docs/runbooks/github-correct-setup-sequence.md
+  - CLAUDE.md
