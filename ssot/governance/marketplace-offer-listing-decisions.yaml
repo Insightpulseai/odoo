@@ -1,0 +1,260 @@
+version: 1
+kind: marketplace_offer_listing_decisions
+status: canonical
+last_updated: "2026-04-19"
+owner: gtm + platform-architecture
+source: "Microsoft Learn — Partner Center → Overview of Microsoft Marketplace"
+
+doctrine: >
+  Pre-decide all Microsoft Marketplace offer listing options for
+  Pulser for Odoo before the listing is built in Partner Center.
+  Offer type, categories, in-product surface eligibility, and
+  channel settings drive visibility + sales motion. Decisions
+  codified here prevent drift during listing construction and
+  make the EM review + publish consultation productive.
+
+parent_ssots:
+  - ssot/governance/partner-program-authority.yaml
+  - ssot/governance/partner-center-account-management.yaml
+  - ssot/governance/isv-success-program-engagement.yaml
+  - ssot/governance/microsoft-365-e7-and-agent-365-opportunity.yaml
+  - ssot/governance/saas-tenancy-model-pulser-for-odoo.yaml
+  - docs/gtm/partner_center_checklist.md
+
+# -----------------------------------------------------------------------------
+# Target offer
+# -----------------------------------------------------------------------------
+target_offer:
+  name: Pulser for Odoo
+  publisher_display_name: InsightPulseAI (brand) / Dataverse IT Consultancy (legal entity)
+  publish_target: "2026-08 to 2026-09"
+  parent_ssots:
+    - ssot/governance/saas-tenancy-model-pulser-for-odoo.yaml
+    - ssot/governance/partner-center-account-management.yaml
+
+# -----------------------------------------------------------------------------
+# Marketplace reach + commerce facts (reference)
+# -----------------------------------------------------------------------------
+marketplace_reach:
+  availability: "100+ countries and regions"
+  tax_handling: microsoft_managed_in_many_locations
+  enterprise_procurement_integration: existing_microsoft_purchase_agreements
+  invoicing: consolidated_from_microsoft
+
+free_benefits_available_to_listed_partners:
+  technical:
+    - application_design_guidance
+    - architecture_consulting (ties to ADR + ADS in isv-success-program-engagement.yaml)
+    - azure_credits_for_dev_and_test (per azure_credit stacking rules)
+    - partner_cloud_support_for_cloud_products (SPD-tier only; not IPAI)
+  marketing:
+    - microsoft_go_to_market_launch_fundamentals (GTM Launch Fundamentals)
+  sales_channel_expansion:
+    - csp_program_access (deferred per partner-program-authority.yaml)
+    - cosell_program
+    - microsoft_sales_team_introductions
+
+# -----------------------------------------------------------------------------
+# Offer type decision
+# -----------------------------------------------------------------------------
+offer_type_decision:
+
+  chosen_offer_type: saas_transactable
+  rationale: >
+    Pulser for Odoo is a multi-tenant SaaS offer with per-tenant
+    fulfillment (per saas-tenancy-model-pulser-for-odoo.yaml). SaaS
+    transactable is the Partner Center offer type that enables
+    Microsoft-managed billing, metering, and subscription lifecycle
+    webhooks.
+
+  rejected_alternatives:
+    - vm_image: not applicable (Pulser is not a VM-packaged appliance)
+    - managed_application: not applicable (Pulser is not deployed into customer Azure sub)
+    - container_image: not applicable (delivery is SaaS, not container distribution)
+    - azure_application_solution_template: not applicable (Pulser is not an ARM/Bicep template)
+    - dynamics_365_extension: excluded (IPAI doctrine — Odoo is canonical ERP, not D365)
+    - power_platform_solution: excluded (Power Platform is bounded per power-platform-adoption.yaml)
+    - m365_teams_app: deferred (Agent 365 SDK path if pursued; see microsoft-365-e7-and-agent-365-opportunity.yaml)
+    - consulting_service: considered_as_supplementary_listing (not replacement)
+
+  potential_supplementary_offers:
+    - consulting_service_offer_for_pulser_deployment: consider_post_GA (once delivery process is repeatable)
+    - consulting_service_offer_for_odoo_readiness_assessment: consider_post_first_customer
+
+# -----------------------------------------------------------------------------
+# Categories decision
+# -----------------------------------------------------------------------------
+categories_decision:
+
+  primary_category: AI + Machine Learning (agent-led automation value proposition)
+  secondary_categories:
+    - Business Applications (Odoo ERP context)
+    - Productivity (finance close, PM, ops workflows)
+
+  industry_targeting:
+    primary:
+      - professional_services (TBWA\SMP archetype, agencies)
+      - small_to_midmarket_business (SMBs with finance teams)
+    secondary:
+      - financial_services (BIR compliance surface for PH market)
+      - retail_and_consumer_goods (where Odoo is a known fit)
+
+  forbidden_category_selections:
+    - Dynamics_365 (doctrine conflict — Pulser is not D365-extension)
+    - Power_Platform_Solutions (doctrine conflict per power-platform-adoption.yaml)
+
+# -----------------------------------------------------------------------------
+# In-product surface eligibility
+# -----------------------------------------------------------------------------
+in_product_surface_eligibility:
+
+  azure_portal:
+    eligible: true
+    reach: azure_customers_using_create_a_resource_flow
+    ipai_priority: high (primary surface — aligns with Azure-first doctrine)
+    setup_required: offer_type_saas_with_azure_compatible_listing_metadata
+
+  microsoft_365_in_product:
+    eligible: conditional_on_agent_365_sdk_integration
+    reach: m365_customers_accessing_marketplace_from_m365_admin_or_copilot
+    ipai_priority: deferred (post-Pulser-GA; gated per microsoft-365-e7-and-agent-365-opportunity.yaml)
+
+  dynamics_365_in_product:
+    eligible: false
+    rationale: Pulser is not a D365 extension; doctrine conflict
+    action: do_not_list_in_d365_in_product_experience
+
+  power_platform_in_product:
+    eligible: false
+    rationale: Pulser is not a Power Platform solution; doctrine conflict
+    action: do_not_list_in_power_platform_in_product_experience
+
+# -----------------------------------------------------------------------------
+# Channel and commerce settings
+# -----------------------------------------------------------------------------
+channel_and_commerce:
+
+  plan_tiers: (per platform/ssot/gtm/marketplace_plans.yaml)
+    - foundational
+    - growth
+    - enterprise
+
+  transactable_billing:
+    model: microsoft_managed_billing_and_metering
+    fulfillment_webhook: https://erp.insightpulseai.com/api/marketplace/webhook (per partner_center_checklist.md)
+    subscription_events_handled: (per saas-tenancy-model-pulser-for-odoo.yaml#billing)
+
+  private_offers:
+    enabled: true
+    use_case: named_customer_private_pricing (e.g. TBWA\SMP, strategic accounts)
+    cross_reference: ssot/governance/partner-center-api-coverage.yaml#strong_api_surface.private_offers
+
+  csp_reselling:
+    enabled_at_publish: false
+    revisit_when: csp_motion_activates_per_partner-program-authority.yaml
+    rationale: CSP incentives for M365 E7 + Agent 365 start 2026-04-01; IPAI deferred
+
+  resale_enabled_offers:
+    applicability: evaluate_post_GA (per Nicole Dezen blog — global availability expanding)
+    decision_trigger: first_interested_reseller
+
+# -----------------------------------------------------------------------------
+# Visibility + discoverability settings
+# -----------------------------------------------------------------------------
+visibility_settings:
+
+  listing_visibility: public (commercial SaaS offer intended for broad discovery)
+
+  target_audiences:
+    - mid_market_to_enterprise_odoo_adopters
+    - ph_sea_then_apac_expansion (per isv-success-program-engagement.yaml#em_requested_templates)
+    - finance_ops_focused_buyers
+    - agentic_ai_early_adopters
+
+  keywords_candidates:
+    - "pulser"
+    - "odoo copilot"
+    - "ai erp"
+    - "finance automation"
+    - "bir compliance philippines"
+    - "agentic odoo"
+    - "odoo governance"
+    - "multi-agent erp"
+
+  featured_placement_eligibility: evaluate_post_first_paying_customer (Microsoft editorial discretion)
+
+# -----------------------------------------------------------------------------
+# Trust + compliance surfaces to complete
+# -----------------------------------------------------------------------------
+trust_and_compliance:
+
+  certifications_to_pursue_pre_publish:
+    - azure_iso_27001_inheritance_documentation (via Azure compliance)
+    - soc_2_type_i (aspirational — see gap list in github-well-architected-framework.yaml)
+    - ph_dpa_2012_posture_statement (data residency + subject rights)
+
+  publisher_profile_completeness_required:
+    - logo + 1600x900_hero_image
+    - solution_description (short + long)
+    - video_demo (closest_approx: docs/gtm/demo_storyboard.md)
+    - privacy_policy_url (tbd — insightpulseai.com/privacy)
+    - terms_of_use_url (tbd — insightpulseai.com/terms)
+    - support_email (platform@insightpulseai.com target; currently jgtolentino_rn@yahoo.com — per isv-success-program-engagement.yaml)
+    - support_url
+    - use_rights_document
+
+# -----------------------------------------------------------------------------
+# Success criteria
+# -----------------------------------------------------------------------------
+success_criteria:
+  - id: MP-LD-1
+    description: Offer type = SaaS transactable set correctly pre-submit
+    target: true
+    measurement: partner_center_offer_draft_review
+  - id: MP-LD-2
+    description: Categories match allowed set (no Dynamics / Power Platform categories selected)
+    target: true
+    measurement: partner_center_offer_draft_review
+  - id: MP-LD-3
+    description: In-product eligibility limited to Azure portal only at publish
+    target: true
+    measurement: partner_center_offer_draft_review
+  - id: MP-LD-4
+    description: Fulfillment webhook URL set and reachable
+    target: true
+    measurement: webhook_smoke_test_evidence
+  - id: MP-LD-5
+    description: Publisher profile 100% complete before submission
+    target: 100% fields
+    measurement: partner_center_completeness_indicator
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not listing under Dynamics 365 or Power Platform categories
+  - not enabling in-product surfacing beyond Azure portal at initial publish
+  - not enabling CSP resale at initial publish (deferred until CSP motion activates)
+  - not publishing without completing trust + compliance section
+  - not reusing yahoo personal email as the support contact for the published offer
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/governance/partner-program-authority.yaml
+  - ssot/governance/partner-center-account-management.yaml
+  - ssot/governance/partner-center-api-coverage.yaml
+  - ssot/governance/isv-success-program-engagement.yaml
+  - ssot/governance/microsoft-365-e7-and-agent-365-opportunity.yaml
+  - ssot/governance/saas-tenancy-model-pulser-for-odoo.yaml
+  - ssot/governance/power-platform-adoption.yaml
+  - ssot/governance/reference-platform-doctrine.yaml
+  - docs/gtm/partner_center_checklist.md
+  - docs/gtm/MARKETPLACE_OFFER.md
+  - docs/gtm/marketplace_research_brief.md
+
+source_references:
+  - https://learn.microsoft.com/en-us/partner-center/marketplace-offers/commercial-marketplace-what-is
+  - https://learn.microsoft.com/en-us/partner-center/marketplace-offers/listing-options-intro
+  - https://learn.microsoft.com/en-us/partner-center/marketplace-offers/publishing-guide
