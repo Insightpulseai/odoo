@@ -36,6 +36,10 @@ zoho:
 
   aliases_on_business:
     parent: business@insightpulseai.com
+    verified_against_live_admin: true
+    verification_date: "2026-04-19"
+    verification_source: Zoho Mail Admin Console users list
+    observed_alias_badge: "+11"
     list:
       - admin@insightpulseai.com
       - billing@insightpulseai.com
@@ -44,6 +48,61 @@ zoho:
       - expenses@insightpulseai.com
       - info@insightpulseai.com
       - jake.tolentino@insightpulseai.com
+      - jgtolentino.rn@gmail.com
+    personal_identity_flag:
+      alias: jgtolentino.rn@gmail.com
+      type: personal_gmail_address
+      risk: cross_identity_exposure
+      detail: >
+        Personal Gmail is configured as a Zoho alias on business@insightpulseai.com.
+        This means the personal Gmail account may receive mail delivered to any
+        of the 11 IPAI business role addresses (admin/billing/ceo/devops/etc.)
+        depending on Zoho forwarding configuration. Distinct from the Yahoo
+        identity (jgtolentino_rn@yahoo.com) used for personal GitHub.
+      remediation:
+        - verify_zoho_forwarding_rules_on_this_alias
+        - remove_personal_gmail_alias_from_business_mailbox_unless_explicitly_required
+        - document_reason_if_retained
+      cross_reference: ssot/identity/saas-multitenant-identity-matrix.yaml#posture_change_flags.msa_vs_entra_separation
+
+  zoho_vs_entra_upn_inversion:
+    finding: >
+      On Zoho Mail, business@insightpulseai.com is the PRIMARY mailbox and
+      jake.tolentino@insightpulseai.com is an ALIAS. On Entra ID, the
+      target UPN is jake.tolentino@insightpulseai.com as the primary
+      identity. This is an intentional inversion:
+        - Zoho primary = routing identity (receives mail for all aliases)
+        - Entra UPN = human identity (authenticates user for apps)
+    governance_rule:
+      - zoho_business_alias_must_not_be_an_entra_member_account
+      - entra_member_jake.tolentino_must_not_be_a_zoho_primary_mailbox
+      - the_two_identity_planes_mirror_at_display_level_only_not_at_authority_level
+
+  observed_user_count:
+    total: 2
+    as_of: "2026-04-19"
+    users:
+      - zoho_user: finance@insightpulseai.com
+        display_name: "InsightPulseAI Finance"
+        last_sign_in: "8 months ago"
+        status: active
+        likely_role: shared_finance_mailbox (no individual named user on Zoho side)
+      - zoho_user: business@insightpulseai.com (with 11 aliases)
+        display_name: "Jake Tolentino"
+        last_sign_in: "yesterday"
+        phone: "+639682699265"
+        status: active
+        type: primary_operator_account
+
+  named_individual_accounts_on_zoho: 1 (Jake only)
+  role_mailbox_on_zoho: 1 (finance@)
+  accountability_gap_assessment:
+    severity: medium (acceptable while IPAI is 1-operator; blocks when second person onboards)
+    remediation_trigger: when_finance_director_khalil_onboards_as_named_entra_member
+    action_at_that_time:
+      - finance@insightpulseai.com alias can redirect to khalil's individual mailbox
+      - khalil.<surname>@insightpulseai.com created as named Zoho user (or as Entra member without Zoho mailbox if he uses a different mail client)
+      - remove_finance_as_primary_mailbox_and_convert_to_distribution_group
 
 # -----------------------------------------------------------------------------
 # Authority 2 — Google Workspace (w9studio.net)
