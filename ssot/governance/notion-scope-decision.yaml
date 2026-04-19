@@ -1,0 +1,135 @@
+# =============================================================================
+# Notion Scope Decision — SSOT
+# =============================================================================
+# Authority: canonical decision on how Notion (for Startups) fits alongside
+#            Odoo CE 18 + OCA + the IPAI SSOT-in-git architecture.
+# Related:   CLAUDE.md (SSOT doctrine)
+#            ssot/odoo/ce18_oca_uc_semantic_odata_binding.yaml
+#            ssot/architecture/azure-architecture-center-map.yaml
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: canonical
+
+decision: allowed_as_complement_scoped_non_ssot_use_only
+
+rationale: >
+  IPAI's architecture is SSOT-in-git, monorepo-first, Azure-native,
+  Odoo-transactional. Notion's Startup offer (6 months Business + AI,
+  ~$12K savings) is useful for NON-SSOT content. It must NOT become a
+  parallel knowledge plane that competes with the monorepo, Odoo, or
+  Databricks for authority.
+
+# -----------------------------------------------------------------------------
+# What Notion IS allowed for (complement)
+# -----------------------------------------------------------------------------
+allowed_use:
+  - marketing_drafts_and_pitch_content
+  - fundraising_materials_and_investor_updates
+  - partner_outreach_and_gtm_narratives
+  - meeting_notes_non_operational (brainstorms, casual syncs)
+  - external_collaboration_drafts_before_they_become_governed_artifacts
+  - personal_founder_notes_and_thinking_scratch
+  - sales_collateral_versions_for_marketplace_pitch
+  - non_confidential_community_content
+
+# -----------------------------------------------------------------------------
+# What Notion IS NOT allowed for (forbidden as SSOT)
+# -----------------------------------------------------------------------------
+forbidden_use:
+  - architecture_ssots (stay in ssot/ in monorepo)
+  - spec_bundles (stay in spec/ in monorepo)
+  - evidence_packs (stay in docs/evidence/ in monorepo)
+  - runbooks_for_production_operations (stay in docs/runbooks/)
+  - roadmap_of_record (Odoo + ADO Boards are authoritative; Plane is projection)
+  - erp_transactional_data (Odoo is SoR)
+  - financial_records (Odoo + Zoho mailbox authority)
+  - identity_or_guest_registry (Entra + ssot/identity/)
+  - agent_persona_or_task_definitions (agents/ in monorepo)
+  - pulser_pack_manifests (platform/ssot/agents/ in monorepo)
+  - governed_analytics (Databricks Unity Catalog)
+  - confidential_finance_or_pii_data
+
+# -----------------------------------------------------------------------------
+# Boundaries
+# -----------------------------------------------------------------------------
+boundaries:
+
+  data_classification:
+    rule: "Only public or internal-unclassified content in Notion. Never confidential or restricted."
+    forbidden_classifications: [confidential, restricted, pii]
+    allowed_classifications: [public, internal_general]
+
+  tool_sprawl_protection:
+    rule: "Notion does not replace any of the governed planes. If a Notion page becomes load-bearing for a decision, migrate it to the monorepo as SSOT."
+    promotion_path: notion → pr_to_monorepo_ssot (one-way)
+
+  authority_preservation:
+    odoo_ce_18_plus_oca: remains_erp_transactional_sor
+    ssot_in_git: remains_architecture_authority
+    entra: remains_identity_authority
+    databricks_unity_catalog: remains_analytics_authority
+    zoho_and_google_workspace: remain_mailbox_authorities
+    azure_pipelines: remains_cicd_deploy_authority
+    ado_boards: remains_portfolio_planning_authority
+
+# -----------------------------------------------------------------------------
+# Integration posture
+# -----------------------------------------------------------------------------
+integration_posture:
+  odoo_integration: do_not_build (Odoo CE 18 + OCA stays intact; no Notion-to-Odoo sync)
+  git_integration: one_way_only (Notion page → markdown → monorepo PR, never reverse)
+  ai_integration: do_not_cross_surfaces (Notion AI stays inside Notion; does NOT replace Pulser)
+  databricks_integration: none (no Notion as data source for analytics)
+  entra_integration: sso_via_entra_sign_in_for_notion_users_only_no_identity_federation_out
+
+# -----------------------------------------------------------------------------
+# Startup offer eligibility
+# -----------------------------------------------------------------------------
+startup_offer:
+  plan: notion_for_startups
+  eligibility:
+    - non_paying_notion_customer_under_100_employees
+    - 6_months_free_if_affiliated_with_select_partner
+    - 3_months_free_with_valid_business_website_and_domain_email
+    - 1_month_free_if_smb_or_incomplete_application
+  ipai_qualifications:
+    - ipai_domain_email_insightpulseai_com (valid)
+    - valid_business_website_www_insightpulseai_com (exists)
+    - under_100_employees (qualifies)
+  default_ipai_tier: 3_months_free (unless affiliated with a Microsoft for Startups partner path that grants 6 months)
+  annual_savings_if_accepted_at_6mo: ~12000_usd
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not replacing Odoo CE 18 + OCA
+  - not replacing monorepo SSOT
+  - not adding Notion to the MCP allowlist
+  - not syncing Notion to Databricks or Odoo
+  - not using Notion AI as a Pulser alternative
+  - not creating a Notion database that competes with ssot/odoo/orm-registry.yaml
+
+# -----------------------------------------------------------------------------
+# Promotion rule
+# -----------------------------------------------------------------------------
+promotion_rule:
+  rule: >
+    If a Notion page becomes load-bearing (referenced in > 1 decision, or
+    cited in production docs, or required for audit), it MUST be migrated
+    to the monorepo as SSOT within 1 sprint. Notion is a drafting
+    surface, not a system of record.
+  enforcement: reviewer_responsibility_at_pr_time
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  claude_md_doctrine: CLAUDE.md (SSOT-in-git invariants)
+  odoo_cross_layer: ssot/odoo/ce18_oca_uc_semantic_odata_binding.yaml
+  aac_map: ssot/architecture/azure-architecture-center-map.yaml
+  mcp_allowlist: ssot/governance/mcp-allowlist.yaml
+  deprecated_tools: CLAUDE.md#Deprecated (Notion is NOT deprecated; scoped as complement)
