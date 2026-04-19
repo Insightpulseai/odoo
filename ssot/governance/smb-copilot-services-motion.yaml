@@ -1,0 +1,231 @@
+version: 1
+kind: smb_copilot_services_motion
+status: canonical
+last_updated: "2026-04-19"
+owner: gtm + platform-architecture
+source: "Microsoft Partner Blog — Copilot monetization for SMBs parts 1 and 2 (David Suhrie, 2026-03)"
+
+doctrine: >
+  SMB Copilot reseller/services is a Microsoft-led go-to-market motion
+  for partners who advise, assess, deploy, and enable Microsoft 365
+  Copilot inside SMB accounts. For IPAI this is NOT the primary
+  motion — Pulser for Odoo as an Azure Marketplace SaaS transactable
+  offer is. This SSOT catalogues the SMB Copilot track and defines
+  the specific trigger conditions under which it becomes in-scope.
+
+parent_ssots:
+  - ssot/governance/partner-program-authority.yaml
+  - ssot/governance/isv-success-program-engagement.yaml
+  - ssot/governance/microsoft-365-e7-and-agent-365-opportunity.yaml
+
+# -----------------------------------------------------------------------------
+# IPAI classification
+# -----------------------------------------------------------------------------
+ipai_classification:
+  state: deferred
+  leverage: low_for_primary_offer / medium_for_services_attach
+  rationale: >
+    IPAI's canonical product is Pulser for Odoo — a custom-engine
+    multi-agent Odoo copilot delivered via Azure Marketplace. SMB
+    Copilot services is a Microsoft-Copilot-reseller play that would
+    dilute focus if pursued as the primary motion. IPAI may activate
+    selectively where an existing client (e.g. TBWA\SMP) requests
+    M365 Copilot alongside Odoo — never as cold outbound.
+
+# -----------------------------------------------------------------------------
+# Microsoft-defined motion (for reference, not adoption)
+# -----------------------------------------------------------------------------
+microsoft_motion:
+
+  methodology: MCEM (Microsoft Customer Engagement Methodology)
+  stage_in_focus: Stage_1_listen_and_consult
+
+  mcem_full_five_stages:
+    stage_1_listen_and_consult:
+      purpose: diagnose_readiness_prioritize_outcomes_establish_first_adoption_motion
+      partner_actions:
+        - target_high_propensity_accounts_via_cloudascent_and_aspx
+        - lead_with_outcomes_not_product_pitch
+        - run_readiness_assessment
+        - introduce_copilot_chat_for_governed_experimentation
+    stage_2_inspire_and_design:
+      purpose: create_intent_via_role_based_demos_and_immersive_experiences
+    stage_3_empower_and_achieve:
+      purpose: bundle_copilot_at_renewal_or_upgrade + leverage_promotions + package_first_deployment
+    stage_4_realize_value:
+      purpose: drive_adoption_via_structured_enablement + measure_scenario_level_outcomes
+    stage_5_manage_and_optimize:
+      purpose: track_usage + optimize + expand_value_via_agents_governance_and_managed_services
+
+  customer_zero_motion:
+    premise: partner_adopts_copilot_internally_first_to_build_credibility
+    actionable_targets:
+      - set_30_day_internal_adoption_goal
+      - document_top_3_internal_scenarios_and_governance_decisions
+      - package_learnings_into_first_customer_readiness_offer
+    ipai_disposition: selective — IPAI engineering already uses Copilot-class tools (Claude Code) internally; formal Customer Zero packaging is low-priority vs Pulser GA
+
+  agent_progression_model:
+    steps:
+      - step_1_copilot_chat (familiarity + responsible_use + early_wins)
+      - step_2_microsoft_365_copilot_business (embed_ai_in_everyday_apps)
+      - step_3_agents (repeatable_tasks + digital_labor + business_process_orchestration)
+    ipai_note: Pulser IS the step-3 agent layer for Odoo-centered workflows — not a Microsoft-Copilot-reseller play
+
+  market_sizing_microsoft_published:
+    smb_tam_partner_opportunity_usd: 777_billion (IDC data, per Microsoft)
+    copilot_revenue_uplift_per_user_per_month: 26_usd (Forrester study, 2025)
+    csp_margin_plus_incentive_per_user_per_month: 6_usd (Forrester, June 2025 CSP price list basis)
+    copilot_roi_over_3_years: up_to_353_percent (Forrester, October 2024)
+
+  pricing_and_promo_watch:
+    m365_plus_copilot_business_bundle_price_change: "2026-07-01"
+    promo_window_lock_in_current_pricing: through_2026-06-30
+    monthly_csp_billing_option_start: "2026-03-01 — applies to M365 Copilot Business and eligible bundles"
+    copilot_for_all_promo_extended: "through_2026-06-30 — includes under-300-seat customer bundles"
+
+  anchor_themes:
+    - productivity_gains_reducing_repetitive_work
+    - operational_efficiency_removing_workflow_friction
+    - cost_control_especially_under_capacity_constraints
+    - innovation_without_unmanaged_risk
+
+  six_plays:
+    - 1_focus_pipeline_on_high_propensity_accounts (ASPX + CloudAscent signals)
+    - 2_lead_with_m365_copilot_automated_readiness_assessment
+    - 3_start_with_copilot_chat_build_momentum_via_early_wins
+    - 4_combine_productivity_with_security_leadership (M365 Business Premium + Defender + Purview)
+    - 5_demand_generation_matching_how_smbs_buy (ready-to-use campaigns)
+    - 6_attach_services_early (training, change management, governance, monitoring)
+
+  monthly_cadence:
+    waves:
+      - signal_based_outreach (readiness + propensity)
+      - governance_first_outreach (unmanaged AI + security gaps)
+      - productivity_outcome_outreach (capacity constraints + repeatable work)
+    packaged_offers:
+      - microsoft_365_copilot_automated_readiness_assessment_offer
+      - copilot_chat_activation_and_enablement_sprint
+      - scenario_discovery_workshop
+
+  pricing_watch:
+    m365_plus_copilot_business_bundle_price_change: "2026-07-01"
+    pre_change_promotional_window: through_2026-06-30
+    implication_for_ipai: >
+      If IPAI ever decides to attach Copilot services to an existing
+      Odoo customer (e.g. TBWA\SMP internal productivity), the pricing
+      lock-in window ends 2026-06-30. Do not defer this narrowly-scoped
+      attach beyond that without a conscious cost decision.
+
+# -----------------------------------------------------------------------------
+# Triggers that would make this in-scope for IPAI
+# -----------------------------------------------------------------------------
+triggers_to_reclassify:
+
+  trigger_1_client_request_from_existing_engagement:
+    condition: TBWA_SMP_or_other_active_odoo_client_requests_m365_copilot_services
+    action: scope_as_services_attach_only; no primary motion shift
+    allowed_offers_in_that_scope:
+      - readiness_assessment (using Microsoft automated tool)
+      - copilot_chat_enablement_sprint
+      - scenario_discovery_workshop (focused on Odoo-adjacent workflows)
+
+  trigger_2_marketplace_copilot_pull_from_pulser_customers:
+    condition: pulser_customers_request_m365_copilot_alongside_pulser_as_unified_ai_offering
+    action: evaluate_packaged_bundle (Pulser + Copilot via Agent 365 SDK per microsoft-365-e7-and-agent-365-opportunity.yaml)
+    rationale: this_is_where_Agent_365_SDK_integration_adds_real_value
+
+  trigger_3_csp_motion_activation:
+    condition: ipai_enrolls_in_csp_partner_program (currently deferred per partner-program-authority.yaml)
+    action: SMB Copilot services becomes natural adjacent motion
+    dependencies:
+      - csp_incentive_inclusion_for_m365_e7_and_agent_365 (effective 2026-04-01)
+      - csp_enrollment_completed
+
+  trigger_4_pulser_ga_plus_first_customer:
+    condition: after_pulser_marketplace_publish_is_live_and_stable_with_first_customer
+    action: reconsider_services_menu_expansion_including_copilot_attach
+    timeline: earliest_post_aug_sep_2026_publish
+
+# -----------------------------------------------------------------------------
+# If activated — minimum viable scope (boundaries to prevent dilution)
+# -----------------------------------------------------------------------------
+minimum_viable_scope_if_activated:
+
+  in_scope:
+    - services_attach_for_existing_pulser_or_odoo_customers_only
+    - readiness_assessments_using_microsoft_automated_tool
+    - copilot_chat_enablement_workshops_with_scoped_odoo_relevant_scenarios
+    - training_and_change_management_for_already_contracted_customers
+
+  out_of_scope:
+    - cold_outbound_smb_copilot_resell
+    - competing_on_copilot_reseller_pricing_with_csp_partners
+    - generic_m365_managed_services_without_an_odoo_or_pulser_anchor
+    - building_copilot_specific_campaign_assets_without_pulser_tie_in
+
+  delivery_model:
+    primary_delivery: thin_advisory_layer (no FTE hires for SMB Copilot services)
+    delivery_authority: platform-architecture + fp_and_a
+    pricing_basis: time_and_materials_for_first_3_engagements_then_productize_if_repeatable
+
+# -----------------------------------------------------------------------------
+# Decision watch list
+# -----------------------------------------------------------------------------
+decision_watch_list:
+
+  - item: M365 Copilot Business pricing change 2026-07-01
+    decision_deadline: "2026-06-15 (window + decision buffer)"
+    applies_if: IPAI internal adoption OR TBWA_SMP_copilot_attach_activated
+    default_action: do_nothing_unless_specific_trigger_fires
+
+  - item: ISV Success Technical Enablement Session use
+    overlap_with_smb_copilot: partial — marketplace publish consultation is higher-priority
+    default_action: prioritize_per_isv-success-program-engagement.yaml#benefits.technical_enablement_sessions
+
+  - item: Microsoft Copilot Partner Directory listing
+    applies_if: activated
+    decision_deadline: post_pulser_ga
+
+# -----------------------------------------------------------------------------
+# Success criteria (activate if motion is triggered)
+# -----------------------------------------------------------------------------
+success_criteria_if_activated:
+  - id: SMB-CP-1
+    description: SMB Copilot services scope limited to existing Pulser/Odoo customers
+    target: 100% services attach (no cold outbound)
+    measurement: engagement_log_review
+  - id: SMB-CP-2
+    description: Copilot attach never becomes primary revenue vs Pulser SaaS
+    target: Copilot attach < 20% of total services revenue
+    measurement: fp_and_a_monthly_review
+  - id: SMB-CP-3
+    description: Readiness assessments delivered using Microsoft automated tool
+    target: 100% (no bespoke assessment framework)
+    measurement: tool_usage_evidence
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not pivoting IPAI primary motion from Pulser to SMB Copilot reselling
+  - not hiring dedicated SMB Copilot sales or delivery staff
+  - not building SMB Copilot marketing collateral separate from Pulser messaging
+  - not enrolling in CSP just to access SMB Copilot motion (CSP has its own trigger criteria)
+  - not competing on price with dedicated Microsoft reseller partners
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/governance/partner-program-authority.yaml
+  - ssot/governance/isv-success-program-engagement.yaml
+  - ssot/governance/microsoft-365-e7-and-agent-365-opportunity.yaml
+  - ssot/governance/partner-center-account-management.yaml
+  - docs/gtm/partner_center_checklist.md
+
+source_references:
+  - "https://partner.microsoft.com/en-us/blog/article/copilot-monetization-for-smbs-start-with-copilot-chat-scale-with-agents"
+  - "https://partner.microsoft.com/en-us/blog/article/copilot-monetization-for-smbs-build-pipeline-with-readiness-and-repeatable-plays"
+  - "Microsoft Customer Engagement Methodology (MCEM)"
+  - "M365 Copilot Automated Readiness Assessment (Tech Community + GitHub)"
