@@ -1,0 +1,272 @@
+version: 1
+kind: repository_lifecycle_operations
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+source: "GitHub Docs — Repositories → Creating and managing repositories"
+
+doctrine: >
+  Repository lifecycle operations (create, rename, transfer, delete,
+  restore, archive, duplicate, template) are governed. REST coverage
+  is partial; several operations are UI-only. Every lifecycle change
+  to an IPAI repo goes through platform-architecture approval and
+  leaves an audit trail in docs/evidence/.
+
+parent_ssots:
+  - ssot/governance/repo-classes.yaml
+  - ssot/governance/repository-best-practices.yaml
+  - ssot/governance/github-org-admin-api-matrix.yaml
+  - ssot/governance/github-desired-state.yaml
+
+# -----------------------------------------------------------------------------
+# Lifecycle operations matrix
+# -----------------------------------------------------------------------------
+operations:
+
+  create_new_repository:
+    rest: "POST /orgs/{org}/repos (org-owned) or POST /user/repos"
+    graphql: "mutation createRepository"
+    ui: supported
+    automation_confidence: high
+    ipai_policy:
+      allowed_via: platform_architecture_approval + templates_only
+      naming: repo-classes.yaml#naming_rules (lowercase-kebab-case, singular, no vanity suffixes)
+      required_initial_content:
+        - README.md
+        - LICENSE
+        - CODEOWNERS
+        - SECURITY.md (tier_0 + tier_1)
+      tier_assignment_required: true (per repo-classes.yaml)
+
+  create_from_template:
+    rest: "POST /repos/{template_owner}/{template_repo}/generate"
+    graphql: no
+    ui: supported
+    automation_confidence: high
+    ipai_policy:
+      preferred_over_freehand_create: true
+      canonical_templates_location: Insightpulse-ai/templates repo
+      template_repos_must_be_marked: is_template=true
+
+  mark_as_template:
+    rest: "PATCH /repos/{owner}/{repo} with is_template: true"
+    graphql: no
+    ui: supported
+    automation_confidence: high
+    ipai_policy:
+      rule: only_explicitly_designated_repos_act_as_templates
+      register_in: ssot/governance/repository-templates-registry.yaml (to be created when first template is designated)
+
+  create_issues_only_repository:
+    rest: "POST /orgs/{org}/repos with has_issues: true, has_wiki: false, etc (no first-class issues_only flag; achieved by creating minimal repo)"
+    graphql: no
+    ui: supported (as pattern, not a distinct type)
+    automation_confidence: medium
+    ipai_policy:
+      use_case: project_tracking_hub_without_code
+      rule: clearly_mark_in_README_that_repo_is_issues_only
+      alternative_preferred: github_projects_v2_at_org_level (per github-projects-v2-scope.yaml)
+
+  duplicate_repository:
+    rest: "No direct API — done via git clone --mirror then push to new repo"
+    graphql: no
+    ui: no
+    automation_confidence: medium
+    ipai_policy:
+      use_case: spin_off_a_portion_of_history_into_a_new_bounded_unit
+      rule: duplication_must_be_approved_by_platform_architecture (because it doubles maintenance surface)
+
+  clone_repository:
+    rest: not_applicable (git operation, not github api)
+    git_command: "git clone https://github.com/Insightpulse-ai/<repo>.git"
+    automation_confidence: high (standard git operation)
+    ipai_policy:
+      auth_pattern: https_with_pat_or_github_app_token (not ssh by default unless developer opts in)
+
+  rename_repository:
+    rest: "PATCH /repos/{owner}/{repo} (name field)"
+    graphql: no
+    ui: supported
+    automation_confidence: high
+    ipai_policy:
+      requires: platform_architecture_approval + doctrine_check_against_naming_rules
+      github_auto_redirect: true (old URL redirects after rename, workflows continue to work)
+      required_communication:
+        - notify_all_CODEOWNERS
+        - update_all_in_repo_SSOT_references_to_the_new_name
+        - update_downstream_dependencies_pointing_at_the_old_name
+      audit_evidence: docs/evidence/<ts>/repo-rename/<old-to-new>.md
+
+  transfer_repository:
+    rest: "POST /repos/{owner}/{repo}/transfer"
+    graphql: no
+    ui: supported
+    automation_confidence: high
+    ipai_policy:
+      allowed_destinations:
+        - another_Insightpulse-ai_scoped_owner (internal reorganization)
+        - approved_external_owner (rare; requires platform-architecture + legal signoff)
+      forbidden_destinations:
+        - personal_accounts_of_engineering_members (no individual ownership of ipai assets)
+        - external_unaffiliated_entities_without_approval
+      github_auto_redirect: true
+      required_communication: same as rename
+      audit_evidence: docs/evidence/<ts>/repo-transfer/<repo>.md
+
+  delete_repository:
+    rest: "DELETE /repos/{owner}/{repo}"
+    graphql: no
+    ui: supported
+    automation_confidence: high
+    ipai_policy:
+      approval_required: platform_architecture
+      preconditions:
+        - repo_not_referenced_in_production_deploys
+        - no_open_issues_or_prs_blocking_deletion
+        - all_artifacts_mirrored_or_archived_if_needed_for_compliance
+        - downstream_dependencies_audited_for_removal
+      confirmation_step: typed_confirmation_via_ui_or_explicit_rest_with_token_with_delete_repo_scope
+      audit_evidence_required: docs/evidence/<ts>/repo-delete/<repo>/
+      restore_window: 90_days (GitHub retains deleted repos for restore)
+
+  restore_deleted_repository:
+    rest: "POST /repos/{owner}/{repo}/restore (within 90-day window; undocumented/partial)"
+    graphql: no
+    ui: supported (enterprise + org owner dashboard)
+    automation_confidence: medium
+    ipai_policy:
+      authority: platform_architecture (org owner)
+      window: 90_days_from_deletion
+      document_restoration_in: docs/evidence/<ts>/repo-restore/<repo>.md
+
+  archive_repository:
+    rest: "PATCH /repos/{owner}/{repo} (archived: true)"
+    graphql: no
+    ui: supported
+    automation_confidence: high
+    ipai_policy:
+      use_case: repo_no_longer_actively_maintained_but_retained_for_history
+      effect:
+        - becomes_read_only
+        - issues_and_prs_frozen
+        - no_further_commits_allowed
+        - still_discoverable_and_cloneable
+      audit_evidence: docs/evidence/<ts>/repo-archive/<repo>.md
+      unarchive_path: "PATCH /repos/{owner}/{repo} with archived=false (requires platform_architecture approval)"
+
+  view_all_repositories:
+    rest:
+      - "GET /orgs/{org}/repos"
+      - "GET /user/repos"
+    graphql: "query { organization(login: \"...\") { repositories(first: 100) { ... } } }"
+    ui: supported
+    automation_confidence: high
+    ipai_policy:
+      inventory_cadence: monthly
+      output_location: docs/evidence/<ts>/repo-inventory/<org>.json
+      reconciliation_against: ssot/governance/repo-classes.yaml + github-enterprise-org-target-state.yaml
+
+  view_repository_limits:
+    rest: "GET /repos/{owner}/{repo} returns size info; no first-class 'limits' endpoint"
+    graphql: no (size fields available in Repository type)
+    ui: supported
+    automation_confidence: medium
+    ipai_policy:
+      monitor: monthly (part of inventory)
+      thresholds:
+        warn_repo_size_over: 4GB
+        warn_single_file_over: 50MB (GitHub hard-blocks at 100MB)
+      remediation: migrate_to_git_lfs_per_repository-best-practices.yaml#pillar_4
+
+# -----------------------------------------------------------------------------
+# Operator reference (git remote operations — standard git, not governance)
+# -----------------------------------------------------------------------------
+operator_reference_git_remote:
+  note: >
+    Standard Git CLI operations. Included here for completeness only;
+    they are operator knowledge, not IPAI-specific governance.
+  operations:
+    add_remote: "git remote add <name> <url>"
+    change_url: "git remote set-url <name> <url>"
+    rename_remote: "git remote rename <old> <new>"
+    remove_remote: "git remote rm <name>"
+    list_remotes: "git remote -v"
+  ipai_conventions:
+    primary_remote_name: origin
+    additional_remotes_allowed: upstream (for fork workflow), fork (personal fork)
+    auth: https_with_pat_or_github_app_token_preferred (ssh opt-in per developer)
+    forbidden: storing_pat_or_password_in_remote_url
+
+# -----------------------------------------------------------------------------
+# IPAI audit + evidence
+# -----------------------------------------------------------------------------
+audit_and_evidence:
+  operations_requiring_evidence:
+    - create (tier_0 + tier_1)
+    - rename
+    - transfer
+    - delete
+    - archive
+    - restore
+    - duplicate
+  evidence_location_pattern: docs/evidence/<YYYYMMDD-HHMM>/<operation>/<repo-or-slug>/
+  required_fields:
+    - operator
+    - approver_list
+    - timestamp
+    - from_state
+    - to_state
+    - reason
+    - downstream_dependencies_affected
+
+# -----------------------------------------------------------------------------
+# SMART success criteria
+# -----------------------------------------------------------------------------
+success_criteria:
+  - id: RLO-1
+    description: 100% of new repos created from canonical templates (not freehand)
+    target: 100%
+    measurement: template_usage_audit
+  - id: RLO-2
+    description: 100% of repo rename / transfer / delete / archive operations have evidence
+    target: 100%
+    measurement: evidence_presence_audit
+  - id: RLO-3
+    description: Monthly repo inventory delivered + reconciled against SSOT
+    target: 100% on-time
+    measurement: docs/evidence/<ts>/repo-inventory/ presence
+  - id: RLO-4
+    description: Zero repos transferred to personal accounts of members
+    target: 0
+    measurement: transfer_evidence_review
+  - id: RLO-5
+    description: Zero repos over size threshold without Git LFS remediation
+    target: 0
+    measurement: repo_size_scan
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not allowing ad-hoc repo creation outside templates for tier_0 + tier_1
+  - not allowing transfer to personal accounts
+  - not letting delete happen without approval + evidence
+  - not treating the 90-day restore window as infinite safety net
+  - not duplicating this SSOT's content into every repo's README
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/governance/repo-classes.yaml
+  - ssot/governance/repository-best-practices.yaml
+  - ssot/governance/github-org-admin-api-matrix.yaml
+  - ssot/governance/github-desired-state.yaml
+  - ssot/governance/github-enterprise-org-target-state.yaml
+  - ssot/governance/github-projects-v2-scope.yaml
+
+source_references:
+  - https://docs.github.com/en/repositories/creating-and-managing-repositories
+  - https://docs.github.com/en/repositories/creating-and-managing-repositories/about-repositories
+  - https://docs.github.com/en/rest/repos/repos
+  - https://docs.github.com/en/graphql/reference/mutations
