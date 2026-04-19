@@ -59,8 +59,7 @@ forbidden_use:
   - non_engineering_program_tracking (use ADO Boards Areas/Iterations)
   - client_facing_project_tracking (use Odoo project or client_portal)
   - duplicating_ado_boards_work_items
-  - bidirectional_sync_with_ado_boards (if synced, use one-way: GH issues →
-    ADO work items via link, not parallel tracking)
+  - "bidirectional_sync_with_ado_boards (if synced, use one-way: GH issues → ADO work items via link, not parallel tracking)"
 
 # -----------------------------------------------------------------------------
 # Relationship to GitHub Issues
@@ -107,9 +106,9 @@ api_usage:
     get_org_project:   GET /orgs/{org}/projectsV2/{project_number}
     list_user_projects: GET /users/{username}/projectsV2
     get_user_project:   GET /users/{username}/projectsV2/{project_number}
-  graphql_preferred_for_mutations: true
-    rationale: "REST for reads; GraphQL for creates/updates/deletes on
-      Projects V2 (which is GraphQL-native)."
+  graphql_preferred_for_mutations:
+    value: true
+    rationale: "REST for reads; GraphQL for creates/updates/deletes on Projects V2 (which is GraphQL-native)."
 
   ipai_auth_path:
     - do_not_embed_pat_in_code
