@@ -1239,3 +1239,79 @@ addenda_2026_04_15:
       - ssot/governance/marketplace-offer-listing-decisions.yaml
       - ssot/governance/partner-program-authority.yaml
       - ssot/governance/isv-success-program-engagement.yaml
+
+
+  # ───── Added 2026-04-19 — industry + AI landing zone references ─────
+
+  - upstream: microsoft/cloud-for-financial-services (Microsoft Cloud for FSI)
+    url: https://learn.microsoft.com/en-us/industry/financial-services/fsi-overview
+    purpose: "Industry-specific Microsoft Cloud bundling Azure + M365 + D365 + Power Platform for financial services (KYC, customer 360, retail banking, loan manager, commercial banking accelerators)"
+    adopt_mode: clone_as_reference
+    internal_owner: gtm + platform-architecture
+    scope: |
+      SELECTIVE EXTRACTION ONLY — narrative + compliance framing only.
+      Platform = D365 + Power Platform + Dataverse, which IPAI excludes.
+      Extract only:
+        - FSI compliance narrative (KYC, AMLC/FATF-equivalent framing)
+        - Customer-360 conceptual pattern (apply to Pulser-on-Odoo, not Dataverse)
+        - Regulatory posture language (adapt to PH BSP + BIR + AMLC)
+        - Industry-positioning vocabulary for Pulser for Odoo FSI marketing
+    do_not_extract:
+      - dataverse_schemas_or_data_models
+      - d365_customer_insights_assets
+      - power_platform_solution_packages
+      - industry_data_model_idm_as_canonical_schema (doctrine conflict)
+    rationale: |
+      IPAI has financial_services listed as secondary industry targeting
+      in marketplace-offer-listing-decisions.yaml. Microsoft Cloud for FSI
+      is useful narrative benchmark but platform is incompatible (D365 +
+      Dataverse). Extract positioning + compliance vocabulary; never
+      adopt implementation assets.
+    see_also:
+      - ssot/governance/marketplace-offer-listing-decisions.yaml#industry_targeting
+      - platform/ssot/agents/pulser-pack-matrix.yaml
+
+  - upstream: Azure/AI-Landing-Zones
+    url: https://github.com/Azure/AI-Landing-Zones
+    purpose: "Microsoft canonical AI landing zone reference architecture (Foundry + AI Search + AI Services + hub-spoke VNet + private endpoints + MI + governance)"
+    adopt_mode: clone_as_reference
+    internal_owner: platform-engineering
+    scope: |
+      SELECTIVE EXTRACTION ONLY — same posture as
+      microsoft/Deploy-Your-AI-Application-In-Production already in this
+      register. Do NOT lift as default baseline.
+      Extract only:
+        - private endpoint patterns for Foundry + AI Search + AI Services
+        - managed identity + RBAC patterns
+        - hub-spoke VNet topology for AI workloads
+        - observability baseline for Foundry + AI Services
+        - network isolation guardrails
+    do_not_extract:
+      - full_resource_set_as_baseline (IPAI's lean Azure BOM is intentional)
+      - opinionated_naming_that_conflicts_with_ipai_naming
+      - automatic_copy_of_entire_bicep_module_tree
+    ipai_alignment_notes: |
+      IPAI already has components that map to AI landing zone shape:
+        - Foundry project: NOT YET PROVISIONED (target state per
+          platform/ssot/ai/foundry-resource-model.yaml) — pending block 6
+          of github-correct-setup-sequence runbook
+        - AI Search: srch-ipai-dev-sea (basic SKU — see azure-sku-bom-sufficiency.yaml)
+        - Document Intelligence: docai-ipai-dev (FormRecognizer S0)
+        - Key Vault: kv-ipai-dev-sea
+        - Log Analytics + App Insights: in rg-ipai-dev-mon-sea
+        - Private endpoints: 3 existing (kv, search, pg)
+      Use this repo's patterns to validate provisioning choices when
+      Foundry project is stood up.
+    rationale: |
+      AI landing zone accelerator is Microsoft's canonical posture for
+      AI workloads on Azure. Aligns with IPAI target state per
+      foundry-resource-model.yaml. Valuable reference for Foundry
+      provisioning design (block 6 of github-correct-setup-sequence.md)
+      but not a direct deploy target — IPAI uses Bicep via AVM modules
+      with infra/ composition.
+    plane: infra + ai
+    see_also:
+      - platform/ssot/ai/foundry-resource-model.yaml
+      - ssot/governance/azure-sku-bom-sufficiency.yaml
+      - docs/runbooks/github-correct-setup-sequence.md
+      - upstream: microsoft/Deploy-Your-AI-Application-In-Production (sibling reference; same SELECTIVE EXTRACTION warning)
