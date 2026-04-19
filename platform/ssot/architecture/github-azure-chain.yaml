@@ -1,0 +1,61 @@
+version: 1
+chain_id: github_azure_minimum_clean
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+
+# -----------------------------------------------------------------------------
+# Minimum clean chain
+# -----------------------------------------------------------------------------
+code_truth: github_enterprise
+planning_truth: azure_boards
+release_truth: azure_pipelines
+identity_truth: entra
+secret_truth: key_vault
+
+runtime:
+  - acr
+  - aca
+  - postgres
+  - app_insights
+  - azure_monitor
+
+# -----------------------------------------------------------------------------
+# Explicitly excluded (prevents split-brain governance)
+# -----------------------------------------------------------------------------
+excluded:
+  - azure_repos
+  - azure_artifacts
+  - test_plans_as_primary_truth
+  - parallel_azure_side_source_control_truth
+
+# -----------------------------------------------------------------------------
+# Rationale
+# -----------------------------------------------------------------------------
+rationale: >
+  GitHub stays code truth; Azure Boards stays planning truth; Azure
+  Pipelines stays release truth. No parallel source-control authority.
+  Azure owns only the services genuinely needed to run Odoo and
+  adjacent workloads (identity, secrets, registry, runtime, DB,
+  monitoring). Test Plans and Artifacts are NOT primary truth.
+
+# -----------------------------------------------------------------------------
+# Related SSOTs
+# -----------------------------------------------------------------------------
+related:
+  github_enterprise_migration: ssot/governance/github-enterprise-migration.yaml
+  ado_github_authority_map: ssot/governance/ado_github_authority_map.yaml
+  platform_authority_split: ssot/governance/platform-authority-split.yaml
+  planning_authority_map: ssot/governance/planning-surface-authority-map.yaml
+  github_projects_v2_scope: ssot/governance/github-projects-v2-scope.yaml
+  entra_identity_matrix: ssot/identity/entra-identity-matrix.yaml
+  resource_inventory: platform/ssot/azure/resource-inventory.dev.yaml
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not using Azure Repos as a second code truth
+  - not using GitHub Actions as deploy authority (Azure Pipelines canonical)
+  - not using GitHub Projects as primary planning truth (Azure Boards canonical)
+  - not using Test Plans as primary test-result-of-record

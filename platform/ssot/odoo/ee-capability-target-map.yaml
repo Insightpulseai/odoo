@@ -1,0 +1,225 @@
+version: 1
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+
+target_major: 19
+runtime_baseline: ce18_oca
+ee_capability_sources:
+  - odoo_editions_page
+  - odoo_19_docs
+  - odoo_19_json_2_external_api
+not_sources:
+  - enterprise_source_code (do NOT mix EE source into CE repo)
+
+# -----------------------------------------------------------------------------
+# Mapping tier rule
+# -----------------------------------------------------------------------------
+mapping_rule:
+  T0: ce_config_only
+  T1: ce_plus_oca
+  T2: thin_ipai_bridge
+  T3: external_service_bridge
+
+doctrine: >
+  Represent EE 19 capabilities as a machine-readable TARGET MAP, not as
+  imported Enterprise code. Default implementation order: CE config →
+  CE + OCA → thin ipai_* bridge → external Azure/Databricks/Foundry
+  service. Upstream Odoo 19 CE tracked as clean reference for core
+  behavior and 19.0 evolution; CE 18 + OCA remains the runtime baseline.
+
+# -----------------------------------------------------------------------------
+# Capability map (starter — expand as EE contracts become live requirements)
+# -----------------------------------------------------------------------------
+capabilities:
+
+  expenses_ocr:
+    target_contract: enterprise_docs
+    preferred_implementation: external_ocr_bridge
+    tier: T3
+    ipai_implementation_notes: >
+      Azure Document Intelligence (docai-ipai-dev) + ipai_odoo_copilot
+      OCR route (commit 01199ffdf). See pulser_expense_mobile_companion
+      PWA pack for mobile-native receipt capture.
+
+  barcode_inventory:
+    target_contract: editions_page
+    preferred_implementation: ce_or_oca_first
+    tier: T1
+    ipai_implementation_notes: >
+      Per pulser_asset_ops pack. Scan + kit + reservations + room
+      booking handled via Odoo CE stock + OCA + thin mobile scan
+      companion.
+
+  planning:
+    target_contract: editions_page
+    preferred_implementation: oca_or_thin_bridge
+    tier: T1_T2
+
+  helpdesk:
+    target_contract: editions_page
+    preferred_implementation: oca_first
+    tier: T1
+
+  field_service:
+    target_contract: editions_page
+    preferred_implementation: oca_or_external_domain_app
+    tier: T1_T2
+
+  knowledge:
+    target_contract: editions_page
+    preferred_implementation: external_or_oca_doc_stack
+    tier: T2_T3
+    ipai_note: Knowledge is Odoo CE 18 enabled per settings_catalog.yaml.
+
+  studio:
+    target_contract: editions_page
+    preferred_implementation: not_replicated_1_to_1
+    tier: external_policy
+    ipai_note: >
+      Do not attempt 1:1 Studio replacement. Use proper inherit/view
+      extension patterns in ipai_* modules when needed.
+
+  documents:
+    target_contract: editions_page
+    preferred_implementation: ce_documents_plus_external_sharepoint_or_blob
+    tier: T0_T3
+    ipai_note: Odoo CE documents enabled per settings_catalog.
+
+  sign:
+    target_contract: editions_page
+    preferred_implementation: external_service_or_oca_doc_stack
+    tier: T3
+    ipai_note: >
+      EE sign module is disabled per settings_catalog.yaml; consider
+      OCA document alternatives or external e-signature service when
+      needed.
+
+  rental:
+    target_contract: editions_page
+    preferred_implementation: oca_or_thin_bridge_if_needed
+    tier: T1_T2
+
+  quality:
+    target_contract: editions_page
+    preferred_implementation: oca_first
+    tier: T1
+
+  appointments:
+    target_contract: editions_page
+    preferred_implementation: oca_or_external_service
+    tier: T1_T2
+
+  approvals:
+    target_contract: editions_page
+    preferred_implementation: oca_first_or_thin_bridge
+    tier: T1_T2
+    ipai_note: >
+      Approval workflow for rate card / budget flows modeled in
+      platform/ssot/workflows/rate-card-approval.yaml; not dependent on
+      EE approvals module.
+
+  iot:
+    target_contract: editions_page
+    preferred_implementation: external_service_or_deferred
+    tier: T3_or_deferred
+
+  voip:
+    target_contract: editions_page
+    preferred_implementation: external_twilio_or_deferred
+    tier: T3_or_deferred
+    ipai_note: Twilio SMS available per Odoo 19 note; voice deferred.
+
+  mobile_apps:
+    target_contract: editions_page
+    preferred_implementation: pwa_not_native_app
+    tier: T2
+    ipai_note: >
+      IPAI mobile strategy is PWA per commit 0ba6a4ebc. Native iOS
+      wrapper (web/mobile/) is complementary; EE native mobile is NOT
+      replicated.
+
+  # Finance-specific EE capabilities (from Odoo 19 EE docs)
+  vendor_bill_ocr:
+    target_contract: odoo_19_enterprise_docs
+    preferred_implementation: external_ocr_bridge
+    tier: T3
+    ipai_note: Same path as expenses_ocr.
+
+  fixed_assets:
+    target_contract: odoo_19_enterprise_docs
+    preferred_implementation: oca_first_or_thin_bridge
+    tier: T1_T2
+
+  deferred_expenses:
+    target_contract: odoo_19_enterprise_docs
+    preferred_implementation: oca_first_or_thin_bridge
+    tier: T1_T2
+
+  edi:
+    target_contract: odoo_19_enterprise_docs
+    preferred_implementation: oca_or_external_service
+    tier: T1_T3
+    ipai_note: >
+      PH EDI requirements for BIR handled via OCA l10n_ph + ipai_ph_*
+      delta per CLAUDE.md.
+
+  batch_payments:
+    target_contract: odoo_19_enterprise_docs
+    preferred_implementation: oca_first
+    tier: T1
+
+  bank_synchronization:
+    target_contract: odoo_19_enterprise_docs
+    preferred_implementation: oca_or_external_service
+    tier: T1_T3
+
+  reconciliation_models:
+    target_contract: odoo_19_enterprise_docs
+    preferred_implementation: oca_first
+    tier: T1
+
+  forecast_future_bills:
+    target_contract: odoo_19_enterprise_docs
+    preferred_implementation: oca_or_thin_bridge
+    tier: T1_T2
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not importing Odoo Enterprise source code into the CE repo
+  - not forking Odoo runtime and EE requirements into one branch
+  - not replicating EE Studio 1:1
+  - not adopting all EE capabilities; adopt only when business need is real
+  - not jumping to Odoo 19 runtime before forward-path criteria met
+    (see ssot/odoo/odoo-18-vs-19-adoption-decision.yaml)
+
+# -----------------------------------------------------------------------------
+# Related SSOTs
+# -----------------------------------------------------------------------------
+related:
+  github_azure_chain: platform/ssot/architecture/github-azure-chain.yaml
+  odoo_18_vs_19_decision: ssot/odoo/odoo-18-vs-19-adoption-decision.yaml
+  odoo_cross_layer: ssot/odoo/ce18_oca_uc_semantic_odata_binding.yaml
+  odoo_interoperability_template: ssot/odoo/interoperability-template.yaml
+  settings_catalog: ssot/odoo/settings_catalog.yaml
+  package_classification: ssot/odoo/package-classification.yaml
+  oca_must_have_base: infra/ssot/oca/must_have_base.yaml
+  rate_card_workflow: platform/ssot/workflows/rate-card-approval.yaml
+  pulser_pack_matrix: platform/ssot/agents/pulser-pack-matrix.yaml
+
+# -----------------------------------------------------------------------------
+# Execution boundary
+# -----------------------------------------------------------------------------
+execution_boundary:
+  this_ssot_is: capability_target_contract_and_tier_map
+  this_ssot_is_not:
+    - enterprise_code_mirror
+    - implementation_detail_for_each_capability
+    - binding_commitment_to_adopt_every_capability
+  promotion_rule: >
+    A capability enters this map as a TARGET CONTRACT reference. Its
+    implementation is decided per-engagement using the tier ladder
+    (T0 → T1 → T2 → T3). Not every listed capability will be
+    implemented — adopt only when business need is real.
