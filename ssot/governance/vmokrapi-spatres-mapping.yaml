@@ -1,0 +1,206 @@
+# =============================================================================
+# VMOKRAPI-SPATRES → IPAI Planning Surface Mapping — SSOT
+# =============================================================================
+# Authority: canonical mapping of Dr. Eduardo A. Morato Jr.'s
+#            VMOKRAPI-SPATRES strategic planning framework to IPAI's
+#            canonical planning surfaces. Treats VMOKRAPI-SPATRES as
+#            the CONCEPTUAL model; IPAI's existing monorepo + ADO
+#            Boards + Odoo + Azure + Power BI as the EXECUTION surfaces.
+# Related:   ssot/governance/planning-surface-authority-map.yaml
+#            ssot/governance/azure-boards-taxonomy.yaml
+#            ssot/architecture/azure-architecture-center-map.yaml
+#            ssot/architecture/azure-resource-inventory.yaml
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: canonical
+
+framework_reference:
+  name: VMOKRAPI-SPATRES
+  author: Dr. Eduardo A. Morato Jr.
+  origin: Filipino strategic planning / management education
+  structure: two_complementary_acronyms
+  top_down_strategy: VMOKRAPI
+  bottom_up_implementation: SPATRES
+
+decision: adopted_as_conceptual_framework_not_new_tool_stack
+
+rationale: >
+  VMOKRAPI-SPATRES is a lightweight strategy-to-execution framework.
+  Unlike PRINCE2 (rejected as heavyweight), VMOKRAPI-SPATRES maps
+  cleanly onto IPAI's existing canonical surfaces without introducing
+  new tools or methodologies. Adopt as the MENTAL MODEL for linking
+  strategic intent to daily execution; continue using monorepo + ADO
+  Boards + Odoo + Azure + Power BI as the actual surfaces.
+
+# -----------------------------------------------------------------------------
+# VMOKRAPI breakdown (top-down strategy)
+# -----------------------------------------------------------------------------
+vmokrapi:
+
+  vision:
+    definition: long_term_aspirational_future_state_of_organization
+    ipai_surface: CLAUDE.md + docs/architecture/
+    ipai_artifacts:
+      - CLAUDE.md (Pulser for Odoo core product narrative)
+      - docs/architecture/azure-architecture-center-map.yaml#canonical_summary
+    ownership: platform_architecture + founder
+    change_cadence: annual_or_on_material_pivot
+
+  mission:
+    definition: fundamental_purpose_reason_for_existence_role
+    ipai_surface: CLAUDE.md (commercial_product_statement sections)
+    ipai_artifacts:
+      - ssot/release/go-live-scope-matrix.yaml#commercial_product_statement
+      - docs/gtm/marketplace_research_brief.md (ISV Success engagement)
+    ownership: founder + business_leadership
+    change_cadence: annual
+
+  objectives:
+    definition: quantifiable_specific_goals_to_be_achieved
+    ipai_surface: ado_boards_epics + annual_okrs (if adopted later)
+    ipai_artifacts:
+      - 12 canonical Epics per ssot/governance/azure-boards-taxonomy.yaml
+      - ssot/release/feature-ship-readiness-gates.yaml (release objectives)
+    ownership: platform_architecture + business_leadership
+    change_cadence: quarterly
+
+  key_result_areas_kras:
+    definition: major_areas_of_outcome_where_performance_is_essential
+    ipai_surface: ado_boards_area_paths + pack/surface taxonomy
+    ipai_artifacts:
+      - 12 Area Paths: odoo, agent-platform, agents, web, data-intelligence,
+        platform, infra, docs, automations, design, templates, identity-security
+      - 4 public surfaces per ssot/web/site-template-adoption.yaml
+      - Pulser packs per platform/ssot/agents/pulser-pack-matrix.yaml
+    ownership: platform_architecture
+    change_cadence: quarterly_review
+
+  performance_indicators:
+    definition: metrics_or_tools_used_to_evaluate_success_and_track_progress
+    ipai_surface: power_bi + databricks + app_insights + identity_secure_score
+    ipai_artifacts:
+      - Databricks PPM Control Tower dashboards
+      - Power BI primary BI surface (per CLAUDE.md #12)
+      - App Insights (appi-ipai-dev-*-sea)
+      - Log Analytics workspaces (log-ipai-dev-*-sea)
+      - Identity Secure Score (43.77% current → 65% target per entra_target_state.yaml)
+      - go-live readiness checklist status (per ssot/release/go-live-readiness.yaml)
+      - Pulser eval gate scorecards (agent-platform/src/agent_platform/evals/)
+    ownership: data_intelligence + platform_architecture
+    change_cadence: continuous (with monthly review)
+
+# -----------------------------------------------------------------------------
+# SPATRES breakdown (bottom-up implementation)
+# -----------------------------------------------------------------------------
+spatres:
+
+  strategies:
+    definition: long_term_plans_designed_to_achieve_goals_typically_longer_than_one_year
+    ipai_surface: docs/architecture/ + ssot/*/*-adoption.yaml files
+    ipai_artifacts:
+      - docs/architecture/agent-framework-adoption.md (MAF runtime strategy)
+      - docs/architecture/site-template-adoption.md (4-site strategy)
+      - docs/architecture/production-ai-foundation-adoption.md (hardening strategy)
+      - ssot/odoo/odoo-18-vs-19-adoption-decision.yaml (version strategy)
+      - ssot/governance/production-ai-foundation-adoption.yaml
+      - ssot/governance/reference-samples-register.yaml
+    ownership: platform_architecture
+    change_cadence: quarterly_review
+
+  programs:
+    definition: structured_initiatives_implementing_the_strategies
+    ipai_surface: ado_boards_epics + spec_bundles
+    ipai_artifacts:
+      - 12 canonical Epics per azure-boards-taxonomy.yaml
+      - 76+ spec/<slug>/ bundles (each program is a spec bundle)
+    ownership: platform_architecture + engineering
+    change_cadence: quarterly
+
+  activities:
+    definition: specific_actions_taken_within_programs_to_move_forward
+    ipai_surface: ado_boards_issues + github_issues
+    ipai_artifacts:
+      - ADO Boards Issues (deliverable slices under Epics)
+      - GitHub Issues (engineering execution backlog)
+      - seed issues listed in azure-boards-taxonomy.yaml
+    ownership: engineering + assigned_owners
+    change_cadence: sprint (1-2 weeks)
+
+  tasks:
+    definition: detailed_operational_steps_for_daily_implementation
+    ipai_surface: ado_boards_tasks + github_issues_sub_items + odoo_project_tasks
+    ipai_artifacts:
+      - ADO Boards Tasks under Issues
+      - GitHub Issue checklists
+      - Odoo project.task for production-operational work
+      - spec/<slug>/tasks.md (design-phase tasks)
+    ownership: individual_contributor
+    change_cadence: daily
+
+  resources:
+    definition: human_financial_and_technological_assets_needed
+    ipai_surface: multi_plane_across_entra_azure_odoo
+    ipai_artifacts:
+      human:
+        - ssot/identity/entra_target_state.yaml (4 members target)
+        - ssot/identity/guest-invite-registry.yaml (11 TBWA\SMP guests)
+        - ssot/identity/entra-identity-matrix.yaml (5-plane model)
+      workload:
+        - 5 managed identities (id-ipai-dev, id-ipai-dev-runtime, -agent, -data, -pipeline)
+        - agent identities under Entra Agent ID
+      financial:
+        - Azure Sponsorship subscription (eba824fb)
+        - Microsoft ISV Success engagement
+      technological:
+        - ssot/architecture/azure-resource-inventory.yaml (dev estate)
+        - platform/ssot/azure/resource-inventory.dev.yaml (canonical raw inventory)
+        - ssot/tooling/mcp-runtime-state.yaml (tool chain state)
+    ownership: platform_architecture + finance
+    change_cadence: quarterly_for_financial + continuous_for_technological
+
+# -----------------------------------------------------------------------------
+# Flow: strategy to execution
+# -----------------------------------------------------------------------------
+strategy_to_execution_flow:
+  vertical_trace:
+    - vision (CLAUDE.md)
+    - mission (product narrative + GTM brief)
+    - objectives (ADO Epic titles)
+    - kras (Area Paths + surface taxonomy)
+    - performance_indicators (Power BI + eval scorecards + Secure Score)
+    - strategies (docs/architecture/ adoption docs)
+    - programs (ADO Epics + spec bundles)
+    - activities (ADO Issues + GitHub Issues)
+    - tasks (ADO Tasks + GitHub Issue checklists + spec tasks.md + Odoo project.task)
+    - resources (Entra + Azure + Odoo + financial)
+
+  rule: >
+    Every activity/task should trace upward to a KRA, objective, mission,
+    and vision. Every strategy/program should flow downward to concrete
+    activities, tasks, and resources. Misalignment = either the task
+    shouldn't exist OR the strategy is missing.
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not introducing new planning tools to support VMOKRAPI-SPATRES
+  - not replacing ADO Boards, spec/, GitHub Issues, or Odoo project
+  - not creating VMOKRAPI-SPATRES-specific software surfaces
+  - not adopting this as mandatory process overhead for every small change
+  - not conflicting with github/spec-kit pattern (both are compatible)
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  planning_authority_map: ssot/governance/planning-surface-authority-map.yaml
+  boards_taxonomy: ssot/governance/azure-boards-taxonomy.yaml
+  aac_map: ssot/architecture/azure-architecture-center-map.yaml
+  resource_inventory: platform/ssot/azure/resource-inventory.dev.yaml
+  entra_target_state: ssot/identity/entra_target_state.yaml
+  go_live_readiness: ssot/release/go-live-readiness.yaml
+  claude_md: CLAUDE.md
