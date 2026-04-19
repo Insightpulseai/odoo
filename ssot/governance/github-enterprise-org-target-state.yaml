@@ -1,0 +1,284 @@
+version: 1
+kind: github_enterprise_org_target_state
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+
+# -----------------------------------------------------------------------------
+# Enterprise (ipai) — governance umbrella
+# -----------------------------------------------------------------------------
+enterprise:
+  name: ipai
+  url: https://github.com/enterprises/ipai
+  role: governance_umbrella
+  owns:
+    - enterprise_policies
+    - billing_and_licensing
+    - identity_and_access_baselines
+    - enterprise_security_controls
+    - compliance_controls
+    - org_lifecycle_governance
+
+# -----------------------------------------------------------------------------
+# Organizations under the enterprise
+# -----------------------------------------------------------------------------
+organizations:
+  - name: Insightpulse-ai
+    url: https://github.com/Insightpulse-ai
+    role: primary_operating_org
+    status: target_primary
+    purpose:
+      - host_canonical_repositories
+      - host_engineering_teams
+      - host_repo_level_projects
+      - host_pull_request_workflows
+      - host_actions_and_environments
+
+    desired_state:
+
+      member_model:
+        initial_admins:
+          - jgtolentino
+        base_permission: read
+        outside_collaborators: minimized
+        org_membership_required_for_core_repos: true
+
+      security:
+        branch_protection_required: true
+        code_scanning_enabled_for_supported_repos: true
+        secret_scanning_enabled: true
+        dependabot_enabled: true
+        required_review_for_protected_branches: true
+        actions_policy_managed: true
+
+      teams:
+        desired:
+          - name: platform
+            role: control_plane_and_ssot
+          - name: odoo
+            role: erp_runtime_and_business_systems
+          - name: web
+            role: user_facing_surfaces
+          - name: data-intelligence
+            role: analytics_and_databricks
+          - name: agent-platform
+            role: agent_runtime
+          - name: agents
+            role: personas_skills_judges
+          - name: infra
+            role: infrastructure_and_edge
+          - name: automations
+            role: scheduled_and_event_driven_automation
+          - name: design
+            role: tokens_components_brand
+          - name: docs
+            role: architecture_governance_runbooks
+
+      repositories:
+        canonical:
+          - name: .github
+            visibility: private
+            role: org_governance
+          - name: docs
+            visibility: public
+            role: cross_repo_docs
+          - name: odoo
+            visibility: public
+            role: transactional_system_of_record
+          - name: platform
+            visibility: private
+            role: control_plane_ssot
+          - name: infra
+            visibility: private
+            role: infrastructure_truth
+          - name: web
+            visibility: private
+            role: user_surface_truth
+          - name: data-intelligence
+            visibility: private
+            role: governed_analytics_truth
+          - name: agent-platform
+            visibility: private
+            role: runtime_agent_truth
+          - name: agents
+            visibility: public
+            role: agent_definition_truth
+          - name: automations
+            visibility: private
+            role: workflow_automation
+          - name: design
+            visibility: internal
+            role: design_system_assets
+          - name: templates
+            visibility: private
+            role: starter_scaffolds
+        supporting:
+          - name: dotfiles
+            visibility: public
+            role: developer_bootstrap
+          - name: ugc-mediaops-kit
+            visibility: public
+            role: standalone_product
+          - name: powerbi-skills
+            visibility: public
+            role: standalone_skill_pack
+        transitional:
+          - name: landing.io
+            visibility: public
+            role: redirect_shell
+            end_state: archive_or_replace_when_no_longer_needed
+        archive_review:
+          - name: demo-repository
+
+      repo_boundaries:
+        transactional_truth: odoo
+        control_plane_truth: platform
+        runtime_agent_truth: agent-platform
+        agent_definition_truth: agents
+        analytics_truth: data-intelligence
+        infra_truth: infra
+        user_surface_truth: web
+        design_truth: design
+        governance_truth: .github
+        documentation_truth: docs
+
+      workflow_model:
+        code_truth: github
+        planning_truth: azure_boards
+        release_truth: azure_pipelines
+        intended_state_truth: repo_ssot_files
+        runtime_truth: evidence_and_runtime_docs
+
+      projects:
+        org_projects_enabled: true
+        use_for:
+          - team_read_models
+          - operational_views
+          - lightweight_execution_views
+        not_primary_for:
+          - portfolio_system_of_record
+          - formal_release_authority
+
+      environments:
+        required_for_production_bearing_repos: true
+        expected:
+          - dev
+          - staging
+          - production
+
+      readme:
+        required: true
+        location: Insightpulse-ai/.github/profile/README.md
+        sections:
+          - purpose
+          - authority_model
+          - canonical_repositories
+          - team_model
+          - security_baseline
+          - contribution_model
+          - support_and_escalation
+
+      pinned_repositories:
+        desired:
+          - odoo
+          - platform
+          - agent-platform
+          - data-intelligence
+          - web
+          - docs
+
+      discussions:
+        enabled: optional
+        recommended_for:
+          - public_docs_repo
+          - public_agents_repo
+        not_required_org_wide: true
+
+      licenses:
+        current_state: 0_left
+        target_state:
+          enough_seats_for_core_internal_members: true
+          enterprise_managed_assignment: true
+
+# -----------------------------------------------------------------------------
+# Assertions that must hold
+# -----------------------------------------------------------------------------
+desired_assertions:
+  - insightpulse_ai_is_the_primary_operating_org
+  - ipai_enterprise_remains_the_governance_umbrella
+  - canonical_repos_live_in_one_primary_org
+  - repo_truth_planes_do_not_overlap
+  - projects_do_not_replace_azure_boards_as_planning_truth
+  - public_private_internal_visibility_is_intentional
+  - azure_pipelines_remains_sole_deploy_authority (per CLAUDE.md)
+  - github_actions_only_as_scoped_exception (per CLAUDE.md + gha-scoped-exception.yaml)
+
+# -----------------------------------------------------------------------------
+# Migration phases
+# -----------------------------------------------------------------------------
+migration_phases:
+
+  phase_1_establish_org_baseline:
+    order: first
+    steps:
+      - add_org_readme_in_dot_github_profile
+      - set_base_permissions_to_read
+      - create_branch_protection_defaults
+      - enable_secret_scanning_dependabot_code_scanning_where_relevant
+      - create_core_teams (10 teams per desired_state.teams.desired)
+      - pin_canonical_repos (6 pinned per desired)
+      - decide_discussions_on_or_off (default off except public docs+agents)
+    evidence: docs/evidence/<ts>/github-org-setup-phase1/
+
+  phase_2_canonical_operating_shape:
+    order: second
+    steps:
+      - place_all_canonical_repos_under_insightpulse_ai
+      - keep_ipai_as_enterprise_umbrella_only
+      - align_repo_visibility_and_team_ownership
+      - attach_protected_environments_to_prod_bearing_repos
+    evidence: docs/evidence/<ts>/github-org-setup-phase2/
+
+  phase_3_governance_hardening:
+    order: third
+    steps:
+      - create_org_rulesets
+      - require_reviewers_with_codeowners
+      - create_reusable_workflows_in_dot_github
+      - require_environment_approvals_for_prod
+      - configure_security_compliance_reporting
+    evidence: docs/evidence/<ts>/github-org-setup-phase3/
+
+# -----------------------------------------------------------------------------
+# Related SSOTs
+# -----------------------------------------------------------------------------
+related:
+  enterprise_migration: ssot/governance/github-enterprise-migration.yaml
+  github_azure_chain: platform/ssot/architecture/github-azure-chain.yaml
+  ado_github_authority_map: ssot/governance/ado_github_authority_map.yaml
+  planning_authority_map: ssot/governance/planning-surface-authority-map.yaml
+  github_projects_v2_scope: ssot/governance/github-projects-v2-scope.yaml
+  gha_scoped_exception: ssot/governance/gha-scoped-exception.yaml
+  entra_identity_matrix: ssot/identity/entra-identity-matrix.yaml
+  boards_taxonomy: ssot/governance/azure-boards-taxonomy.yaml
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not splitting canonical repos across multiple sibling orgs unless
+    compliance or ownership demands it
+  - not moving deploy authority from Azure Pipelines to GitHub Actions
+  - not moving portfolio planning from Azure DevOps Boards to GitHub Projects
+  - not enabling Enterprise Managed Users on day one (see
+    github-enterprise-migration.yaml for EMU deferral reasoning)
+  - not archiving transitional repos before replacement ships
+
+# -----------------------------------------------------------------------------
+# Execution boundary
+# -----------------------------------------------------------------------------
+execution_boundary:
+  this_ssot_is: target_end_state_and_phase_plan
+  this_ssot_is_not: live_org_state_mirror
+  per_phase_human_approval_required: true
+  runbook: docs/runbooks/github-enterprise-org-setup.md
