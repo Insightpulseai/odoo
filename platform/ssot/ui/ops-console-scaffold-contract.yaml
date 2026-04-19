@@ -32,9 +32,9 @@ decision_record:
 # -----------------------------------------------------------------------------
 strip_list:
   - all_aws_specific_files_and_configs
-  - all_terraform_files (IPAI is Bicep-primary)
-  - ".github/workflows/*" (replaced with azure-pipelines.yml)
-  - vercel_specific_files (Vercel deprecated 2026-04-07)
+  - "all_terraform_files (IPAI is Bicep-primary)"
+  - '".github/workflows/*" (replaced with azure-pipelines.yml)'
+  - "vercel_specific_files (Vercel deprecated 2026-04-07)"
   - github_copilot_opinionated_pipeline_bits
 
 # -----------------------------------------------------------------------------
