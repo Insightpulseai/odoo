@@ -1,0 +1,177 @@
+version: 1
+kind: m365_mca_billing_account
+status: canonical
+last_updated: "2026-04-19"
+verified_against_live_tenant: true
+verification_source: Microsoft 365 admin center — Billing → Billing accounts
+owner: platform-architecture + fp_and_a
+
+doctrine: >
+  The Microsoft Customer Agreement (MCA) billing account is the
+  commercial billing authority for the IPAI tenant. This is distinct
+  from Partner Center billing profile (Marketplace publishing side).
+  Both surfaces must be aligned before production commerce activates.
+
+# -----------------------------------------------------------------------------
+# Billing account facts (verified 2026-04-19)
+# -----------------------------------------------------------------------------
+billing_account:
+  name: Default Directory
+  status: active
+  agreement_type: microsoft_customer_agreement_mca
+  your_role: billing_account_owner
+  billing_account_id: present (value not recorded in this SSOT for secrecy)
+
+sold_to_address:
+  line_1: La Fuerza Plaza
+  city: Makati
+  region: Metro Manila
+  postal_code: "1231"
+  country: PH
+  cross_reference: memory_project_legal_identifiers (D-U-N-S 719209694, DTI 2606431)
+
+primary_billing_contact:
+  name: Jake Tolentino
+  email: jake.tolentino@insightpulseai.com
+  phone: "9682699265"
+  cross_reference: ssot/identity/entra_target_state.yaml (member identity)
+
+# -----------------------------------------------------------------------------
+# Gaps observed
+# -----------------------------------------------------------------------------
+gaps:
+  registration_number:
+    status: not_provided
+    required_for:
+      - ph_bir_invoicing_compliance (if invoicing from Microsoft requires local tax registration display)
+      - partner_center_verification_alignment
+    remediation: populate_with_dti_2606431 or relevant business registration
+
+  tax_id:
+    status: not_populated
+    required_for:
+      - tax_treatment_on_microsoft_invoices (may affect VAT or withholding)
+      - cross_border_sales_compliance
+    remediation: populate_with_current_bir_tin
+
+  qualifications:
+    status: none
+    definition: microsoft_qualification_tags (education, nonprofit, gov etc.)
+    ipai_applicable: none (commercial ISV)
+    action: leave_blank (intentionally not applicable)
+
+# -----------------------------------------------------------------------------
+# Alignment check vs Partner Center
+# -----------------------------------------------------------------------------
+partner_center_alignment:
+  partner_center_legal_profile:
+    owner: ssot/governance/partner-center-account-management.yaml#universal_requirements.account_settings.partner_tab
+    alignment_needed:
+      - sold_to_address_matches_partner_center_legal_address
+      - primary_contact_email_matches_partner_center_seller_contact
+      - tax_id_matches_partner_center_tax_profile
+  partner_center_billing_profile:
+    applicability: only_for_dynamics_365_ce_or_ops_offers (per partner-center-account-management.yaml)
+    ipai_applicability: not_required (IPAI offer is SaaS transactable, not D365 CE/Ops)
+  partner_center_payout_profile:
+    must_match_partner_center_registration_country: PH
+    ipai_registration_country: PH (aligned)
+
+# -----------------------------------------------------------------------------
+# Distinction from Azure subscription
+# -----------------------------------------------------------------------------
+distinction_from_azure_subscription:
+  mca_billing_account:
+    role: commercial_billing_authority_for_m365_and_azure_under_mca
+  azure_subscription_runtime:
+    primary: Microsoft Azure Sponsorship (eba824fb-332d-4623-9dfb-2c9f7ee83f4e)
+    note: sponsorship_is_under_a_different_agreement_construct_not_mca_billed
+    cross_reference: ssot/governance/finops-azure-cost-governance.yaml
+  reconciliation:
+    current_state: >
+      MCA exists but the primary Azure subscription is ISV Sponsored
+      (not MCA-billed). This means M365 seats (Entra P2, Fabric, D365
+      sandbox) bill via MCA; Azure compute/data bills via sponsorship
+      credits until sponsorship ends.
+    post_sponsorship_action: >
+      Plan MCA-billed Azure subscription for production Azure workloads
+      before sponsorship expires. See finops-azure-cost-governance.yaml.
+
+# -----------------------------------------------------------------------------
+# Remediation tasks
+# -----------------------------------------------------------------------------
+remediation_tasks:
+
+  tier_1_commercial_compliance:
+    actions:
+      - populate_registration_number_dti_2606431
+      - populate_tax_id_current_bir_tin
+      - align_primary_contact_email_with_entra_member_identity
+    timeline: within_30_days
+    evidence: docs/evidence/<ts>/mca-billing-completion/
+
+  tier_2_partner_center_alignment:
+    actions:
+      - cross_reference_legal_address_between_mca_and_partner_center
+      - ensure_payout_profile_country_matches_mca_sold_to_country
+      - sync_tax_profile_submission_with_mca_tax_id
+    timeline: before_aug_sep_2026_marketplace_publish
+
+  tier_3_post_sponsorship_planning:
+    actions:
+      - model_post_sponsorship_azure_cost_under_mca
+      - evaluate_enterprise_agreement_vs_mca_pay_as_you_go_for_prod
+    timeline: before_sponsorship_expiry
+    cross_reference: ssot/governance/finops-azure-cost-governance.yaml
+
+# -----------------------------------------------------------------------------
+# Success criteria
+# -----------------------------------------------------------------------------
+success_criteria:
+  - id: MCA-1
+    description: MCA billing account active with owner authority
+    target: true
+    measurement: this_ssot_billing_account_block (already confirmed)
+  - id: MCA-2
+    description: Registration number and tax ID populated
+    target: both non-null
+    measurement: admin_center_billing_profile_screen_audit
+  - id: MCA-3
+    description: MCA sold-to + Partner Center legal address reconciled
+    target: matching
+    measurement: partner-center-account-management.yaml cross-check
+  - id: MCA-4
+    description: Post-sponsorship Azure billing plan decided
+    target: mca_plan_documented_or_enterprise_agreement_plan_documented
+    measurement: finops-azure-cost-governance.yaml gap closed
+
+# -----------------------------------------------------------------------------
+# Security / privacy notes
+# -----------------------------------------------------------------------------
+security_notes:
+  this_ssot_does_not_record:
+    - billing_account_id_value (stored in admin center only)
+    - credit_card_or_bank_details
+    - full_tax_id_value
+    - invoice_numbers
+  rationale: prevent_accidental_pii_commit_per_secrets_policy
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not committing billing account ID, tax IDs, or bank details to this repo
+  - not treating MCA as a substitute for Partner Center legal/tax/payout profile
+  - not assuming sponsorship will continue indefinitely
+  - not conflating MCA billing authority with Azure subscription runtime ownership
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/identity/m365-tenant-license-inventory-and-capability-map.yaml
+  - ssot/governance/partner-center-account-management.yaml
+  - ssot/governance/partner-program-authority.yaml
+  - ssot/governance/finops-azure-cost-governance.yaml
+  - ssot/identity/entra_target_state.yaml
+  - docs/gtm/partner_center_checklist.md

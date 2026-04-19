@@ -1,0 +1,279 @@
+version: 1
+kind: m365_tenant_license_inventory_and_capability_map
+status: canonical
+last_updated: "2026-04-19"
+verified_against_live_tenant: true
+verification_source: Microsoft 365 admin center — Billing → Your products
+owner: platform-architecture + identity-ops
+
+doctrine: >
+  Licenses are capability entitlements, not decoration. Every active
+  SKU in the tenant is evaluated against IPAI's canonical architecture.
+  Excess seats are not a problem — they're headroom for governed
+  rollout. Missing entitlements (e.g. Fabric paid capacity, Dynamics
+  F&O) are surfaced explicitly, not silently assumed.
+
+# -----------------------------------------------------------------------------
+# Active license inventory (as of 2026-04-19)
+# -----------------------------------------------------------------------------
+active_licenses:
+
+  dynamics_365_sales_fs_cs_partner_sandbox:
+    sku_label: "Dynamics 365 Sales / Field Service / Customer Service Partner Sandbox"
+    total_seats: 25
+    assigned: 0
+    available: 25
+    license_class: crm_sandbox
+    is_production: false
+    notes: sandbox_only_no_prod_license_grant
+    crm_ui_surfaces:
+      - sales_hub
+      - field_service
+      - customer_service
+    not_covered_by_this_sku:
+      - dynamics_365_finance
+      - dynamics_365_supply_chain_management
+      - dynamics_365_commerce
+      - dynamics_365_human_resources
+
+  microsoft_entra_id_p2:
+    sku_label: "Microsoft Entra ID P2"
+    total_seats: 100
+    assigned: 3
+    available: 97
+    license_class: identity_and_security
+    is_production: true
+    strategic_importance: very_high
+    notes: large_headroom_for_governed_rollout
+
+  microsoft_fabric_free:
+    sku_label: "Microsoft Fabric (Free)"
+    total_seats: 1000000
+    assigned: 1
+    available: 999999
+    license_class: analytics_tenant_presence
+    is_production: false_paid_capacity_not_present
+    notes: enables_tenant_level_fabric_access_not_a_paid_capacity_sku
+
+# -----------------------------------------------------------------------------
+# License → capability → IPAI architecture relevance
+# -----------------------------------------------------------------------------
+license_to_capability_map:
+
+  microsoft_entra_id_p2:
+    unlocks:
+      - conditional_access_policies (all features including risk-based)
+      - identity_protection (risk detection + remediation policies)
+      - privileged_identity_management (PIM — just-in-time elevation)
+      - access_reviews (periodic review of group + role assignments)
+      - entitlement_management (access packages for contractors + guests)
+      - passwordless_and_fido2_policies
+      - cross_tenant_access_settings (B2B collaboration governance)
+      - azure_ad_reporting (sign-ins, audit logs, risky users)
+    ipai_architecture_relevance: critical
+    currently_used_by_ipai_ssots:
+      - ssot/identity/entra_target_state.yaml
+      - ssot/identity/entra_rbac_roles.yaml
+      - ssot/identity/entra-governance-policy.yaml
+      - ssot/identity/entra-identity-matrix.yaml
+      - ssot/governance/github-identity-and-oauth.yaml
+    ipai_action:
+      - assign_entra_p2_to_all_4_internal_members (platform-architecture, finance ops, design, data)
+      - enable_pim_for_ipai_owner_roles (starting with GA → Privileged)
+      - stand_up_conditional_access_baseline (block legacy auth, require MFA, restrict admin portal access)
+      - activate_access_reviews_for_tbwa_smp_guests (11 guests, quarterly)
+      - assign_identity_protection_risk_policies (block high-risk sign-ins)
+    seats_headroom: 97_available_no_scarcity_blocker_for_ipai_rollout
+
+  dynamics_365_sales_fs_cs_partner_sandbox:
+    unlocks:
+      - dynamics_365_sales_sandbox_instance
+      - dynamics_365_field_service_sandbox_instance
+      - dynamics_365_customer_service_sandbox_instance
+      - partner_demo_and_proof_of_concept_workloads
+      - connectors_and_dataverse_for_the_sandbox
+    ipai_architecture_relevance: low
+    rationale: >
+      IPAI's canonical ERP is Odoo CE 18 + OCA + ipai_* per CLAUDE.md.
+      Dynamics CRM is not in scope for IPAI products. Sandbox seats
+      are useful only for: (a) exploratory Microsoft co-sell motion
+      where a demo tenant is needed, (b) learning Dataverse shape
+      for agent-platform integration reference.
+    ipai_action:
+      - do_not_assign_seats_as_default
+      - reserve_25_seats_for_partner_sandbox_scenarios_only
+      - monitor_expiry (partner sandbox licenses typically renew with MAICPP membership)
+    seats_headroom: 25_available_all_unassigned
+
+  microsoft_fabric_free:
+    unlocks:
+      - tenant_level_fabric_enablement
+      - onelake_access (at free tier limits)
+      - basic_power_bi_service_usage (personal workspace + small shared)
+      - fabric_trial_experiences
+    ipai_architecture_relevance: partial
+    rationale: >
+      CLAUDE.md #13 says Fabric is the complement for mirroring and
+      OneLake integration. Free tier covers evaluation + mirroring
+      dependencies but NOT production Fabric capacity (F64 SKU or
+      equivalent). Paid Power BI Premium / Fabric capacity still
+      required for primary BI surface per CLAUDE.md #12.
+    ipai_action:
+      - keep_free_as_tenant_enablement_baseline
+      - evaluate_paid_fabric_capacity_decision_when_fabric_mirroring_ga
+      - cross_reference: ssot/data-intelligence/databricks-plane-charter.yaml
+      - cross_reference: platform/ssot/governance/foundry-model-routing.yaml
+    fabric_paid_capacity_required_for:
+      - production_power_bi_workspaces
+      - governed_dataflows_at_scale
+      - fabric_capacity_bound_features (direct lake, event streams, real-time hub)
+
+# -----------------------------------------------------------------------------
+# Gaps (licenses NOT present but potentially needed)
+# -----------------------------------------------------------------------------
+license_gaps:
+
+  dynamics_365_finance_and_operations:
+    status: not_licensed_in_this_tenant
+    ipai_relevance: not_applicable (Odoo CE is IPAI canonical ERP)
+    action: none (doctrine excludes D365 F&O)
+
+  microsoft_365_copilot:
+    status: to_be_verified (not shown in pasted inventory)
+    ipai_relevance: medium_to_high_for_m365_surface_agents
+    cross_reference: ssot/governance/claude-code-activation-matrix.yaml
+    action: check_admin_center_billing_for_m365_copilot_sku_and_decide_enrollment
+
+  github_enterprise_cloud:
+    status: active_in_github_enterprise_ipai (NOT appearing in M365 billing — billed through GitHub)
+    ipai_relevance: critical
+    cross_reference: ssot/governance/github-enterprise-current-state-snapshot.yaml
+    action: verify_ghas_trial_status_and_decide_adoption_before_expiry
+
+  azure_ad_b2c_or_external_id:
+    status: to_be_verified
+    ipai_relevance: high (required for SaaS tenancy model per saas-tenancy-model-pulser-for-odoo.yaml)
+    action: verify_external_id_tenant_provisioning_before_first_paying_customer
+
+  power_bi_premium_or_fabric_capacity:
+    status: not_licensed (only Fabric Free present)
+    ipai_relevance: high (CLAUDE.md #12 primary BI surface mandate)
+    action: >
+      Evaluate F64 or equivalent capacity purchase before production
+      BI workloads go live. Until then, use Power BI Pro per-user
+      with governed workspace share only.
+
+  office_365_e3_or_microsoft_365_e3:
+    status: to_be_verified
+    ipai_relevance: medium (Teams, Exchange, SharePoint for internal ops)
+    note: email delivery uses Zoho SMTP per CLAUDE.md; M365 tenant mailbox may still be present
+    action: clarify_current_email_and_collaboration_license_footprint
+
+# -----------------------------------------------------------------------------
+# Assignment recommendations (derived actions)
+# -----------------------------------------------------------------------------
+assignment_recommendations:
+
+  entra_p2_assignments_priority_order:
+    order:
+      - "1 — assign to jgtolentino (platform-architecture, you)"
+      - "2 — assign to finance_director_khalil when onboarded as member not guest"
+      - "3 — assign to future data + design + agent-platform member leads"
+      - "4 — reserve pool for SCIM-provisioned future engineers"
+    rationale: P2 unlocks PIM and CA baseline; must cover every privileged identity before others
+
+  dynamics_sandbox_assignments:
+    recommendation: hold_all_25_seats_unassigned
+    reason: sandbox_is_discretionary_not_operational
+    activate_only_when: microsoft_co-sell_motion_needs_demo_tenant
+
+  fabric_free_assignments:
+    recommendation: assign_to_analytics_leads_as_needed
+    governance_concern: none
+    note: do_not_count_as_production_entitlement
+
+# -----------------------------------------------------------------------------
+# Policy immediate actions (pair with entra-governance-policy.yaml)
+# -----------------------------------------------------------------------------
+immediate_actions_unlocked_by_p2:
+
+  conditional_access_baseline:
+    deploy:
+      - block_legacy_authentication
+      - require_mfa_for_all_users
+      - restrict_admin_portal_access_to_trusted_locations_and_compliant_devices
+      - require_compliant_or_hybrid_joined_device_for_privileged_roles
+    evidence: docs/evidence/<ts>/entra-ca-baseline/
+
+  pim_configuration:
+    elevate_these_roles_from_permanent_to_eligible:
+      - Global Administrator
+      - Privileged Authentication Administrator
+      - Security Administrator
+      - Application Administrator
+    require_approval_and_mfa_for_activation: true
+    max_activation_duration_hours: 4
+    evidence: docs/evidence/<ts>/entra-pim-config/
+
+  access_reviews:
+    scopes:
+      - tbwa_smp_guest_accounts (11 guests, quarterly)
+      - privileged_entra_role_members (monthly)
+      - external_user_access_to_ipai_apps (quarterly)
+    cross_reference: ssot/identity/guest-invite-registry.yaml
+
+  identity_protection_policies:
+    sign_in_risk_policy:
+      threshold: high
+      action: block_access
+    user_risk_policy:
+      threshold: high
+      action: require_password_change + mfa
+
+# -----------------------------------------------------------------------------
+# Success criteria
+# -----------------------------------------------------------------------------
+success_criteria:
+  - id: LIC-1
+    description: Entra P2 assigned to all privileged identities
+    target: 100% of privileged identities
+    measurement: entra_license_assignment_audit
+  - id: LIC-2
+    description: PIM enabled for all owner-class Entra roles
+    target: 100%
+    measurement: pim_configuration_audit
+  - id: LIC-3
+    description: Conditional Access baseline deployed (MFA + legacy-auth block + admin location restriction)
+    target: all 4 baseline policies live
+    measurement: ca_policy_inventory
+  - id: LIC-4
+    description: Quarterly access reviews running for TBWA\SMP guests and privileged roles
+    target: true
+    measurement: access_review_report_in_docs_evidence
+  - id: LIC-5
+    description: License gaps (Fabric capacity, M365 Copilot, External ID) explicitly decided
+    target: each gap has recorded decision
+    measurement: this_ssot_gap_block_updated
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not assigning D365 sandbox seats by default (wastes strategic positioning)
+  - not treating Fabric Free as a production entitlement
+  - not deploying CA baseline without canary ring (platform-architecture first, engineering next)
+  - not rolling PIM without approval workflow and break-glass account exemption
+  - not assigning Entra P2 to all 100 seats preemptively (seats are headroom, not targets)
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/identity/entra_target_state.yaml
+  - ssot/identity/entra_rbac_roles.yaml
+  - ssot/identity/entra-governance-policy.yaml
+  - ssot/identity/entra-identity-matrix.yaml
+  - ssot/identity/guest-invite-registry.yaml
+  - ssot/governance/github-identity-and-oauth.yaml
+  - ssot/governance/saas-tenancy-model-pulser-for-odoo.yaml
+  - CLAUDE.md (Odoo is canonical ERP; Power BI is primary BI surface)
