@@ -424,6 +424,72 @@ execution_boundary:
     explicit approval.
 
 # -----------------------------------------------------------------------------
+# Future scaling path (ADO scale-agile features deferred until team growth)
+# -----------------------------------------------------------------------------
+future_scaling_path:
+  upstream_reference: https://learn.microsoft.com/azure/devops/boards/plans/agile-at-scale
+  current_scale: solo_ops_or_small_focused_team
+  current_decision: basic_process_plus_12_area_paths_plus_1_to_2_week_iterations_sufficient
+
+  scaling_features_deferred:
+
+    portfolio_management:
+      status: deferred
+      adopt_when: multiple_teams_delivering_against_shared_program_goals
+      capability: multi_level_work_hierarchies_rollup_reporting_cross_team_capacity
+      ipai_current_equivalent: >
+        12 Area Paths acting as team boundaries; one-person portfolio
+        rollup happens in aac map and scope matrix SSOTs.
+
+    delivery_plans:
+      status: deferred
+      adopt_when: coordinated_multi_team_release_trains
+      capability: timeline_calendar_view_of_features_across_teams
+      ipai_current_equivalent: >
+        ssot/release/go-live-scope-matrix.yaml serves as the single
+        timeline view for the first gate; expand to ADO Delivery Plans
+        when multi-team releases emerge.
+
+    multi_team_dashboards:
+      status: deferred
+      adopt_when: stakeholder_reporting_at_multiple_org_levels_demands_it
+      capability: team_program_leadership_dashboards_with_rollup
+      ipai_current_equivalent: >
+        Databricks PPM Control Tower + Power BI dashboards serve
+        leadership reporting; ADO native dashboards deferred.
+
+    hierarchical_team_structure:
+      status: deferred
+      adopt_when: 3_or_more_autonomous_engineering_teams
+      capability: team_of_teams_with_portfolio_rollups
+      ipai_current_equivalent: >
+        Area Paths currently represent capability boundaries, not team
+        boundaries. When real teams form, split Area Paths into
+        team-scoped sub-paths under existing capability roots.
+
+    dependency_tracking_in_delivery_plans:
+      status: deferred
+      adopt_when: cross_team_dependencies_become_a_coordination_bottleneck
+      capability: predecessor_successor_arrows_on_timeline
+
+  revisit_triggers:
+    any_one_triggers_evaluation:
+      - team_grows_beyond_3_active_engineers
+      - multi_team_release_coordination_becomes_recurring_problem
+      - leadership_demand_for_rollup_portfolio_views
+      - cross_team_dependencies_delay_delivery_more_than_once
+      - client_engagement_contractually_requires_portfolio_reporting
+
+  migration_path:
+    rule: additive_not_destructive
+    steps:
+      - 1_add_team_scoped_sub_area_paths_under_existing_capability_paths
+      - 2_keep_basic_process_hierarchy_Epic_Issue_Task (no need to switch to Scrum)
+      - 3_enable_ADO_Delivery_Plans_feature_on_existing_epics_issues
+      - 4_add_program_dashboards_pulling_from_existing_area_paths
+      - 5_evaluate_process_change_to_Scrum_only_if_ceremonies_become_real_value
+
+# -----------------------------------------------------------------------------
 # Anchors
 # -----------------------------------------------------------------------------
 anchors:
