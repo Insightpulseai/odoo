@@ -1,0 +1,177 @@
+# =============================================================================
+# GitHub Projects V2 Scope — SSOT
+# =============================================================================
+# Authority: canonical decision on how GitHub Projects V2 (the kanban/
+#            table UI over GitHub Issues) fits alongside ADO Boards and
+#            Odoo operational truth in the IPAI planning landscape.
+# Related:   ssot/governance/azure-boards-taxonomy.yaml (ADO Boards = portfolio SoR)
+#            ssot/governance/platform-authority-split.yaml
+#            ssot/governance/ado_github_authority_map.yaml
+#            ssot/governance/notion-scope-decision.yaml (same pattern)
+#            CLAUDE.md (Engineering & Delivery Authority section)
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: canonical
+
+decision: allowed_as_projection_over_github_issues_never_as_planning_sor
+
+rationale: >
+  Per CLAUDE.md Engineering & Delivery Authority split:
+  - Azure Pipelines = sole deploy authority
+  - Azure DevOps Boards = portfolio/planning system of record
+  - GitHub Issues = engineering execution backlog
+  - Azure DevOps Boards owns portfolio
+  GitHub Projects V2 is a VIEW surface over GitHub Issues — kanban,
+  table, roadmap. It is allowed as a projection of the engineering
+  backlog, NEVER as its own planning SoR, NEVER as a competitor to
+  ADO Boards.
+
+# -----------------------------------------------------------------------------
+# Authority layering (what owns what)
+# -----------------------------------------------------------------------------
+authority_stack:
+  portfolio_planning_of_record: azure_devops_boards
+  engineering_execution_backlog: github_issues
+  engineering_backlog_visual_projection: github_projects_v2 (this SSOT)
+  operational_project_tracking_in_production: odoo_project
+  personal_drafting_surface: notion (per ssot/governance/notion-scope-decision.yaml)
+
+# -----------------------------------------------------------------------------
+# What GitHub Projects V2 IS allowed for
+# -----------------------------------------------------------------------------
+allowed_use:
+  - visual_kanban_over_github_issues
+  - roadmap_timeline_projection_over_issues_and_milestones
+  - cross_repo_issue_aggregation_view
+  - sprint_view_for_engineering_backlog
+  - personal_or_team_triage_view
+  - github_native_automation_rules_that_update_issue_fields
+
+# -----------------------------------------------------------------------------
+# What GitHub Projects V2 IS NOT allowed for (forbidden)
+# -----------------------------------------------------------------------------
+forbidden_use:
+  - portfolio_planning_system_of_record (that's ADO Boards)
+  - roadmap_system_of_record (that's Odoo project + ADO Boards)
+  - non_engineering_program_tracking (use ADO Boards Areas/Iterations)
+  - client_facing_project_tracking (use Odoo project or client_portal)
+  - duplicating_ado_boards_work_items
+  - bidirectional_sync_with_ado_boards (if synced, use one-way: GH issues →
+    ADO work items via link, not parallel tracking)
+
+# -----------------------------------------------------------------------------
+# Relationship to GitHub Issues
+# -----------------------------------------------------------------------------
+relationship_to_github_issues:
+  github_issues_role: engineering_execution_backlog (source of record for issues)
+  github_projects_v2_role: visual_projection_view_over_issues
+  issues_stay_authoritative: true
+  projects_fields_vs_issues_fields:
+    rule: "Use GitHub issues for canonical fields (title, body, labels,
+      assignees, milestone). Use Project custom fields (status, priority,
+      sprint, effort) for PLANNING-layer metadata that doesn't belong on
+      the issue itself."
+
+# -----------------------------------------------------------------------------
+# Relationship to ADO Boards (the actual planning SoR)
+# -----------------------------------------------------------------------------
+relationship_to_ado_boards:
+  ado_boards_role: portfolio_and_planning_of_record (per CLAUDE.md)
+  github_projects_role: engineering_backlog_visual_layer
+  mapping_rule: >
+    ADO Boards Epics (capability domains) map to GitHub Issues
+    aggregated under the matching Area Path. Do NOT create parallel
+    epics in GitHub Projects. If a cross-reference link is needed:
+    use Issue description or ADO work item "Link" to GitHub Issue URL.
+
+  duplication_prohibition: >
+    Same work item SHALL NOT exist as both an ADO Boards Issue/Task and
+    a GitHub Projects card independent of its source GitHub Issue. If
+    GitHub Issue X is in GitHub Projects, the ADO Boards equivalent must
+    either be (a) a rolled-up Epic (aggregate view) or (b) a linked
+    reference — never a parallel duplicate.
+
+# -----------------------------------------------------------------------------
+# API usage scope (if needed)
+# -----------------------------------------------------------------------------
+api_usage:
+  rest_api_version: "2026-03-10 (GitHub Projects V2)"
+  auth_requirements:
+    - fine_grained_token with "Projects" organization permission (read)
+    - GitHub App installation access tokens for read-only scripts
+  common_endpoints:
+    list_org_projects: GET /orgs/{org}/projectsV2
+    get_org_project:   GET /orgs/{org}/projectsV2/{project_number}
+    list_user_projects: GET /users/{username}/projectsV2
+    get_user_project:   GET /users/{username}/projectsV2/{project_number}
+  graphql_preferred_for_mutations: true
+    rationale: "REST for reads; GraphQL for creates/updates/deletes on
+      Projects V2 (which is GraphQL-native)."
+
+  ipai_auth_path:
+    - do_not_embed_pat_in_code
+    - use_github_app_or_fine_grained_token_from_azure_key_vault
+    - rbac_assignment_lives_in_infra_not_app_code (per ssot/governance/production-ai-foundation-adoption.yaml)
+
+# -----------------------------------------------------------------------------
+# Integration posture
+# -----------------------------------------------------------------------------
+integration_posture:
+  one_way_sync_allowed:
+    - github_issues_status_changes → github_projects_v2 (native)
+    - closed_issue → ado_boards_work_item_linked_status_update (via webhook or script)
+  bidirectional_sync_forbidden:
+    - never_ado_boards_↔_github_projects_bidirectional
+    - reason: causes_conflict_resolution_chaos_and_ambiguous_source_of_record
+
+# -----------------------------------------------------------------------------
+# IPAI recommended setup
+# -----------------------------------------------------------------------------
+ipai_recommended_setup:
+  mode: read_only_projection_for_engineering_visibility
+  projects_per_repo: at_most_one_engineering_backlog_view
+  custom_fields_allowed:
+    - status (Todo/In Progress/In Review/Done)
+    - priority (P0/P1/P2)
+    - sprint (link to iteration if mirroring ADO iteration)
+    - effort_estimate (engineering only; not portfolio planning)
+  custom_fields_forbidden:
+    - business_value
+    - roadmap_phase
+    - client_deliverable_dates
+  rationale: "Anything above engineering-execution layer belongs in ADO
+    Boards, not GitHub Projects."
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not planning system of record (ADO Boards is)
+  - not replacing ADO Boards for any team using ADO
+  - not bidirectional syncing with ADO Boards
+  - not used for portfolio/program planning
+  - not used for client-facing project views
+  - not a substitute for Odoo project tracking
+
+# -----------------------------------------------------------------------------
+# Promotion/demotion rule
+# -----------------------------------------------------------------------------
+promotion_rule: >
+  If a GitHub Projects V2 view becomes load-bearing for a NON-engineering
+  decision (client commitments, financial planning, regulatory reporting),
+  that signal indicates it should have been in ADO Boards or Odoo from
+  the start. Migrate it; do not entrench the anti-pattern.
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  ado_boards_taxonomy: ssot/governance/azure-boards-taxonomy.yaml
+  ado_github_authority_map: ssot/governance/ado_github_authority_map.yaml
+  platform_authority_split: ssot/governance/platform-authority-split.yaml
+  claude_md_authority_section: CLAUDE.md (Engineering & Delivery Authority)
+  notion_scope_decision: ssot/governance/notion-scope-decision.yaml
+  upstream_api_docs: https://docs.github.com/en/rest/projects
