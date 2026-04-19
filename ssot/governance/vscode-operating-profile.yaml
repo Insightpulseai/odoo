@@ -1,0 +1,184 @@
+# =============================================================================
+# VS Code Operating Profile — SSOT
+# =============================================================================
+# Authority: canonical VS Code 1.116+ settings policy for IPAI
+#            development. Combines agent-native features with enterprise
+#            governance controls (network filtering, debug logs).
+# Related:   docs/operating/CLAUDE_CODE_OPERATING_STANDARD.md
+#            ssot/governance/mcp-allowlist.yaml
+#            ssot/tooling/mcp-runtime-state.yaml
+#            ssot/governance/planning-surface-authority-map.yaml
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: canonical
+
+target_baseline: vs_code_1_116_0_or_later
+upstream_release_date: "2026-04-15"
+
+# -----------------------------------------------------------------------------
+# Features adopted / restricted
+# -----------------------------------------------------------------------------
+features:
+
+  agent_debug_logs:
+    status: enabled_for_local_dev_disabled_for_ci
+    setting: github.copilot.chat.agentDebugLog.fileLogging.enabled
+    local_dev: true
+    ci_headless: false
+    rationale: >
+      Chronological agent interaction logs are useful for debugging
+      chat customizations and agent behavior in local dev. Disable in
+      CI to avoid log leakage + disk pressure on ephemeral runners.
+    evidence_capture_rule: >
+      If debug logs are used to diagnose a prod incident, move the
+      relevant excerpt to docs/evidence/<ts>/agent-debug/ and redact
+      any secrets before committing.
+
+  copilot_cli_thinking_effort:
+    status: configurable_per_session
+    default_for_ipai: medium
+    escalate_to_high_when: architecture_or_multi_file_planning_or_complex_debugging
+    drop_to_low_when: single_line_edit_or_trivial_question
+    rationale: IPAI model routing (opus main / sonnet subagent / haiku trivial) already reflects this tradeoff
+
+  visual_studio_code_agents_companion_app:
+    status: insiders_only_evaluation
+    ipai_adoption: not_adopted_for_production
+    reason: preview_only_and_insiders_builds_not_stable_enough_for_solo_ops
+
+  terminal_agent_tools:
+    status: enabled_with_constraints
+    foreground_terminal_access: allowed_with_approval
+    background_terminal_notifications: enabled (chat.tools.terminal.backgroundNotifications=true)
+    constraints:
+      - destructive_commands_still_require_explicit_approval_per_operating_standard_section_7
+      - agent_must_announce_send_to_terminal_actions_in_one_sentence
+      - agent_must_not_auto_reply_to_sudo_or_privileged_prompts
+      - focus_terminal_button_surfaces_blocking_prompts_to_user
+
+  chat_ux_inline_diffs:
+    status: enabled
+    rationale: reduces_review_loop; agent_still_does_not_self_approve_diffs
+
+  integrated_browser:
+    status: enabled_with_mcp_allowlist_scope
+    entry_points:
+      - View > Browser
+      - keyboard shortcut ⌥⌘/ (macOS) or Ctrl+Alt+/ (Win/Linux)
+    mcp_tool_binding: restricted_to_playwright_or_approved_browser_mcp
+    rule: do_not_navigate_to_deprecated_service_ui (see CLAUDE.md deprecation list)
+
+  github_copilot_built_in:
+    status: accepted_default
+    setting_if_disabled: chat.disableAIFeatures
+    ipai_policy: >
+      GitHub Copilot Chat is built-in as of 1.116. IPAI default is enabled.
+      Disable only in repos with strict policy (not currently required).
+
+# -----------------------------------------------------------------------------
+# Enterprise network filtering (CRITICAL for governance)
+# -----------------------------------------------------------------------------
+enterprise_network_controls:
+  rule: "Denied domains take precedence over allowed domains."
+
+  chat_agent_networkFilter:
+    mode: allowlist_plus_denylist
+    enforce: true
+
+  chat_agent_allowedNetworkDomains:
+    - "*.azure.com"
+    - "*.azurewebsites.net"
+    - "*.microsoft.com"
+    - "*.microsoftonline.com"
+    - "*.ai.azure.com"
+    - "*.databricks.com"
+    - "*.databricks.net"
+    - "*.insightpulseai.com"
+    - "*.w9studio.net"
+    - "github.com"
+    - "*.github.com"
+    - "*.githubusercontent.com"
+    - "learn.microsoft.com"
+    - "huggingface.co"
+    - "api.openai.com (if explicitly needed; prefer Foundry)"
+    - "*.slack.com"
+    - "slack.com"
+    - "mcp.paypal.com"
+    - "mcp.sentry.dev"
+    - "bindings.mcp.cloudflare.com (DEPRECATED but currently connected; remove with Cloudflare decommission)"
+
+  chat_agent_deniedNetworkDomains:
+    - "*.supabase.co"
+    - "*.supabase.com"
+    - "*.supabase.in"
+    - "*.vercel.com"
+    - "*.vercel.app"
+    - "*.cloudflare.com (after Cloudflare decommission is complete)"
+    - "*.n8n.cloud"
+    - "n8n.insightpulseai.com"
+    - "*.digitalocean.com"
+    - "*.wixsite.com"
+    - "*.wixusercontent.com"
+    - "mg.insightpulseai.com (Mailgun deprecated)"
+  denied_rationale: all_deprecated_per_claude_md_deprecation_list
+
+# -----------------------------------------------------------------------------
+# IPAI operating alignment (1.115 + 1.116 features → IPAI doctrine)
+# -----------------------------------------------------------------------------
+ipai_alignment:
+
+  repo_first_workflow:
+    release_alignment: 1_115_and_1_116_reinforce_agent_native_direction
+    ipai_existing_posture: already_repo_first (per CLAUDE_CODE_OPERATING_STANDARD.md §1)
+
+  persistent_agent_logs:
+    alignment: supports_ipai_evidence_discipline
+    usage: capture_anomalies_to_docs_evidence_after_redaction
+
+  foreground_terminal_access:
+    alignment: supports_claude_code_vs_code_extension_usage
+    ipai_guardrail: escalation_rules_in_operating_standard_section_7_unchanged
+
+  enterprise_network_filtering:
+    alignment: directly_enables_ipai_deprecation_policy_enforcement
+    impact: high (enforces CLAUDE.md deprecation list at the editor layer)
+
+  integrated_browser_for_mcp:
+    alignment: supports_playwright_mcp_and_approved_browser_mcp_only
+    ipai_guardrail: respect_mcp_allowlist_yaml
+
+# -----------------------------------------------------------------------------
+# Deployment posture
+# -----------------------------------------------------------------------------
+deployment_posture:
+  scope: local_dev_machines_only (CI uses headless tooling, not VS Code)
+  settings_distribution: settings_sync_via_github_signed_in_account
+  enterprise_policy_enforcement:
+    current: settings_synced_per_user
+    future: group_policy_distribution_if_team_grows
+  backup_policy: user_settings_in_dotfiles_repo (Insightpulse-ai/dotfiles)
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not adopting VS Code Insiders builds as IPAI default
+  - not adopting the VS Code Agents companion app in production
+  - not disabling Copilot globally (useful default)
+  - not loosening destructive-command approval rules due to terminal improvements
+  - not using foreground terminal access to bypass escalation rules
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  operating_standard: docs/operating/CLAUDE_CODE_OPERATING_STANDARD.md
+  session_lifecycle: docs/operating/SESSION_LIFECYCLE.md
+  headless_workflows: docs/operating/HEADLESS_AGENT_WORKFLOWS.md
+  mcp_allowlist: ssot/governance/mcp-allowlist.yaml
+  mcp_runtime_state: ssot/tooling/mcp-runtime-state.yaml
+  claude_md_deprecation: CLAUDE.md (Deprecated section)
+  upstream_vscode_1_116: https://code.visualstudio.com/updates/v1_116
