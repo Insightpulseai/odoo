@@ -1,0 +1,240 @@
+version: 1
+kind: w9studio_google_workspace_identity_plane
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture + identity-ops
+verified_against_live_state: true
+verification_date: "2026-04-19"
+
+doctrine: >
+  W9 Studio is an IPAI business unit operating on Google Workspace
+  (w9studio.net) — a distinct identity plane from IPAI's primary
+  Entra tenant (insightpulseai.com). This introduces a cross-IdP
+  governance surface that must be explicit. Shared role mailboxes
+  are tolerated short-term but represent an accountability gap that
+  should be remediated before any customer-facing W9 Studio workflow.
+
+parent_ssots:
+  - ssot/identity/saas-multitenant-identity-matrix.yaml
+  - ssot/identity/entra_target_state.yaml
+  - platform/ssot/org/package-and-artifact-topology.yaml
+  - ssot/identity/mailbox-authority.yaml
+
+# -----------------------------------------------------------------------------
+# Observed state (live admin verification 2026-04-19)
+# -----------------------------------------------------------------------------
+observed_state:
+  identity_provider: google_workspace
+  domain: w9studio.net
+  admin_surface: admin.google.com
+  organizational_units_visible:
+    - W9 Studio (primary OU)
+    - Workspace Guests
+  active_users:
+    - email: accounts@w9studio.net
+      display_name: "accounting & admin"
+      status: active
+      last_sign_in: "about 4 months ago"
+      email_usage_gb: 0.001
+      identity_type: shared_role_mailbox
+    - email: finance@w9studio.net
+      display_name: "W9 Studio Fin"
+      status: active
+      last_sign_in: "about 2 months ago"
+      email_usage_gb: 0.001
+      identity_type: shared_role_mailbox
+    - email: business@w9studio.net
+      display_name: "W9 Studio Main"
+      status: active
+      last_sign_in: "about 16 hours ago"
+      email_usage_gb: 0.003
+      identity_type: shared_role_mailbox
+  active_user_count: 3
+  individual_named_user_count: 0 (all accounts are role-based)
+
+# -----------------------------------------------------------------------------
+# Cross-plane relationship to IPAI primary identity
+# -----------------------------------------------------------------------------
+cross_plane_relationship:
+
+  w9studio_plane:
+    idp: google_workspace
+    domain: w9studio.net
+    business_unit: W9 Studio (per package-and-artifact-topology.yaml)
+    public_site: www.w9studio.net (per topology)
+    aca_container: ghcr.io/insightpulse-ai/w9studio-web (per topology)
+
+  ipai_primary_plane:
+    idp: entra_id
+    domain: insightpulseai.com
+    directory_id: 402de71a-87ec-4302-a609-fb76098d1da7
+    primary_members: [jake.tolentino@insightpulseai.com]
+
+  bridge_mechanism_current: none (no federation; accounts are isolated)
+  bridge_mechanism_target:
+    option_a_saml_federation: federate_google_workspace_to_entra_so_w9studio_users_can_access_ipai_apps (Entra supports Google Workspace as SAML IdP)
+    option_b_b2b_guest_invitation: invite_w9studio_users_as_b2b_guests_into_entra (same pattern as TBWA/SMP 11 guests)
+    option_c_consolidate_to_entra: migrate_w9studio_email_and_identity_to_entra_and_deprecate_google_workspace (heavy lift)
+
+# -----------------------------------------------------------------------------
+# Actor class extension (updates saas-multitenant-identity-matrix)
+# -----------------------------------------------------------------------------
+actor_class_extension:
+
+  A9_ipai_business_unit_on_external_idp:
+    description: IPAI business unit with its own IdP and domain (currently only W9 Studio)
+    identity_source: google_workspace w9studio.net
+    serves_actor_classes: operationally parallel to A1 (IPAI workforce) but not in IPAI Entra tenant
+    current_user_count: 3 shared role mailboxes
+    access_to_ipai_primary_entra_tenant: none_today
+    access_to_w9studio_public_site_admin: yes (via Google Workspace console)
+    access_to_azure_ipai_resources: none_today (would require B2B guest invite or federation)
+    cross_reference: ssot/identity/saas-multitenant-identity-matrix.yaml
+
+  update_to_existing_matrix: this SSOT adds A9 as a 9th actor class beyond the 8 originally codified
+
+# -----------------------------------------------------------------------------
+# Governance concerns
+# -----------------------------------------------------------------------------
+governance_concerns:
+
+  concern_1_shared_role_mailboxes:
+    finding: all 3 w9studio.net users are role-based (accounts@, finance@, business@)
+    risk:
+      - no_individual_accountability_per_action
+      - credential_sharing_is_likely_in_practice
+      - access_revocation_is_all_or_nothing
+      - audit_trail_shows_role_not_person
+    severity: medium (acceptable while w9studio is small + internal-only; blocking for customer-facing flows)
+    remediation:
+      - stand_up_individual_named_user_accounts_for_active_w9studio_operators
+      - convert_role_addresses_to_distribution_groups_or_shared_mailboxes_with_individual_sign_in_behind
+      - enforce_mfa_on_all_individual_accounts
+
+  concern_2_no_cross_plane_governance:
+    finding: w9studio.net and insightpulseai.com have no federation or guest-invite bridge
+    risk:
+      - w9studio_operators_cannot_access_ipai_azure_or_entra_resources
+      - ipai_admin_cannot_see_w9studio_user_activity_in_unified_audit_log
+      - identity_provisioning_happens_twice_if_individual_works_on_both
+    severity: medium
+    remediation:
+      - decide_bridge_strategy (option a, b, or c above)
+      - if_option_b_chosen_invite_named_individuals_as_b2b_guests_into_insightpulseai_entra
+
+  concern_3_mfa_posture_unknown:
+    finding: MFA status on 3 w9studio.net accounts not visible from this screen
+    risk: if MFA not enforced, shared role mailboxes are high-value phishing targets
+    remediation: verify + enforce via Google Workspace admin (2-step verification policy)
+
+  concern_4_deprecation_confusion:
+    clarification: w9studio.net is NOT on the deprecated list (per CLAUDE.md; only insightpulseai.net is deprecated)
+    action: confirm w9studio.net stays as legitimate BU domain; do not confuse with insightpulseai.net deprecation
+
+# -----------------------------------------------------------------------------
+# Decision lanes
+# -----------------------------------------------------------------------------
+decision_lanes:
+
+  lane_1_status_quo:
+    description: keep w9studio on google workspace, keep role mailboxes, no cross-plane bridge
+    pros: no work required; existing operations uninterrupted
+    cons: governance gaps (no accountability, no unified audit); blocks any customer-facing motion requiring Entra identity
+    recommendation: acceptable as short-term only; revisit within 6 months
+
+  lane_2_b2b_guest_bridge:
+    description: invite named individuals from w9studio as B2B guests into insightpulseai.com Entra tenant
+    pros: unified audit visibility; existing Entra CA policies protect w9studio access to IPAI resources; same pattern as TBWA/SMP guests
+    cons: requires individual named accounts (not role mailboxes)
+    recommendation: medium-term target (3-6 months)
+
+  lane_3_saml_federation:
+    description: federate w9studio google workspace to entra so w9studio users SSO to IPAI apps
+    pros: seamless user experience; w9studio retains Google Workspace for email; IPAI gets unified identity
+    cons: requires enterprise google workspace tier; SAML metadata exchange; more complex to operate
+    recommendation: long-term target only if w9studio grows beyond 10 active users
+
+  lane_4_full_consolidation:
+    description: migrate w9studio.net email and identity entirely into Entra; deprecate google workspace
+    pros: single IdP; fully unified governance; simpler ops
+    cons: email migration is disruptive; w9studio brand tied to w9studio.net email addresses; heavy lift
+    recommendation: only_if_w9studio_operations_pivot_significantly; not the default path
+
+  current_recommendation: lane_1_now → lane_2_within_6_months
+
+# -----------------------------------------------------------------------------
+# Immediate action items
+# -----------------------------------------------------------------------------
+action_items:
+
+  priority_1_within_30_days:
+    - verify_mfa_enforced_on_all_3_w9studio_accounts
+    - document_who_has_credentials_to_each_role_mailbox_today
+    - audit_what_third_party_services_accept_w9studio_accounts (reduce unmonitored attack surface)
+
+  priority_2_within_6_months:
+    - create_individual_named_accounts_for_active_w9studio_operators
+    - convert_shared_role_mailboxes_to_distribution_groups_or_google_delegates
+    - invite_individuals_as_b2b_guests_into_insightpulseai_entra (lane 2)
+    - record_in_guest-invite-registry.yaml
+
+  priority_3_if_w9studio_scales:
+    - evaluate_saml_federation (lane 3)
+    - evaluate_consolidation (lane 4) — only if strategic pivot happens
+
+# -----------------------------------------------------------------------------
+# Relationship to SaaS tenancy model
+# -----------------------------------------------------------------------------
+relationship_to_saas_tenancy:
+
+  clarification: w9studio is NOT a Pulser-for-Odoo customer tenant
+  it_is: an IPAI internal business unit that runs a public website (w9studio.net) and operates on Google Workspace
+  scenario_fit_in_identity_matrix:
+    - not_S3_or_S4_or_S5 (those are customer-facing Pulser tenants)
+    - closest_analog: S2_ipai_extended_guests (if w9studio users are invited as guests to IPAI primary Entra)
+    - unique_aspect: W9 Studio has its own product surface (www.w9studio.net public site) but is operationally part of IPAI
+
+# -----------------------------------------------------------------------------
+# Success criteria
+# -----------------------------------------------------------------------------
+success_criteria:
+  - id: W9-1
+    description: MFA enforced on all w9studio.net accounts
+    target: 100%
+    measurement: google_workspace_2sv_policy_audit
+  - id: W9-2
+    description: Individual named accounts exist for active operators
+    target: 100% of active operators
+    measurement: google_workspace_user_list
+  - id: W9-3
+    description: Shared role addresses converted to distribution groups with individual sign-in backing
+    target: 3/3 role addresses converted
+    measurement: google_workspace_configuration_audit
+  - id: W9-4
+    description: Cross-plane bridge decision made and implemented (lane 1/2/3/4)
+    target: decision_recorded_and_executed
+    measurement: this SSOT decision_lanes.current_recommendation
+  - id: W9-5
+    description: w9studio individuals appear in guest-invite-registry when lane 2 executes
+    target: true (when executed)
+    measurement: ssot/identity/guest-invite-registry.yaml presence
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not treating w9studio.net as deprecated (only insightpulseai.net is deprecated per CLAUDE.md)
+  - not forcing lane_4 full consolidation unless strategic pivot warrants it
+  - not integrating w9studio users into production customer tenant flows (A3/A4 actor classes are separate)
+  - not exposing w9studio role mailbox credentials in any governance surface
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/identity/saas-multitenant-identity-matrix.yaml
+  - ssot/identity/entra_target_state.yaml
+  - ssot/identity/entra-governance-policy.yaml
+  - ssot/identity/guest-invite-registry.yaml
+  - ssot/identity/mailbox-authority.yaml
+  - platform/ssot/org/package-and-artifact-topology.yaml (www.w9studio.net topology)
