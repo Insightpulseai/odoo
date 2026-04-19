@@ -1524,3 +1524,91 @@ addenda_2026_04_15:
       - ssot/governance/finops-azure-cost-governance.yaml (sponsorship expiry + post-sponsorship plan)
       - ssot/identity/m365-mca-billing-account.yaml (MCA billing for paid subs)
       - ssot/governance/saas-tenancy-model-pulser-for-odoo.yaml (per-tenant subscription pattern)
+
+
+  # ───── Added 2026-04-19 — microsoft/azure-skills plugin ─────
+
+  - upstream: microsoft/azure-skills
+    url: https://github.com/microsoft/azure-skills
+    purpose: "Packaged Azure capability layer for coding agents — 20 curated Azure skills + 200+ MCP tools across 40+ Azure services + Foundry. Installs as one-command plugin in Claude Code, Copilot CLI, VS Code, Gemini CLI."
+    adopt_mode: consume_directly
+    internal_owner: platform-engineering
+    scope: |
+      Adopt AS-IS. This is the Microsoft-owned, MIT-licensed, canonical
+      Azure skills layer. Directly addresses IPAI's need for Azure
+      bootstrapping + troubleshooting + cost + design + AI + storage +
+      RBAC + data service capabilities inside agents.
+
+    capability_classes_unlocked:
+      - build_and_deploy_workflows
+      - troubleshooting_and_operations
+      - cost_optimization_and_design
+      - ai_workflows (Foundry-aware)
+      - storage_operations
+      - rbac_and_identity
+      - data_service_operations
+
+    installation_method: single_command_install (Claude Code / Copilot CLI / VS Code / Gemini CLI)
+    prerequisites:
+      - node_js_18_or_newer
+      - azure_cli_authentication
+      - basic_azure_infrastructure_access
+    ipai_prerequisites_status:
+      - node_js_18_or_newer: assumed_present (devcontainer baseline)
+      - azure_cli_authentication: present (az login active for jgtolentino)
+      - basic_azure_infrastructure_access: present (subscription owner + resource owner)
+
+    governance_interactions:
+      mcp_allowlist:
+        impact: plugin uses already-allowlisted MCPs (azure, github, azure-devops)
+        new_mcps_introduced: none (plugin routes through existing MCPs with curated tool calls)
+        cross_reference: ssot/governance/mcp-allowlist.yaml
+      vscode_enterprise_policy:
+        chat_mcp_access: registry mode compatible (plugin skills are scoped)
+        cross_reference: ssot/governance/vscode-enterprise-policy-contract.yaml
+      claude_code_activation:
+        skills_ssot: .claude/skills/ (IPAI local) + plugin-provided skills (Microsoft canonical)
+        cross_reference: ssot/governance/claude-code-activation-matrix.yaml
+
+    resolves_earlier_finding: |
+      User flagged "you need to build Azure bootstrapping skills" and
+      provided this repo. Earlier thinking positioned Azure skill
+      development as an IPAI build effort. Correct posture: DO NOT
+      BUILD — adopt Microsoft's canonical plugin. It covers 20 skills
+      + 200 tools out of the box. IPAI builds only the thin
+      Pulser/Odoo-specific skills on top.
+
+    relationship_to_ipai_custom_skills:
+      do_not_build:
+        - generic_azure_resource_deploy_skills (plugin covers)
+        - generic_azure_troubleshooting_skills (plugin covers)
+        - generic_azure_cost_skills (plugin covers)
+        - generic_rbac_skills (plugin covers)
+      do_build_thin_on_top:
+        - ipai_odoo_specific_deploy_skills (pulser fulfillment webhook, tenant provisioning)
+        - ipai_foundry_project_provisioning_skill (for block 6 of setup runbook)
+        - ipai_marketplace_publish_workflow_skill
+        - ipai_bir_compliance_reporting_skill
+
+    rationale: |
+      Microsoft canonical Azure skills package is precisely the "reuse
+      first, build delta only" doctrine applied to agent skills.
+      IPAI should consume this plugin as the baseline Azure capability
+      surface and build only Odoo + Pulser + IPAI-specific skills on top.
+      This is the short path to Azure bootstrapping capability the user
+      flagged — installation is minutes, not weeks.
+
+    plane: agent + infra
+    see_also:
+      - ssot/governance/mcp-allowlist.yaml
+      - ssot/governance/vscode-enterprise-policy-contract.yaml
+      - ssot/governance/claude-code-activation-matrix.yaml
+      - platform/ssot/agentic/claude-code-operating-model.yaml
+      - upstream: Azure/AI-Landing-Zones (reference patterns — plugin's AI skills complement this)
+      - upstream: Azure/Enterprise-Scale (reference patterns — plugin's bootstrap-class skills complement this)
+
+    immediate_action:
+      - add_to_ipai_engineering_workstation_setup_per_vscode_enterprise_policy_contract
+      - verify_plugin_skill_set_against_ipai_skill_gap_list_in_claude-code-activation-matrix
+      - document_in_mcp_runtime_state_yaml_when_active
+      - evidence: docs/evidence/<ts>/azure-skills-plugin-adoption/
