@@ -140,6 +140,38 @@ post_deploy_start_caveat:
   rollback_note: if_start_fails_pipeline_should_halt_and_surface_error
 
 # -----------------------------------------------------------------------------
+# CI validation checks (GitHub Actions scoped exception + Azure Pipelines)
+# -----------------------------------------------------------------------------
+ci_validation_checks:
+  scope: pre_merge_and_pre_deploy
+  required_checks:
+    - folder_naming_validates_display_name_MirroredDatabase_pattern
+    - mirroring_json_present_and_valid_json
+    - platform_file_present
+    - json_schema_lint_on_mirroring_json
+    - allowed_environment_connection_mapping_per_branch
+    - no_accidental_prod_connection_ids_on_non_prod_branches
+    - deployment_rule_completeness_for_each_stage
+    - post_deploy_runbook_present_with_start_mirroring_step
+    - child_item_artifacts_referenced_in_separate_sql_folder
+  ci_surface:
+    gha_scoped_exception: pre_merge_validation_only (per CLAUDE.md gha-scoped-exception)
+    azure_pipelines: canonical_deploy_orchestration
+
+# -----------------------------------------------------------------------------
+# GitHub Projects REST API automation (Sept 2025)
+# -----------------------------------------------------------------------------
+github_projects_automation:
+  rest_api_available_since: "2025-09"
+  ipai_use:
+    - auto_update_project_status_on_validation_pass_or_fail
+    - reflect_deployment_stage_status_in_project_board
+    - link_mirrored_database_item_to_ado_boards_work_item_via_AB_reference
+  not_used_for:
+    - replacing_azure_boards_as_planning_sor
+    - bidirectional_sync_with_azure_boards
+
+# -----------------------------------------------------------------------------
 # Authority preservation
 # -----------------------------------------------------------------------------
 authority_preservation:

@@ -1,0 +1,195 @@
+version: 1
+kind: minimize_custom_code_doctrine
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+
+canonical_sentence: >
+  Reuse first. Configure second. Fork/adapt third. Custom code last.
+  Every custom line of code must justify itself against an upstream
+  that could have been configured, forked, or composed instead.
+
+# -----------------------------------------------------------------------------
+# Decision ladder (apply in order; never skip)
+# -----------------------------------------------------------------------------
+decision_ladder:
+  L0_reuse_as_is:
+    description: use_upstream_directly_no_changes
+    examples:
+      - odoo_ce_18_modules (built-in)
+      - azure_verified_modules_avm
+      - databricks_mosaic_ai_capabilities
+      - foundry_hosted_agents
+      - microsoft_agent_framework_primitives
+      - oca_modules_verified_on_18_0 (see infra/ssot/oca/must_have_*.yaml)
+    test_required: verify_upstream_coverage_before_declaring_gap
+
+  L1_configure:
+    description: upstream_capability_exists_just_needs_configuration
+    examples:
+      - odoo_property_fields_for_parent_scoped_metadata
+      - ce_settings_toggle_in_settings_catalog
+      - avm_parameter_override
+      - oca_module_configuration_via_data_files
+    test_required: document_the_configuration_in_ssot_not_code
+
+  L2_compose:
+    description: combine_upstream_capabilities_no_new_code
+    examples:
+      - ce_plus_oca_plus_property_fields
+      - mcp_connector_composition
+      - pulser_pack_binding_of_existing_tools
+    test_required: composition_is_declarative_not_imperative
+
+  L3_fork_adapt:
+    description: start_from_upstream_apply_minimal_patch
+    when_appropriate:
+      - upstream_close_but_incomplete
+      - patch_is_upstreamable_or_genuinely_local
+      - fork_has_clear_retirement_or_upstream_merge_path
+    caution:
+      - fork_carries_maintenance_cost
+      - drift_from_upstream_accumulates
+    required_artifacts:
+      - fork_disposition_doc (docs/architecture/<topic>-fork-disposition.md)
+      - reason_for_fork_vs_pr_upstream
+      - retirement_criteria
+
+  L4_thin_ipai_bridge:
+    description: minimal_custom_module_as_bridge_or_overlay
+    pattern: "ipai_<domain>_<feature>"
+    scope_allowed:
+      - integration_bridges (e.g., ipai_auth_oauth_https — HTTPS callback fix for Azure Front Door)
+      - adapters (e.g., ipai_odoo_copilot systray + agent-platform API)
+      - thin_overlays (e.g., ipai_ph_* for BIR compliance deltas)
+    mandatory_docs_per_claude_md:
+      - README.md
+      - docs/MODULE_INTROSPECTION.md
+      - docs/TECHNICAL_GUIDE.md
+    forbidden_patterns:
+      - duplicating_oca_capability_as_ipai_star_when_oca_exists
+      - re_implementing_ce_features
+      - replacing_upstream_with_ipai_version
+      - any_ipai_star_module_without_introspection_docs
+
+  L5_full_custom:
+    description: net_new_capability_no_upstream_available
+    when_appropriate:
+      - genuinely_novel_business_logic
+      - no_upstream_has_even_the_shape
+    required_justification:
+      - evidence_that_L0_through_L4_all_evaluated_and_rejected
+      - business_owner_approval
+      - retirement_criteria_if_upstream_later_ships
+
+# -----------------------------------------------------------------------------
+# Per-concern guidance
+# -----------------------------------------------------------------------------
+per_concern:
+
+  odoo:
+    rule: "CE 18 → property fields → OCA same domain → adjacent OCA → composition → ipai_* delta"
+    authority: CLAUDE.md "Odoo extension and customization doctrine"
+    verify_step: search_oca_and_adjacent_oca_repos_before_writing_ipai_star
+    fork_policy:
+      - do_NOT_fork_odoo_core
+      - may_fork_specific_oca_modules_only_with_retirement_plan_and_upstream_pr
+    authority_ssot: ssot/odoo/interoperability-template.yaml
+
+  azure_infra:
+    rule: "Azure Verified Modules (AVM) → AVM parameter override → custom Bicep/Terraform only for genuine gaps"
+    authority: ssot/governance/production-ai-foundation-adoption.yaml
+    avoid: "writing custom Bicep from scratch when AVM covers the resource"
+
+  agent_runtime:
+    rule: "Microsoft Agent Framework primitives → MAF workflows (Sequential/Graph) → thin ipai wrapper only where MAF gap"
+    authority: ssot/agent-platform/runtime-sdk-decision-matrix.yaml
+    avoid: "custom orchestration when MAF supervisor/router/judge primitives work"
+
+  data_engineering:
+    rule: "Unity Catalog governance → Databricks-native Spark/Delta → Delta Live Tables where applicable → custom notebooks last"
+    authority: ssot/data-intelligence/databricks-plane-charter.yaml
+
+  mobile:
+    rule: "PWA (browser-installable) → native iOS wrapper only for native-only features (AuthenticationServices, LocalAuthentication, SF Symbols)"
+    authority: platform/ssot/agents/pulser-pack-matrix.yaml#pulser_expense_mobile_companion
+    avoid: "native iOS app development for features a PWA serves"
+
+  ee_capabilities:
+    rule: "CE config → OCA → thin ipai bridge → external Azure/Foundry/Databricks service (T0→T3 ladder)"
+    authority: platform/ssot/odoo/ee-capability-target-map.yaml
+    avoid: "importing Odoo EE source code"
+
+  mcp_tools:
+    rule: "tier1_core official Microsoft MCPs → tier1_pending DB/files/markdown → custom MCP server last"
+    authority: ssot/governance/mcp-allowlist.yaml
+    avoid: "custom MCP servers for capability that official servers provide"
+
+  planning_and_governance:
+    rule: "github spec-kit pattern → spec/<slug>/ bundles → unified capability template → no bespoke PM tool"
+    authority: ssot/governance/unified-capability-template-authority.yaml
+
+# -----------------------------------------------------------------------------
+# Forking policy
+# -----------------------------------------------------------------------------
+forking_policy:
+  default: do_not_fork
+  acceptable_when:
+    - upstream_does_not_accept_patches
+    - patch_is_business_specific (not upstreamable)
+    - fork_has_explicit_retirement_date_or_upstream_merge_criteria
+  mandatory_artifacts:
+    - docs/architecture/<fork-topic>-fork-disposition.md
+    - retirement_or_upstream_merge_plan
+    - fork_drift_audit_every_quarter
+  tracked_in: ssot/governance/fork-register.yaml (create when first fork lands)
+
+# -----------------------------------------------------------------------------
+# Red flags (stop and re-evaluate)
+# -----------------------------------------------------------------------------
+red_flags:
+  - writing_code_that_matches_an_existing_oca_module_description
+  - creating_custom_bicep_for_a_resource_with_avm_coverage
+  - forking_without_retirement_plan
+  - custom_mcp_server_when_official_serves
+  - native_ios_code_for_pwa_servable_feature
+  - ipai_star_module_without_introspection_docs
+  - importing_ee_source_into_ce_repo
+  - copying_upstream_code_into_ipai_star_to_avoid_dependency
+
+# -----------------------------------------------------------------------------
+# Metrics
+# -----------------------------------------------------------------------------
+metrics:
+  track:
+    - line_count_of_ipai_star_modules_over_time (target: flat or shrinking)
+    - oca_module_adoption_count (target: grow before ipai_star grows)
+    - avm_module_usage_count (target: grow)
+    - fork_count (target: 0; tolerance: < 5 active forks with retirement plans)
+  review_cadence: quarterly
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not banning custom code entirely (genuine deltas are fine)
+  - not preserving upstream purity at the cost of real business value
+  - not blocking emergency patches waiting for upstream PR merge
+  - not refusing forks when the business case is genuine and retirement-bounded
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  claude_md_engineering_execution_doctrine: CLAUDE.md (Engineering Execution Doctrine)
+  claude_md_odoo_doctrine: CLAUDE.md (Odoo extension and customization doctrine)
+  odoo_interop_template: ssot/odoo/interoperability-template.yaml
+  odoo_package_classification: ssot/odoo/package-classification.yaml
+  ee_capability_target: platform/ssot/odoo/ee-capability-target-map.yaml
+  oca_must_have_base: infra/ssot/oca/must_have_base.yaml
+  avm_reference: https://aka.ms/avm
+  runtime_sdk_decision: ssot/agent-platform/runtime-sdk-decision-matrix.yaml
+  unified_capability_template: ssot/governance/unified-capability-template-authority.yaml
+  mcp_allowlist: ssot/governance/mcp-allowlist.yaml
+  databricks_plane_charter: ssot/data-intelligence/databricks-plane-charter.yaml
+  production_foundation_adoption: ssot/governance/production-ai-foundation-adoption.yaml
