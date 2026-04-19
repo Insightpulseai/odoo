@@ -1,0 +1,176 @@
+version: 1
+kind: foundry_to_m365_publish_path
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture + gtm
+
+doctrine: >
+  Microsoft has two documented paths to publish an existing Foundry/MAF
+  agent directly into Microsoft 365 Copilot + Teams without involving
+  Copilot Studio. For IPAI, this is the concrete delivery mechanism
+  that turns Agent 365 SDK from abstract option into actionable step.
+  Path B (proxy via M365 Agents Toolkit) is IPAI's route because
+  Pulser requires custom SSO + managed infra.
+
+parent_ssots:
+  - ssot/governance/microsoft-365-e7-and-agent-365-opportunity.yaml
+  - ssot/governance/power-platform-adoption.yaml
+  - platform/ssot/ai/foundry-resource-model.yaml
+  - ssot/agent-platform/agent_framework_adoption.yaml
+
+# -----------------------------------------------------------------------------
+# The two documented paths
+# -----------------------------------------------------------------------------
+publish_paths:
+
+  path_a_direct_foundry_portal_publish:
+    url: https://learn.microsoft.com/azure/foundry/agents/how-to/publish-copilot
+    mechanism: foundry_portal_publish_button
+    auto_provisions:
+      - azure_bot_service
+      - entra_id_app_registration
+      - agent_packaging_for_distribution
+    use_when: simple_foundry_agent_with_default_sso_and_no_custom_infra
+    ipai_fit: low
+    rationale: >
+      Pulser requires custom SSO (tenant-scoped Entra via SAML + SCIM
+      per github-identity-and-oauth.yaml), managed identity-scoped
+      access to Key Vault, and tenant-isolated per-customer data
+      planes per saas-tenancy-model-pulser-for-odoo.yaml. Path A's
+      auto-provisioned bot service + default Entra app is insufficient.
+
+  path_b_proxy_via_m365_agents_toolkit:
+    url: https://learn.microsoft.com/microsoft-365/copilot/extensibility/create-deploy-agents-sdk
+    mechanism: m365_agents_toolkit_proxy_app + m365_agents_sdk
+    architecture: proxy_app_delivers_agent_to_m365_surfaces_while_runtime_stays_on_foundry
+    supports:
+      - custom_sso
+      - managed_infra
+      - per_tenant_isolation
+      - multi_channel_delivery (Copilot, Teams, Web, SMS, Email + 10+ others)
+    use_when: enterprise_isv_with_custom_identity_or_tenancy_requirements
+    ipai_fit: high
+    rationale: >
+      Pulser's governance posture + per-tenant isolation + custom
+      SSO all map to Path B. Proxy app can enforce IPAI doctrine
+      (zero-secret agents, MCP allowlist, SaaS tenancy isolation)
+      while Foundry hosts the MAF runtime.
+
+# -----------------------------------------------------------------------------
+# 3-way architectural clarification
+# -----------------------------------------------------------------------------
+three_way_relationship:
+
+  copilot_studio:
+    role: fully_managed_saas_platform_for_low_code_declarative_or_custom_engine_agents
+    orchestrator: proprietary_copilot_studio_hosted
+    target_audience: makers_and_business_users
+    ipai_use: none (prohibited — pulser runtime is MAF-on-Foundry)
+
+  m365_agents_sdk:
+    role: pro_code_channel_delivery_layer
+    owns: channel_delivery_packaging_sso_wrapping
+    does_not_own: orchestration_logic
+    surfaces: [m365_copilot, teams, web, sms, email, plus_10_more]
+    ipai_use: canonical_delivery_wrapper_for_pulser_agents_reaching_m365_surfaces
+
+  pulser_on_maf_on_foundry:
+    role: agent_orchestration_runtime
+    owns: planner_router_specialist_agents_tools_retrieval_judges_handoffs
+    delivery_via: m365_agents_sdk_wrapping (when reaching M365 surfaces)
+    ipai_use: canonical_agent_runtime (per agent_framework_adoption.yaml)
+
+  clean_stack:
+    level_1_agent_logic: pulser_on_maf_on_foundry
+    level_2_delivery_wrapper: m365_agents_sdk_plus_toolkit_proxy
+    level_3_surfacing: m365_copilot_plus_teams_plus_word_etc
+    copilot_studio_position: not_in_the_stack_for_ipai
+
+# -----------------------------------------------------------------------------
+# IPAI implementation roadmap
+# -----------------------------------------------------------------------------
+ipai_implementation_roadmap:
+
+  phase_0_prerequisites:
+    - foundry_project_ipai_copilot_resource_provisioned (per foundry-resource-model.yaml — currently blocker)
+    - pulser_core_skills_stable_on_maf_runtime
+    - m365_e5_developer_subscription_activated_per_isv-success-program-engagement (for sandbox testing)
+    - agent-platform_custom_sso_design_documented
+
+  phase_1_sdk_familiarization (after Foundry provisioned):
+    - install_m365_agents_toolkit_in_ipai_dev_tenant
+    - clone_path_b_reference_proxy_app
+    - prototype_one_pulser_skill_wrapped_by_proxy
+    - test_teams_deployment_in_m365_dev_sandbox
+
+  phase_2_first_shipped_agent_365_agent (post Pulser marketplace GA):
+    - scope_narrow_pulser_skill_for_m365_surface_publish
+    - implement_sdk_wrapper_with_ipai_governance_controls
+    - submit_for_microsoft_agent_store_review
+    - list_in_copilot_partner_directory_and_agent_showcase
+
+  phase_3_scale:
+    - expand_to_additional_pulser_skills
+    - evaluate_multi_channel_delivery (SMS, email, Web beyond Teams)
+    - optimize_for_frontier_partner_badge_eligibility
+
+# -----------------------------------------------------------------------------
+# Ruled out
+# -----------------------------------------------------------------------------
+ruled_out:
+  copilot_studio_as_orchestrator:
+    status: forbidden
+    rationale: violates agent_framework_adoption.yaml (MAF canonical); violates claude-code-operating-model.yaml (governed Pulser runtime)
+  power_automate_wrapper_around_pulser:
+    status: forbidden
+    rationale: adds Power Platform dependency where M365 Agents SDK already solves the problem directly
+  dataverse_metadata_layer_beside_pulser:
+    status: forbidden
+    rationale: no Microsoft-documented pattern for Dataverse-beside-non-Dynamics-ERP; violates IPAI's no-Dataverse-dependency doctrine; M365 Agents SDK uses Microsoft Graph + Entra for metadata context
+
+# -----------------------------------------------------------------------------
+# Success criteria
+# -----------------------------------------------------------------------------
+success_criteria:
+  - id: FM365-1
+    description: Foundry project provisioned and first Pulser agent runs on MAF runtime
+    target: true
+    measurement: foundry-resource-model.yaml#reality_vs_target updated to "provisioned"
+  - id: FM365-2
+    description: M365 Agents Toolkit proxy prototype built in dev sandbox tenant
+    target: true
+    measurement: evidence_in_docs_evidence
+  - id: FM365-3
+    description: Copilot Studio not adopted as Pulser orchestrator
+    target: 0 Copilot Studio dependencies in IPAI code
+    measurement: repo_dependency_audit
+  - id: FM365-4
+    description: One Pulser skill successfully published to M365 Agents Toolkit path in test tenant
+    target: true
+    measurement: published_agent_evidence
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not adopting Copilot Studio at any level
+  - not using Path A (direct Foundry portal publish) for Pulser — insufficient for IPAI's governance requirements
+  - not building Pulser skills that cannot be wrapped by M365 Agents SDK (delivery must stay multi-channel)
+  - not publishing Pulser to M365 before Pulser reaches marketplace GA
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/governance/microsoft-365-e7-and-agent-365-opportunity.yaml
+  - ssot/governance/power-platform-adoption.yaml
+  - ssot/agent-platform/agent_framework_adoption.yaml
+  - platform/ssot/ai/foundry-resource-model.yaml
+  - ssot/governance/saas-tenancy-model-pulser-for-odoo.yaml
+  - ssot/governance/github-identity-and-oauth.yaml
+
+source_references:
+  - https://learn.microsoft.com/microsoft-365/copilot/extensibility/overview-custom-engine-agent
+  - https://learn.microsoft.com/azure/foundry/agents/how-to/publish-copilot
+  - https://learn.microsoft.com/microsoft-365/copilot/extensibility/create-deploy-agents-sdk
+  - https://learn.microsoft.com/microsoft-365/copilot/copilot-agent-store
