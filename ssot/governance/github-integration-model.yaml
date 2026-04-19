@@ -48,26 +48,29 @@ ipai_stance_on_adjacent:
 decision_model:
 
   use_github_app_when:
-    - org_or_repo_installation_required
-    - durable_permissions_needed
-    - webhook_driven_behavior_across_repos
-    - pr_project_or_repo_automation_at_scale
-    - potential_marketplace_or_developer_program_path
-    - need_separate_identity_from_individual_contributor_pat
+    criteria:
+      - org_or_repo_installation_required
+      - durable_permissions_needed
+      - webhook_driven_behavior_across_repos
+      - pr_project_or_repo_automation_at_scale
+      - potential_marketplace_or_developer_program_path
+      - need_separate_identity_from_individual_contributor_pat
     ipai_preferred_for: most_production_integrations
 
   use_github_actions_when:
-    - automation_is_repo_scoped
-    - ci_cd_or_policy_enforcement (PR validation only per IPAI GHA scoped exception)
-    - runs_on_github_events
-    - does_not_need_separate_always_on_service
+    criteria:
+      - automation_is_repo_scoped
+      - "ci_cd_or_policy_enforcement (PR validation only per IPAI GHA scoped exception)"
+      - runs_on_github_events
+      - does_not_need_separate_always_on_service
     ipai_constraint: "NEVER for deploy authority; scoped exception only (ssot/governance/gha-scoped-exception.yaml)"
 
   use_rest_graphql_api_plus_webhooks_when:
-    - need_own_backend_control_plane
-    - syncing_github_state_into_another_system
-    - read_write_automation_beyond_simple_workflow_logic
-    - building_github_aware_agents_in_agent_platform
+    criteria:
+      - need_own_backend_control_plane
+      - syncing_github_state_into_another_system
+      - read_write_automation_beyond_simple_workflow_logic
+      - building_github_aware_agents_in_agent_platform
 
 # -----------------------------------------------------------------------------
 # Repo placement per integration concern
