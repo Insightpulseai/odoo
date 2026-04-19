@@ -1,0 +1,159 @@
+version: 1
+kind: github_integration_model
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+
+canonical_sentence: >
+  GitHub App + GitHub Actions + webhooks/API is the canonical IPAI
+  integration model. Not "only Actions." Not "bot account." Not
+  "only Projects automation." Not "manual integration scripts."
+
+# -----------------------------------------------------------------------------
+# Native building blocks (per GitHub Docs)
+# -----------------------------------------------------------------------------
+native_building_blocks:
+  github_apps:
+    best_for: [long_lived_permissioned_integrations, org_or_repo_installation, webhook_driven_behavior, pr_repo_project_automation, marketplace_or_developer_program_legitimacy]
+  github_actions_workflows:
+    best_for: [event_driven_automation_inside_github, repo_scoped_ci_policy_enforcement, runs_on_github_events]
+    ipai_constraint: scoped_exception_only_per_CLAUDE_md (NEVER as deploy authority)
+  custom_actions:
+    best_for: reusable_execution_units_for_workflows
+  rest_api:
+    best_for: read_write_automation_from_external_systems
+  graphql_api:
+    best_for: [projects_v2_mutations, rich_queries_across_repos_issues_prs]
+  webhooks:
+    best_for: event_consumption_by_your_own_backend_or_control_plane
+
+# -----------------------------------------------------------------------------
+# Adjacent surfaces GitHub integrates with
+# -----------------------------------------------------------------------------
+adjacent_surfaces:
+  editors: [vscode, visual_studio]
+  project_tools: [jira_optional]
+  team_comms: [slack, microsoft_teams]
+  copilot_cloud_agent_in_teams: available
+
+ipai_stance_on_adjacent:
+  vscode: canonical (per ssot/governance/vscode-operating-profile.yaml)
+  slack: canonical (IPAI mail/ops via Slack MCP)
+  teams: optional (M365 channel; per agent_delivery_stack)
+  jira: NOT adopted (ADO Boards is portfolio SoR per CLAUDE.md)
+
+# -----------------------------------------------------------------------------
+# IPAI decision model — which building block for which need
+# -----------------------------------------------------------------------------
+decision_model:
+
+  use_github_app_when:
+    - org_or_repo_installation_required
+    - durable_permissions_needed
+    - webhook_driven_behavior_across_repos
+    - pr_project_or_repo_automation_at_scale
+    - potential_marketplace_or_developer_program_path
+    - need_separate_identity_from_individual_contributor_pat
+    ipai_preferred_for: most_production_integrations
+
+  use_github_actions_when:
+    - automation_is_repo_scoped
+    - ci_cd_or_policy_enforcement (PR validation only per IPAI GHA scoped exception)
+    - runs_on_github_events
+    - does_not_need_separate_always_on_service
+    ipai_constraint: "NEVER for deploy authority; scoped exception only (ssot/governance/gha-scoped-exception.yaml)"
+
+  use_rest_graphql_api_plus_webhooks_when:
+    - need_own_backend_control_plane
+    - syncing_github_state_into_another_system
+    - read_write_automation_beyond_simple_workflow_logic
+    - building_github_aware_agents_in_agent_platform
+
+# -----------------------------------------------------------------------------
+# Repo placement per integration concern
+# -----------------------------------------------------------------------------
+repo_mapping:
+  platform:
+    hosts:
+      - github_app_manifest_or_registration_docs
+      - webhook_contracts
+      - github_to_platform_sync_logic
+      - project_and_repo_policy_contracts
+
+  dot_github:
+    hosts:
+      - reusable_actions_workflows
+      - org_wide_automation (PR validation scoped exception only)
+      - repo_policy_workflows
+      - codeowners_templates
+
+  agents:
+    hosts:
+      - prompt_contracts_for_github_aware_agents
+      - judge_logic_for_pr_or_issue_triage
+
+  agent_platform:
+    hosts:
+      - runtime_execution_for_github_event_driven_agents
+      - webhook_consumers (if routed through agent-platform not platform)
+      - github_mcp_tool_adapters (when github MCP is wired)
+
+# -----------------------------------------------------------------------------
+# GitHub Developer Program qualifications
+# -----------------------------------------------------------------------------
+developer_program_qualifications:
+  minimum_bar:
+    - integration_in_production_or_development_using_github_apis
+    - support_contact_email
+  ipai_support_contact: support@insightpulseai.com (pending; currently business@insightpulseai.com via Zoho alias)
+  ipai_status: not_yet_enrolled_evaluate_when_marketplace_offer_lands
+
+# -----------------------------------------------------------------------------
+# What GitHub is NOT (in IPAI doctrine)
+# -----------------------------------------------------------------------------
+github_is_not:
+  - sole_planning_authority (ADO Boards is)
+  - sole_runtime_control_plane (platform + agent-platform are)
+  - sole_enterprise_workflow_engine (Azure Pipelines + Odoo workflows)
+  - sole_deploy_authority (Azure Pipelines is per CLAUDE.md)
+
+github_is:
+  - code_truth
+  - pr_and_review_truth
+  - integration_event_hub
+  - repo_level_automation_engine
+  - developer_facing_extension_surface
+
+# -----------------------------------------------------------------------------
+# Anti-patterns
+# -----------------------------------------------------------------------------
+anti_patterns:
+  - only_actions_for_integration (no durable identity)
+  - bot_account_instead_of_github_app (fragile, per-user PAT)
+  - only_projects_automation_for_cross_system_work
+  - manual_integration_scripts_outside_an_app_or_action
+  - using_pat_in_long_lived_automation_where_github_app_applies
+  - treating_gha_as_deploy_authority (CLAUDE.md forbids)
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not replacing Azure Pipelines as deploy authority
+  - not replacing Azure Boards as planning authority
+  - not adopting Jira as parallel planning tool
+  - not building a GitHub App for every small integration (match scale)
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  gha_scoped_exception: ssot/governance/gha-scoped-exception.yaml
+  github_enterprise_migration: ssot/governance/github-enterprise-migration.yaml
+  github_enterprise_org_target_state: ssot/governance/github-enterprise-org-target-state.yaml
+  github_projects_v2_scope: ssot/governance/github-projects-v2-scope.yaml
+  github_azure_chain: platform/ssot/architecture/github-azure-chain.yaml
+  agent_delivery_stack: ssot/agent-platform/agent_delivery_stack.yaml
+  vscode_operating_profile: ssot/governance/vscode-operating-profile.yaml
+  planning_authority_map: ssot/governance/planning-surface-authority-map.yaml
+  mcp_allowlist: ssot/governance/mcp-allowlist.yaml
