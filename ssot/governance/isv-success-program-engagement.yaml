@@ -111,59 +111,99 @@ benefits:
     priority_routing: yes_with_severity_selection
     status: not_yet_activated
 
-  dynamics_365_sales_fs_cs_partner_sandbox:
+  dynamics_365_partner_sandbox_sales_fs_cs:
+    sku_label_from_partner_center: "Dynamics 365 Partner Sandbox – Sales, Field Service and Customer Service"
     seats: 25
-    duration: 1_year_from_activation_date
-    activation_status: already_visible_in_tenant_license_inventory
+    activation_deadline: "2027-04-30"
+    status_in_partner_center: REDEEMED (verified 2026-04-19 via Benefits | Cloud services page)
+    activation_status_live: already_visible_in_tenant_license_inventory (0/25 assigned)
     cross_reference: ssot/identity/m365-tenant-license-inventory-and-capability-map.yaml
     ipai_disposition: hold_unassigned (Odoo is canonical ERP; sandbox is discretionary)
 
-  m365_e5_subscription:
-    duration: tied_to_isv_success_period
-    activation_path: partner_center_benefits_workspace (Developer Program | Microsoft 365 Dev Center)
+  dynamics_365_discounted_and_free_licenses:
+    sku_label_from_partner_center: "Dynamics 365 discounted and free licenses"
+    seats: 25
+    activation_deadline: "2027-04-30"
+    status_in_partner_center: unknown_not_redeemed (verified 2026-04-19)
+    ipai_disposition: evaluate_then_defer
+    rationale: >
+      This is DISTINCT from the D365 Partner Sandbox (which is already
+      redeemed). "Discounted and free licenses" is a commercial-use
+      benefit for internal operational D365. IPAI does NOT adopt D365
+      as its ERP (Odoo is canonical) so this benefit is likely of
+      low-to-zero strategic value. Leave unredeemed unless a specific
+      D365 use case emerges.
+    action: defer_until_specific_need_identified
+
+  m365_e5_developer_subscription:
+    sku_label_from_partner_center: "Microsoft 365 E5 Developer Subscription"
+    seats: 25
+    activation_deadline: "2027-04-30"
+    status_in_partner_center: unknown_not_redeemed (verified 2026-04-19)
+    important_distinction: >
+      This is the DEVELOPER subscription, not a production M365 E5.
+      It's a sandbox/dev-tenant SKU for testing + app development.
+      It does NOT entitle you to run real customer workloads on it.
+    activation_path: partner_center_benefits_workspace + Microsoft 365 Dev Center (https://aka.ms/m365devprogram)
     six_month_reuse_restriction: >
       "If a user has previously activated the M365 sandbox and has not
       utilized it, they will be unable to use it for the next six months.
       As an alternative, activate a different domain or email."
     status: not_yet_activated
-    priority_for_ipai: medium (potential M365 E7 evaluation per microsoft-365-e7-and-agent-365-opportunity.yaml)
+    priority_for_ipai: medium
+    ipai_use_case: >
+      Use this dev tenant to prototype the Agent 365 SDK integration
+      without touching the production tenant. Aligns with
+      microsoft-365-e7-and-agent-365-opportunity.yaml#integration_roadmap
+      phase_1_sdk_familiarization.
 
-  github_enterprise_subscription:
-    coupon_code_ref: stored_in_email_and_partner_center_benefits_workspace_not_in_this_ssot
-    coupon_code_value: NOT_RECORDED_HERE (see email; ISV-Success-Program-12months-* format — keep out of git per secrets-policy)
-    seats: 20
-    duration: 12_months_from_activation_date
-    renewal: not_eligible_for_2nd_year
+  github_enterprise_cloud_subscription:
+    sku_label_from_partner_center: "GitHub Enterprise Cloud Subscription"
+    seats_awarded: 20
+    seats_remaining: 20
+    activation_deadline: "2027-04-30"
+    status_in_partner_center: not_redeemed (verified 2026-04-19 via Benefits | Developer tools page)
+    coupon_code_ref: stored_in_partner_center_workspace_and_em_email_only
+    coupon_code_value: NOT_RECORDED_HERE (keep out of git per secrets-policy)
     public_preview: yes
     upgrades_over_free_or_team:
       - 50_gb_package_storage
       - 50000_automation_minutes_per_month
-    critical_conflict:
-      rule: "If you have Enterprise, this benefit is not available."
-      ipai_existing_state:
-        - ipai enterprise already exists at github.com/enterprises/ipai
-          (per github-enterprise-current-state-snapshot.yaml)
-      implication: >
-        IPAI likely cannot redeem the 20-seat ISV Success GitHub
-        Enterprise benefit because IPAI already has a GitHub Enterprise
-        account. This must be verified with EM before attempting redemption.
-      action_required: >
-        Ask So Yeong Choi to confirm whether IPAI's existing
-        `ipai` enterprise disqualifies this benefit OR whether
-        the 20 seats can be added to the existing enterprise.
+    earlier_concern_about_existing_enterprise:
+      concern_text: >
+        Per the EM email: "If you have Enterprise, this benefit is not
+        available." IPAI already has the `ipai` GitHub Enterprise account.
+      partner_center_evidence: >
+        DESPITE that rule, the benefit shows as AVAILABLE (Not Redeemed,
+        20 of 20 seats remaining) in IPAI's Partner Center. This suggests
+        either (a) the rule doesn't apply to IPAI's enterprise variant,
+        (b) Microsoft awards it regardless and redemption may still fail,
+        or (c) the Preview program has different eligibility logic.
+      disposition: verify_redemption_path_with_em_before_attempting
     redemption_flow_if_eligible:
       - launch_activation_url_in_incognito_on_correct_tenant
-      - create_org_or_sign_into_existing
-      - if_personal_account_convert_to_org (not applicable — IPAI has org)
+      - sign_into_ipai_organization_account (not personal jgtolentino)
       - redirect_to_redeem_your_coupon_page
       - provide_payment_instrument (no charge until expiry)
-    status: pending_eligibility_confirmation
+    status: pending_em_confirmation_then_redemption_if_eligible
+    action_required:
+      - ask_em_to_confirm_whether_redemption_works_when_ipai_enterprise_exists
+      - if_redemption_fails_at_checkout_it_is_a_clean_no_op_no_commitment_made
+      - if_redemption_succeeds_20_seats_augment_existing_ipai_enterprise_for_12_months
 
-  visual_studio:
-    duration: tied_to_isv_success_period (12 months)
-    activation_path: partner_center_benefits_workspace
-    bundle_notes: "Visual Studio + GitHub benefit activation combined per MS docs"
-    status: not_yet_activated
+  microsoft_visual_studio_enterprise_ide:
+    sku_label_from_partner_center: "Microsoft Visual Studio Enterprise IDE"
+    seats_awarded: 25
+    seats_remaining: 24
+    seats_already_assigned: 1 (likely jgtolentino personal account from prior activation)
+    activation_deadline: "2027-04-30"
+    status_in_partner_center: partially_redeemed (verified 2026-04-19)
+    activation_path: partner_center_benefits_workspace (user_by_user_assignment)
+    bundle_notes: "VS Enterprise + GitHub benefits are adjacent in Developer tools tab; not bundled as one activation"
+    ipai_disposition:
+      - assign_to_platform-architecture_first (you)
+      - reserve_pool_for_scim_provisioned_engineers_when_team_grows
+      - do_not_assign_to_personal_accounts_of_contractors_without_review
 
   curated_resources:
     location: https://aka.ms/isvsuccessresources
