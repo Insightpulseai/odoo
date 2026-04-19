@@ -1,0 +1,171 @@
+version: 1
+kind: fabric_mirroring_alm_pattern
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+
+doctrine: >
+  Fabric mirrored databases are CI/CD-friendly at the ITEM-DEFINITION
+  level but NOT full-fidelity environment packages. Git tracks the
+  mirrored database definition; SQL analytics endpoint, views, and
+  other child items are NOT tracked/deployed. Orchestrate promotion
+  via Azure Pipelines (canonical per CLAUDE.md) with explicit
+  post-deploy start + managed identity setup steps.
+
+# -----------------------------------------------------------------------------
+# Git representation (per Microsoft)
+# -----------------------------------------------------------------------------
+git_representation:
+  folder_pattern: "{display_name}.MirroredDatabase/"
+  tracked_files:
+    - mirroring.json (mirrored database definition)
+    - .platform (system-generated)
+  NOT_tracked:
+    - sql_analytics_endpoint
+    - views
+    - other_child_items
+
+  ipai_repo_placement: data-intelligence/fabric/mirrored-databases/<name>.MirroredDatabase/
+  git_authority: github (per clean chain)
+
+# -----------------------------------------------------------------------------
+# Deployment pipelines (Fabric-native + Azure Pipelines orchestration)
+# -----------------------------------------------------------------------------
+deployment_pipelines:
+
+  stages: [dev, staging, production]
+
+  fabric_native_capability:
+    can_compare_between_stages: true
+    can_deploy_across_stages: true
+    can_parameterize_source: true (deployment rules)
+
+  deployment_rules_per_stage:
+    - target_connection_id
+    - target_database_name (source-type dependent)
+
+  ipai_canonical_orchestration: azure_pipelines (per CLAUDE.md)
+  rationale: >
+    Fabric deployment pipelines CAN be used directly, but IPAI's
+    canonical deploy authority is Azure Pipelines. Wrap Fabric
+    deployment operations in Azure Pipelines stages for unified
+    audit + evidence capture + approval gates.
+
+# -----------------------------------------------------------------------------
+# Canonical ALM flow (Azure Pipelines wrapping Fabric operations)
+# -----------------------------------------------------------------------------
+canonical_alm_flow:
+
+  source_control:
+    step_1_author_mirrored_database_in_fabric_dev_workspace
+    step_2_commit_to_git_via_fabric_git_integration (produces
+      data-intelligence/fabric/mirrored-databases/<name>.MirroredDatabase/
+      with mirroring.json + .platform)
+    step_3_pr_review_in_github_with_codeowners_approval
+
+  pipeline_stages:
+
+    stage_ci:
+      - yaml_validate (mirroring.json schema)
+      - contract_check (tracked files present, no stray children committed)
+
+    stage_deploy_dev:
+      - fabric_api_deploy_mirrored_database_definition
+      - fabric_api_start_mirroring (manual step — NOT automatic post-deploy)
+      - capture_evidence_to_docs_evidence_ts
+
+    stage_deploy_staging:
+      required_approvals: [platform-architecture]
+      steps:
+        - apply_deployment_rules (set target_connection_id for staging)
+        - fabric_api_deploy
+        - ensure_managed_identity_configured_on_source (per per-source requirements below)
+        - fabric_api_start_mirroring
+        - validation_query_against_mirror
+
+    stage_deploy_production:
+      required_approvals: [platform-architecture, finance_director_for_finance_affecting_mirrors]
+      gates:
+        - staging_validation_passed
+        - child_items_manually_verified_or_rebuilt (views + SQL analytics endpoint)
+        - rollback_plan_tested
+      steps:
+        - apply_deployment_rules (prod connection id)
+        - fabric_api_deploy
+        - verify_prod_managed_identity_and_grants
+        - fabric_api_start_mirroring
+        - hypercare_window_start
+
+# -----------------------------------------------------------------------------
+# Managed identity + grant requirements (per-source)
+# -----------------------------------------------------------------------------
+identity_and_grant_requirements:
+  rule: >
+    For these sources, source-system managed identity MUST be enabled
+    AND granted Read + Write permission on the mirrored database
+    before mirroring can start. Handle via infra/ IaC, not manual
+    portal clicks.
+  sources_requiring_mi_setup:
+    - azure_sql_database
+    - azure_sql_managed_instance
+    - azure_database_for_postgresql (IPAI: pg-ipai-odoo)
+    - sql_server_2025
+
+  ipai_implementation:
+    mi_preferred: id-ipai-dev-data (or dedicated mirroring MI)
+    grant_mechanism: iac_bicep_or_terraform_in_infra_repo
+    validation_step_in_pipeline: verify_mi_and_grants_before_starting_mirroring
+    secrets: none_required_if_mi_properly_configured (aligned with
+      platform/ssot/policy/azure-ai-governance-baseline.yaml keyless_auth principle)
+
+# -----------------------------------------------------------------------------
+# Child-item caveat (NOT tracked / NOT deployed)
+# -----------------------------------------------------------------------------
+child_items_caveat:
+  not_tracked_in_git: [sql_analytics_endpoint, views, other_child_items]
+  not_deployed_in_pipeline: [sql_analytics_endpoint, views, other_child_items]
+
+  ipai_mitigations:
+    - manage_views_as_separate_git_tracked_sql_files_under_data_intelligence_fabric_views
+    - apply_views_via_idempotent_sql_in_pipeline_stage_after_mirror_start
+    - document_sql_analytics_endpoint_config_in_separate_ssot_yaml
+    - on_prod_promotion_manually_verify_child_surface_matches_staging
+
+# -----------------------------------------------------------------------------
+# Auto-start caveat
+# -----------------------------------------------------------------------------
+post_deploy_start_caveat:
+  behavior: mirroring_does_NOT_auto_start_after_deployment
+  ipai_mitigation: explicit_pipeline_stage_calls_fabric_api_to_start_mirroring
+  rollback_note: if_start_fails_pipeline_should_halt_and_surface_error
+
+# -----------------------------------------------------------------------------
+# Authority preservation
+# -----------------------------------------------------------------------------
+authority_preservation:
+  code_and_pr_truth: github
+  planning_truth: azure_boards
+  release_truth: azure_pipelines (wrapping Fabric API calls)
+  runtime_truth: fabric_onelake_mirrored_database
+  secret_truth: key_vault (for any non-MI credentials needed by Fabric API calls)
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not relying on Fabric-native pipelines as sole deploy authority
+  - not manually starting mirroring in production (must be pipeline step)
+  - not tracking/deploying child items via Fabric pipeline (use separate SQL artifacts)
+  - not using API keys where managed identity can serve
+  - not skipping MI + grant verification step
+
+# -----------------------------------------------------------------------------
+# Related SSOTs
+# -----------------------------------------------------------------------------
+related:
+  fabric_mirroring_role_split: ssot/data-intelligence/fabric-mirroring-role-split.yaml
+  databricks_plane_charter: ssot/data-intelligence/databricks-plane-charter.yaml
+  github_azure_chain: platform/ssot/architecture/github-azure-chain.yaml
+  ai_governance_baseline: platform/ssot/policy/azure-ai-governance-baseline.yaml
+  odoo_cloud_platform_release_gates: platform/ssot/release/odoo-cloud-release-gates.yaml
+  branch_env_contract: platform/ssot/runtime/branch-environment-contract.yaml
