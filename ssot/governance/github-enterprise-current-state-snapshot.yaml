@@ -1,0 +1,124 @@
+version: 1
+kind: github_enterprise_current_state_snapshot
+status: canonical_stub
+last_updated: "2026-04-19"
+observed_from: enterprise_dashboard_ipai
+owner: platform-architecture
+
+doctrine: >
+  Point-in-time snapshot of the ipai GitHub Enterprise Cloud state,
+  observed from the enterprise dashboard. Not a prescription — a
+  record. Prescription lives in github-enterprise-org-target-state.yaml.
+
+parent_ssots:
+  - ssot/governance/github-enterprise-org-target-state.yaml
+  - ssot/governance/github-enterprise-migration.yaml
+  - ssot/governance/github-desired-state.yaml
+
+# -----------------------------------------------------------------------------
+# Enterprise identity
+# -----------------------------------------------------------------------------
+enterprise:
+  slug: ipai
+  url: https://github.com/enterprises/ipai
+  role: governance_umbrella
+
+# -----------------------------------------------------------------------------
+# Organizations under ipai (observed)
+# -----------------------------------------------------------------------------
+organizations:
+  count_observed: 1
+  list:
+    - name: Insightpulse-ai
+      url: https://github.com/Insightpulse-ai
+      role: primary_operating_org
+      owner_count: 1
+      member_count: to_be_recorded
+      repo_count: to_be_recorded
+  alignment_with_target: matches github-enterprise-org-target-state.yaml
+
+# -----------------------------------------------------------------------------
+# Notable enterprise-level events (as of observation)
+# -----------------------------------------------------------------------------
+notable_events:
+
+  github_advanced_security_trial:
+    status: active
+    days_remaining: 30 (as of 2026-04-19)
+    action_required_before_expiry:
+      - decide_commercial_ghas_adoption_vs_trial_lapse
+      - if_adopting: confirm_billing_via_azure_subscription_per_gha-scoped-exception.yaml
+      - if_lapsing: document_replacement_security_posture (Defender for DevOps coverage)
+    cross_reference:
+      - ssot/governance/repository-best-practices.yaml
+      - ssot/governance/github-target-state-success-criteria.yaml#category_4_security_and_compliance
+
+  copilot_ai_training_data_update:
+    announced_effective_date: "2026-04-24"
+    summary: >
+      GitHub will begin using GitHub Copilot interaction data for AI
+      model training unless the user opts out.
+    action_required_before_effective_date:
+      - review_copilot_data_training_opt_out_in_personal_account_settings
+      - document_ipai_posture (opt_out_by_default for engineering accounts)
+      - update: ssot/governance/claude-code-activation-matrix.yaml + vscode-operating-profile.yaml with Copilot posture
+    ipai_default_recommendation: opt_out_for_all_engineering_members (principle of least data sharing)
+
+# -----------------------------------------------------------------------------
+# Observed naming discrepancy (to reconcile)
+# -----------------------------------------------------------------------------
+observed_naming_discrepancy:
+  evidence:
+    observed_url: https://github.com/enterprises/ipai-platform/organizations
+    canonical_url: https://github.com/enterprises/ipai
+  status: needs_reconciliation
+  disposition: >
+    The canonical enterprise slug per github-enterprise-org-target-state.yaml
+    is `ipai`. If `ipai-platform` exists as a separate enterprise, it
+    must either be consolidated into `ipai` or explicitly documented
+    as a distinct governance boundary with a separate SSOT. No stray
+    enterprise slugs.
+  owner: platform-architecture
+
+# -----------------------------------------------------------------------------
+# Gaps vs target state
+# -----------------------------------------------------------------------------
+gaps_vs_target:
+  - 'enterprise_readme_not_yet_written — dashboard shows "Write something about this enterprise"'
+  - 'explore_enterprise_onboarding_1_of_8_completed — 7 onboarding items not yet done'
+  - 'ghas_trial_decision_pending — 30d window'
+  - 'copilot_training_opt_out_decision_pending — before 2026-04-24'
+
+# -----------------------------------------------------------------------------
+# Recommended immediate actions
+# -----------------------------------------------------------------------------
+recommended_actions:
+  before_2026-04-24:
+    - opt_out_of_copilot_training_for_all_engineering_members (unless explicit reason to share)
+    - document_the_decision_in_claude-code-activation-matrix.yaml
+  before_ghas_trial_expiry:
+    - decide_on_ghas_commercial_adoption (strongly recommend adoption for tier_0 + tier_1 per repository-best-practices.yaml)
+    - ensure_billing_via_azure_subscription
+  within_30_days:
+    - write_enterprise_readme_per_target_state
+    - complete_remaining_7_explore_enterprise_onboarding_items
+    - reconcile_ipai_vs_ipai-platform_slug_discrepancy
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not treating this snapshot as prescription (that's github-enterprise-org-target-state.yaml)
+  - not letting the GHAS trial lapse silently without a security posture decision
+  - not defaulting to opt-in for Copilot data training without explicit authorization
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/governance/github-enterprise-org-target-state.yaml
+  - ssot/governance/github-enterprise-migration.yaml
+  - ssot/governance/repository-best-practices.yaml
+  - ssot/governance/claude-code-activation-matrix.yaml
+  - ssot/governance/vscode-operating-profile.yaml
+  - ssot/governance/gha-scoped-exception.yaml

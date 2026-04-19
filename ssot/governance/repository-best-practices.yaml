@@ -1,0 +1,242 @@
+version: 1
+kind: repository_best_practices
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+source: "GitHub Docs — Repositories → Best practices for repositories"
+
+doctrine: >
+  GitHub's official repository best practices (README, security,
+  branching over forking, Git LFS) are the minimum floor for every
+  IPAI repo. IPAI extends the floor with tier-specific hardening per
+  repo-classes.yaml. No IPAI engineering repo exists without these
+  four pillars.
+
+parent_ssots:
+  - ssot/governance/repo-classes.yaml
+  - ssot/governance/github-target-state-success-criteria.yaml
+  - ssot/governance/github-desired-state.yaml
+  - ssot/governance/github-identity-and-oauth.yaml
+
+# -----------------------------------------------------------------------------
+# Pillar 1 — README + companion files
+# -----------------------------------------------------------------------------
+pillar_1_readme_and_companions:
+
+  required_per_repo:
+    - README.md
+    - LICENSE (or repo-level license declaration)
+    - CODEOWNERS (mapped to teams, not individuals)
+
+  strongly_recommended:
+    - CONTRIBUTING.md (for repos accepting external contributions)
+    - CODE_OF_CONDUCT.md (public / OSS repos)
+    - CITATION.cff (research artifacts)
+    - SECURITY.md (see pillar 2)
+
+  readme_contract:
+    include_only:
+      - purpose_of_repo
+      - repo_boundaries_and_scope
+      - quickstart
+      - canonical_links (to architecture / spec / SSOT)
+      - key_commands
+      - runtime_or_service_topology_summary
+    exclude:
+      - long_tutorials
+      - giant_architecture_essays (link to docs/architecture/)
+      - file_by_file_descriptions
+      - frequently_changing_details
+    cross_reference: ssot/governance/github-markdown-conventions.yaml
+
+# -----------------------------------------------------------------------------
+# Pillar 2 — Security (minimum floor)
+# -----------------------------------------------------------------------------
+pillar_2_security:
+
+  minimum_floor_every_repo:
+    - dependabot_alerts_enabled: true
+    - secret_scanning_enabled: true
+    - push_protection_enabled: true
+    - code_scanning_enabled: true (where language supported)
+
+  additional_recommended:
+    - security_md_file_present: true
+    - private_vulnerability_reporting_enabled: true
+
+  tier_hardening:
+    tier_0:
+      additionally_required:
+        - branch_protection_max
+        - required_reviewers (at least 1 CODEOWNER)
+        - signed_commits_required
+        - dependency_review_on_pr
+        - codeql_default_languages_plus_custom_queries
+    tier_1:
+      additionally_required:
+        - branch_protection_high
+        - required_reviewers (at least 1 CODEOWNER)
+        - dependency_review_on_pr
+    tier_2:
+      additionally_required:
+        - branch_protection_standard
+
+  cross_reference:
+    - ssot/governance/repo-classes.yaml
+    - ssot/governance/github-target-state-success-criteria.yaml#category_4_security_and_compliance
+    - ssot/governance/github-identity-and-oauth.yaml
+
+# -----------------------------------------------------------------------------
+# Pillar 3 — Branching over forking
+# -----------------------------------------------------------------------------
+pillar_3_branching_over_forking:
+
+  rule: >
+    Regular collaborators work from a single repository, creating pull
+    requests between branches, not between forks. Forking is reserved
+    for unaffiliated external contributors (OSS model).
+
+  protected_branches:
+    main:
+      required_status_checks: true
+      required_pull_request_reviews: true
+      required_reviewer_count:
+        tier_0: ">= 1"
+        tier_1: ">= 1"
+        tier_2: ">= 1 (optional)"
+      dismiss_stale_reviews: true
+      require_code_owner_reviews: true (tier_0 + tier_1)
+      restrict_direct_push: true (except enforced admin override with audit)
+      linear_history: preferred
+
+  branch_naming:
+    canonical:
+      - main
+      - feature/*
+      - bugfix/*
+      - chore/*
+      - docs/*
+      - hotfix/*
+      - release/*
+    optional:
+      - develop (only if intentionally used)
+    cross_reference: ssot/governance/github-desired-state.yaml#canonical_repo_contract_files
+
+  forking_model:
+    allowed_when:
+      - external_contributor_not_part_of_org
+      - public_oss_repo_accepting_patches
+    discouraged_when: internal_collaborator_wants_a_fork_for_convenience
+    rationale: forks_fragment_review_and_ci_coverage_for_internal_work
+
+# -----------------------------------------------------------------------------
+# Pillar 4 — Git Large File Storage (Git LFS)
+# -----------------------------------------------------------------------------
+pillar_4_git_lfs:
+
+  rule: >
+    Track large files (binary assets, datasets, design exports, models)
+    via Git LFS. Do not commit large binaries directly to the main
+    git object store.
+
+  when_to_adopt:
+    - design_repo_with_figma_exports
+    - data_intelligence_repo_with_sample_fixtures
+    - agents_repo_with_model_artifacts
+    - any_repo_approaching_github_file_size_limits (100MB per file,
+      5GB repo advisory)
+
+  configuration:
+    required_files:
+      - .gitattributes (declaring LFS patterns)
+    tracked_patterns_examples:
+      - "*.psd filter=lfs diff=lfs merge=lfs -text"
+      - "*.fig filter=lfs diff=lfs merge=lfs -text"
+      - "*.parquet filter=lfs diff=lfs merge=lfs -text"
+      - "*.onnx filter=lfs diff=lfs merge=lfs -text"
+      - "*.safetensors filter=lfs diff=lfs merge=lfs -text"
+
+  forbidden:
+    - storing_secrets_in_lfs (LFS is still git-tracked content)
+    - using_lfs_for_code_files (use .gitignore or archives)
+
+  cost_awareness:
+    lfs_storage_is_metered: true
+    cross_reference: ssot/governance/finops-azure-cost-governance.yaml
+
+# -----------------------------------------------------------------------------
+# Repo contract checklist (every new repo must satisfy)
+# -----------------------------------------------------------------------------
+repo_contract_checklist:
+  - "README.md present with purpose, boundaries, quickstart, canonical links"
+  - "LICENSE file present"
+  - "CODEOWNERS mapped to teams"
+  - "Dependabot alerts enabled"
+  - "Secret scanning enabled"
+  - "Push protection enabled"
+  - "Code scanning enabled (where language supported)"
+  - "Branch protection on main with required PRs + status checks"
+  - "CODEOWNERS-gated review for tier_0 + tier_1"
+  - "No direct pushes to main (except documented admin exceptions)"
+  - "SECURITY.md present (tier_0 + tier_1)"
+  - "Private vulnerability reporting enabled"
+  - ".gitattributes declaring LFS patterns (if large binaries apply)"
+  - "CLAUDE.md present where Claude Code is active"
+  - ".github/workflows/ scoped per gha-scoped-exception.yaml"
+
+# -----------------------------------------------------------------------------
+# Success criteria
+# -----------------------------------------------------------------------------
+success_criteria:
+  - id: RBP-1
+    description: 100% of engineering repos have README + LICENSE + CODEOWNERS
+    target: 100%
+    measurement: repo_hygiene_scan
+  - id: RBP-2
+    description: Dependabot + secret scanning + push protection enabled on every repo
+    target: 100%
+    measurement: security_feature_scan
+  - id: RBP-3
+    description: Code scanning enabled on tier_0 + tier_1 repos (where language supported)
+    target: 100% of eligible repos
+    measurement: github_code_scanning_coverage
+  - id: RBP-4
+    description: Branch protection on main for every engineering repo
+    target: 100%
+    measurement: branch_protection_audit
+  - id: RBP-5
+    description: Tier_0 + tier_1 repos have SECURITY.md + private vulnerability reporting
+    target: 100%
+    measurement: repo_file_audit
+  - id: RBP-6
+    description: Zero direct pushes to main outside documented admin exceptions
+    target: 0
+    measurement: audit_log_review
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not allowing new engineering repos without README + LICENSE + CODEOWNERS
+  - not disabling push protection anywhere
+  - not accepting internal collaborator forks as a normal workflow
+  - not committing large binaries directly to the main object store
+  - not treating security features as optional on public repos
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/governance/repo-classes.yaml
+  - ssot/governance/github-target-state-success-criteria.yaml
+  - ssot/governance/github-desired-state.yaml
+  - ssot/governance/github-markdown-conventions.yaml
+  - ssot/governance/github-identity-and-oauth.yaml
+  - ssot/governance/gha-scoped-exception.yaml
+
+source_references:
+  - https://docs.github.com/en/repositories/creating-and-managing-repositories/best-practices-for-repositories
+  - https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes
+  - https://docs.github.com/en/code-security/getting-started/quickstart-for-securing-your-repository
+  - https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/defining-the-mergeability-of-pull-requests/about-protected-branches
+  - https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-git-large-file-storage
