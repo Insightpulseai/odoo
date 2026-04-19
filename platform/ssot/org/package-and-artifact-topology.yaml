@@ -1,228 +1,208 @@
 version: 1
 kind: package_and_artifact_topology
 status: canonical
-last_updated: "2026-04-19"
-owner: platform-architecture
-
-doctrine: >
-  GitHub Packages (GHCR) is the canonical internal registry for
-  shared npm packages, Maven, NuGet, etc. Azure Container Registry
-  (acripaiodoo) remains the canonical container image registry for
-  ACA deployments. No split-brain: one package type = one registry
-  authority.
-
-# -----------------------------------------------------------------------------
-# Registry split (canonical)
-# -----------------------------------------------------------------------------
-registry_authority:
-
-  shared_npm_packages:
-    authority: github_packages_npm_registry
-    scope: "@insightpulse-ai"
-    rationale: >
-      Co-located with source, automated publish via Actions, scoped
-      visibility per package, native to TypeScript/Node workflows.
-    examples:
+org:
+  enterprise: ipai
+  primary_operating_org: Insightpulse-ai
+principles:
+  - github_packages_is_an_internal_artifact_distribution_layer
+  - ghcr_is_the_default_container_registry
+  - azure_runtime_is_the_default_deployment_target
+  - public_domains_are_application_surfaces_not_package_endpoints
+  - shared_packages_should_be_reused_across_web_surfaces_where_practical
+  - artifact_names_must_be_deterministic_and_repo_aligned
+registries:
+  ghcr:
+    type: github_container_registry
+    purpose:
+      - deployable_container_images
+      - runtime_images
+      - worker_images
+      - preview_images_if_needed
+    naming_pattern: ghcr.io/insightpulse-ai/<artifact-name>
+  npm:
+    type: github_packages_npm_registry
+    purpose:
+      - shared_ui_packages
+      - design_tokens
+      - typed_api_clients
+      - auth_helpers
+      - internal_frontend_libraries
+    naming_pattern: "@insightpulse-ai/<package-name>"
+artifact_policies:
+  visibility:
+    default_packages: private
+    default_images: private
+    public_allowed_only_if:
+      - intentionally_open_source
+      - no_internal_contract_or_secret_exposure
+  retention:
+    preview_images: short_lived
+    release_images: retained
+  immutability:
+    release_tags_should_be_immutable: true
+  provenance:
+    ci_published_only: true
+domains:
+  - domain: www.insightpulseai.com
+    app_id: insightpulseai_main
+    repo_owner: web
+    surface_type: flagship_public_site
+    deployable_artifacts:
+      containers:
+        - ghcr.io/insightpulse-ai/insightpulseai-main
+      packages_consumed:
+        - "@insightpulse-ai/design-tokens"
+        - "@insightpulse-ai/ui"
+        - "@insightpulse-ai/platform-api-client"
+    runtime_target:
+      preferred: azure_container_apps
+    notes:
+      - public_site_domain
+      - may_share_frontend_packages_with_w9studio_and_prismalab
+  - domain: www.w9studio.net
+    app_id: w9studio
+    repo_owner: web
+    surface_type: business_unit_public_site
+    deployable_artifacts:
+      containers:
+        - ghcr.io/insightpulse-ai/w9studio-web
+      packages_consumed:
+        - "@insightpulse-ai/design-tokens"
+        - "@insightpulse-ai/ui"
+    runtime_target:
+      preferred: azure_container_apps
+    notes:
+      - public_site_domain
+      - should_reuse_shared_ui_where_possible
+  - domain: prismalab.insightpulseai.com
+    app_id: prismalab
+    repo_owner: web
+    surface_type: domain_application
+    deployable_artifacts:
+      containers:
+        - ghcr.io/insightpulse-ai/prismalab-web
+      packages_consumed:
+        - "@insightpulse-ai/design-tokens"
+        - "@insightpulse-ai/ui"
+        - "@insightpulse-ai/platform-api-client"
+        - "@insightpulse-ai/prismalab-domain-client"
+    runtime_target:
+      preferred: azure_container_apps
+    notes:
+      - domain_specific_surface
+      - private_internal_packages_expected
+shared_packages:
+  - name: "@insightpulse-ai/design-tokens"
+    owner_repo: design
+    purpose:
+      - shared_design_tokens
+      - theme_contract
+      - spacing_typography_color_semantics
+  - name: "@insightpulse-ai/ui"
+    owner_repo: web
+    purpose:
+      - shared_react_ui_components
+      - app_shell_primitives
+      - status_badges_tables_panels
+  - name: "@insightpulse-ai/platform-api-client"
+    owner_repo: platform
+    purpose:
+      - typed_api_contract_client
+      - shared_platform_backend_access
+  - name: "@insightpulse-ai/auth-entra"
+    owner_repo: platform
+    purpose:
+      - entra_auth_helpers
+      - session_and_token_utilities
+  - name: "@insightpulse-ai/prismalab-domain-client"
+    owner_repo: web
+    purpose:
+      - prismalab_specific_client_contracts
+    optional: true
+container_images:
+  - image: ghcr.io/insightpulse-ai/insightpulseai-main
+    owner_repo: web
+    app_id: insightpulseai_main
+    deployment_model: aca
+    environments:
+      - dev
+      - staging
+      - production
+  - image: ghcr.io/insightpulse-ai/w9studio-web
+    owner_repo: web
+    app_id: w9studio
+    deployment_model: aca
+    environments:
+      - dev
+      - staging
+      - production
+  - image: ghcr.io/insightpulse-ai/prismalab-web
+    owner_repo: web
+    app_id: prismalab
+    deployment_model: aca
+    environments:
+      - dev
+      - staging
+      - production
+  - image: ghcr.io/insightpulse-ai/ops-console
+    owner_repo: web
+    app_id: ops_console
+    deployment_model: aca
+    environments:
+      - dev
+      - staging
+      - production
+    optional: true
+repo_to_registry_mapping:
+  design:
+    publishes:
       - "@insightpulse-ai/design-tokens"
+  web:
+    publishes:
+      - "@insightpulse-ai/ui"
+      - ghcr.io/insightpulse-ai/insightpulseai-main
+      - ghcr.io/insightpulse-ai/w9studio-web
+      - ghcr.io/insightpulse-ai/prismalab-web
+      - ghcr.io/insightpulse-ai/ops-console
+  platform:
+    publishes:
       - "@insightpulse-ai/platform-api-client"
-      - "@insightpulse-ai/ui"
-      - "@insightpulse-ai/auth-helpers"
-      - "@insightpulse-ai/type-contracts"
-
-  container_images:
-    authority: azure_container_registry_acripaiodoo
-    rationale: >
-      acripaiodoo is the IPAI canonical ACR per platform/ssot/azure/
-      resource-inventory.dev.yaml. ACA deployments pull from ACR via
-      managed identity (id-ipai-dev-runtime). NOT GHCR — avoid
-      split-brain between source-colocated GHCR and deploy-time ACR.
-    examples:
-      - acripaiodoo.azurecr.io/ipai-ops-console
-      - acripaiodoo.azurecr.io/ipai-odoo-dev
-      - acripaiodoo.azurecr.io/ipai-prismalab
-      - acripaiodoo.azurecr.io/ipai-website
-      - acripaiodoo.azurecr.io/ipai-w9studio
-
-  ghcr_container_images_exception:
-    when_allowed:
-      - open_source_public_images_IPAI_chooses_to_publish (none today)
-      - marketplace_deliverable_public_images (deferred)
-    default: not_used_for_production
-    rule: "For any IPAI production container, ACR is authoritative."
-
-  other_package_types:
-    maven_nuget_rubygems: evaluate_per_use_case (unlikely in current stack)
-    python_pypi: via_private_azure_artifacts_or_github_packages (decide when Python package publishing emerges; current IPAI uses uv + pyproject.toml locally, no publishing yet)
+      - "@insightpulse-ai/auth-entra"
+  agent-platform:
+    publishes: []
+  odoo:
+    publishes: []
+  data-intelligence:
+    publishes: []
+ci_cd_contract:
+  publish_from:
+    - github_actions
+    - azure_pipelines_if_explicitly_needed
+  requirements:
+    - build_must_be_repo_owned
+    - package_version_must_be_traceable_to_commit
+    - image_tag_must_include_release_or_sha
+    - no_manual_pushes_for_release_artifacts
+assertions:
+  - github_packages_is_not_a_hosting_layer
+  - ghcr_is_the_default_container_image_registry
+  - public_domains_consume_artifacts_but_are_not_artifact_endpoints
+  - shared_packages_should_reduce_cross_app_duplication
+  - deployment_target_for_web_surfaces_is_azure_not_github_pages
 
 # -----------------------------------------------------------------------------
-# Per-domain artifact consumption (4 surfaces)
+# Migration note vs prior ACR-canonical posture
 # -----------------------------------------------------------------------------
-per_domain_artifacts:
-
-  www_insightpulseai_com:
-    domain: www.insightpulseai.com
-    role: flagship_public_site
-    repo_lane: web
-    app_path: web/apps/ipai-landing
-    consumes_npm_packages:
-      - "@insightpulse-ai/design-tokens"
-      - "@insightpulse-ai/ui"
-      - "@insightpulse-ai/auth-helpers"
-      - "@insightpulse-ai/platform-api-client"
-    deploys_container_image: acripaiodoo.azurecr.io/ipai-website
-
-  www_w9studio_net:
-    domain: www.w9studio.net
-    role: business_unit_public_site
-    repo_lane: web
-    app_path: web/apps/w9studio-site (planned)
-    consumes_npm_packages:
-      - "@insightpulse-ai/design-tokens" (with w9studio theme overlay)
-      - "@insightpulse-ai/ui"
-    deploys_container_image: acripaiodoo.azurecr.io/ipai-w9studio
-
-  prismalab_insightpulseai_com:
-    domain: prismalab.insightpulseai.com
-    role: domain_app
-    repo_lane: web
-    app_path: web/apps/prismalab
-    consumes_npm_packages:
-      - "@insightpulse-ai/design-tokens"
-      - "@insightpulse-ai/ui"
-      - "@insightpulse-ai/auth-helpers"
-      - "@insightpulse-ai/platform-api-client"
-      - "@insightpulse-ai/type-contracts"
-    deploys_container_image: acripaiodoo.azurecr.io/ipai-prismalab
-
-  erp_insightpulseai_com:
-    domain: erp.insightpulseai.com
-    role: transactional_app
-    repo_lane: addons (Odoo native)
-    consumes_npm_packages: []  # Odoo is Python; shared NPM packages not applicable
-    deploys_container_image: acripaiodoo.azurecr.io/ipai-odoo-dev (+ staging/prod)
-
-  ops_console_internal:
-    domain: ops_console (ACA-hosted; see web/ops-console/)
-    role: internal_operator_console
-    repo_lane: web/ops-console
-    consumes_npm_packages:
-      - "@insightpulse-ai/design-tokens"
-      - "@insightpulse-ai/ui"
-      - "@insightpulse-ai/auth-helpers"
-      - "@insightpulse-ai/platform-api-client"
-    deploys_container_image: acripaiodoo.azurecr.io/ipai-ops-console
-
-# -----------------------------------------------------------------------------
-# Shared package catalog (to be published via Actions)
-# -----------------------------------------------------------------------------
-shared_packages_catalog:
-  scope: "@insightpulse-ai"
-  publish_pipeline: github_actions_scoped_exception_for_npm_publish_only
-  authentication: github_app_installation_token (no PAT)
-
-  packages:
-    - name: "@insightpulse-ai/design-tokens"
-      source_repo: design (or shared package in monorepo)
-      purpose: canonical_design_tokens_json_plus_css_vars
-      consumers: [all web apps]
-
-    - name: "@insightpulse-ai/ui"
-      source_repo: web (or shared package)
-      purpose: shared_shadcn_based_ui_components
-      consumers: [ipai-landing, w9studio-site, prismalab, ops-console]
-
-    - name: "@insightpulse-ai/auth-helpers"
-      source_repo: web (or shared package)
-      purpose: msal_auth_helpers + entra_token_bridge
-      consumers: [authenticated_apps_only]
-
-    - name: "@insightpulse-ai/platform-api-client"
-      source_repo: platform (or shared package)
-      purpose: typed_client_for_platform_api
-      consumers: [ops-console, ipai-landing (demo workspace), prismalab]
-
-    - name: "@insightpulse-ai/type-contracts"
-      source_repo: platform
-      purpose: shared_typescript_types_across_apps_and_backends
-      consumers: [all web apps + agent-platform (if TS bindings emerge)]
-
-# -----------------------------------------------------------------------------
-# CI publish flow
-# -----------------------------------------------------------------------------
-ci_publish_flow:
-
-  npm_publish_to_ghcr:
-    trigger: tag_push_or_release_workflow_dispatch
-    ci_surface: github_actions_scoped_exception (per CLAUDE.md gha-scoped-exception.yaml)
-    steps:
-      - checkout
-      - setup_node_and_pnpm
-      - install
-      - build
-      - run_tests
-      - set_npm_auth (@insightpulse-ai:registry=https://npm.pkg.github.com, token from GitHub App)
-      - pnpm_publish
-    authentication: github_app_installation_token (NEVER PAT)
-    rationale: GitHub Packages publish is one of the rare scoped exceptions where GHA is appropriate
-
-  container_publish_to_acr:
-    trigger: tag_push_or_pipeline_dispatch
-    ci_surface: azure_pipelines (canonical per CLAUDE.md)
-    steps:
-      - checkout
-      - docker_build (multi-stage, non-root)
-      - az_login (OIDC federation, managed identity)
-      - az_acr_login
-      - docker_push_to_acripaiodoo
-      - deploy_to_aca (optional, with approval gate)
-    authentication: managed_identity_oidc (NEVER inline credentials)
-    pipeline_file: azure-pipelines.yml (per app/service)
-
-# -----------------------------------------------------------------------------
-# Versioning policy
-# -----------------------------------------------------------------------------
-versioning:
-  npm_packages:
-    scheme: semver
-    breaking_change_policy: major_bump_only_with_migration_note
-    pre_release_tags: [alpha, beta, rc]
-  container_images:
-    tag_scheme:
-      - latest (dev branch head; NOT for production)
-      - <semver> (e.g., 1.2.3)
-      - <git-sha-short> (e.g., abc1234; immutable)
-    production_pulls: pin_to_semver_or_sha_never_latest
-
-# -----------------------------------------------------------------------------
-# What should NOT happen
-# -----------------------------------------------------------------------------
-anti_patterns:
-  - ghcr_as_production_container_registry (ACR is canonical)
-  - acr_as_npm_registry (GHCR is canonical for npm)
-  - publishing_container_images_to_both_ghcr_and_acr (split-brain)
-  - using_pat_for_npm_publish (use GitHub App installation token)
-  - using_latest_tag_in_production_aca_revision
-  - duplicating_shared_packages_per_app (use @insightpulse-ai scope)
-  - storing_ghcr_or_acr_credentials_in_env_files (KV + managed identity only)
-
-# -----------------------------------------------------------------------------
-# Non-goals
-# -----------------------------------------------------------------------------
-non_goals:
-  - not using GitHub Packages as public runtime delivery (CDN/edge is ACA + Front Door)
-  - not using GHCR for IPAI production container images
-  - not replacing ACR with GHCR
-  - not publishing shared npm packages to public npm registry (keep internal)
-  - not storing images in two registries
-
-# -----------------------------------------------------------------------------
-# Related SSOTs
-# -----------------------------------------------------------------------------
-related:
-  github_azure_chain: platform/ssot/architecture/github-azure-chain.yaml
-  app_surface_topology: platform/ssot/org/app-surface-and-mcp-topology.yaml
-  resource_inventory: platform/ssot/azure/resource-inventory.dev.yaml
-  github_integration_model: ssot/governance/github-integration-model.yaml
-  gha_scoped_exception: ssot/governance/gha-scoped-exception.yaml
-  site_template_adoption: ssot/web/site-template-adoption.yaml
-  minimize_custom_code: ssot/governance/minimize-custom-code-doctrine.yaml
+migration_note:
+  prior_posture: acr_acripaiodoo_was_canonical_container_registry (per earlier platform/ssot/architecture/github-azure-chain.yaml#runtime)
+  new_posture: ghcr_is_default_container_registry_for_web_surfaces
+  reconciliation_required:
+    - update_platform_ssot_architecture_github_azure_chain_yaml_runtime_block
+    - reconfigure_aca_pull_credentials_to_authenticate_to_ghcr (github app installation token or managed identity federation)
+    - evaluate_whether_acripaiodoo_stays_for_odoo_runtime_image_only_or_deprecates
+    - update_odoo_cloud_platform_bom_if_odoo_image_also_moves_to_ghcr
+  affects_existing_images:
+    - ipai-odoo-dev (currently in acripaiodoo; decide stay or migrate)
+    - ipai-odoo-staging / ipai-odoo-prod (currently in acripaiodoo)
+  infra_change_required: yes (ACA pull secret / federated identity must be rewired for GHCR)
