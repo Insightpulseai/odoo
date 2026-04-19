@@ -1,0 +1,500 @@
+version: 1
+kind: azure_sku_bom_sufficiency
+status: canonical
+last_updated: "2026-04-19"
+verified_against_live_azure: true
+verification_timestamp: "2026-04-19"
+owner: platform-architecture + finops
+
+doctrine: >
+  Resource existence is not sufficiency. Each Azure resource is judged
+  by SKU × quantity × sufficiency for target go-live workload. Undersized
+  blocks go-live. Oversized burns budget. Structurally-wrong requires
+  redesign. This SSOT is the single truth for SKU sufficiency judgments.
+
+# -----------------------------------------------------------------------------
+# Evaluation dimensions
+# -----------------------------------------------------------------------------
+evaluation_dimensions:
+  - undersized: SKU too small for expected production load
+  - right_sized: SKU matches current expected go-live profile
+  - oversized: SKU safe but inefficient for current phase
+  - structurally_wrong: wrong service/SKU family, even if adequate in size
+
+sufficiency_values: [sufficient, insufficient_undersized, insufficient_structural, oversized, missing]
+
+# -----------------------------------------------------------------------------
+# Subscription context
+# -----------------------------------------------------------------------------
+subscription:
+  name: Microsoft Azure Sponsorship
+  id: eba824fb-332d-4623-9dfb-2c9f7ee83f4e
+  region_primary: southeastasia
+
+# -----------------------------------------------------------------------------
+# SKU/BOM matrix (authoritative — verified via az CLI on 2026-04-19)
+# -----------------------------------------------------------------------------
+matrix:
+
+  # ─────────────────────────────────────────────
+  # GROUP: data (postgres, storage)
+  # ─────────────────────────────────────────────
+  - group: data
+    service: postgresql_flexible_server
+    resource: pg-ipai-odoo
+    sku: Standard_D2s_v3 (GeneralPurpose)
+    storage_gb: 128
+    storage_tier: P10 (500 iops)
+    ha_mode: Disabled
+    backup_retention_days: 7
+    geo_redundant_backup: Disabled
+    autogrow: Disabled
+    version: "16"
+    count: 1
+    purpose: primary_odoo_db_plus_ipai_workloads
+    sufficiency: insufficient_undersized
+    risk: HIGH
+    right_size_action: |
+      Before go-live: enable zone-redundant HA, enable auto-grow, extend
+      backup retention to >= 30d (compliance-affecting), consider
+      geo-redundant backup for DR. D2s_v3 is acceptable for initial
+      tenant count but will need D4s_v3 as tenants grow.
+    go_live_blocker: YES (HA Disabled + backup retention too short)
+
+  - group: data
+    service: storage_account
+    resource: stipaidevlake
+    sku: Standard_LRS
+    count: 8 (total storage accounts)
+    purpose: lakehouse + general data lake
+    sufficiency: oversized_count
+    risk: LOW
+    right_size_action: >
+      8 storage accounts is proliferation. Audit purpose of each —
+      consolidate ephemeral/logs into single account unless there's a
+      security isolation reason. Keep: lake, bkp, agent, logs.
+      Investigate: stlkipaidev, stdevipai, databricks-managed,
+      scans-managed (likely Purview-managed).
+
+  - group: data
+    service: storage_account
+    resource: stipaidevbkp
+    sku: Standard_ZRS
+    count: 1
+    purpose: backup_vault_storage
+    sufficiency: sufficient
+    risk: LOW
+    right_size_action: none for dev; for prod, consider GRS for cross-region DR
+
+  # ─────────────────────────────────────────────
+  # GROUP: runtime (ACA env + apps)
+  # ─────────────────────────────────────────────
+  - group: runtime
+    service: container_apps_environment
+    resource: acae-ipai-dev-sea
+    sku: Consumption (no Dedicated profile)
+    zone_redundant: false
+    count: 1
+    purpose: shared_runtime_env_for_all_4_surfaces
+    sufficiency: insufficient_structural
+    risk: HIGH (for production)
+    right_size_action: |
+      For production: add Dedicated workload profile (D4 or D8) for Odoo
+      primary, keep Consumption for web surfaces. Enable
+      zoneRedundant=true. Consumption-only is fine for dev; NOT
+      sufficient for prod SLO (99.5% availability target).
+    go_live_blocker: YES (zoneRedundant=false + Consumption-only for Odoo)
+
+  - group: runtime
+    service: container_app
+    resource: ipai-odoo-dev
+    sku_profile: Consumption
+    cpu: 1.0
+    memory: 2Gi
+    min_replicas: 1
+    max_replicas: 3
+    count: 1
+    purpose: odoo_erp_runtime
+    sufficiency: insufficient_undersized
+    risk: MEDIUM (dev), HIGH (prod)
+    right_size_action: |
+      For Odoo prod: move to Dedicated profile, cpu=2+, memory=4Gi+,
+      minReplicas>=2 for HA. Current 1/2Gi + min=1 cannot sustain Odoo
+      worker processes + background cron under load.
+    go_live_blocker: YES (cannot serve production Odoo reliably at current size)
+
+  - group: runtime
+    service: container_app
+    resource: ipai-website
+    cpu: 0.25
+    memory: 0.5Gi
+    min_replicas: 1
+    max_replicas: 3
+    count: 1
+    purpose: marketing_website (insightpulseai.com)
+    sufficiency: sufficient
+    risk: LOW
+
+  - group: runtime
+    service: container_app
+    resource: ipai-prismalab
+    cpu: 0.25
+    memory: 0.5Gi
+    min_replicas: 1
+    max_replicas: 3
+    count: 1
+    purpose: prismalab_domain_application
+    sufficiency: sufficient_for_early_access
+    risk: LOW
+
+  - group: runtime
+    service: container_app
+    resource: ipai-w9studio
+    cpu: 0.25
+    memory: 0.5Gi
+    min_replicas: 1
+    max_replicas: 3
+    count: 1
+    purpose: w9studio_business_unit_site
+    sufficiency: sufficient
+    risk: LOW
+
+  # ─────────────────────────────────────────────
+  # GROUP: networking
+  # ─────────────────────────────────────────────
+  - group: networking
+    service: azure_front_door
+    resource: "(none)"
+    sku: "(not provisioned)"
+    count: 0
+    purpose: routing_authority_and_edge_waf
+    sufficiency: missing
+    risk: CRITICAL
+    right_size_action: |
+      Provision Azure Front Door Standard (or Premium for WAF) before
+      go-live. Required for: path-based routing per
+      reference-platform-doctrine.yaml, TLS termination, caching,
+      DDoS protection at edge. Reference-platform-doctrine already
+      cites front-door-paths.yaml as the canonical routing SSOT —
+      the SSOT exists conceptually but no AFD resource backs it.
+    go_live_blocker: YES (no edge routing; ACA managed certs alone don't give WAF or path composition)
+
+  - group: networking
+    service: virtual_network
+    resource: vnet-ipai-dev-sea
+    count: 1
+    purpose: ipai_primary_vnet
+    sufficiency: sufficient
+    risk: LOW
+
+  - group: networking
+    service: private_endpoints
+    resources: [pe-ipai-dev-kv, pe-ipai-dev-search, pe-ipai-dev-pg]
+    count: 3
+    purpose: private_access_to_kv_search_pg
+    sufficiency: sufficient
+    risk: LOW
+    note: PEs for shared assets present; no PE on postgres flexible server (check public access)
+
+  # ─────────────────────────────────────────────
+  # GROUP: cache + realtime
+  # ─────────────────────────────────────────────
+  - group: cache_realtime
+    service: azure_cache_for_redis
+    resource: redis-ipai-dev-sea
+    sku: Basic C0
+    capacity: 0 (250MB)
+    replicas_per_master: 0
+    persistence: none
+    count: 1
+    purpose: session_cache_or_queue_cache
+    sufficiency: insufficient_structural
+    risk: HIGH (for production)
+    right_size_action: |
+      Basic C0 has no SLA, no persistence, no replica. For prod, move
+      to Standard C1 or Premium P1 (persistence + 99.9% SLA). Basic
+      is acceptable only for dev.
+    go_live_blocker: YES (no SLA; data loss on restart)
+
+  - group: cache_realtime
+    service: signalr
+    resource: sigr-ipai-dev-sea
+    sku: Free_F1
+    count: 1
+    purpose: realtime_push_for_ops_console
+    sufficiency: insufficient_structural
+    risk: HIGH (for production)
+    right_size_action: |
+      Free_F1 is 20 concurrent connections max + no SLA. For prod,
+      move to Standard_S1 (1000 concurrent, 99.9% SLA) minimum.
+    go_live_blocker: YES (cannot serve production concurrent users)
+
+  # ─────────────────────────────────────────────
+  # GROUP: ai
+  # ─────────────────────────────────────────────
+  - group: ai
+    service: azure_ai_foundry_project
+    resource: "(none — ipai-copilot-resource not yet provisioned)"
+    sku: "(not provisioned)"
+    count: 0
+    purpose: agent_runtime_model_deployment_scope
+    sufficiency: missing
+    risk: CRITICAL (for agent-platform go-live)
+    right_size_action: |
+      Provision Foundry project ipai-copilot-resource in
+      rg-ipai-dev-ai-sea per platform/ssot/ai/foundry-resource-model.yaml.
+      Deploy gpt-4.1 family deployment sized for initial tenant count
+      (default 30K TPM, scale after observed usage).
+    go_live_blocker: YES (agent-platform cannot register agents without Foundry project)
+
+  - group: ai
+    service: document_intelligence (form_recognizer)
+    resource: docai-ipai-dev
+    sku: S0
+    count: 1
+    purpose: doc_ingestion_for_finance_flows
+    sufficiency: sufficient
+    risk: LOW
+    right_size_action: monitor TPS; S0 supports commercial-tier usage
+
+  - group: ai
+    service: azure_ai_search
+    resource: srch-ipai-dev-sea
+    sku: basic
+    replica_count: 1
+    partition_count: 1
+    count: 1
+    purpose: retrieval_substrate_for_agent_platform
+    sufficiency: insufficient_undersized
+    risk: MEDIUM
+    right_size_action: |
+      Basic tier supports 2GB index + 3 replicas max. For prod with
+      multiple tenants, move to Standard S1 (25GB) with 2+ replicas for
+      query SLA. Keep 1 partition until index size warrants sharding.
+
+  - group: ai
+    service: azure_databricks
+    resource: dbw-ipai-dev
+    sku: premium
+    count: 1
+    purpose: analytics_engineering_plane_plus_unity_catalog
+    sufficiency: sufficient
+    risk: LOW
+    note: Premium tier required for Unity Catalog + cluster policies; correct choice
+
+  # ─────────────────────────────────────────────
+  # GROUP: registry
+  # ─────────────────────────────────────────────
+  - group: registry
+    service: container_registry
+    resource: acripaiodoo
+    sku: Basic
+    zone_redundancy: Disabled
+    geo_replication: none
+    count: 1
+    purpose: odoo_container_image_registry
+    sufficiency: insufficient_structural
+    risk: MEDIUM
+    right_size_action: |
+      Per package-and-artifact-topology.yaml, GHCR is now the default
+      container registry for web surfaces. Decide:
+      (a) keep acripaiodoo for odoo images only and stay Basic;
+      (b) promote to Premium if geo-replication needed;
+      (c) migrate odoo images to GHCR too and deprecate ACR.
+      Basic is fine for dev but has no geo-replication, no content trust.
+    go_live_blocker: NO (but forces architecture decision)
+
+  # ─────────────────────────────────────────────
+  # GROUP: security
+  # ─────────────────────────────────────────────
+  - group: security
+    service: key_vault
+    resource: kv-ipai-dev-sea
+    sku: standard
+    rbac_authorization: true
+    purge_protection: true
+    soft_delete: true
+    count: 1
+    purpose: secrets_store_for_all_workloads
+    sufficiency: sufficient
+    risk: LOW
+    right_size_action: >
+      Standard SKU is fine for software-key scenarios. Move to Premium
+      only if HSM-backed keys are required (e.g. BIR / PCI
+      compliance-mandated key storage).
+
+  - group: security
+    service: backup_vault
+    resource: bvault-ipai-dev-sea
+    count: 1
+    purpose: managed_backups_for_azure_workloads
+    sufficiency: present_but_not_configured
+    risk: HIGH
+    right_size_action: Verify backup policies are attached to PG + storage + ACA volumes
+
+  - group: security
+    service: managed_identities
+    resources: [id-ipai-dev, id-ipai-dev-agent, id-ipai-dev-data, id-ipai-dev-runtime, id-ipai-dev-pipeline, dbmanagedidentity]
+    count: 6
+    purpose: workload_specific_managed_identities
+    sufficiency: sufficient
+    risk: LOW
+    note: good separation of concern
+
+  - group: security
+    service: purview
+    resource: pv-ipai-dev-sea
+    sku: Standard
+    count: 1
+    purpose: data_catalog_and_governance
+    sufficiency: oversized_for_current_phase
+    risk: LOW (cost risk only)
+    right_size_action: |
+      Purview Standard exists but governance scope not yet established.
+      Either: (a) activate Unity Catalog + Purview integration now and
+      use it, or (b) suspend until analytics maturity reaches point of
+      value. Continuing to pay for unused capacity is budget waste.
+
+  # ─────────────────────────────────────────────
+  # GROUP: monitor
+  # ─────────────────────────────────────────────
+  - group: monitor
+    service: log_analytics_workspace
+    resources: [log-ipai-dev-sea, log-ipai-dev-data-sea, log-ipai-dev-agent-sea, log-ipai-dev-runtime-sea]
+    sku: PerGB2018 (pay-as-you-go)
+    retention:
+      log-ipai-dev-sea: 90d (no daily cap)
+      others: 30d (1GB/d daily cap)
+    count: 4
+    purpose: workload_segregated_telemetry
+    sufficiency: sufficient_but_segmentation_review_recommended
+    risk: LOW
+    right_size_action: |
+      4 workspaces is more than the canonical observability-and-telemetry
+      SSOT calls for. Canonical: single workspace (log-ipai-dev-runtime-sea).
+      Consolidate or document why segmentation is needed.
+
+  - group: monitor
+    service: application_insights
+    resources: [appi-ipai-dev, appi-ipai-dev-agent-sea, appi-ipai-dev-runtime-sea]
+    retention:
+      appi-ipai-dev: 90d
+      appi-ipai-dev-agent-sea: 365d
+      appi-ipai-dev-runtime-sea: 365d
+    count: 3
+    purpose: workload_telemetry
+    sufficiency: sufficient
+    risk: LOW
+
+  # ─────────────────────────────────────────────
+  # GROUP: event
+  # ─────────────────────────────────────────────
+  - group: event
+    service: event_hub_namespace
+    resource: Atlas-e613d16b-...
+    sku: Standard
+    count: 1
+    purpose: purview_atlas_managed_resource
+    sufficiency: sufficient
+    risk: LOW
+    note: managed by Purview, not user-created
+
+# -----------------------------------------------------------------------------
+# Go-live blockers summary (derived)
+# -----------------------------------------------------------------------------
+go_live_blockers:
+  critical:
+    - azure_front_door_not_provisioned (routing authority missing)
+    - azure_ai_foundry_project_not_provisioned (agent runtime blocked)
+  high_risk:
+    - postgres_ha_disabled (no zone-redundant HA + 7d backup retention + autogrow off)
+    - aca_env_zone_redundant_false_and_consumption_only (cannot hit 99.5% SLO)
+    - ipai_odoo_dev_aca_sized_for_dev_not_prod (cpu=1, mem=2Gi, min=1)
+    - redis_basic_c0 (no SLA, no persistence)
+    - signalr_free_f1 (20 connections max)
+  medium_risk:
+    - azure_ai_search_basic_sku (2GB index cap)
+    - acr_basic_no_geo_redundancy (decision pending GHCR migration)
+    - storage_account_proliferation (8 accounts; audit needed)
+  low_risk_or_informational:
+    - purview_oversized_for_current_phase
+    - multiple_log_analytics_workspaces_vs_canonical_single_workspace
+
+# -----------------------------------------------------------------------------
+# Aggregate counts
+# -----------------------------------------------------------------------------
+aggregate:
+  total_resources: 52
+  by_type:
+    container_apps: 4
+    storage_accounts: 8
+    managed_identities: 6
+    log_analytics_workspaces: 4
+    application_insights: 3
+    private_endpoints: 3
+    virtual_networks: 2
+    cache_redis: 1
+    postgresql_flexible_server: 1
+    container_registry: 1
+    cognitive_services: 1
+    databricks_workspace: 1
+    key_vault: 1
+    signalr: 1
+    purview: 1
+    backup_vault: 1
+    search_service: 1
+    azure_front_door: 0
+    ai_foundry_project: 0
+
+# -----------------------------------------------------------------------------
+# Sufficiency rollup
+# -----------------------------------------------------------------------------
+sufficiency_rollup:
+  sufficient: 10
+  insufficient_undersized: 3
+  insufficient_structural: 3
+  oversized: 1
+  missing: 2
+  not_evaluated: 33 (managed / non-SKU resources like NICs, NSGs, cert bindings)
+
+# -----------------------------------------------------------------------------
+# Verification commands (reproducibility)
+# -----------------------------------------------------------------------------
+verification_commands:
+  - az resource list --query "[].{name:name, type:type, sku:sku.name, tier:sku.tier, rg:resourceGroup}" -o json
+  - az postgres flexible-server show -n pg-ipai-odoo -g rg-ipai-data-sea
+  - az containerapp env show -n acae-ipai-dev-sea -g rg-ipai-dev-odoo-sea
+  - az containerapp show -n <name> -g rg-ipai-dev-odoo-sea --query "properties.template.scale"
+  - az redis show -n redis-ipai-dev-sea -g rg-ipai-dev-realtime
+  - az keyvault show -n kv-ipai-dev-sea
+  - az acr show -n acripaiodoo
+  - az search service show -n srch-ipai-dev-sea -g rg-ipai-dev-ai-sea
+
+# -----------------------------------------------------------------------------
+# Refresh cadence
+# -----------------------------------------------------------------------------
+refresh_cadence:
+  frequency: monthly_or_on_sku_change
+  owner: platform-architecture + finops
+  evidence_path: docs/evidence/<ts>/sku-bom-review/
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not treating resource existence as sufficiency
+  - not upgrading SKUs without justified workload need (oversizing wastes sponsorship)
+  - not letting go-live blockers slip without ADR
+  - not drifting SKU judgments into tribal knowledge (this SSOT is authoritative)
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/governance/observability-and-telemetry.yaml
+  - ssot/governance/finops-azure-cost-governance.yaml
+  - ssot/governance/saas-tenancy-model-pulser-for-odoo.yaml
+  - ssot/governance/reference-platform-doctrine.yaml
+  - platform/ssot/ai/foundry-resource-model.yaml
+  - platform/ssot/runtime/branch-environment-contract.yaml
+  - platform/ssot/azure/resource-inventory.dev.yaml
