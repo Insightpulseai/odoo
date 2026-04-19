@@ -1,0 +1,176 @@
+# =============================================================================
+# Claude Code Operating Standard Authority — SSOT
+# =============================================================================
+# Authority: canonical authority for the IPAI Claude Code operator handbook.
+#            Consolidates fragmented operator guidance into one unified
+#            standard with supporting lifecycle, headless, and subagent
+#            catalog documents.
+# Related:   docs/operating/CLAUDE_CODE_OPERATING_STANDARD.md
+#            docs/operating/SESSION_LIFECYCLE.md
+#            docs/operating/HEADLESS_AGENT_WORKFLOWS.md
+#            templates/claude/CLAUDE.md
+#            templates/claude/SUBAGENT_CATALOG.md
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-04-19"
+owner: "platform-architecture"
+status: canonical
+
+doctrine: >
+  IPAI is already beyond the "why agentic" stage. The gap was
+  standardization, packaging, and repeatable execution — not mindset,
+  spec-driven delivery, or governance. This artifact pack compresses
+  IPAI's existing maturity into one operator standard, addressing the
+  medium and high packaging gaps identified in the self-assessment.
+
+# -----------------------------------------------------------------------------
+# Gap analysis findings (from self-assessment)
+# -----------------------------------------------------------------------------
+gap_analysis:
+  low_gap_already_mature:
+    - repo_first_execution
+    - agentic_mindset
+    - sub_agent_concept
+    - ci_headless_automation
+    - mcp_tooling_awareness
+    - persistent_context_via_claude_md
+    - spec_driven_thinking
+
+  already_ahead:
+    - spec_driven_delivery (ssot + spec bundles + go-live gates)
+    - governance_and_authority_model (6 truth types separated)
+    - role_model (maker/judge/domain packs/release ops/identity ops)
+    - platform_architecture (Odoo + Azure + Foundry + Databricks + Entra)
+
+  medium_gap_addressed_by_this_pack:
+    - claude_code_operating_standard
+    - sub_agent_catalog_format
+    - session_lifecycle_conventions
+    - command_ritual_consistency
+    - headless_workflow_recipes
+    - onboarding_docs
+
+  high_gap_addressed_by_this_pack:
+    - one_canonical_playbook_for_contributors
+    - claude_focused_constitution_file_hierarchy
+    - standard_review_commit_flow
+    - standard_agent_relay_for_claude_code
+    - standard_prompt_rules_template_cloud_vs_local_vs_ci
+
+# -----------------------------------------------------------------------------
+# Artifact pack (5 files)
+# -----------------------------------------------------------------------------
+artifact_pack:
+
+  operating_standard:
+    path: docs/operating/CLAUDE_CODE_OPERATING_STANDARD.md
+    role: canonical_operator_handbook
+    contents:
+      - authority_order (9-level hierarchy)
+      - startup_routine (5-action checklist)
+      - planning_routine
+      - execution_routine
+      - validation_routine
+      - pr_commit_routine
+      - escalation_rules
+      - forbidden_shortcuts
+      - subagent_usage_rules
+      - tone_and_output
+      - deprecation_hygiene
+      - evidence_discipline
+      - tool_mcp_usage
+      - related_standards_crosswalk
+
+  session_lifecycle:
+    path: docs/operating/SESSION_LIFECYCLE.md
+    role: step_by_step_session_flow
+    contents:
+      - 8_step_flow: start → load_authority → inspect_repo → make_plan → execute → validate → summarize → commit_or_handoff
+      - headless_variant
+      - subagent_variant
+      - anti_patterns_table
+
+  headless_agent_workflows:
+    path: docs/operating/HEADLESS_AGENT_WORKFLOWS.md
+    role: ci_and_scheduled_agent_workflows
+    contents:
+      - 9_canonical_workflows (triage, PR review, release notes, blocker summary, drift, evidence, SSO health, eval gate, contract checks)
+      - azure_pipelines_canonical
+      - gha_scoped_exception_boundary
+      - per_workflow_steps_and_forbidden_actions
+
+  claude_md_starter_template:
+    path: templates/claude/CLAUDE.md
+    role: repo_starter_template
+    contents:
+      - project_identity
+      - architecture_summary
+      - source_of_truth_map
+      - coding_conventions
+      - test_expectations
+      - deployment_rules
+      - safety_rules
+      - approval_boundaries
+      - agent_commands
+      - operating_standard_link
+      - commit_convention
+      - deprecated_list_pointer
+
+  subagent_catalog:
+    path: templates/claude/SUBAGENT_CATALOG.md
+    role: canonical_list_of_available_subagents_by_role
+    contents:
+      - when_to_use_subagent
+      - maker_agents_table
+      - judge_agents_table
+      - research_investigation_agents
+      - platform_specific_agents
+      - support_ux_writing_agents
+      - dispatch_pattern_example
+      - forbidden_usage
+      - ipai_specific_notes
+
+# -----------------------------------------------------------------------------
+# What this pack IS NOT
+# -----------------------------------------------------------------------------
+non_goals:
+  - not a replacement for CLAUDE.md (this complements with operator-level detail)
+  - not a replacement for individual SSOT files (this references them)
+  - not adopted as rigid process (solo-ops scale prefers clear rules)
+  - not a marketing artifact (internal operator standard only)
+  - not adopted from external Claude Code book/playbook wholesale
+  - not a substitute for .claude/rules/*.md (those are path-scoped; this is repo-wide)
+
+# -----------------------------------------------------------------------------
+# Packaging verdict
+# -----------------------------------------------------------------------------
+packaging_verdict:
+  external_playbook_value: low_for_concepts (IPAI is ahead)
+  external_playbook_value_for_packaging: medium
+  internal_pack_value: high_as_the_consolidation
+  recommendation: treat_external_claude_code_books_as_reference_only_not_foundation
+
+# -----------------------------------------------------------------------------
+# Usage rule
+# -----------------------------------------------------------------------------
+usage_rule:
+  every_new_repo: copy templates/claude/CLAUDE.md + link to operating standard
+  every_session: read authority per operating standard §1 before acting
+  every_subagent_dispatch: reference SUBAGENT_CATALOG.md for role match
+  every_ci_workflow: follow HEADLESS_AGENT_WORKFLOWS.md patterns
+  every_commit: conventional commits + Co-Authored-By trailer
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  claude_md_repo_root: CLAUDE.md
+  claude_md_global: ~/.claude/CLAUDE.md
+  operating_standard: docs/operating/CLAUDE_CODE_OPERATING_STANDARD.md
+  session_lifecycle: docs/operating/SESSION_LIFECYCLE.md
+  headless_workflows: docs/operating/HEADLESS_AGENT_WORKFLOWS.md
+  starter_template: templates/claude/CLAUDE.md
+  subagent_catalog: templates/claude/SUBAGENT_CATALOG.md
+  unified_capability_template: spec/_templates/unified-capability-template.md
+  planning_authority_map: ssot/governance/planning-surface-authority-map.yaml
