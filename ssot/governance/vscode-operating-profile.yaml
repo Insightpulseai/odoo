@@ -19,6 +19,109 @@ target_baseline: vs_code_1_116_0_or_later
 upstream_release_date: "2026-04-15"
 
 # -----------------------------------------------------------------------------
+# Channel strategy
+# -----------------------------------------------------------------------------
+channel_strategy:
+  primary: vscode_stable_1_116
+  primary_use: daily_driver_for_all_normal_work
+  secondary: vscode_insiders
+  secondary_use: only_for_vs_code_agents_companion_app_parallel_sessions
+  do_not:
+    - adopt_insiders_as_default
+    - run_production_critical_coding_on_insiders_builds
+
+# -----------------------------------------------------------------------------
+# Agent surface split (3 lanes)
+# -----------------------------------------------------------------------------
+agent_surfaces:
+  local_repo_work:
+    tool: vscode_chat_and_terminal_1_116_stable
+    use_for: [implementation, refactors, test_debug_loops, terminal_workflows, pr_preparation]
+  parallel_work:
+    tool: vscode_agents_app_insiders_preview
+    use_for: [multi_repo_or_multi_worktree_parallel_tasks, isolated_changesets, review_several_agent_outputs_in_parallel]
+    ipai_posture: evaluate_not_adopt_as_default
+  headless_automation:
+    tool: github_actions_scoped_exception_plus_azure_pipelines
+    use_for: [issue_triage, pr_summaries, code_review_automation, release_notes, repetitive_compliance_reporting_loops]
+
+# -----------------------------------------------------------------------------
+# Core modes
+# -----------------------------------------------------------------------------
+core_modes:
+  default_mode: repo_first
+  planning_mode: explicit
+  review_mode: inline_diff_first
+  terminal_mode: foreground_terminal_enabled_with_constraints
+  browser_mode: integrated_browser_enabled_for_allowed_domains_only
+
+# -----------------------------------------------------------------------------
+# Customization sources (persist across sessions)
+# -----------------------------------------------------------------------------
+customization_sources:
+  - workspace_instructions (CLAUDE.md + .claude/rules/*.md)
+  - custom_agents (per templates/claude/SUBAGENT_CATALOG.md)
+  - mcp_servers (per .mcp.json + ssot/governance/mcp-allowlist.yaml)
+  - hooks (per platform/ssot/agents/pulser-hook-lifecycle.yaml)
+  - prompt_files (spec/_templates/ + agents/)
+
+# -----------------------------------------------------------------------------
+# Canonical settings.json snippet
+# -----------------------------------------------------------------------------
+canonical_settings_snippet:
+  format: json
+  content: |
+    {
+      "github.copilot.chat.agentDebugLog.fileLogging.enabled": true,
+      "chat.tools.terminal.backgroundNotifications": true,
+      "workbench.browser.enableChatTools": true,
+      "chat.agent.networkFilter": true
+    }
+  rationale:
+    agentDebugLog: "Debug logs make agent behavior reviewable (redact secrets before committing to evidence)"
+    backgroundNotifications: "Terminal notifications reduce polling friction during long-running agent tool calls"
+    browser_enableChatTools: "Browser tools are useful, but only if governed by networkFilter"
+    networkFilter: "Enterprise safety rail — enforces deprecation list at the editor layer"
+
+# -----------------------------------------------------------------------------
+# Use-case matrix (3-surface mapping)
+# -----------------------------------------------------------------------------
+use_case_matrix:
+  editor_1_116:
+    fits_best_for:
+      - implementation
+      - refactors
+      - test_debug_loops
+      - terminal_driven_workflows
+      - quick_pr_preparation
+  agents_companion_app_insiders:
+    fits_best_for:
+      - parallel_task_farms
+      - multi_worktree_exploration
+      - delegated_reviews
+      - high_volume_issue_or_pr_execution
+  ci_headless_agents:
+    fits_best_for:
+      - issue_triage
+      - pr_summaries
+      - code_review_automation
+      - release_notes
+      - repetitive_compliance_or_reporting_loops
+    canonical_ci: azure_pipelines_with_gha_scoped_exception_per_claude_md
+
+# -----------------------------------------------------------------------------
+# Truth-plane alignment (consolidates across SSOTs)
+# -----------------------------------------------------------------------------
+truth_plane_alignment:
+  code_and_pr_truth: github
+  planning_truth: azure_boards
+  release_truth: azure_pipelines
+  editor_runtime_primary_surface: vscode_1_116
+  editor_runtime_parallel_surface: vscode_agents_app_insiders
+  tool_bridge: mcp
+  controlled_network_access: org_policy_chat_agent_networkFilter_plus_allow_deny_lists
+
+# -----------------------------------------------------------------------------
 # Features adopted / restricted
 # -----------------------------------------------------------------------------
 features:
