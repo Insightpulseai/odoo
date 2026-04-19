@@ -162,10 +162,10 @@ red_flags:
 # -----------------------------------------------------------------------------
 metrics:
   track:
-    - line_count_of_ipai_star_modules_over_time (target: flat or shrinking)
-    - oca_module_adoption_count (target: grow before ipai_star grows)
-    - avm_module_usage_count (target: grow)
-    - fork_count (target: 0; tolerance: < 5 active forks with retirement plans)
+    - "line_count_of_ipai_star_modules_over_time (target: flat or shrinking)"
+    - "oca_module_adoption_count (target: grow before ipai_star grows)"
+    - "avm_module_usage_count (target: grow)"
+    - "fork_count (target: 0; tolerance: < 5 active forks with retirement plans)"
   review_cadence: quarterly
 
 # -----------------------------------------------------------------------------
