@@ -1442,3 +1442,85 @@ addenda_2026_04_15:
       - ssot/governance/azure-sku-bom-sufficiency.yaml
       - ssot/governance/finops-azure-cost-governance.yaml
       - ssot/governance/github-actions-azure-oidc-policy.yaml (scoped GHA role in ALZ CI/CD)
+
+
+  # ───── Correction 2026-04-19 — ALZ bootstrap is low-code, real blocker is subscription count ─────
+
+  - upstream_correction: Azure/ALZ-IaC-Accelerator (bootstrap posture correction)
+    url: https://azure.github.io/Azure-Landing-Zones/bootstrap/
+    applies_to: previous_entry_for_Azure/ALZ-IaC-Accelerator (see above)
+    correction_type: reframe_not_replace
+
+    prior_framing_to_correct: |
+      Earlier framing implied ALZ activation would be a heavy custom
+      engineering project. That framing was wrong. Bootstrap is a
+      guided low-code 4-phase workflow (Planning → Prerequisites →
+      Bootstrap → Run). Users provide configuration inputs; the
+      accelerator generates IaC + CI/CD pipelines automatically.
+
+    actual_bootstrap_flow:
+      phase_0_planning: choose IaC language (Bicep or Terraform) + VCS (GitHub or Azure DevOps)
+      phase_1_prerequisites:
+        - create_4_azure_subscriptions_minimum (management, connectivity, identity, security)
+        - obtain_billing_permissions
+        - configure_authentication (user account or service principal)
+        - assign_owner_on_management_groups_and_subs
+        - assign_user_access_administrator_at_root (for Bicep path)
+      phase_2_bootstrap: run_powershell_module — tool provisions IaC + CI/CD pipelines automatically
+      phase_3_run: trigger CI/CD pipelines to deploy landing zone
+
+    user_provides:
+      - subscription_ids_for_the_4_platform_subscriptions
+      - naming_convention_choices
+      - policy_initiative_choices
+      - region_choices
+    tool_generates:
+      - iac_code (Bicep or Terraform)
+      - ci_cd_pipelines
+      - pipeline_service_connections
+      - initial_deployment
+
+    actual_ipai_blocker:
+      real_constraint: ipai_has_2_azure_subscriptions_not_4
+      subscriptions_today:
+        - microsoft_azure_sponsorship (eba824fb — active ISV-sponsored)
+        - azure_subscription_1 (536d8cf6 — secondary, minimal use)
+      subscriptions_required_for_canonical_alz_bootstrap:
+        - management_subscription
+        - connectivity_subscription
+        - identity_subscription
+        - security_subscription
+      implication: |
+        The blocker is NOT "bootstrap is too complex" — it is "IPAI's
+        2-subscription footprint cannot accommodate canonical 4-platform-
+        subscription ALZ layout." ALZ activation timing depends on
+        subscription provisioning, not engineering capacity.
+
+    revised_phased_ladder:
+      phase_1_now:
+        action: no_alz_bootstrap (not a coding decision — a subscription-count decision)
+        rationale: IPAI has 2 subs; ALZ expects 4 minimum
+        instead_do: consume AVM modules + ALZ naming/tagging vocabulary in infra/
+      phase_2_post_sponsorship_subscription_arrival:
+        trigger: ipai_provisions_paid_azure_subscriptions (per finops-azure-cost-governance.yaml post-sponsorship plan)
+        action: evaluate_4_sub_layout_and_run_bootstrap_phase_1
+        delivery_shape: guided_low_code (run PowerShell bootstrap, answer config prompts)
+        engineering_effort_estimate: hours-to-days, not weeks
+      phase_3_post_first_paying_tenant:
+        trigger: customer_tenancy_requires_per_tenant_subscription_per_saas-tenancy-model
+        action: extend bootstrap with subscription-vending pattern
+      phase_4_at_scale:
+        trigger: more_than_10_subscriptions
+        action: full_alz_aligned_mg_and_policy_and_subscription_vending
+
+    key_insight_to_internalize: |
+      ALZ activation is a subscription-provisioning + configuration-input
+      exercise, not a custom-coding exercise. When the subscription
+      prerequisites are in place, bootstrap is a day-scale activity, not
+      a sprint-scale one. Plan activation timing around the post-
+      sponsorship subscription arrival, not around engineering capacity.
+
+    cross_reference:
+      - ssot/governance/finops-azure-cost-governance.yaml (sponsorship expiry + post-sponsorship plan)
+      - ssot/identity/m365-mca-billing-account.yaml (MCA billing for paid subs)
+      - ssot/governance/saas-tenancy-model-pulser-for-odoo.yaml (per-tenant subscription pattern)
