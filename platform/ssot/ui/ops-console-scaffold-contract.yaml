@@ -1,0 +1,150 @@
+version: 1
+kind: ops_console_scaffold_contract
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture
+
+# -----------------------------------------------------------------------------
+# Decision record (IMMEDIATE IRREVERSIBLE CHOICES)
+# -----------------------------------------------------------------------------
+decision_record:
+  repo_path: web/ops-console/
+  base_template:
+    upstream: Blazity/next-enterprise
+    adoption_mode: clone_and_strip (per minimize-custom-code L3 fork_adapt)
+    retirement_criteria: "track upstream only if Blazity maintains Azure-compat; otherwise treat as frozen baseline"
+  framework: nextjs_15_app_router_strict_typescript
+  charts: recharts (NOT visx)
+  theme: next_themes (NOT jotai)
+  auth: "@azure/msal-react + @azure/msal-browser"
+  data_fetching: tanstack_query
+  live_logs: "@microsoft/signalr"
+  ui_library: shadcn_ui
+  test: [vitest, playwright, storybook]
+  observability: opentelemetry_instrumentation_hook
+  package_manager: pnpm
+  deploy_target: azure_container_apps
+  deploy_authority: azure_pipelines (per CLAUDE.md)
+  docker_mode: standalone_output
+
+# -----------------------------------------------------------------------------
+# Strip list (remove from Blazity baseline)
+# -----------------------------------------------------------------------------
+strip_list:
+  - all_aws_specific_files_and_configs
+  - all_terraform_files (IPAI is Bicep-primary)
+  - ".github/workflows/*" (replaced with azure-pipelines.yml)
+  - vercel_specific_files (Vercel deprecated 2026-04-07)
+  - github_copilot_opinionated_pipeline_bits
+
+# -----------------------------------------------------------------------------
+# Deferred (DO NOT adopt now)
+# -----------------------------------------------------------------------------
+deferred:
+  - visx (revisit after Branches + Builds ship + dark mode passes)
+  - exotic_microfrontend_composition
+  - deep_dashboard_polish
+  - custom_chart_aesthetic_system
+  - xstate_for_complex_state_machines (use TanStack Query state first)
+
+# -----------------------------------------------------------------------------
+# Milestone — the actual target
+# -----------------------------------------------------------------------------
+milestone:
+  name: first_deployable_authenticated_branches_screen_on_aca
+  not: scaffold_done
+  proves:
+    - shell
+    - auth
+    - api_contract
+    - environment_deployability
+    - design_direction
+    - operator_usefulness
+
+# -----------------------------------------------------------------------------
+# Scope (minimum viable)
+# -----------------------------------------------------------------------------
+scope_minimum_viable:
+  branches_screen:
+    fields_displayed: [branch_name, latest_commit_sha_short, status_dot, last_deployed_env, last_deploy_time]
+    data_source: typed_mock_data (no real API call yet)
+    auth_required: msal_login_redirect_if_not_signed_in
+    dark_mode_toggle: working
+    keyboard_accessible: focus_ring_plus_enter_to_drill (drill destination stubbed)
+    playwright_smoke_test: required_passing
+
+  docker_aca_readiness:
+    next_config_output: standalone
+    dockerfile: multi_stage_non_root_port_3000
+    health_endpoint: /api/health
+
+# -----------------------------------------------------------------------------
+# Verification gates (CI contract)
+# -----------------------------------------------------------------------------
+verification:
+  required_passing:
+    - pnpm_install
+    - pnpm_build_standalone_output
+    - pnpm_test (vitest unit tests)
+    - pnpm_lint (eslint + typescript-eslint strict)
+    - pnpm_tsc_no_emit (type check)
+    - docker_build_locally
+    - playwright_smoke_against_dev_server
+
+# -----------------------------------------------------------------------------
+# Forbidden in this scaffold
+# -----------------------------------------------------------------------------
+forbidden:
+  - visx_xstate_jotai_or_deep_chart_aesthetics
+  - github_actions_workflows (use azure-pipelines.yml per CLAUDE.md)
+  - aws_or_terraform_leftover_files
+  - polish_beyond_what_is_needed_for_branches_page
+  - inline_msal_secrets (env vars + .env.example only)
+  - new_ssot_files_created_by_subagent (main session owns architecture SSOTs)
+
+# -----------------------------------------------------------------------------
+# Azure alignment (from platform/ssot/azure/resource-inventory.dev.yaml)
+# -----------------------------------------------------------------------------
+azure_alignment:
+  container_app_target: ipai-ops-console (new ACA; name per infra/ azure BOM addition)
+  container_apps_environment: acae-ipai-dev-sea (shared)
+  container_registry: acripaiodoo (shared)
+  managed_identity: id-ipai-dev-runtime (shared apps MI)
+  key_vault: kv-ipai-dev-sea (MSAL client id via Key Vault reference; not inline)
+  app_insights: appi-ipai-dev-runtime-sea (shared)
+  auth_tenant: 402de71a-87ec-4302-a609-fb76098d1da7
+
+# -----------------------------------------------------------------------------
+# Related SSOTs
+# -----------------------------------------------------------------------------
+related:
+  odoo_cloud_platform_spec: spec/odoo-cloud-platform/
+  platform_bom: platform/ssot/architecture/odoo-cloud-platform-bom.yaml
+  branch_env_contract: platform/ssot/runtime/branch-environment-contract.yaml
+  release_gates: platform/ssot/release/odoo-cloud-release-gates.yaml
+  minimize_custom_code: ssot/governance/minimize-custom-code-doctrine.yaml
+  github_azure_chain: platform/ssot/architecture/github-azure-chain.yaml
+  vscode_operating_profile: ssot/governance/vscode-operating-profile.yaml
+  app_surface_topology: platform/ssot/org/app-surface-and-mcp-topology.yaml
+  resource_inventory: platform/ssot/azure/resource-inventory.dev.yaml
+
+# -----------------------------------------------------------------------------
+# Follow-up work (after Branches ships)
+# -----------------------------------------------------------------------------
+follow_up_work_ordered:
+  - builds_matrix_screen (branches down, stages across, status dots)
+  - databases_screen (pg-ipai-odoo transparency)
+  - logs_screen (terminal aesthetic, live pulse via signalr)
+  - dark_mode_pass (token swap)
+  - error_states (failed build drilldown, cert expiring banner, PITR restore, rate-limit, degraded-mode)
+  - aca_replicas_card_split (one card per env, not 3/1/1 composite)
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not a_vercel_deployment (deprecated)
+  - not_a_multi_tenant_saas_shell_yet
+  - not_deep_chart_styling_in_first_iteration
+  - not_aws_or_gcp_deployable
+  - not_using_github_actions_for_deploy (Azure Pipelines only)
