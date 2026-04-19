@@ -1,0 +1,222 @@
+version: 1
+kind: microsoft_partner_marketing_campaign_relevance
+status: canonical
+last_updated: "2026-04-19"
+owner: gtm + platform-architecture
+source: "Microsoft Partner Marketing Center — AI Business Solutions partner campaigns catalogue"
+
+doctrine: >
+  Microsoft Partner Marketing Center offers ready-to-use campaign assets
+  aligned to Microsoft product motions. Most of the AI Business Solutions
+  campaigns target Dynamics 365 / Business Central / Power Platform /
+  SMB Copilot reseller motions that conflict with IPAI's Odoo-CE-first
+  + Pulser-as-canonical-agent-layer doctrine. A narrow subset is
+  adoptable as either reusable narrative scaffolding or selective
+  services attach. This SSOT classifies each campaign explicitly.
+
+parent_ssots:
+  - ssot/governance/partner-program-authority.yaml
+  - ssot/governance/smb-copilot-services-motion.yaml
+  - ssot/governance/microsoft-365-e7-and-agent-365-opportunity.yaml
+  - ssot/governance/reference-platform-doctrine.yaml
+
+# -----------------------------------------------------------------------------
+# Campaign relevance matrix (18 campaigns)
+# -----------------------------------------------------------------------------
+campaigns:
+
+  - name: ai_powered_marketing_experiences
+    purpose: ai_assisted_campaign_delivery_and_execution
+    ipai_disposition: evaluate
+    leverage: medium
+    rationale: marketing automation assist is useful for Pulser GTM without Microsoft product tie
+
+  - name: partner_success_kit_ai_business_solutions
+    purpose: skilling_and_marketing_tools
+    ipai_disposition: reference_only
+    leverage: low
+    rationale: consume relevant skilling sections; do not adopt Microsoft-first-party messaging wholesale
+
+  - name: microsoft_365_copilot_business
+    purpose: m365_copilot_business_enablement_for_all_users
+    ipai_disposition: deferred
+    leverage: low
+    rationale: Microsoft Copilot reseller motion — not IPAI primary; see smb-copilot-services-motion.yaml
+
+  - name: innovate_with_low_code_ai_and_agents
+    purpose: power_platform_driven_ai_transformation
+    ipai_disposition: excluded
+    leverage: none
+    rationale: Power Platform is bounded per power-platform-adoption.yaml; not a customer-delivery motion for IPAI
+
+  - name: service_transformation_with_ai
+    purpose: transform_service_delivery_with_ai
+    ipai_disposition: evaluate
+    leverage: medium
+    rationale: narrative scaffolding potentially reusable for Pulser finance + ops copilot positioning
+
+  - name: accelerate_csp_renewals
+    purpose: m365_renewal_uplift_for_csp_partners
+    ipai_disposition: deferred
+    leverage: none
+    rationale: CSP motion not active for IPAI; triggered only when CSP enrollment happens
+
+  - name: secure_ai_productivity_smb
+    purpose: unified_ai_powered_security_operations_for_smb
+    ipai_disposition: deferred
+    leverage: low
+    rationale: SMB Copilot security attach — follows smb-copilot-services-motion.yaml triggers
+
+  - name: automate_business_processes_with_agents
+    purpose: agent_led_business_process_automation
+    ipai_disposition: adopt_narrative_not_assets
+    leverage: high
+    rationale: closest narrative fit to Pulser value proposition; extract messaging + customer-proof patterns; do NOT adopt Microsoft-Copilot-specific assets
+
+  - name: agentic_sales
+    purpose: enhance_customer_experience_and_close_more_deals_via_agents
+    ipai_disposition: evaluate
+    leverage: medium
+    rationale: Pulser has a shared/sales pack per pulser-pack-matrix; narrative fit if IPAI ever ships sales-specific agents for Odoo CRM
+
+  - name: business_central_for_smb
+    purpose: dynamics_365_business_central_smb_erp
+    ipai_disposition: excluded
+    leverage: none
+    rationale: Business Central competes with Odoo CE; doctrine conflict
+
+  - name: erp_transformation_with_ai
+    purpose: dynamics_365_plus_ai_agents_for_erp
+    ipai_disposition: adopt_narrative_not_assets
+    leverage: high
+    rationale: narrative fit (intelligent ERP + agents IS Pulser's thesis); extract positioning but swap D365 → Odoo + Azure Foundry
+    critical_note: must_not_imply_dynamics_365_adoption_by_ipai
+
+  - name: move_to_cloud_with_microsoft_365_office_eos
+    purpose: office_end_of_support_migration
+    ipai_disposition: excluded
+    leverage: none
+    rationale: M365 migration is not IPAI's offering surface
+
+  - name: its_time_for_business
+    purpose: indirect_partner_copilot_plus_security_opportunity
+    ipai_disposition: deferred
+    leverage: low
+    rationale: indirect partner framing; not IPAI primary
+
+  - name: dragon_copilot_customer_evidence
+    purpose: dragon_copilot_healthcare_case_studies
+    ipai_disposition: excluded
+    leverage: none
+    rationale: vertical-specific (healthcare); not IPAI customer segment
+
+  - name: security_and_compliance_smb
+    purpose: enable_security_and_compliance_for_smb
+    ipai_disposition: deferred
+    leverage: low
+    rationale: SMB security attach — pair with smb-copilot-services-motion.yaml triggers if ever activated
+
+  # Catalogue notes — these appear in "More like this" and may not be distinct ABS campaigns
+  - name: partner_marketing_center_pro
+    purpose: advanced_tier_with_ai_assisted_planning_and_asset_library
+    ipai_disposition: evaluate
+    leverage: medium
+    rationale: paid upgrade to Marketing Center; evaluate after first successful Pulser campaign is run
+    cost_watch: subscription_evaluation_required
+    cross_reference: ssot/governance/finops-azure-cost-governance.yaml
+
+# -----------------------------------------------------------------------------
+# Disposition tally
+# -----------------------------------------------------------------------------
+tally:
+  adopt_narrative_not_assets: 2 (automate_business_processes_with_agents + erp_transformation_with_ai)
+  evaluate: 4 (ai_powered_marketing, service_transformation_with_ai, agentic_sales, partner_marketing_center_pro)
+  reference_only: 1 (partner_success_kit)
+  deferred: 5 (m365_copilot_business, accelerate_csp_renewals, secure_ai_productivity_smb, its_time_for_business, security_and_compliance_smb)
+  excluded: 4 (innovate_with_low_code, business_central_for_smb, move_to_cloud_office_eos, dragon_copilot)
+  total: 16 primary campaigns classified
+
+# -----------------------------------------------------------------------------
+# Asset reuse rules (critical — prevents brand confusion)
+# -----------------------------------------------------------------------------
+asset_reuse_rules:
+
+  narrative_adoption_allowed:
+    - extract_positioning_themes (governed AI adoption, agent-led automation, outcome-first conversations)
+    - reuse_outcome_framing (productivity, efficiency, cost control, innovation without risk)
+    - reuse_market_data_with_citation (Forrester / IDC stats already in smb-copilot-services-motion.yaml)
+
+  asset_adoption_forbidden:
+    - do_not_reuse_assets_implying_microsoft_copilot_resell
+    - do_not_reuse_assets_implying_dynamics_365_adoption
+    - do_not_reuse_assets_implying_business_central_or_power_platform_as_ipai_product
+    - do_not_cobrand_with_microsoft_without_explicit_authorization
+    - do_not_claim_microsoft_partner_designations_not_yet_earned
+
+  brand_discipline:
+    ipai_name_when_facing_microsoft_ecosystem: Dataverse IT Consultancy (registered entity; see isv-success-program-engagement.yaml)
+    ipai_name_when_facing_customers: InsightPulseAI (IPAI)
+    product_name: Pulser for Odoo
+    never_imply:
+      - IPAI_is_microsoft_subsidiary_or_reseller_without_csp_enrollment
+      - Pulser_runs_on_microsoft_dynamics
+      - Pulser_is_a_microsoft_copilot_extension (it runs on Foundry; see microsoft-365-e7-and-agent-365-opportunity.yaml for the Agent 365 SDK path if pursued later)
+
+# -----------------------------------------------------------------------------
+# Priority extraction queue (narrative-only, per adopt_narrative_not_assets)
+# -----------------------------------------------------------------------------
+priority_extraction_queue:
+  first:
+    campaign: automate_business_processes_with_agents
+    extract:
+      - customer_pain_themes_on_repetitive_work
+      - proof_patterns_for_agent_led_automation
+      - adoption_and_change_management_framing
+    apply_to: pulser_marketplace_listing + pulser_pitch_deck
+  second:
+    campaign: erp_transformation_with_ai
+    extract:
+      - intelligent_erp_narrative
+      - agent_plus_erp_integration_value_proposition
+    apply_to: pulser_for_odoo_positioning (swap D365 → Odoo CE + Azure Foundry)
+    critical_guardrail: do_not_imply_d365_adoption_anywhere_in_derivatives
+
+# -----------------------------------------------------------------------------
+# Success criteria
+# -----------------------------------------------------------------------------
+success_criteria:
+  - id: MPMC-1
+    description: Zero published IPAI marketing materials imply D365 / Business Central / Power Platform as IPAI product
+    target: 0 violations
+    measurement: marketing_content_review
+  - id: MPMC-2
+    description: Narrative extractions from Microsoft campaigns properly attribute source where material data reused
+    target: 100% proper attribution
+    measurement: content_review
+  - id: MPMC-3
+    description: Partner Marketing Center Pro decision made before second major Pulser campaign
+    target: decision_recorded_in_docs_gtm
+    measurement: decision_artifact_presence
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not reusing Microsoft-first-party assets as IPAI assets
+  - not implying IPAI sells Microsoft products IPAI doesn't resell
+  - not subscribing to Partner Marketing Center Pro without first extracting value from free Marketing Center
+  - not activating deferred campaigns without the trigger conditions in parent SSOTs
+  - not co-branding with Microsoft without explicit authorization per Microsoft partner trademark rules
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/governance/partner-program-authority.yaml
+  - ssot/governance/smb-copilot-services-motion.yaml
+  - ssot/governance/microsoft-365-e7-and-agent-365-opportunity.yaml
+  - ssot/governance/isv-success-program-engagement.yaml
+  - ssot/governance/reference-platform-doctrine.yaml
+  - ssot/governance/power-platform-adoption.yaml
+  - docs/gtm/partner_center_checklist.md
+  - docs/gtm/marketplace_research_brief.md
