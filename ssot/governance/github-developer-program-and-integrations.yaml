@@ -1,0 +1,200 @@
+version: 1
+kind: github_developer_program_and_integration_types
+status: canonical
+last_updated: "2026-04-19"
+owner: platform-architecture + gtm
+source: "GitHub Docs — Integrations → About building integrations + GitHub Developer Program"
+
+doctrine: >
+  GitHub integrations are classified by type (GitHub App, Actions
+  workflow, custom action). IPAI's default integration primitive is
+  GitHub Apps. OAuth apps are restricted. Custom actions published to
+  Marketplace follow the Actions Marketplace publishing SSOT. Enrolling
+  in the GitHub Developer Program is a GTM-layer decision tied to
+  Marketplace publishing readiness, not a technical prerequisite.
+
+parent_ssots:
+  - ssot/governance/github-integration-model.yaml
+  - ssot/governance/github-identity-and-oauth.yaml
+  - ssot/governance/github-actions-marketplace-publishing.yaml
+  - ssot/governance/partner-program-authority.yaml
+
+# -----------------------------------------------------------------------------
+# Integration types (GitHub canonical)
+# -----------------------------------------------------------------------------
+integration_types:
+
+  github_app:
+    description: integration_running_on_app_owner_server_or_user_device
+    auth: installation_tokens + optional_user_tokens
+    scope: install_per_org_or_per_repo
+    rate_limits: higher_than_oauth_or_pat
+    ipai_posture: preferred_default_for_all_automation_requiring_github_access
+    cross_reference: ssot/governance/github-integration-model.yaml
+
+  github_actions_workflow:
+    description: yaml_defined_automation_running_inside_the_repo
+    scope: per_repo (can call reusable workflows from other repos)
+    ipai_posture: scoped_use_per_gha-scoped-exception.yaml
+    cross_reference:
+      - ssot/governance/gha-scoped-exception.yaml
+      - ssot/governance/github-actions-workflow-authoring-doctrine.yaml
+
+  custom_action:
+    description: reusable_code_callable_from_workflows
+    types:
+      - javascript_action
+      - docker_container_action
+      - composite_action
+    ipai_posture:
+      - build_composite_actions_first (no extra dependencies)
+      - publish_to_Insightpulse-ai_actions_repos_only_under_narrow_scope_per_marketplace_publishing_ssot
+    cross_reference: ssot/governance/github-actions-marketplace-publishing.yaml
+
+# -----------------------------------------------------------------------------
+# API surfaces (reference)
+# -----------------------------------------------------------------------------
+api_surfaces:
+  rest:
+    purpose: standard_admin_and_write_plane
+    cross_reference: ssot/governance/github-org-admin-api-matrix.yaml
+  graphql:
+    purpose: selective_domain_mutations (e.g. verifiable domains)
+    cross_reference: ssot/governance/github-org-admin-api-matrix.yaml
+  webhooks:
+    purpose: event_subscription_plane (never_a_settings_write_plane)
+    cross_reference: ssot/governance/github-org-admin-api-matrix.yaml
+
+# -----------------------------------------------------------------------------
+# IPAI integration classification (how IPAI uses each type)
+# -----------------------------------------------------------------------------
+ipai_integration_classification:
+
+  github_apps:
+    ipai_use_cases:
+      - repo_automation_and_pr_bots
+      - deploy_protection_rules (per github-actions-deployment-environments.yaml)
+      - claude_code_github_action_authentication (per claude-code-operating-model.yaml)
+      - pulser_mutating_agent_gateway (zero-secret pattern)
+      - copilot_coding_agent_validation (when adopted)
+    registration_requirements:
+      - app_registered_under_Insightpulse-ai_org_only
+      - narrow_permission_scope (contents, issues, pull_requests, id-token as needed)
+      - private_key_stored_in_azure_key_vault
+      - webhook_secret_stored_in_azure_key_vault
+
+  oauth_apps:
+    ipai_posture: restricted_by_default (per github-identity-and-oauth.yaml)
+    allowed_exceptions:
+      - okta_scim_integration (conditional on scim provider choice)
+
+  personal_access_tokens:
+    ipai_posture: minimized
+    allowed_only_for: ad_hoc_operator_ops
+    forbidden:
+      - pat_checked_into_repo
+      - pat_used_as_automation_principal
+
+# -----------------------------------------------------------------------------
+# GitHub Developer Program
+# -----------------------------------------------------------------------------
+github_developer_program:
+
+  eligibility:
+    - integration_in_production_or_development_using_github_api
+    - support_email_published
+
+  ipai_eligibility_status:
+    integration_in_development: true
+    support_email_candidate: platform@insightpulseai.com (to be confirmed)
+    registration_pending: true
+
+  ipai_decision_gate:
+    enroll_when:
+      - first_ipai_published_github_app_or_action_lands
+      - support_email_is_live_and_monitored
+      - gtm_aligns_program_benefits_with_marketplace_motion
+    do_not_enroll_prematurely_because:
+      - program_kudos_are_tied_to_shipped_integrations_not_planned_ones
+      - support_email_commitment_implies_responsiveness_sla
+
+  cross_reference:
+    - ssot/governance/partner-program-authority.yaml (3-track partner model)
+    - ssot/governance/github-actions-marketplace-publishing.yaml (publishing actions)
+    - docs/gtm/partner_center_checklist.md (separate Azure Marketplace motion)
+
+  relationship_to_other_programs:
+    azure_marketplace_isv_success: separate (Pulser for Odoo SaaS commercial offer)
+    github_copilot_partner_program: separate (Copilot Chat extension productization; gated on Pulser GA per partner-program-authority.yaml)
+    github_developer_program: kudos + visibility for GitHub-API-based integrations
+
+# -----------------------------------------------------------------------------
+# Prototyping with GitHub-hosted AI models
+# -----------------------------------------------------------------------------
+ai_models_for_prototyping:
+  availability: github_hosts_ai_models_free_for_prototyping
+  ipai_posture: reference_only
+  rationale: >
+    IPAI default model provider is Microsoft Foundry (per
+    platform/ssot/ai/foundry-resource-model.yaml). GitHub-hosted models
+    are acceptable for prototyping inside Insightpulse-ai repos but
+    must not become a production model-provider lane.
+  cross_reference:
+    - ssot/ai/external-reference-authorities.yaml
+    - platform/ssot/agentic/claude-code-operating-model.yaml
+
+# -----------------------------------------------------------------------------
+# Promotional assets (if IPAI ships a GitHub integration)
+# -----------------------------------------------------------------------------
+promotional_assets:
+  allowed:
+    - use_octocat_or_github_logo_to_signal_integration
+    - publish_video_or_blog_post_on_ipai_domain
+  forbidden:
+    - misuse_of_github_trademarks
+    - claiming_partnership_without_program_enrollment
+
+# -----------------------------------------------------------------------------
+# Success criteria
+# -----------------------------------------------------------------------------
+success_criteria:
+  - id: INT-1
+    description: All IPAI GitHub automation uses GitHub Apps (not OAuth apps or PATs) where supported
+    target: 100%
+    measurement: installed_apps_registry_vs_automation_inventory
+  - id: INT-2
+    description: Every published GitHub App has narrow permission scope + KV-stored private key
+    target: 100%
+    measurement: app_permission_audit + kv_secret_presence
+  - id: INT-3
+    description: IPAI registers for GitHub Developer Program after first published integration
+    target: true (when conditions met)
+    measurement: enrollment_evidence_in_docs_gtm
+
+# -----------------------------------------------------------------------------
+# Non-goals
+# -----------------------------------------------------------------------------
+non_goals:
+  - not defaulting to OAuth apps when GitHub Apps support the use case
+  - not using PATs as automation principals
+  - not treating GitHub Developer Program as equivalent to Microsoft Partner Center (they are separate tracks)
+  - not adopting GitHub-hosted AI models as production model provider (Foundry is default)
+  - not publishing marketing content implying partnership before enrollment
+
+# -----------------------------------------------------------------------------
+# Anchors
+# -----------------------------------------------------------------------------
+anchors:
+  - ssot/governance/github-integration-model.yaml
+  - ssot/governance/github-identity-and-oauth.yaml
+  - ssot/governance/github-actions-marketplace-publishing.yaml
+  - ssot/governance/github-org-admin-api-matrix.yaml
+  - ssot/governance/partner-program-authority.yaml
+  - ssot/governance/gha-scoped-exception.yaml
+  - platform/ssot/ai/foundry-resource-model.yaml
+  - ssot/ai/external-reference-authorities.yaml
+
+source_references:
+  - https://docs.github.com/en/apps/overview
+  - https://docs.github.com/en/get-started/exploring-integrations/about-building-integrations
+  - https://docs.github.com/en/get-started/exploring-integrations/github-developer-program
