@@ -14,6 +14,7 @@
 !docker/
 !docker/requirements/
 !docker/requirements/**
+!requirements.txt
 
 # Exclude .git inside OCA repos (not needed in image)
 addons/oca/*/.git

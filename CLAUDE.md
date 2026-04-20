@@ -93,6 +93,55 @@ If you cannot execute due to missing credentials/tooling/access, say exactly wha
 
 ---
 
+## Core Operating Paradigm (2026-04 refresh)
+
+### Upstream-first adoption
+
+Assume Microsoft has already shipped the baseline before proposing custom work.
+
+Order of operations:
+1. Verify whether Microsoft already provides the capability.
+2. Classify the upstream artifact (baseline / pattern / primitive / skip — per Rule 25).
+3. Adopt and adapt the smallest valid baseline.
+4. Build only the thin IPAI delta.
+
+Never default to:
+- greenfield architecture
+- hand-rolled scaffolding
+- custom runtimes
+- dismissing a Microsoft repo without inspecting its actual code and deployment shape
+
+### Discussion is not delivery
+
+Architecture discussion, doctrine refinement, registry indexing, repo creation, plugin installs, memory entries, and Azure resource provisioning are **NOT** treated as execution.
+
+A workstream is "working" only when ALL of the following exist as evidence:
+- real input arrives
+- live orchestration runs (not stub)
+- real tool calls fire (not mock)
+- concrete output artifact produced
+- evaluation result recorded
+- persisted trace/audit event emitted
+
+Anything short of end-to-end execution is sense-making, not delivery. Sense-making is necessary but never sufficient.
+
+### Product strategy
+
+IPAI is **not primarily a custom software shop** in this lane.
+
+IPAI **packages, configures, and sells** deployable Microsoft baselines plus thin domain overlays.
+
+Default commercial posture (in order):
+- adopt — fork or install the canonical Microsoft baseline
+- configure — overlay tenant + brand + region settings
+- package — wrap as customer-readable 3-slide spec (per Rule 26)
+- prove — run end-to-end against a real scenario with eval evidence
+- sell — list on AppSource (per Rule 26 Aug-Sep 2026 target)
+
+The commercial unit is the packaged adoption offer, not the custom build.
+
+---
+
 ## Quick Reference
 
 | Item | Value |
@@ -177,6 +226,225 @@ See `.claude/rules/security-baseline.md` for full policy (sections 2.1-2.6).
 21. **iOS Wrapper Code Contract**: When editing wrapper-shell implementation files, also apply `docs/skills/ios-wrapper-code-contract.md`. File-level review emphasis: `WrapperViewController.swift` owns shell orchestration only, `BiometricAuth.swift` owns biometric policy/orchestration only, `Assets.xcassets` stays minimal and governed, `Environment.swift` remains the source of routing/environment configuration, `Info.plist` remains aligned with native auth/biometric requirements.
 22. **Odoo Integration Adoption**: Check Odoo 18 native integrations first (payments, bank sync, EDI, commerce connectors, website). If native is insufficient, check OCA before creating `ipai_*`. Reserve `ipai_*` for thin bridges to external Azure/Foundry services only. SSOT: `ssot/odoo/integration_adoption.yaml`.
 23. **Engineering Execution Doctrine**: Reuse upstream for commodity capability; configure for compositional concerns; build only the thinnest `ipai_*` layer for business-specific deltas. Design first (`docs/architecture/`, `ssot/`, `spec/`) → codify second (`CLAUDE.md`, `.claude/rules/`, `.claude/skills/`, `.mcp.json`) → execute third (Claude Code follows doctrine, never invents platform choices). Auto memory is learned ops notes, not canonical architecture. See "Engineering Execution Doctrine" section above.
+
+24. **Adopt Reflex (paradigm)**: Before authoring any artifact (code, skill, agent, accelerator, eval, MCP server), search the Microsoft canonical catalog AND the IPAI registry first. Default to "find it" over "build it." Dismissal of any Microsoft surface as "not strategic" or "reference only" must be backed by deep inspection (read the code, run the sample) — surface-level dismissal is forbidden because it has been wrong repeatedly. The proof bar for `ipai_*` custom code is high: must demonstrate that no Microsoft / canonical upstream solves the need with configuration. SSOT: `ssot/microsoft-artifact-registry/` (when landed). Memory pointer: `feedback_adopt_dont_build.md`.
+
+25. **Microsoft Adoption Registry — canonical surface IPAI uses**: This is the locked surface; everything else is OUT until a registry entry justifies it.
+
+    **Layer 0 — Platform bootstrap**:
+    - `Azure/ALZ-Bicep` (Enterprise-Scale ALZ — mgmt groups, identity, network, policy, monitoring)
+    - `Azure/Azure-Verified-Modules` (peer-reviewed Bicep + Terraform modules)
+
+    **Layer 1 — Workload accelerators (Microsoft-canonical, fork-and-configure)**:
+    - `microsoft/unified-data-foundation-with-fabric-solution-accelerator` → `data-intelligence/` baseline
+    - `microsoft/agentic-applications-for-unified-data-foundation-solution-accelerator` → `agent-platform/` baseline
+    - `microsoft/Multi-Agent-Custom-Automation-Engine-Solution-Accelerator` (MACAE) → borrow supervisor pattern
+    - `microsoft/Prior-Authorization-Multi-Agent-Solution-Accelerator` → borrow approval-gate pattern
+    - `microsoft/content-processing-solution-accelerator` → adopt for BIR/invoice doc extraction
+
+    **Layer 2 — Frameworks + tools (adopt as deps)**:
+    - `microsoft/agent-framework` (MAF) — runtime substrate (per Rule 10a)
+    - `microsoft/azure-skills` plugin — operator workflow skills (24 skills, installed)
+    - `microsoft/markitdown` — corpus ingestion (PDF/DOCX/XLSX → Markdown)
+    - `microsoft/Foundry-Local` — solo-mode runtime
+    - `microsoft/playwright-mcp` — browser automation MCP (in `.mcp.json`)
+    - `azure-ai-foundry/mcp-foundry` — Foundry MCP (in `.mcp.json`)
+    - **Azure SDK family** (canonical reference: `azure.github.io/azure-sdk/releases`) — Python SDKs for IPAI: `azure-ai-projects`, `azure-ai-agents-persistent`, `azure-ai-inference`, `azure-ai-openai`, `azure-search-documents`, `azure-ai-documentintelligence`, `azure-ai-contentsafety`, `azure-ai-contentunderstanding`, `azure-identity`, `azure-keyvault-{secrets,keys,certificates}`, `azure-storage-blob`, `azure-cosmos`, `azure-servicebus`, `azure-eventgrid`, `azure-monitor-{query-logs,query-metrics,ingestion,opentelemetry}`. Never hand-roll HTTP clients for any Azure service — adopt the canonical SDK.
+
+    **Layer 3 — Code reference library (clone, adapt notebooks)**:
+    - `microsoft/ai-agents-for-beginners` (17 lessons, 99.7% Python notebooks on MAF + Foundry V2): primary lessons to adapt = 14 (MAF orchestration: handoff/human-loop/middleware/conditional/concurrent/sequential), 11 (MCP+A2A+NLWeb protocols), 5 (Agentic RAG with Foundry V2), 6 (trustworthy agents), 8 (multi-agent), 13 (memory). Sparse-checkout to skip 50+ language translations. NOT for runtime install — for direct code adaptation into `agent-platform/`.
+
+    **Layer 4 — Microsoft Agent 365 + Foundry IQ (productized M365 lane, GA via Frontier)**:
+    - **Microsoft Entra Agent ID** — productized agent identity (Zero Trust, least privilege)
+    - **Agent 365 SDK** — any-agent-stack interop with M365 + Notifications + tools
+    - **Agent 365 MCP servers** (7) — Outlook Mail, Outlook Calendar, Teams, Copilot Search, SharePoint+OneDrive, User Profile, Dataverse (GA)
+    - **Foundry IQ** — agent-callable knowledge layer on Azure AI Search agentic retrieval (Entra ACL + Purview label aware)
+    - **AI in SharePoint** — human-facing knowledge surface (replaces wiki concept; Viva Topics retired)
+    - **Microsoft Purview Unified Catalog** — governance plane (sensitivity labels, AI compliance)
+    - **Evals for Agent Interop** (`aka.ms/EvalsForAgentInterop`, Jan 2026) — eval harness with scenario format + judges + leaderboard
+
+    **Layer 4.5 — Runtime Governance (Microsoft Agent Governance Toolkit / AGT)**:
+    - **`microsoft/agent-governance-toolkit`** (v3.1.0, Microsoft-signed Public Preview, MIT, 9,500+ tests, all 10 OWASP Agentic Top 10 risks covered, sub-millisecond deterministic policy enforcement). NATIVE MAF middleware; sits between MAF runtime and tool execution. Replaces ALL custom-built policy / approval / audit / kill-switch / sandboxing / SRE infrastructure. Components — Policy Engine (YAML/OPA/Cedar, deterministic, < 0.1ms), Zero-Trust Identity (Ed25519 + ML-DSA-65 quantum-safe, trust scoring 0-1000, SPIFFE/SVID), Execution Sandboxing (4-tier privilege rings, saga orchestration, kill switch), Agent SRE (SLOs, error budgets, replay debugging, chaos engineering, circuit breakers), MCP Security Scanner (tool poisoning + typosquatting + hidden instruction detection on `.mcp.json` declared servers), Shadow AI Discovery, Agent Lifecycle (provisioning → rotation → orphan detection → decommissioning), Governance Dashboard, PromptDefense Evaluator (12-vector prompt injection audit), Unified `agt` CLI. Key marketplace differentiator: 0.00% policy violation rate (deterministic) vs 26.67% for prompt-based safety (red-team verified). Compliance: NIST AI RMF + EU AI Act + Colorado AI Act + SOC 2.
+
+    **Skip list (verified — do not adopt for new IPAI work)**:
+    - `microsoft/semantic-kernel` — superseded by MAF (Microsoft's official position; SK is predecessor)
+    - `microsoft/autogen` — superseded by MAF (also a predecessor)
+    - `microsoft/CDM` repo — 16 months stale; Microsoft data-modeling investment moved to Fabric semantic models. CDM FinancialServices schema is reference vocabulary only.
+    - OData libraries (`Microsoft.AspNetCore.OData`) — adjacent, not core; learn 5 query parameters for Microsoft Graph only
+    - Glean — closed model + cost-prohibitive; use Foundry IQ instead
+    - SAP Signavio — different paradigm (BPM-first vs LLM-first); cannot swap from MAF stack
+
+26. **Pulser product packaging (GTM)**: Pulser is positioned as a packaged ISV offering on Microsoft AppSource / Azure Marketplace (target Aug-Sep 2026 per ISV Success engagement). Every Pulser specialist MUST ship with a customer-readable 3-slide spec following the Microsoft AI Agent for Finance template format: (Slide 1) Overview card with From → To, Current Workflow Challenges, Key Features, Business Impact, Key Users; (Slide 2) 6-step workflow with AI Agent connections + Benefits + KPIs impacted + Value benefit; (Slide 3) Reference architecture with Key Considerations, Inputs needed, Agent-to-Agent Workflow, Architecture diagram. Each spec doubles as: customer pitch + internal contract + eval scenario seed + architecture review. SSOT for spec template: `docs/agent-specs/template.md` (when landed). Customer audience vocabulary varies: "AI operating copilot" (Microsoft co-sell), "process automation agent" (CFO buyers), "specialized LLM agent" (technical buyers) — same artifact, three vocabularies.
+
+27. **Agent product pattern (4-phase + 6-section)**: All Pulser specialists implement the same convergent industry pattern (Microsoft Finance template + Anthropic investment-memo use case + scenario-based eval methodology):
+
+    **4-phase workflow per specialist**:
+    1. RETRIEVE — pull from N sources via MCP connectors (Foundry IQ KB + Odoo bridge + Agent 365 MCPs)
+    2. ANALYZE — named calculations + comparisons + risk flags (declarative in YAML)
+    3. GENERATE — formatted deliverable matching the 6-section template
+    4. REFINE — citations + drill-downs + alternative formats (PowerPoint, SharePoint page, Word)
+
+    **6-section deliverable template (every Pulser output)**:
+    1. EXECUTIVE SUMMARY — recommendation/decision/status
+    2. CONTEXT / SCOPE — what was reviewed/processed
+    3. PRIMARY ANALYSIS — calculations / reconciliations
+    4. COMPARATIVE / TREND — vs budget / vs prior period / vs benchmark
+    5. CONFIDENCE / METHOD — data sources, assumptions, calculation walk
+    6. RISKS / OPEN ITEMS — what needs human review or follow-up
+
+    Each specialist's spec is one YAML file (~80 lines) — declarative, no engine code. Microsoft Agent 365 + MAF + Foundry IQ + Evals for Agent Interop run the spec.
+
+28. **Two-layer corpus model**: All Pulser knowledge retrieval is two-layered:
+    - **Layer 1 — Microsoft authority**: Microsoft Learn docs + Sample Browser (~4,545 samples) — accessed via `microsoft-learn` MCP server (already in `.mcp.json`). ZERO local indexing; Microsoft maintains.
+    - **Layer 2 — IPAI authority**: doctrine + ssot + research + BIR forms + tenant configs + Pulser persona — indexed in Foundry IQ KB (per-tenant). Ingested via markitdown → Blob → Azure AI Search indexer.
+    Both queryable by Pulser. Both governed via Purview labels. Neither requires custom code in the engine.
+
+29. **Builder / Operator / Judge triad (human-equivalent role model)**: Every Microsoft artifact AND every Pulser specialist is classified across three roles — the stable human responsibility model sitting on top of the technical stack. Not "what layer is this?" but "who behaves like the builder, the operator, the judge for this artifact?" This triad is the registry schema's `human_equivalent` field; it also maps to the supervisor-mediated orchestration pattern (Rule 10a — planner=builder, specialist=operator, judge=judge).
+
+    **Build — who implements it?** (Microsoft cert lane: technical implementation)
+    - `AZ-204` Azure Developer Associate
+    - `AI-102` Azure AI Engineer Associate
+    - `DP-700` Fabric Data Engineer Associate
+    - `GH-200` GitHub Actions
+    - `GH-300` GitHub Copilot
+    - IPAI hire profile: implementer / integration engineer / toolsmith / runtime builder
+
+    **Operate — who runs it in business context?** (Microsoft cert lane: AI business solutions)
+    - `AB-730` AI Business Professional
+    - `AB-731` AI Transformation Leader
+    - `AB-900` Microsoft 365 Copilot and Agent Administration Fundamentals
+    - IPAI hire profile: business operator / domain specialist / workflow owner / agent supervisor
+
+    **Judge — who approves / governs?** (Microsoft cert lane: architect + security + governance)
+    - `AZ-305` Azure Solutions Architect Expert
+    - `SC-100` Cybersecurity Architect Expert
+    - `SC-200` Security Operations Analyst Associate
+    - `SC-300` Identity and Access Administrator Associate
+    - `AZ-500` Azure Security Engineer Associate
+    - `PL-600` Power Platform Solution Architect Expert
+    - `AB-100` Agentic AI Business Solutions Architect
+    - IPAI hire profile: architecture judge / security judge / governance judge / approval authority
+
+    **Application to registry entries**: every artifact in `ssot/microsoft-artifact-registry/` (per Rule 25) gets a `human_equivalent` field with `builder_roles`, `operator_roles`, `judge_roles` arrays.
+
+    **Application to Pulser specialists**: every specialist's 3-slide spec (per Rule 26) declares Build/Operate/Judge owners — Build = `agent-platform/` engineer wiring it, Operate = the customer's domain user, Judge = the customer's architect/compliance authority + an LLM judge agent.
+
+    **Application to Jake's certification roadmap (matches the triad):**
+    - Build lane: AI-102 (mid-2026)
+    - Judge lane: SC-300 (2026 Q3) → AZ-305 (2026 Q4)
+    - Operate lane: AB-731 (when hiring expands) — see `user_deakin_sig787.md` for math foundation pre-req
+
+30. **Runtime Governance via AGT (mandatory for all Pulser specialists)**: `agent-platform/` MUST integrate `microsoft/agent-governance-toolkit` (AGT) as native MAF middleware. AGT sits between MAF runtime and tool execution; every tool call, resource access, and inter-agent message is evaluated against deterministic policy before execution (sub-millisecond, < 0.1ms p50). NEVER custom-build policy engine, audit logger, kill switch, sandboxing, MCP security scanner, shadow AI discovery, agent lifecycle manager, SRE for agents, or compliance dashboards — AGT covers all. Policies authored in YAML/OPA/Cedar live in `ssot/governance/agt-policies/<scope>/<policy-name>.yaml` (per tenant + per specialist + per band). Required AGT components for Pulser production: Policy Engine, Zero-Trust Identity (complements Entra Agent ID), Execution Sandboxing (4-tier privilege rings + kill switch), Agent SRE (SLOs + circuit breakers), MCP Security Scanner (validates `.mcp.json` declared servers), PromptDefense Evaluator (12-vector audit for ISV compliance evidence), Governance Dashboard (operator + customer visibility). Marketplace differentiator: AGT enforcement is deterministic (0.00% policy violation rate) vs prompt-based safety (26.67% violation rate per Microsoft red-team). This is the productized realization of CLAUDE.md "policy-gated agent" canonical classification — Pulser specialists carry AGT enforcement as a runtime promise, not a marketing claim. Compliance evidence pack auto-generated for NIST AI RMF + EU AI Act + Colorado AI Act + SOC 2 — required artifacts for AppSource listing (Rule 26 Aug-Sep 2026 target). CLI: `agt verify` runs in CI per pull request; `agt verify --evidence ./agt-evidence.json --strict` is the deployment gate. SSOT pointer: `ssot/governance/agt-adoption.yaml` (when landed). Memory pointer: `project_agt_runtime_governance.md`.
+
+31. **Owned-repo taxonomy — 5 post-development lanes, 11 repos in `Insightpulse-ai`**: Codified 2026-04-20 (revised the same day from a too-coarse 3-repo audience model). The org is shaped by **post-development lifecycle stage**, not by coding discipline or audience. The enterprise (`ipai`) is the governance shell (policies, billing, security defaults, organization inventory); the org (`Insightpulse-ai`) is the operating portfolio for what you **package, prove, publish, and operate**.
+
+    **Lifecycle → repo mapping (the canonical shape)**:
+
+    ```
+    discover/adopt        → accelerators-catalog
+    compose/build         → agent-platform · data-intelligence · web
+    package               → marketplace-publishing
+    deploy/operate        → platform · infra
+    govern/standardize    → .github · docs · templates · design
+    ```
+
+    **The 11 owned repos (5 lanes)**:
+
+    | Lane | Repo | Purpose |
+    |---|---|---|
+    | **A. Governance / shared standards** | `.github` | Org-level CODEOWNERS, dependabot, issue/PR templates, org profile |
+    | A | `docs` | Architecture records, publishing checklists, package blueprints, public/private package docs, onboarding, proofs, GTM/demo narratives |
+    | A | `templates` | Repo standards, scaffold templates (new specialist, new accelerator adoption, new bundle) |
+    | **B. Platform / publishing / commercialization** | `platform` | Platform contracts, environment definitions, deployment governance, control-plane shell. **NOT** a UI shell. |
+    | B | `marketplace-publishing` | AppSource/Azure-Marketplace + Databricks Marketplace offer packaging, transactable mechanics, fulfillment/metering, listing assets, `Azure/Commercial-Marketplace-SaaS-Accelerator` adoption |
+    | B | `infra` | Landing zones (ALZ adoption), shared infra baselines, networking, identity, AVM module composition |
+    | **C. Product / app surfaces** | `web` | User-facing apps + product UX shells (current Fluent UI v9 work belongs HERE, not in `platform`) |
+    | C | `agent-platform` | Pulser agent runtime; MAF wiring, supervisor/router, specialist YAML specs (Rule 27), AGT middleware (Rule 30), evals, MCP/tool adapters |
+    | C | `data-intelligence` | Databricks bundles, Unity Catalog schemas, DLT pipelines, BIR/regulatory data products, Power BI semantic layer |
+    | C | `pulser-odoo` (OR `odoo`) | Odoo runtime composition (per the Odoo boundary rule below) — packaged commercial product surface |
+    | **D. Design system** | `design` | Fluent UI v9 adoption guidance, design tokens, shared components, shell patterns, page templates, brand-safe primitives |
+    | **E. Adoption / accelerator intake** | `accelerators-catalog` | Microsoft + Databricks + Azure accelerator index; classification (baseline / pattern / primitive / skip per Rule 25); adoption decisions; extracted patterns; modernization notes; one-time discovery memory (avoid re-discovering) |
+
+    **Optional later** (only when real demand exists): `automations`, `agents` (definitions split from runtime), `customer-packages`, `demos`, `patterns-lab`, `upstream-intake`. **Never one repo per accelerator** — those become junk immediately.
+
+    **Ownership boundary (one-sentence rule, unchanged)**: **Upstream = capability. Yours = composition + thin delta + package.** Never re-author, mirror, or fork what upstream already maintains.
+
+    **Upstream — NOT yours** (reference, pin, evaluate, adapt around):
+    - `odoo/odoo` (core ERP — base apps + l10n_ph + huge addon surface; Odoo SA maintains)
+    - All OCA repos (community modules; OCA maintains)
+    - `microsoft/fluentui` (design upstream → influences `design`/`web`, never fork unless contributing back)
+    - `microsoft/agent-framework` (MAF), `microsoft/agent-governance-toolkit` (AGT), `microsoft/azure-skills`, `microsoft/markitdown`, `microsoft/Foundry-Local`, `microsoft/playwright-mcp`, `azure-ai-foundry/mcp-foundry`
+    - All Microsoft solution accelerators (UDF + agentic-UDF + MACAE + Prior-Auth + content-processing + Deploy-Your-AI-App-In-Production)
+    - `Azure/ALZ-Bicep`, `Azure/Azure-Verified-Modules`, `Azure/Commercial-Marketplace-SaaS-Accelerator` (pattern donor for `marketplace-publishing`)
+    - `databricks-industry-solutions`, `databrickslabs/fsi-solution-accelerators` (extract patterns into `data-intelligence` and `accelerators-catalog`; never fork the whole org)
+    - `microsoft/ai-agents-for-beginners` (clone + adapt notebooks, do not mirror)
+
+    **Odoo-lane boundary (one repo, NOT a fork of `odoo/odoo` or OCA)**: The Odoo repo (whether named `odoo` or `pulser-odoo`) owns ONLY (1) version pin + module selection + dependency ordering + lock files; (2) `addons/ipai/` thin bridge layer (Odoo↔MCP, Odoo↔Pulser, BIR/PH overlays); (3) runtime config + Docker/compose + scripts + migration notes + tests + deployment contract; (4) SSOT addon inventory + upstream pins + composition policy. Internal layout: `addons/oca/` (upstream-selected modules, hydrated/pinned at runtime — not re-authored), `addons/ipai/` (thin bridge/domain modules), `addons/local/` (only if truly needed). Choose `pulser-odoo` if positioning as packaged commercial product; choose `odoo` if positioning as ERP runtime composition.
+
+    **Forking policy**: Do NOT fork by default. Fork only if (a) you must carry a temporary patch awaiting upstream merge, or (b) you intend to contribute back upstream. Otherwise keep upstream external and put your delta in your own repo. **Never one repo per accelerator** — adoption intelligence lives in `accelerators-catalog`, not as 50+ mirror repos.
+
+    **What NOT to do**:
+    - Don't organize by **vendor** (no `microsoft-repos`, `azure-repos`, `databricks-repos`)
+    - Don't organize by **job title** (no `dev`, `design`, `ops`, `data` as repo names)
+    - Don't make **one repo per accelerator** (junk on day one)
+    - Don't mix **upstream mirrors with product truth** (the org contains adopted truth + packaging + thin delta, not bulk copies)
+
+    **Application to current state (2026-04-20)**: Legacy `Insightpulseai` org has 17 repos (16 active + 1 archived). Migration mapping to the 11-repo `Insightpulse-ai` shape:
+
+    | Source (`Insightpulseai/`) | Target (`Insightpulse-ai/`) | Lane | Action |
+    |---|---|---|---|
+    | `odoo` | `pulser-odoo` (or `odoo`) | C | rename + migrate |
+    | `agent-platform` | `agent-platform` | C | migrate as-is |
+    | `data-intelligence` | `data-intelligence` | C | migrate as-is |
+    | `web` | `web` | C | migrate as-is |
+    | `agents` | `agent-platform/agents/` | C | fold via `git subtree add` |
+    | `infra` | `infra` | B | migrate as-is |
+    | `automations` | `agent-platform/automations/` (until volume justifies own repo) | C | fold |
+    | `powerbi-skills` | `data-intelligence/skills/powerbi/` | C | fold |
+    | `ugc-mediaops-kit` | `agent-platform/skills/mediaops/` OR archive | C | fold or archive |
+    | `design` | `design` | D | migrate as-is |
+    | `templates` | `templates` | A | migrate as-is |
+    | `docs` | `docs` | A | migrate as-is |
+    | `landing.io` (archived) | absorbed into `docs/landing/` | A | drop from migration scope |
+    | `.github` | `.github` | A | migrate as-is |
+    | `dotfiles` | personal `tbwa/dotfiles` | — | move to personal account |
+    | `demo-repository` (both orgs) | archive | — | archive, don't migrate |
+    | `Insightpulseai/platform` (current legacy) | `platform` | B | migrate; **purge any UI/Fluent content** — that lives in `web`/`design` |
+
+    **Repos to create from scratch in `Insightpulse-ai`** (no legacy source): `marketplace-publishing` (B), `accelerators-catalog` (E).
+
+    **Current `Insightpulse-ai/ipai-platform` repo** (Vite + Fluent UI v9 scratch from 2026-04-19): misnamed for the lane model. Decision required — either (a) rename to `web` (or `ops-console`) and migrate; (b) repurpose into the real `platform` control-plane shell quickly; or (c) delete and start `web` clean.
+
+    **Migration path**: consolidate-then-migrate via `git subtree add` (preserves history) before `gh gei migrate-repo`. SSOT pointer: `ssot/governance/owned-repos.yaml` (when landed).
+
+    **Connected memory entries**: `feedback_adopt_dont_build.md`, `project_microsoft_adoption_registry_2026-04-19.md` (Rule 25 — what's upstream; the `accelerators-catalog` repo is the productized realization of Rule 25).
+
+---
+
+## Execution Gate
+
+Before proposing custom code, every contributor (human or agent) MUST satisfy:
+
+1. **Search for Microsoft upstream first.** Use `microsoft-learn` MCP (already in `.mcp.json`), `microsoft_code_sample_search`, `gh search repos --owner microsoft --owner Azure --owner Azure-Samples --owner azure-ai-foundry`, and `microsoft/azure-skills` plugin. The default assumption is "Microsoft has shipped this."
+
+2. **Inspect actual repo structure, code samples, and deployability.** Surface-level dismissal is forbidden (per Rule 24). Read the README, list the `samples/` and `code-samples/` directories, check `last push` date, verify license, run `claude plugin list` if it's an installable plugin.
+
+3. **Prefer clone-and-adapt over scaffold-and-design.** If a Microsoft notebook/sample/accelerator covers the pattern, fork+adapt is the path — never write from scratch.
+
+4. **Prefer one live proof over additional doctrine text.** If you have a working architecture document but no end-to-end run, the doctrine is incomplete. The next correct action is execution, not more doctrine.
+
+A workstream is **NOT "done"** because:
+- repos were created
+- docs were written
+- memories were saved
+- plugins were installed
+- Azure resources were provisioned
+- ADRs landed
+- registry entries authored
+
+A workstream is **only "working"** when an end-to-end path executes against real input and produces evidence (output artifact + eval result + persisted trace).
+
+This gate applies to every PR, every session, every adoption decision. It is the operational complement to Rule 24 (Adopt Reflex) and the Core Operating Paradigm above.
 
 ---
 
@@ -339,6 +607,39 @@ addons/ipai/<module_name>/
 | Superset (as canonical BI) | Power BI (primary) + Superset (supplemental only) | 2026-03-21 |
 | Notion (as data source) | Removed from Databricks bundle | 2026-03-21 |
 | Wix (all — hosting, CMS, DNS, API) | Azure DNS + Azure Container Apps + Odoo CMS | 2026-04-02 |
+| `microsoft/semantic-kernel` (for new IPAI work) | `microsoft/agent-framework` (MAF — official Microsoft successor; SK is predecessor) | 2026-04-19 |
+| `microsoft/autogen` (for new IPAI work) | `microsoft/agent-framework` (MAF — also subsumes AutoGen patterns) | 2026-04-19 |
+| `microsoft/CDM` repo as runtime dependency | Fabric semantic models + Dataverse-native CDM (CDM repo is reference vocabulary only; 16 months stale) | 2026-04-19 |
+| Custom OData libraries / API authoring (`Microsoft.AspNetCore.OData`) | Skip — not in IPAI stack; learn 5 OData query parameters only when calling Microsoft Graph | 2026-04-19 |
+| SAP Signavio adoption (as IPAI agent platform) | Skip — different paradigm (BPM-first vs LLM-first); cannot swap from MAF stack | 2026-04-19 |
+| Glean (enterprise search) | Foundry IQ (Microsoft canonical, Entra+Purview-aware, MCP-callable) | 2026-04-19 |
+| Notion AI / Mem.ai / Obsidian (as IPAI knowledge manager) | AI in SharePoint (human surface) + Foundry IQ (agent surface) — Microsoft canonical | 2026-04-19 |
+| Custom-built eval harness for `agent-platform/evals/` | `Evals for Agent Interop` (`aka.ms/EvalsForAgentInterop`, Microsoft, Jan 2026) | 2026-04-19 |
+| Local indexing of Microsoft Learn docs | Microsoft Learn MCP server (`microsoft-learn` already in `.mcp.json`) — Microsoft maintains | 2026-04-19 |
+| Custom synthetic data seeder skill | Foundry simulators (adversarial + context-appropriate) + AI Red Teaming Agent (PyRIT) + Faker/Mimesis/Presidio for IPAI delta | 2026-04-19 |
+| Custom Pulser identity scheme | Microsoft Entra Agent ID (productized via Frontier early access) | 2026-04-19 |
+| Custom M365 tool integration (Outlook/Teams/SharePoint) | Agent 365 MCP servers (7 GA/preview, Nov 2025) | 2026-04-19 |
+| `microsoft/ai-agents-for-beginners` as "curriculum-only" classification | RECLASSIFIED 2026-04-19 — primary working code reference for MAF + Foundry V2 (clone + adapt lesson 14 + 11 + 5 + 6 + 8 notebooks) | 2026-04-19 |
+| Custom policy engine for Pulser approval bands | `microsoft/agent-governance-toolkit` (AGT) Policy Engine (YAML/OPA/Cedar, sub-ms deterministic, Layer 4.5) | 2026-04-19 |
+| Custom audit logger for Pulser actions | AGT audit logger + Governance Dashboard (auto-generated compliance evidence) | 2026-04-19 |
+| Custom kill switch / circuit breaker for Pulser | AGT Execution Sandboxing (4-tier privilege rings + kill switch) + Agent SRE (circuit breakers) | 2026-04-19 |
+| Custom MCP security validation | AGT MCP Security Scanner (tool poisoning + typosquatting + hidden instruction detection) | 2026-04-19 |
+| Custom shadow AI / unregistered agent detection | AGT Shadow AI Discovery | 2026-04-19 |
+| Custom agent credential rotation / lifecycle | AGT Agent Lifecycle (provisioning → rotation → orphan detection → decommissioning) | 2026-04-19 |
+| Custom prompt injection defense (12-vector) | AGT PromptDefense Evaluator | 2026-04-19 |
+| Custom SRE for autonomous agents (SLOs / error budgets / replay / chaos) | AGT Agent SRE | 2026-04-19 |
+| Custom compliance evidence pack for AppSource listing | AGT compliance dashboards + auto-generated NIST AI RMF + EU AI Act + Colorado AI Act + SOC 2 mappings | 2026-04-19 |
+| Prompt-based safety guardrails ("please follow rules") for Pulser mutations | AGT deterministic policy enforcement (0.00% violation rate vs 26.67% prompt-based per Microsoft red-team) | 2026-04-19 |
+| `Azure-Samples/azure-databricks-mlops-mlflow` for fine-tuning | Wrong repo (classic ML regression, no LLM fine-tuning, 12 months stale). Use `databricks_genai` SDK + `databricks/mlops-stacks` scaffold + `databricks/genai-cookbook` patterns for Databricks fine-tuning; Foundry portal + `azure-ai-projects` SDK for Foundry SFT/DPO/RFT. | 2026-04-19 |
+| `Azure/azureml-examples track_with_databricks_deploy_aml.ipynb` (deploying to Azure ML endpoints) | Wrong serving plane — IPAI uses Foundry (Layer 4) and Mosaic AI Model Serving (Layer 1), not Azure ML. Adopting Azure ML endpoints fragments the stack into 3 serving planes. | 2026-04-19 |
+| `HuggingFaceTB/smol-training-playbook` + `huggingface/smollm` + `huggingface/nanotron` as fine-tuning paths | Wrong scope — these are PRE-TRAINING from scratch, not fine-tuning. Pre-training costs $10K-$100K+ vs fine-tuning $50-$500. Useful as EDUCATION ONLY (transformer math + attention internals; pairs with Deakin SIG787). For production fine-tuning use `databricks_genai` (Databricks) or `azure-ai-projects` (Foundry). | 2026-04-19 |
+| Declaring a Microsoft artifact "reference only", "curriculum only", or "not relevant" without inspecting its actual code, structure, and deployment shape | Per Rule 24 (Adopt Reflex) + Execution Gate: surface-level dismissal is forbidden because it has been wrong repeatedly. Run `gh repo view`, list `samples/` + `code-samples/` directories, check last-push date, read the README, install the plugin if it is one — THEN decide. | 2026-04-19 |
+| Building custom scaffolds when an active Microsoft baseline already exists | Per Rule 24 + Rule 25: search Microsoft canonical catalog first. Active baselines exist for: agent runtime (MAF), policy engine (AGT), eval harness (Evals for Agent Interop), data foundation (UDF accelerator), agent platform (agentic-UDF accelerator), corpus ingestion (markitdown), knowledge layer (Foundry IQ), identity (Entra Agent ID), governance (Purview), serving (Foundry + Mosaic AI Model Serving). Do not scaffold custom replacements. | 2026-04-19 |
+| Treating architecture discussion, doctrine refinement, repo creation, plugin installs, memory entries, or Azure provisioning as runtime delivery | Per Execution Gate: a workstream is "working" only when end-to-end execution produces evidence (input → orchestration → tool calls → output → eval → trace). Sense-making is necessary but never sufficient. | 2026-04-19 |
+| Evaluating only L5 solution accelerators while ignoring L1 services, L2 frameworks, L3 tools, L4 reference samples | Per Rule 25: production assembly composes P0 governance + L5 baseline + L4 patterns + L3 primitives + L2 runtime + L1 services. Any single-layer evaluation produces incomplete adoption decisions. | 2026-04-19 |
+| Hand-rolling agent runtimes where Microsoft Agent Framework + Foundry Agent Service V2 already fit | MAF is the declared runtime substrate (Rule 10a). Foundry Agent Service V2 is the productized hosting (`azure-ai-projects` + `azure-ai-agents-persistent`). Custom agent runtime in `agent-platform/src/agent_platform/runtime/` must be MAF-imports only — never reimplement orchestration, registry, or graph builders that MAF already provides. | 2026-04-19 |
+| Creating bespoke eval harnesses before checking Microsoft-provided eval assets | `Evals for Agent Interop` (`aka.ms/EvalsForAgentInterop`, Microsoft, Jan 2026) + Foundry observability evaluators (built-in safety/quality/RAG/agent evaluators) + AGT PromptDefense Evaluator + AI Red Teaming Agent (PyRIT) cover the eval landscape. Custom Python eval framework in `agent-platform/evals/` is forbidden — use the Microsoft-shipped harness + author scenario YAMLs only. | 2026-04-19 |
+| Expanding IPAI custom code beyond thin overlays when the upstream baseline is sufficient | Per Rule 24 + Rule 27: IPAI delta is bounded to (a) Odoo MCP bridge, (b) declarative agent YAML specs, (c) BIR/PH ontology + thresholds in `ssot/`, (d) tenant configs, (e) Pulser persona definitions, (f) reporting/memo templates. ANY new Python module in `addons/ipai/`, `agent-platform/`, `data-intelligence/`, or `agents/` requires a registry entry justifying the delta against the canonical Microsoft baseline. | 2026-04-19 |
 
 ### Engineering & Delivery Authority (Option C)
 

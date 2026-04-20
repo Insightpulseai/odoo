@@ -1,0 +1,25 @@
+# =============================================================================
+# Delta image — base = 18.0-copilot, overlay updated ipai_odoo_copilot only
+# =============================================================================
+# Use when OCA submodules aren't hydrated locally but we need to ship a
+# module-level fix fast. Inherits everything (OCA + base) from 18.0-copilot.
+#
+# Build:
+#   docker build -f docker/Dockerfile.delta-copilot \
+#     -t acripaiodoo.azurecr.io/ipai-odoo:18.0-copilot-oauth-<timestamp> \
+#     --platform linux/amd64 .
+# =============================================================================
+
+FROM acripaiodoo.azurecr.io/ipai-odoo:18.0-copilot
+
+USER root
+
+# Only overlay the module we changed
+COPY addons/ipai/ipai_odoo_copilot/ /mnt/extra-addons/ipai/ipai_odoo_copilot/
+
+# Ensure ownership + perms
+RUN chown -R odoo:odoo /mnt/extra-addons/ipai/ipai_odoo_copilot/
+
+USER odoo
+
+CMD ["odoo", "-c", "/etc/odoo/odoo.conf"]

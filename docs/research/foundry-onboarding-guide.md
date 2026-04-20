@@ -28,7 +28,13 @@ azd version
 > [!NOTE]
 > If `azd version` panics with "Operation not permitted" regarding `/Users/tbwa/.azd`, ensure you have proper filesystem permissions or try running the command from a native terminal with Full Disk Access.
 
-### 2.3 Python SDK
+### 2.3 Authentication (macOS / Local)
+The project uses **Microsoft Entra ID (Client-Secret-Free)** flow via `DefaultAzureCredential`.
+1. Run `az login` in your native terminal.
+2. Select the `InsightPulseAI` subscription.
+3. **Troubleshooting**: If you encounter "Operation not permitted" in VS Code, ensure you have granted **Full Disk Access** to VS Code and the terminal under `Settings > Privacy & Security`.
+
+### 2.4 Python SDK
 The project uses `requirements-ai.txt` for Foundry-native development.
 ```bash
 source .venv/bin/activate
@@ -36,21 +42,20 @@ pip install -r requirements-ai.txt
 ```
 
 ## 3. Workspace Setup (.foundry)
-Every `ipai_` agent or Odoo wrapper project must initialize a `.foundry` directory at the root:
 
-```bash
-mkdir .foundry
-touch .foundry/agent-metadata.yaml
-```
+### 3.1 Specialized Agent Discovery (SSOT)
+All specialized agents (P2P, R2R, Media, Marketplace) are registered in the canonical Skills Manifest:
+- **Location**: `ssot/agent-platform/skills_manifest.yaml`
+- **Usage**: Use the `skill_id` and `infrastructure_name` from this file when configuring your local environment variables.
 
-### 3.1 agent-metadata.yaml Example
+### 3.2 agent-metadata.yaml Example
 ```yaml
 agentName: "pulser-assistant-ph"
 defaultEnvironment: "dev"
 environments:
   dev:
-    projectEndpoint: "https://ipai-foundry-ph.eastus2.inference.ai.azure.com"
-    azureContainerRegistry: "acripaiprod.azurecr.io"
+    projectEndpoint: "https://acae-ipai-dev-sea.cognitiveservices.azure.com/" # Verified SEA
+    azureContainerRegistry: "acripaiodoo.azurecr.io"
     testCases:
       - id: "ap-invoice-extraction"
         evaluator: "rag_faithfulness"

@@ -158,7 +158,10 @@
       "Bash(databricks --version)",
       "Bash(__NEW_LINE_2b789cf7750484e6__ az:*)",
       "Bash(databricks warehouses:*)",
-      "Bash(find /Users/tbwa/Documents/GitHub/Insightpulseai -path */ipai_odoo_copilot* -name *.py)"
+      "Bash(find /Users/tbwa/Documents/GitHub/Insightpulseai -path */ipai_odoo_copilot* -name *.py)",
+      "WebFetch(domain:microsoft.github.io)",
+      "WebFetch(domain:partner.microsoft.com)",
+      "Read(//Users/tbwa/Documents/GitHub/Insightpulseai/addons/ipai/ipai_odoo_copilot/=== config XML files in data/**)"
     ],
     "deny": [
       "Bash(docker context use *)"
