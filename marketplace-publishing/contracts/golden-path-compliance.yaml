@@ -1,0 +1,48 @@
+schema_version: "1.0"
+last_reviewed: "2026-04-23"
+authority: "marketplace-publishing/contracts/golden-path-compliance.yaml"
+contract_scope: "Compliance posture and required trust artifacts for the Pulser for Odoo golden path"
+sources:
+  - "marketplace-publishing/docs/M365_COMPLIANCE_AND_CERTIFICATION.md"
+  - "marketplace-publishing/offers/ACAT_READINESS_CHECKLIST.md"
+  - "platform/contracts/release/golden-path.yaml"
+
+product:
+  product_name: "Pulser for Odoo"
+  publish_channel: "microsoft_partner_center_saas"
+  compliance_boundary_owner: "Commercialization Lane"
+
+compliance_posture:
+  target_level: "Partner Center SaaS readiness with ACAT-backed M365 control tracking"
+  data_classifications:
+    - "internal"
+    - "customer"
+    - "regulated"
+  required_controls:
+    - "oauth_redirect_contract"
+    - "foundry_auth_and_rbac_contract"
+    - "agent_identity_governance"
+    - "incident_response"
+    - "privacy_and_terms"
+
+required_artifacts:
+  - artifact_id: "privacy_policy"
+    status: "pending"
+  - artifact_id: "terms_of_service"
+    status: "pending"
+  - artifact_id: "publisher_attestation"
+    status: "pending"
+  - artifact_id: "incident_response_runbook"
+    status: "pending"
+  - artifact_id: "oauth_redirect_evidence"
+    status: "available_for_microsoft_prod"
+  - artifact_id: "foundry_endpoint_and_auth_contracts"
+    status: "available"
+  - artifact_id: "foundry_rbac_readiness_evidence"
+    status: "pending"
+  - artifact_id: "agent_identity_governance_evidence"
+    status: "pending"
+
+evidence_repository:
+  path_template: "marketplace-publishing/evidence/<offer-sku>/"
+  acat_checklist: "marketplace-publishing/offers/ACAT_READINESS_CHECKLIST.md"

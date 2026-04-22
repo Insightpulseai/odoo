@@ -1,0 +1,33 @@
+schema_version: "1.0"
+last_reviewed: "2026-04-23"
+authority: "marketplace-publishing/contracts/golden-path-gtm.yaml"
+contract_scope: "Single GTM collateral bundle for the Pulser for Odoo golden path"
+sources:
+  - "docs/gtm/MARKETPLACE_OFFER.md"
+  - "docs/gtm/marketplace_research_brief.md"
+  - "marketplace-publishing/contracts/golden-path-packaging.yaml"
+  - "marketplace-publishing/contracts/golden-path-compliance.yaml"
+
+bundle:
+  product_name: "Pulser for Odoo"
+  publish_channel: "microsoft_partner_center_saas"
+  offer_binding: "marketplace-publishing/contracts/golden-path-packaging.yaml"
+  compliance_binding: "marketplace-publishing/contracts/golden-path-compliance.yaml"
+
+required_assets:
+  - asset_id: "product_summary"
+    status: "draft_available"
+    source: "docs/gtm/MARKETPLACE_OFFER.md"
+  - asset_id: "screenshots_or_demo_capture"
+    status: "pending"
+    minimum_count: 3
+  - asset_id: "trust_statement"
+    status: "pending"
+  - asset_id: "install_notes"
+    status: "pending"
+  - asset_id: "support_notes"
+    status: "pending"
+    contact_email: "marketplace@insightpulseai.com"
+
+release_dependency:
+  release_contract: "platform/contracts/release/golden-path.yaml"

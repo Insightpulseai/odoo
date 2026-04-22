@@ -1,6 +1,9 @@
 schema_version: "1.0"
 last_reviewed: "2026-04-23"
 authority: "platform/contracts/foundry/endpoints.yaml"
+owning_repo: "Insightpulseai/odoo"
+owning_system: "Pulser for Odoo authenticated operator surface"
+release_contract: "platform/contracts/release/golden-path.yaml"
 source_of_confirmation: "Azure AI Foundry portal project overview confirmed by operator on 2026-04-23"
 
 projects:
@@ -9,6 +12,10 @@ projects:
     foundry_resource_name: "ipai-foundry-sea"
     environment: "dev"
     status: "active"
+    owning_repo: "Insightpulseai/odoo"
+    owning_system: "Pulser for Odoo authenticated operator surface"
+    runtime_surface: "https://erp.insightpulseai.com"
+    verification_status: "operator_confirmed_2026_04_23"
     project_endpoint: "https://ipai-foundry-sea.services.ai.azure.com/api/projects/ipai-copilot"
     azure_openai_base_url: "https://ipai-foundry-sea.openai.azure.com/openai/v1"
     ai_services_base_url: "https://ipai-foundry-sea.services.ai.azure.com"

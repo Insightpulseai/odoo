@@ -1,0 +1,40 @@
+schema_version: "1.0"
+last_reviewed: "2026-04-23"
+authority: "marketplace-publishing/contracts/golden-path-packaging.yaml"
+contract_scope: "Single package and offer model for the Pulser for Odoo golden path"
+sources:
+  - "docs/gtm/MARKETPLACE_OFFER.md"
+  - "docs/gtm/marketplace_research_brief.md"
+  - "platform/marketplace/offers/odooops-control-plane/offer.yaml"
+
+product:
+  product_name: "Pulser for Odoo"
+  product_scope: "Authenticated Odoo login and operator surface backed by the ipai-copilot Foundry project"
+  owning_repo: "Insightpulseai/odoo"
+  runtime_surface: "https://erp.insightpulseai.com"
+
+offer_model:
+  offer_type: "saas"
+  package_strategy: "single_offer_single_runtime_surface"
+  publish_channel: "microsoft_partner_center_saas"
+  offer_name: "Pulser for Odoo"
+  offer_id: "tbd_partner_center_offer_id"
+  publisher:
+    name: "InsightPulseAI"
+    seller_id: "tbd"
+    contact_email: "marketplace@insightpulseai.com"
+  support_url: "https://insightpulseai.com/support"
+  privacy_url: "https://insightpulseai.com/privacy"
+  terms_url: "https://insightpulseai.com/terms"
+
+commercial_model:
+  billing_model: "hybrid_per_user_plus_metered_overage"
+  plan_family:
+    - "starter"
+    - "pro"
+    - "enterprise_private_offer"
+  status: "draft"
+
+release_binding:
+  release_contract: "platform/contracts/release/golden-path.yaml"
+  preview_and_live_share_same_offer_definition: true

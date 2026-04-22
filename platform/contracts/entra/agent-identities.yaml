@@ -1,0 +1,79 @@
+schema_version: "1.0"
+last_reviewed: "2026-04-23"
+authority: "platform/contracts/entra/agent-identities.yaml"
+contract_scope: "Golden-path Entra agent identity inventory and governance baseline"
+sources:
+  - "docs/architecture/spec/pulser-agent-365-registration/README.md"
+  - "docs/architecture/spec/pulser-agent-365-registration/manifest-pulser-finance.json"
+  - "docs/architecture/spec/pulser-agent-365-registration/manifest-pulser-ops.json"
+  - "docs/architecture/spec/pulser-agent-365-registration/manifest-pulser-research.json"
+  - "Operator-reported Entra Manage Agents inventory on 2026-04-23"
+
+portfolio_summary:
+  active_agent_identities: 3
+  blueprints: 2
+  unmanaged_agent_identities: 1
+  governance_target: "Every active identity has owner, sponsor, purpose, environment, and retirement policy."
+
+identities:
+  - identity_name: "ipai-agent-pulser-finance-dev"
+    display_name: "Pulser Finance"
+    identity_type: "agent_365_service_principal"
+    runtime_identity: "id-ipai-agent-finance-close-dev"
+    owner: "tbd"
+    sponsor: "tbd"
+    purpose: "Finance specialist agent for Odoo finance, BIR compliance, bank reconciliation, and expense workflows"
+    environment: "dev"
+    blueprint_source: "docs/architecture/spec/pulser-agent-365-registration/manifest-pulser-finance.json"
+    active: true
+    managed_status: "managed"
+    retirement_policy: "Retire only after successor identity, RBAC transfer, and manifest archive are complete."
+    governance_status: "owner_and_sponsor_capture_pending"
+
+  - identity_name: "ipai-agent-pulser-ops-dev"
+    display_name: "Pulser Ops"
+    identity_type: "agent_365_service_principal"
+    runtime_identity: "id-ipai-agent-pulser-dev"
+    owner: "tbd"
+    sponsor: "tbd"
+    purpose: "Infrastructure and DevOps specialist agent for Azure resource inspection and deployment operations"
+    environment: "dev"
+    blueprint_source: "docs/architecture/spec/pulser-agent-365-registration/manifest-pulser-ops.json"
+    active: true
+    managed_status: "managed"
+    retirement_policy: "Retire only after successor identity, RBAC transfer, and manifest archive are complete."
+    governance_status: "owner_and_sponsor_capture_pending"
+
+  - identity_name: "ipai-agent-pulser-research-dev"
+    display_name: "Pulser Research"
+    identity_type: "agent_365_service_principal"
+    runtime_identity: "id-ipai-agent-pulser-dev"
+    owner: "tbd"
+    sponsor: "tbd"
+    purpose: "Read-only research agent for cited retrieval over internal corpus and approved web grounding"
+    environment: "dev"
+    blueprint_source: "docs/architecture/spec/pulser-agent-365-registration/manifest-pulser-research.json"
+    active: true
+    managed_status: "managed"
+    retirement_policy: "Retire only after successor identity, RBAC transfer, and manifest archive are complete."
+    governance_status: "owner_and_sponsor_capture_pending"
+
+  - identity_name: "tbd-unmanaged-agent-01"
+    display_name: "Unmanaged agent identity observed in Entra inventory"
+    identity_type: "agent_identity"
+    runtime_identity: "tbd"
+    owner: "tbd"
+    sponsor: "tbd"
+    purpose: "tbd"
+    environment: "tbd"
+    blueprint_source: "Operator-reported Entra Manage Agents inventory on 2026-04-23"
+    active: true
+    managed_status: "unmanaged"
+    retirement_policy: "Must be assigned an owner and sponsor or retired before promotion beyond preview."
+    governance_status: "remediation_required"
+
+governance_rules:
+  owner_required_for_active_identity: true
+  sponsor_required_for_active_identity: true
+  unmanaged_identities_block_promotion_beyond_preview: true
+  retirement_policy_required_for_active_identity: true
