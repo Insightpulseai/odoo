@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="ipai_pulser_chat.Systray">
+        <div class="o_ipai_pulser_chat_systray">
+            <button class="o_ipai_pulser_chat_btn btn border-0 bg-transparent"
+                    t-on-click="togglePanel"
+                    title="Pulser"
+                    t-att-class="{'o_ipai_pulser_chat_btn_active': state.isOpen}">
+                <i class="fa fa-comments-o"/>
+            </button>
+
+            <div t-if="state.isOpen" class="o_ipai_pulser_chat_drawer shadow-lg">
+                <div class="o_ipai_pulser_chat_header d-flex align-items-center justify-content-between px-3 py-2 border-bottom">
+                    <div>
+                        <strong>Pulser</strong>
+                        <div class="text-muted small">External runtime shell</div>
+                    </div>
+                    <button class="btn btn-sm btn-outline-secondary border-0"
+                            t-on-click="closePanel"
+                            title="Close">
+                        <i class="fa fa-times"/>
+                    </button>
+                </div>
+                <PulserChatPanel/>
+            </div>
+        </div>
+    </t>
+
+</templates>

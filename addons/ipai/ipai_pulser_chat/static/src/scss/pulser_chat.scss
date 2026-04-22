@@ -1,0 +1,69 @@
+.o_ipai_pulser_chat_systray {
+  position: relative;
+}
+
+.o_ipai_pulser_chat_btn {
+  color: var(--o-brand-odoo);
+}
+
+.o_ipai_pulser_chat_btn_active {
+  color: #0f766e;
+}
+
+.o_ipai_pulser_chat_drawer {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 360px;
+  height: 520px;
+  background: #fff;
+  border: 1px solid #d7dbe0;
+  border-radius: 12px;
+  overflow: hidden;
+  z-index: 1000;
+}
+
+.o_ipai_pulser_chat_panel {
+  height: 100%;
+  background: linear-gradient(180deg, #fff 0%, #f7f8fa 100%);
+}
+
+.o_ipai_pulser_chat_messages {
+  min-height: 0;
+}
+
+.o_ipai_pulser_chat_message {
+  display: flex;
+  margin-bottom: 0.75rem;
+}
+
+.o_ipai_pulser_chat_message.o_role_user {
+  justify-content: flex-end;
+}
+
+.o_ipai_pulser_chat_message.o_role_assistant {
+  justify-content: flex-start;
+}
+
+.o_ipai_pulser_chat_bubble {
+  max-width: 85%;
+  padding: 0.6rem 0.8rem;
+  border-radius: 12px;
+  white-space: pre-wrap;
+}
+
+.o_ipai_pulser_chat_message.o_role_user .o_ipai_pulser_chat_bubble {
+  background: #0f766e;
+  color: #fff;
+}
+
+.o_ipai_pulser_chat_message.o_role_assistant .o_ipai_pulser_chat_bubble {
+  background: #eef2f7;
+  color: #243447;
+}
+
+.o_ipai_pulser_chat_empty,
+.o_ipai_pulser_chat_notice,
+.o_ipai_pulser_chat_error {
+  background: rgba(255, 255, 255, 0.85);
+}

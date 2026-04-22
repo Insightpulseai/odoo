@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="param_pulser_chat_enabled" model="ir.config_parameter">
+        <field name="key">ipai.pulser_chat.enabled</field>
+        <field name="value">False</field>
+    </record>
+
+    <record id="param_pulser_chat_backend_url" model="ir.config_parameter">
+        <field name="key">ipai.pulser_chat.backend_url</field>
+        <field name="value"></field>
+    </record>
+
+    <record id="param_pulser_chat_timeout_seconds" model="ir.config_parameter">
+        <field name="key">ipai.pulser_chat.timeout_seconds</field>
+        <field name="value">30</field>
+    </record>
+</odoo>

@@ -1,0 +1,124 @@
+=== Local CI Gate ===
+Repo: /Users/tbwa/Documents/GitHub/Insightpulseai
+Time: 2026-04-22T17:45:20Z
+
+--- Repo Health ---
+=== Repo Health Check ===
+Repo: /Users/tbwa/Documents/GitHub/Insightpulseai
+
+--- Directory Structure ---
+  PASS  addons/ipai/
+  PASS  .devcontainer/
+  PASS  scripts/
+  PASS  docs/
+  PASS  spec/
+  PASS  ssot/
+
+--- Required Files ---
+  PASS  CLAUDE.md
+  PASS  .gitignore
+
+--- Secrets Check (staged files) ---
+  PASS  No secrets detected in staged changes
+
+--- Deprecated System Check (staged files) ---
+  PASS  No deprecated system references
+
+--- Module Completeness (staged ipai_* modules) ---
+  PASS  ipai_pulser_chat
+
+===========================
+PASS: Repo health OK
+  => PASS
+
+--- Spec Validation ---
+=== Spec Bundle Validation ===
+Spec dir: /Users/tbwa/Documents/GitHub/Insightpulseai/spec
+
+--- Bundle Completeness ---
+  WARN  _templates: no PRD or constitution found
+  PASS  adls-etl-reverse-etl
+  PASS  agent-deployments-hardening
+  WARN  agent-factory-sdlc-research: no PRD or constitution found
+  PASS  agent-factory
+  PASS  agent-platform
+  PASS  agentic-global-compliance-cloud
+  PASS  ap-invoice-agent
+  WARN  archive: no PRD or constitution found
+  PASS  azure-devops-pipeline-baseline
+  PASS  bank-reconciliation-agent
+  PASS  commercial-controls-rate-card
+  PASS  copilot-target-state
+  PASS  databricks-bundles-foundation
+  PASS  diva-goals
+  PASS  docs-platform
+  PASS  entra-identity-migration
+  PASS  eval-engine-hardening
+  PASS  expense-liquidation-agent
+  PASS  expense-parity-odoo
+  PASS  fabric-power-bi-serving
+  PASS  finance-domain-intelligence
+  PASS  finance-unified
+  PASS  finops-hub
+  PASS  fluent-designer-agent
+  PASS  gmail-inbox-addon
+  PASS  gmail-mail-plugin
+  WARN  ipai-workload-center: no PRD or constitution found
+  PASS  m365-declarative-agent
+  PASS  marketing-agency-stack
+  PASS  meta-integration-bridge
+  PASS  microsoft-marketplace-gtm
+  PASS  odoo-chatgpt-connector
+  PASS  odoo-cloud-platform
+  PASS  odoo-foundry-vscode-extension
+  PASS  odoo-ios-mobile
+  PASS  odoo-on-azure-operations
+  PASS  odoo-on-azure
+  PASS  odoo-seed-import
+  PASS  odoo-sh-azure-equivalent
+  PASS  odoo-sh-equivalent-staging
+  PASS  plane-unified-docs
+  WARN  power-platform-identity-poc: no PRD or constitution found
+  PASS  ppm-clarity-plane-odoo
+  PASS  pulser-agents
+  PASS  pulser-entra-agent-id
+  PASS  pulser-inline-viz
+  PASS  pulser-odoo-ph
+  PASS  pulser-odoo
+  PASS  pulser-platform
+  PASS  pulser-web
+  PASS  pulsetax-agentic-control-plane
+  PASS  release-gates-hardening
+  PASS  reverse-avatax-odoo18-pulser
+  PASS  reverse-sap-concur
+  PASS  sap-joule-concur-odoo-azure
+  WARN  seed-dedup-remediation: no PRD or constitution found
+  PASS  target-platform-architecture
+  PASS  task-router-hardening
+  PASS  tax-pulse-sub-agent
+  PASS  taxpulse-bir-integration
+  PASS  taxpulse-ph
+  PASS  unified-api-gateway
+  PASS  w9-studio-copilot
+  PASS  wholesale-saas-erp-azure
+
+--- Staged Spec References ---
+  SKIP  No staged spec changes
+
+===========================
+Checked: 65 bundles
+PASS with 6 warning(s)
+  => PASS
+
+--- Python Syntax ---
+  => PASS
+
+--- YAML Lint ---
+  => SKIP (no staged .yaml/.yml files)
+
+--- Naming Convention ---
+  => PASS
+
+===========================
+PASS: 4  FAIL: 0  SKIP: 1
+LOCAL CI: PASSED

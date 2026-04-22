@@ -1,0 +1,16 @@
+ addons/ipai/ipai_pulser_chat/README.md             |  29 ++++
+ addons/ipai/ipai_pulser_chat/__init__.py           |   4 +
+ addons/ipai/ipai_pulser_chat/__manifest__.py       |  26 ++++
+ .../ipai/ipai_pulser_chat/controllers/__init__.py  |   3 +
+ .../ipai_pulser_chat/controllers/pulser_chat.py    | 169 +++++++++++++++++++++
+ .../ipai_pulser_chat/data/ir_config_parameter.xml  |  17 +++
+ addons/ipai/ipai_pulser_chat/models/__init__.py    |   3 +
+ .../ipai_pulser_chat/models/res_config_settings.py |  24 +++
+ .../static/src/js/chat/pulser_chat_panel.js        | 112 ++++++++++++++
+ .../static/src/js/systray/pulser_systray.js        |  33 ++++
+ .../static/src/scss/pulser_chat.scss               |  69 +++++++++
+ .../static/src/xml/chat/pulser_chat_panel.xml      |  59 +++++++
+ .../static/src/xml/pulser_systray.xml              |  30 ++++
+ .../views/res_config_settings_views.xml            |  29 ++++
+ .../pulser-chat-shell-addon/README.md              |  40 +++++
+ 15 files changed, 647 insertions(+)

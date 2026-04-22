@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_ipai_pulser_chat" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.ipai.pulser.chat</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='general_settings']" position="inside">
+                <block title="Pulser Chat Shell" name="ipai_pulser_chat_settings">
+                    <setting string="Pulser Chat"
+                             help="Enable the thin Pulser systray shell for the external agent runtime.">
+                        <field name="ipai_pulser_chat_enabled"/>
+                        <div class="content-group" invisible="not ipai_pulser_chat_enabled">
+                            <div class="row mt16">
+                                <label for="ipai_pulser_chat_backend_url" class="col-lg-3"/>
+                                <field name="ipai_pulser_chat_backend_url"
+                                       placeholder="https://pulser.example.com/api/chat"/>
+                            </div>
+                            <div class="row mt8">
+                                <label for="ipai_pulser_chat_timeout_seconds" class="col-lg-3"/>
+                                <field name="ipai_pulser_chat_timeout_seconds"/>
+                            </div>
+                        </div>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+</odoo>
