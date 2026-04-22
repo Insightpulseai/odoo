@@ -1,0 +1,9 @@
+ docs/architecture/W9_BOUNDARY_MODEL.md             | 41 ++++++++++++++
+ .../20260423-0131/w9-boundary-model/README.md      | 26 +++++++++
+ .../w9-boundary-model/contract-checks.txt          |  6 ++
+ .../20260423-0131/w9-boundary-model/diff-stat.txt  |  0
+ .../20260423-0131/w9-boundary-model/file-list.txt  |  3 +
+ .../20260423-0131/w9-boundary-model/yaml-parse.txt |  3 +
+ .../contracts/business/company-boundaries.yaml     | 57 +++++++++++++++++++
+ platform/contracts/identity/test-matrix.yaml       | 65 ++++++++++++++++++++++
+ 8 files changed, 201 insertions(+)

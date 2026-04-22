@@ -1,0 +1,65 @@
+version: 1
+owner_repo: platform
+owner_team: identity
+status: draft
+
+cohorts:
+  - key: w9_workspace_personas
+    display_name: W9 Studio Workspace Personas
+    workspace_domain: w9studio.net
+    workspace_organizational_unit: W9 Studio
+    users:
+      - business@w9studio.net
+      - finance@w9studio.net
+      - accounts@w9studio.net
+    boundary_role:
+      - persona_testing
+      - policy_scoped_user_group
+      - customer_like_test_cohort
+    not_a_boundary_for:
+      - separate_entra_tenant
+      - separate_git_branch
+      - separate_ci_environment
+
+surfaces:
+  - key: google_workspace
+    test_focus:
+      - gmail_persona_flows
+      - calendar_persona_flows
+      - drive_docs_persona_flows
+      - google_oauth_user_selection
+    uses_cohorts:
+      - w9_workspace_personas
+
+  - key: odoo
+    test_focus:
+      - multi_company_visibility
+      - company_scoped_journals_and_taxes
+      - operator_role_access
+    company_boundary_required_for_w9: true
+    uses_cohorts:
+      - w9_workspace_personas
+
+  - key: entra
+    test_focus:
+      - workforce_identity
+      - enterprise_app_access
+      - cross_tenant_behavior_only_when_explicitly_needed
+    separate_tenant_required_for_w9: false
+    uses_cohorts:
+      - w9_workspace_personas
+
+  - key: git_and_cicd
+    test_focus:
+      - normal_branch_and_environment_flow
+    w9_specific_branching_required: false
+    uses_cohorts:
+      - w9_workspace_personas
+
+rules:
+  - id: test-matrix-ou-persona-only
+    description: W9 Google Workspace personas are valid for user and workflow testing but do not redefine tenant or company boundaries.
+  - id: test-matrix-odoo-company-required
+    description: W9 business-entity testing in Odoo must use a separate company context.
+  - id: test-matrix-no-branch-fork
+    description: W9 persona testing does not imply a separate Git or CI branch model.

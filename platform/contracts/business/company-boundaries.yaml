@@ -1,0 +1,57 @@
+version: 1
+owner_repo: platform
+owner_team: business-architecture
+status: draft
+
+doctrine:
+  google_workspace_ou_is_not_odoo_company: true
+  google_workspace_ou_is_not_entra_tenant: true
+  odoo_company_is_business_entity_boundary: true
+  separate_entra_tenant_only_for_external_org_isolation: true
+
+entities:
+  - key: insightpulseai
+    display_name: InsightPulseAI
+    business_boundary_type: provider
+    google_workspace_boundary:
+      domain: insightpulseai.com
+      boundary_type: mailbox_and_collaboration
+    odoo_boundary:
+      company_required: true
+      company_name: InsightPulseAI
+      company_id: "1"
+    entra_boundary:
+      tenant_domain: insightpulseai.com
+      separate_tenant_required: false
+
+  - key: w9_studio
+    display_name: W9 Studio
+    business_boundary_type: business_unit_or_customer_like_cohort
+    google_workspace_boundary:
+      domain: w9studio.net
+      organizational_unit: W9 Studio
+      boundary_type: persona_and_policy_grouping
+      primary_users:
+        - business@w9studio.net
+        - finance@w9studio.net
+        - accounts@w9studio.net
+    odoo_boundary:
+      company_required_if_distinct_entity: true
+      company_name: W9 Studio
+      company_id: "2"
+    entra_boundary:
+      tenant_domain: insightpulseai.com
+      separate_tenant_required: false
+      separate_tenant_only_when:
+        - external_customer_sign_in_simulation
+        - admin_consent_isolation
+        - marketplace_customer_install_testing
+        - cross_tenant_behavior_validation
+
+rules:
+  - id: business-boundary-ou-not-company
+    description: A Google Workspace organizational unit does not replace an Odoo company boundary.
+  - id: business-boundary-ou-not-tenant
+    description: A Google Workspace organizational unit does not replace an Entra tenant boundary.
+  - id: business-boundary-company-for-books
+    description: Separate books, journals, taxes, and company-scoped visibility require a separate Odoo company.
