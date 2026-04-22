@@ -18,8 +18,8 @@ That mismatch reproduced the user-reported `AADSTS50011` failure on 2026-04-22.
 
 ## Repo Changes
 
-- Added the deterministic `auth_oauth` HTTPS callback patch to [platform/runtime/docker/docker/Dockerfile.pulser-odoo](/Users/tbwa/Documents/GitHub/Insightpulseai/platform/runtime/docker/docker/Dockerfile.pulser-odoo:216)
-- Added the same patch to [docker/Dockerfile.unified](/Users/tbwa/Documents/GitHub/Insightpulseai/docker/Dockerfile.unified:24)
+- Added the deterministic `auth_oauth` HTTPS callback patch to [platform/runtime/docker/docker/Dockerfile.pulser-odoo](/Users/tbwa/Documents/GitHub/Insightpulseai/platform/runtime/docker/docker/Dockerfile.pulser-odoo:223)
+- Added the same patch to [docker/Dockerfile.unified](/Users/tbwa/Documents/GitHub/Insightpulseai/docker/Dockerfile.unified:31)
 
 ## Deployment
 
