@@ -11,37 +11,56 @@ canonical_base_modules:
   - contacts
 
 canonical_custom_modules:
+  - id: ipai_auth_oauth_https
+    role: force HTTPS redirect URIs for auth_oauth behind reverse proxies (Azure
+      Front Door)
+    depends: [ auth_oauth ]
+    type: infrastructure_bridge
+    critical: true
+    reason: fixes AADSTS50011 error where Odoo sends HTTP redirect URIs to OAuth
+      providers (Entra ID, Google, etc.) but app registrations only have HTTPS
+      configured
+
   - id: ipai_enterprise_bridge
     role: shared config, security groups, feature flags, audit mixins
-    depends: [base, mail]
+    depends: [ base, mail ]
     type: bridge
 
   - id: ipai_ai_core
     role: agent session records, tool registry, correlation IDs, AI contract layer
-    depends: [ipai_enterprise_bridge, mail]
+    depends: [ ipai_enterprise_bridge, mail ]
     type: core_bridge
 
   - id: ipai_foundry_bridge
     role: Odoo to Foundry Agent Service runtime integration
-    depends: [ipai_ai_core, ipai_enterprise_bridge]
+    depends: [ ipai_ai_core, ipai_enterprise_bridge ]
     type: external_bridge
 
   - id: ipai_document_intelligence_bridge
     role: Odoo to Azure Document Intelligence OCR/extraction
-    depends: [documents, ipai_enterprise_bridge, ipai_ai_core]
+    depends: [ documents, ipai_enterprise_bridge, ipai_ai_core ]
     type: external_bridge
 
   - id: ipai_odoo_copilot
     role: embedded copilot UI and action surface inside Odoo
-    depends: [ipai_enterprise_bridge, ipai_ai_core, mail]
+    depends: [ ipai_enterprise_bridge, ipai_ai_core, mail ]
     type: ux_bridge
 
   - id: ipai_ap_expense_capture
     role: invoice/expense capture, matching, dedupe, routing, exceptions
-    depends: [account, purchase, hr_expense, documents, ipai_document_intelligence_bridge, ipai_ai_core]
+    depends:
+      [
+        account,
+        purchase,
+        hr_expense,
+        documents,
+        ipai_document_intelligence_bridge,
+        ipai_ai_core,
+      ]
     type: workflow
 
 install_order:
+  - ipai_auth_oauth_https
   - ipai_enterprise_bridge
   - ipai_ai_core
   - ipai_foundry_bridge
