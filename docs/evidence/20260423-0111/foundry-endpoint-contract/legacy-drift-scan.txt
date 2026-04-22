@@ -1,0 +1,6 @@
+platform/contracts/foundry/endpoints.yaml:28:      - "Older repo docs may still reference ipai-copilot-resource endpoints."
+docs/runbooks/FOUNDRY_PROJECT_BASELINE.md:55:Older repo docs still reference `ipai-copilot-resource` as the Foundry resource and endpoint base.
+docs/runbooks/claude-code-foundry.md:25:| Resource name | `ipai-copilot-resource` |
+docs/runbooks/foundry-connections-and-tools.md:21:| `ipai-copilot-resource` | Microsoft Azure Sponsorship (`eba824fb-...`) | All Foundry workloads (gpt-4.1 + future fine-tuned variants) | **CANONICAL** |
+platform/ssot/mvp/template_adoption.yaml:59:      foundry_project: "https://ipai-copilot-resource.services.ai.azure.com/api/projects/ipai-copilot"
+platform/ssot/ai/agents.yaml:28:  project_endpoint: "https://ipai-copilot-resource.services.ai.azure.com/api/projects/ipai-copilot"

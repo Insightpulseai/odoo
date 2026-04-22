@@ -1,0 +1,43 @@
+schema_version: "1.0"
+last_reviewed: "2026-04-23"
+authority: "platform/contracts/foundry/auth-policy.yaml"
+
+clients:
+  portal:
+    auth_modes: [api_key]
+    default_auth_mode: api_key
+    intent: "Portal validation and quick bootstrap tests"
+
+  ai_toolkit:
+    auth_modes: [entra_rbac, api_key_fallback]
+    default_auth_mode: entra_rbac
+    intent: "Local developer tooling and project connection discovery"
+    prerequisites:
+      - "Signed into the correct Entra tenant"
+      - "Signed into the correct Azure subscription"
+      - "Pointed at the canonical Foundry project endpoint"
+      - "Principal can read project connections on the Foundry project/resource scope"
+
+  runtime_apps:
+    auth_modes: [managed_identity, api_key_fallback]
+    default_auth_mode: managed_identity
+    intent: "Application runtime, hosted services, and deployed agents"
+    prerequisites:
+      - "Managed identity has the required Azure RBAC on the Foundry resource/project"
+      - "Runtime config resolves the canonical endpoint contract"
+
+  cicd:
+    auth_modes: [federated_identity, secret]
+    default_auth_mode: federated_identity
+    intent: "Build, deploy, and environment automation"
+    prerequisites:
+      - "Federated identity preferred where supported"
+      - "Secrets allowed only where no approved keyless path exists"
+
+rules:
+  prefer_keyless_for_runtime: true
+  api_key_allowed_for_bootstrap_only: true
+  manual_key_copy_paste_for_runtime_forbidden: true
+  ai_toolkit_requires_project_connection_inventory_access: true
+  same_tenant_subscription_project_context_required_for_local_tooling: true
+  global_admin_does_not_imply_foundry_resource_rbac: true

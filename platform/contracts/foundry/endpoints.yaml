@@ -1,0 +1,29 @@
+schema_version: "1.0"
+last_reviewed: "2026-04-23"
+authority: "platform/contracts/foundry/endpoints.yaml"
+source_of_confirmation: "Azure AI Foundry portal project overview confirmed by operator on 2026-04-23"
+
+projects:
+  ipai-copilot:
+    project_name: "ipai-copilot"
+    foundry_resource_name: "ipai-foundry-sea"
+    environment: "dev"
+    status: "active"
+    project_endpoint: "https://ipai-foundry-sea.services.ai.azure.com/api/projects/ipai-copilot"
+    azure_openai_base_url: "https://ipai-foundry-sea.openai.azure.com/openai/v1"
+    ai_services_base_url: "https://ipai-foundry-sea.services.ai.azure.com"
+    portal_api_key_path: "Azure AI Foundry portal -> Project overview -> API key"
+    endpoint_discipline:
+      project_endpoint_for:
+        - project-native APIs
+        - project connection inventory
+        - project-scoped tool and agent operations
+      azure_openai_base_url_for:
+        - OpenAI-compatible chat/completions
+        - embeddings
+        - inference clients that expect the Azure OpenAI surface
+      ai_services_base_url_for:
+        - resource-scoped AI Services APIs that are not project-scoped
+    legacy_drift_note:
+      - "Older repo docs may still reference ipai-copilot-resource endpoints."
+      - "Treat this file as the canonical endpoint contract for the current ipai-copilot project baseline."
