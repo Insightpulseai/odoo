@@ -3,6 +3,12 @@ owner_repo: platform
 owner_team: identity
 status: draft
 
+tenant:
+  primary_domain: insightpulseai.com
+  initial_domain: ceoinsightpulseai.onmicrosoft.com
+  primary_domain_verified: true
+  federated: false
+
 globals:
   callback_path: /auth_oauth/signin
   public_https_required: true
@@ -26,6 +32,8 @@ providers:
     secret_owner: identity
     app_type: web
     ui_console: entra_app_registration
+    enterprise_app_name: InsightPulse AI - Odoo Login
+    application_id: 3446e178-3eba-48c9-b5bd-4283ff729eb1
 
 environments:
   dev:
@@ -74,8 +82,5 @@ rules:
 exemptions: []
 
 evidence:
-  microsoft_enterprise_app_name: InsightPulse AI - Odoo Login
-  microsoft_application_id: ""
-  google_oauth_client_name: ""
-  last_verified_at: ""
-  verified_by: ""
+  last_verified_from: entra_admin_center
+  verified_by: admin@insightpulseai.com

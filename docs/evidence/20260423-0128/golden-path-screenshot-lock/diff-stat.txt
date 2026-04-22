@@ -1,0 +1,5 @@
+ platform/contracts/entra/agent-identities.yaml |  5 +++++
+ platform/contracts/foundry/rbac-matrix.yaml    | 10 +++++++++-
+ platform/contracts/identity/oauth-matrix.yaml  | 15 ++++++++++-----
+ platform/contracts/release/golden-path.yaml    |  5 ++++-
+ 4 files changed, 28 insertions(+), 7 deletions(-)

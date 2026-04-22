@@ -10,6 +10,11 @@ policy:
   purpose_required: true
   retirement_policy_required: true
 
+summary:
+  total: 3
+  active: 3
+  unmanaged: 1
+
 identities:
   - key: ipai-copilot-resource-ipai-copilot-agentidentity
     display_name: ipai-copilot-resource-ipai-copilot-AgentIdentity

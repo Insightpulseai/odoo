@@ -8,7 +8,10 @@ product:
   name: InsightPulse AI Odoo Login
   runtime_surface: erp
   foundry_project: ipai-copilot
-  identity_surface: google_and_microsoft_oauth
+  identity_surface:
+    tenant_domain: insightpulseai.com
+    microsoft_enterprise_app: InsightPulse AI - Odoo Login
+    microsoft_application_id: 3446e178-3eba-48c9-b5bd-4283ff729eb1
   publish_channel: microsoft_marketplace
   package_contract: marketplace-publishing/contracts/golden-path-packaging.yaml
   compliance_contract: marketplace-publishing/contracts/golden-path-compliance.yaml

@@ -3,6 +3,9 @@ owner_repo: platform
 owner_team: ai-platform
 status: draft
 
+tenant:
+  primary_domain: insightpulseai.com
+
 resources:
   - key: ipai-foundry-sea
     kind: microsoft_foundry_project
@@ -16,6 +19,11 @@ principals:
     display_name: admin@insightpulseai.com
     principal_type: user
     object_id: ""
+    role_hint:
+      entra_role: Global Administrator
+      assignment_scope: Directory
+      membership: Direct
+      state: Active
   - key: odoo-runtime-mi
     display_name: ""
     principal_type: managed_identity
@@ -33,7 +41,7 @@ required_access:
       - read_project
       - read_connections
     required_roles: []
-    status: unknown
+    status: failing_or_unverified
   - principal: odoo-runtime-mi
     resource: ipai-foundry-sea
     client: runtime_apps
