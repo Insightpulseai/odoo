@@ -1,0 +1,9 @@
+oauth_prod_google_microsoft_match=PASS
+oauth_prod_https=PASS
+foundry_project_endpoint_match=PASS
+foundry_openai_base_match=PASS
+auth_policy_clients_present=PASS
+rbac_tracks_principals=PASS
+agent_identity_has_unmanaged=PASS
+release_has_preview_before_live=PASS
+product_key_alignment=PASS

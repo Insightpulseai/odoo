@@ -1,135 +1,81 @@
-schema_version: "1.0"
-last_reviewed: "2026-04-23"
-authority: "platform/contracts/identity/oauth-matrix.yaml"
-contract_scope: "Golden-path OAuth redirect contract for the authenticated Odoo operator surface"
-sources:
-  - "config/ENVIRONMENTS.md"
-  - "infra/ssot/auth/oidc_clients.yaml"
-  - "platform/ssot/integrations/entra_oidc.yaml"
-  - "docs/evidence/20260423-0056/entra-odoo-redirect-uri/README.md"
+version: 1
+owner_repo: platform
+owner_team: identity
+status: draft
 
-product:
-  product_id: "pulser-odoo-authenticated-surface"
-  product_name: "Pulser for Odoo"
-  runtime_surface: "https://erp.insightpulseai.com"
-  oauth_callback_path: "/auth_oauth/signin"
+globals:
+  callback_path: /auth_oauth/signin
+  public_https_required: true
+  preview_publishable: false
+  production_publishable: true
 
-rules:
-  public_callback_scheme: "https"
-  shared_callback_path_across_providers: true
-  public_environments_must_never_emit_http: true
-  preview_host_required_before_publish: true
-  environment_sequence:
-    - dev
-    - preview
-    - staging
-    - production
+products:
+  - key: odoo_login
+    name: InsightPulse AI Odoo Login
+    runtime_surface: erp
+    notes: Canonical golden-path authenticated product surface.
+
+providers:
+  google:
+    registration_owner: identity
+    secret_owner: identity
+    app_type: web
+    ui_console: google_cloud_console
+  microsoft:
+    registration_owner: identity
+    secret_owner: identity
+    app_type: web
+    ui_console: entra_app_registration
 
 environments:
   dev:
-    public_host: "erp-dev.insightpulseai.com"
-    host_status: "defined_in_repo_contract"
+    public: false
     publishable: false
+    base_url: ""
+    callback_path: /auth_oauth/signin
+    expected_redirects:
+      google: ""
+      microsoft: ""
   preview:
-    public_host: null
-    public_host_template: "tbd"
-    host_status: "pending_assignment"
+    public: true
     publishable: false
+    base_url: ""
+    callback_path: /auth_oauth/signin
+    expected_redirects:
+      google: ""
+      microsoft: ""
   staging:
-    public_host: "erp-staging.insightpulseai.com"
-    host_status: "defined_in_repo_contract"
+    public: true
     publishable: false
+    base_url: ""
+    callback_path: /auth_oauth/signin
+    expected_redirects:
+      google: ""
+      microsoft: ""
   production:
-    public_host: "erp.insightpulseai.com"
-    host_status: "live"
+    public: true
     publishable: true
+    base_url: https://erp.insightpulseai.com
+    callback_path: /auth_oauth/signin
+    expected_redirects:
+      google: https://erp.insightpulseai.com/auth_oauth/signin
+      microsoft: https://erp.insightpulseai.com/auth_oauth/signin
 
-providers:
-  microsoft_entra:
-    display_name: "Microsoft Entra (InsightPulseAI)"
-    protocol: "oidc"
-    registration_owner:
-      system: "Microsoft Entra ID"
-      enterprise_app_display_name: "InsightPulse AI - Odoo Login"
-      app_id: "3446e178-3eba-48c9-b5bd-4283ff729eb1"
-      tenant_domain: "insightpulseai.com"
-      config_source: "platform/ssot/integrations/entra_oidc.yaml"
-    secret_owner:
-      system: "Azure Key Vault"
-      vault: "kv-ipai-dev"
-      client_id_secret: "entra-client-id"
-      client_secret_secret: "entra-client-secret"
-    environments:
-      dev:
-        public_host: "erp-dev.insightpulseai.com"
-        callback_path: "/auth_oauth/signin"
-        expected_redirect_uri: "https://erp-dev.insightpulseai.com/auth_oauth/signin"
-        https_required: true
-        publishable: false
-        verification_status: "pending_live_validation"
-      preview:
-        public_host: null
-        callback_path: "/auth_oauth/signin"
-        expected_redirect_uri: null
-        expected_redirect_uri_template: "https://<preview-host>/auth_oauth/signin"
-        https_required: true
-        publishable: false
-        verification_status: "blocked_by_preview_host_assignment"
-      staging:
-        public_host: "erp-staging.insightpulseai.com"
-        callback_path: "/auth_oauth/signin"
-        expected_redirect_uri: "https://erp-staging.insightpulseai.com/auth_oauth/signin"
-        https_required: true
-        publishable: false
-        verification_status: "pending_app_registration_validation"
-      production:
-        public_host: "erp.insightpulseai.com"
-        callback_path: "/auth_oauth/signin"
-        expected_redirect_uri: "https://erp.insightpulseai.com/auth_oauth/signin"
-        https_required: true
-        publishable: true
-        verification_status: "verified_live_callback_2026_04_23"
+rules:
+  - id: oauth-public-https-only
+    description: Public environments must never emit http redirect URIs.
+  - id: oauth-provider-path-consistency
+    description: Google and Microsoft must use the same callback path unless explicitly exempted.
+  - id: oauth-no-empty-publishable-redirects
+    description: Publishable environments must define expected redirect URIs for both providers.
+  - id: oauth-base-url-required-for-public
+    description: Public environments must define a base_url.
 
-  google_workspace_w9studio:
-    display_name: "Google Workspace (W9 Studio)"
-    protocol: "oauth2"
-    registration_owner:
-      system: "Google Workspace / Google Cloud Console"
-      hosted_domain: "w9studio.net"
-      admin_email: "business@w9studio.net"
-      config_source: "infra/ssot/auth/oidc_clients.yaml"
-    secret_owner:
-      system: "Azure Key Vault"
-      vault: "kv-ipai-dev"
-      client_id_secret: "google-oauth-w9studio-client-id"
-      client_secret_secret: "google-oauth-w9studio-client-secret"
-    environments:
-      dev:
-        public_host: "erp-dev.insightpulseai.com"
-        callback_path: "/auth_oauth/signin"
-        expected_redirect_uri: "https://erp-dev.insightpulseai.com/auth_oauth/signin"
-        https_required: true
-        publishable: false
-        verification_status: "pending_google_console_alignment"
-      preview:
-        public_host: null
-        callback_path: "/auth_oauth/signin"
-        expected_redirect_uri: null
-        expected_redirect_uri_template: "https://<preview-host>/auth_oauth/signin"
-        https_required: true
-        publishable: false
-        verification_status: "blocked_by_preview_host_assignment"
-      staging:
-        public_host: "erp-staging.insightpulseai.com"
-        callback_path: "/auth_oauth/signin"
-        expected_redirect_uri: "https://erp-staging.insightpulseai.com/auth_oauth/signin"
-        https_required: true
-        publishable: false
-        verification_status: "pending_google_console_alignment"
-      production:
-        public_host: "erp.insightpulseai.com"
-        callback_path: "/auth_oauth/signin"
-        expected_redirect_uri: "https://erp.insightpulseai.com/auth_oauth/signin"
-        https_required: true
-        publishable: true
-        verification_status: "ssot_registered_runtime_smoke_pending"
+exemptions: []
+
+evidence:
+  microsoft_enterprise_app_name: InsightPulse AI - Odoo Login
+  microsoft_application_id: ""
+  google_oauth_client_name: ""
+  last_verified_at: ""
+  verified_by: ""

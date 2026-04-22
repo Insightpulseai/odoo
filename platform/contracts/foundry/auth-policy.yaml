@@ -1,46 +1,45 @@
-schema_version: "1.0"
-last_reviewed: "2026-04-23"
-authority: "platform/contracts/foundry/auth-policy.yaml"
-owning_repo: "Insightpulseai/odoo"
-owning_system: "Pulser for Odoo authenticated operator surface"
-release_contract: "platform/contracts/release/golden-path.yaml"
+version: 1
+owner_repo: platform
+owner_team: ai-platform
+status: draft
+
+defaults:
+  prefer_keyless_for_runtime: true
+  api_key_allowed_for_bootstrap_only: true
+  require_documented_client_auth_mode: true
 
 clients:
   portal:
-    auth_modes: [api_key]
-    default_auth_mode: api_key
-    intent: "Portal validation and quick bootstrap tests"
-
+    allowed_auth_modes:
+      - api_key
+    preferred_auth_mode: api_key
+    fallback_auth_modes: []
   ai_toolkit:
-    auth_modes: [entra_rbac, api_key_fallback]
-    default_auth_mode: entra_rbac
-    intent: "Local developer tooling and project connection discovery"
-    prerequisites:
-      - "Signed into the correct Entra tenant"
-      - "Signed into the correct Azure subscription"
-      - "Pointed at the canonical Foundry project endpoint"
-      - "Principal can read project connections on the Foundry project/resource scope"
-
+    allowed_auth_modes:
+      - entra_rbac
+      - api_key
+    preferred_auth_mode: entra_rbac
+    fallback_auth_modes:
+      - api_key
   runtime_apps:
-    auth_modes: [managed_identity, api_key_fallback]
-    default_auth_mode: managed_identity
-    intent: "Application runtime, hosted services, and deployed agents"
-    prerequisites:
-      - "Managed identity has the required Azure RBAC on the Foundry resource/project"
-      - "Runtime config resolves the canonical endpoint contract"
-
-  cicd:
-    auth_modes: [federated_identity, secret]
-    default_auth_mode: federated_identity
-    intent: "Build, deploy, and environment automation"
-    prerequisites:
-      - "Federated identity preferred where supported"
-      - "Secrets allowed only where no approved keyless path exists"
+    allowed_auth_modes:
+      - managed_identity
+      - api_key
+    preferred_auth_mode: managed_identity
+    fallback_auth_modes:
+      - api_key
+  ci_cd:
+    allowed_auth_modes:
+      - federated_identity
+      - secret
+    preferred_auth_mode: federated_identity
+    fallback_auth_modes:
+      - secret
 
 rules:
-  prefer_keyless_for_runtime: true
-  api_key_allowed_for_bootstrap_only: true
-  manual_key_copy_paste_for_runtime_forbidden: true
-  ai_toolkit_requires_project_connection_inventory_access: true
-  same_tenant_subscription_project_context_required_for_local_tooling: true
-  global_admin_does_not_imply_foundry_resource_rbac: true
+  - id: foundry-runtime-no-manual-copy-paste-key
+    description: Runtime apps must not depend on manually copied API keys.
+  - id: foundry-ai-toolkit-rbac-first
+    description: AI Toolkit should use Entra RBAC first when supported.
+  - id: foundry-cicd-noninteractive-auth
+    description: CI/CD must use noninteractive auth only.

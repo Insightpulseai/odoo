@@ -1,94 +1,57 @@
-schema_version: "1.0"
-last_reviewed: "2026-04-23"
-authority: "platform/contracts/foundry/rbac-matrix.yaml"
-contract_scope: "Golden-path Foundry RBAC readiness for project connection inventory and runtime access"
-sources:
-  - "platform/contracts/foundry/endpoints.yaml"
-  - "platform/contracts/foundry/auth-policy.yaml"
-  - "Operator-reported AI Toolkit connections/read failure context"
+version: 1
+owner_repo: platform
+owner_team: ai-platform
+status: draft
 
-foundry_target:
-  project_name: "ipai-copilot"
-  foundry_resource_name: "ipai-foundry-sea"
-  project_endpoint: "https://ipai-foundry-sea.services.ai.azure.com/api/projects/ipai-copilot"
-  azure_openai_base_url: "https://ipai-foundry-sea.openai.azure.com/openai/v1"
-  verification_goal: "Approved clients can read project connections without read-denied errors"
+resources:
+  - key: ipai-foundry-sea
+    kind: microsoft_foundry_project
+    subscription_id: ""
+    resource_group: ""
+    resource_id: ""
+    project_name: ipai-copilot
 
 principals:
-  - principal_id: "human-local-tooling-admin"
-    principal_type: "user"
-    principal_ref: "admin@insightpulseai.com"
-    client_surface: "ai_toolkit"
-    scope:
-      resource: "ipai-foundry-sea"
-      project: "ipai-copilot"
-    required_read_actions:
-      - "project_connections.read"
-      - "project_metadata.read"
-      - "model_deployments.read"
-    required_role_bindings:
-      resource_scope_roles:
-        - name: "tbd_after_live_capture"
-          status: "pending_verification"
-      project_scope_roles:
-        - name: "tbd_after_live_capture"
-          status: "pending_verification"
-    verification_status: "pending_connections_read_check"
-    notes:
-      - "Global Administrator in Entra does not satisfy this requirement by itself."
-      - "Tenant, subscription, and project context must match the contract."
+  - key: admin-user
+    display_name: admin@insightpulseai.com
+    principal_type: user
+    object_id: ""
+  - key: odoo-runtime-mi
+    display_name: ""
+    principal_type: managed_identity
+    object_id: ""
+  - key: github-cicd
+    display_name: ""
+    principal_type: federated_identity
+    object_id: ""
 
-  - principal_id: "runtime-apps-managed-identity"
-    principal_type: "user_assigned_managed_identity"
-    principal_ref: "mi-ipai-odoo-dev"
-    client_surface: "runtime_apps"
-    scope:
-      resource: "ipai-foundry-sea"
-      project: "ipai-copilot"
-    required_read_actions:
-      - "project_metadata.read"
-      - "model_deployments.read"
-      - "inference.invoke"
-    required_role_bindings:
-      resource_scope_roles:
-        - name: "tbd_after_live_capture"
-          status: "pending_verification"
-      project_scope_roles:
-        - name: "tbd_after_live_capture"
-          status: "pending_verification"
-    verification_status: "pending_runtime_role_capture"
-    notes:
-      - "Managed identity is the preferred runtime auth mode."
-      - "Runtime does not require manual API key copy/paste."
+required_access:
+  - principal: admin-user
+    resource: ipai-foundry-sea
+    client: ai_toolkit
+    required_actions:
+      - read_project
+      - read_connections
+    required_roles: []
+    status: unknown
+  - principal: odoo-runtime-mi
+    resource: ipai-foundry-sea
+    client: runtime_apps
+    required_actions:
+      - invoke_models
+    required_roles: []
+    status: unknown
+  - principal: github-cicd
+    resource: ipai-foundry-sea
+    client: ci_cd
+    required_actions:
+      - deploy_or_configure
+    required_roles: []
+    status: unknown
 
-  - principal_id: "cicd-federated-identity"
-    principal_type: "federated_identity"
-    principal_ref: "tbd_pipeline_identity"
-    client_surface: "cicd"
-    scope:
-      resource: "ipai-foundry-sea"
-      project: "ipai-copilot"
-    required_read_actions:
-      - "project_metadata.read"
-      - "model_deployments.read"
-      - "deployment_validation.read"
-    required_role_bindings:
-      resource_scope_roles:
-        - name: "tbd_after_live_capture"
-          status: "pending_verification"
-      project_scope_roles:
-        - name: "tbd_after_live_capture"
-          status: "pending_verification"
-    verification_status: "pending_identity_selection"
-    notes:
-      - "Federated identity is preferred over long-lived secrets."
-
-verification_contract:
-  success_criteria:
-    - "AI Toolkit can enumerate project connections for the canonical project endpoint."
-    - "Runtime apps can resolve the canonical endpoint contract without local API key dependency."
-    - "CI/CD can validate Foundry client configuration without secret-only auth."
-  blocking_conditions:
-    - "Wrong tenant, subscription, or project context"
-    - "Missing project connection read permission"
-    - "Principal bound only to Entra directory admin roles without Azure RBAC"
+verification:
+  method:
+    - portal_check
+    - cli_check
+  last_verified_at: ""
+  verified_by: ""

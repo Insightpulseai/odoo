@@ -1,0 +1,10 @@
+ .../contracts/golden-path-compliance.yaml          |  65 +++----
+ .../contracts/golden-path-gtm.yaml                 |  58 +++----
+ .../contracts/golden-path-packaging.yaml           |  67 ++++----
+ platform/contracts/entra/agent-identities.yaml     | 126 ++++++--------
+ platform/contracts/foundry/auth-policy.yaml        |  77 +++++----
+ platform/contracts/foundry/endpoints.yaml          |  56 +++---
+ platform/contracts/foundry/rbac-matrix.yaml        | 141 ++++++----------
+ platform/contracts/identity/oauth-matrix.yaml      | 188 ++++++++-------------
+ platform/contracts/release/golden-path.yaml        |  95 +++++------
+ 9 files changed, 354 insertions(+), 519 deletions(-)

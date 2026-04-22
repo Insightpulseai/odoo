@@ -1,36 +1,24 @@
-schema_version: "1.0"
-last_reviewed: "2026-04-23"
-authority: "platform/contracts/foundry/endpoints.yaml"
-owning_repo: "Insightpulseai/odoo"
-owning_system: "Pulser for Odoo authenticated operator surface"
-release_contract: "platform/contracts/release/golden-path.yaml"
-source_of_confirmation: "Azure AI Foundry portal project overview confirmed by operator on 2026-04-23"
+version: 1
+owner_repo: platform
+owner_team: ai-platform
+status: active
 
 projects:
-  ipai-copilot:
-    project_name: "ipai-copilot"
-    foundry_resource_name: "ipai-foundry-sea"
-    environment: "dev"
-    status: "active"
-    owning_repo: "Insightpulseai/odoo"
-    owning_system: "Pulser for Odoo authenticated operator surface"
-    runtime_surface: "https://erp.insightpulseai.com"
-    verification_status: "operator_confirmed_2026_04_23"
-    project_endpoint: "https://ipai-foundry-sea.services.ai.azure.com/api/projects/ipai-copilot"
-    azure_openai_base_url: "https://ipai-foundry-sea.openai.azure.com/openai/v1"
-    ai_services_base_url: "https://ipai-foundry-sea.services.ai.azure.com"
-    portal_api_key_path: "Azure AI Foundry portal -> Project overview -> API key"
-    endpoint_discipline:
-      project_endpoint_for:
-        - project-native APIs
-        - project connection inventory
-        - project-scoped tool and agent operations
-      azure_openai_base_url_for:
-        - OpenAI-compatible chat/completions
-        - embeddings
-        - inference clients that expect the Azure OpenAI surface
-      ai_services_base_url_for:
-        - resource-scoped AI Services APIs that are not project-scoped
-    legacy_drift_note:
-      - "Older repo docs may still reference ipai-copilot-resource endpoints."
-      - "Treat this file as the canonical endpoint contract for the current ipai-copilot project baseline."
+  - key: ipai-copilot
+    name: ipai-copilot
+    environment: dev
+    region: southeastasia
+    foundry_resource_name: ipai-foundry-sea
+    project_endpoint: https://ipai-foundry-sea.services.ai.azure.com/api/projects/ipai-copilot
+    azure_openai_base_url: https://ipai-foundry-sea.openai.azure.com/openai/v1
+    portal_available: true
+    api_key_available: true
+    notes: Canonical Foundry project baseline for the golden path.
+
+rules:
+  - id: foundry-single-project-endpoint
+    description: All clients must reference the same project endpoint for a given environment.
+  - id: foundry-single-openai-base-url
+    description: All Azure OpenAI-compatible clients must use the same approved base URL.
+  - id: foundry-no-legacy-endpoints
+    description: Deprecated resource or project endpoints must not remain in active config.

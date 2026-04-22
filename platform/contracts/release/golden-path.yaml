@@ -1,63 +1,52 @@
-schema_version: "1.0"
-last_reviewed: "2026-04-23"
-authority: "platform/contracts/release/golden-path.yaml"
-contract_scope: "Golden-path release spine for the authenticated Odoo operator surface backed by Foundry"
-sources:
-  - "platform/contracts/identity/oauth-matrix.yaml"
-  - "platform/contracts/foundry/endpoints.yaml"
-  - "platform/contracts/foundry/auth-policy.yaml"
-  - "platform/contracts/foundry/rbac-matrix.yaml"
-  - "platform/contracts/entra/agent-identities.yaml"
-  - "docs/gtm/MARKETPLACE_OFFER.md"
-  - "docs/gtm/marketplace_research_brief.md"
+version: 1
+owner_repo: platform
+owner_team: release
+status: draft
 
 product:
-  product_id: "pulser-for-odoo"
-  product_name: "Pulser for Odoo"
-  golden_path_name: "Authenticated Odoo operator surface"
-  runtime_surface: "https://erp.insightpulseai.com"
-  foundry_project: "ipai-copilot"
-  package_contract: "marketplace-publishing/contracts/golden-path-packaging.yaml"
-  compliance_contract: "marketplace-publishing/contracts/golden-path-compliance.yaml"
-  gtm_contract: "marketplace-publishing/contracts/golden-path-gtm.yaml"
+  key: odoo-login-foundry-copilot
+  name: InsightPulse AI Odoo Login
+  runtime_surface: erp
+  foundry_project: ipai-copilot
+  identity_surface: google_and_microsoft_oauth
+  publish_channel: microsoft_marketplace
+  package_contract: marketplace-publishing/contracts/golden-path-packaging.yaml
+  compliance_contract: marketplace-publishing/contracts/golden-path-compliance.yaml
+  gtm_contract: marketplace-publishing/contracts/golden-path-gtm.yaml
 
-release_model:
-  environment_sequence:
+environments:
+  sequence:
     - dev
     - preview
     - staging
     - production
-  publish_channel: "microsoft_partner_center_saas"
-  runtime_publish_path: "single_runtime_surface"
-  package_publish_path: "single_offer_single_package_definition"
-  promotion_rule: "live promotion cannot bypass preview validation"
 
-promotion_prerequisites:
-  dev:
-    - "contract_files_present"
-    - "yaml_parse_pass"
-  preview:
-    - "oauth_redirect_contract_pass"
-    - "foundry_endpoint_contract_pass"
-    - "foundry_client_config_contract_pass"
-  staging:
-    - "preview_validation_pass"
-    - "foundry_rbac_readiness_pass"
-    - "agent_governance_contract_present"
-  production:
-    - "microsoft_oauth_smoke_pass"
-    - "google_oauth_smoke_pass"
-    - "foundry_connections_read_pass"
-    - "agent_governance_guard_pass"
-    - "compliance_readiness_pass"
-    - "gtm_bundle_ready"
+promotion_requirements:
+  dev_to_preview:
+    - oauth_contract_valid
+    - foundry_endpoint_contract_valid
+    - preview_deploy_green
+  preview_to_staging:
+    - google_oauth_smoke_green
+    - microsoft_oauth_smoke_green
+    - foundry_client_config_green
+  staging_to_production:
+    - release_gate_green
+    - compliance_ready
+    - packaging_ready
+    - gtm_ready
 
-rollback_source_of_truth:
-  runtime: "Azure Container Apps revision history"
-  database: "PostgreSQL point-in-time restore"
-  release_gates: "platform/ssot/release/feature-ship-readiness-gates.yaml"
-  checklist: "docs/release/FEATURE_SHIP_READINESS_CHECKLIST.md"
+rollback:
+  source_of_truth: git_and_environment_deploy_history
+  triggers:
+    - oauth_smoke_failure
+    - foundry_client_regression
+    - production_health_failure
 
-normalization_gaps:
-  current_repo_environment_index: "config/ENVIRONMENTS.md"
-  known_gap: "Preview is a target-state environment for this golden path but is not yet normalized across Odoo, OAuth, and Foundry surfaces."
+rules:
+  - id: golden-path-single-product
+    description: Only one product is in scope for this golden path.
+  - id: golden-path-no-parallel-package-models
+    description: The golden path must use one package model only.
+  - id: golden-path-preview-before-live
+    description: Live promotion cannot bypass preview validation.
