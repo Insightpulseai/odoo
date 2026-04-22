@@ -220,6 +220,12 @@ RUN sed -i '/^addons_path/d' /etc/odoo/odoo.conf \
     && sed -i '/^\[options\]/a list_db = False' /etc/odoo/odoo.conf \
     && sed -i '/^\[options\]/a server_wide_modules = base,web' /etc/odoo/odoo.conf
 
+# ACA terminates TLS before Odoo, so auth_oauth sees an internal http://
+# url_root unless the proxy contract is perfect. Normalize the callback
+# scheme at image build time so Entra only ever receives the HTTPS URI.
+RUN sed -i "s|return_url = request.httprequest.url_root + 'auth_oauth/signin'|return_url = request.httprequest.url_root.replace('http://', 'https://', 1) + 'auth_oauth/signin'|" \
+    /usr/lib/python3/dist-packages/odoo/addons/auth_oauth/controllers/main.py
+
 RUN chown -R odoo:odoo /mnt/extra-addons /etc/odoo/odoo.conf
 
 USER odoo

@@ -1,0 +1,11 @@
+{
+  "appId": "3446e178-3eba-48c9-b5bd-4283ff729eb1",
+  "displayName": "InsightPulse AI - Odoo Login",
+  "objectId": "6189985b-a35d-4617-90b3-ada1c4493f3b",
+  "redirectUris": [
+    "https://fde-erp-ipai-dev-c6aphngnfzb8gbay.z01.azurefd.net/auth_oauth/signin",
+    "https://erp.insightpulseai.com/auth_oauth/signin",
+    "https://odoo.insightpulseai.com/auth_oauth/signin",
+    "http://localhost:8069/auth_oauth/signin"
+  ]
+}
