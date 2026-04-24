@@ -3,15 +3,30 @@
 
     <t t-name="ipai_pulser_chat.ChatPanel">
         <div class="o_ipai_pulser_chat_panel d-flex flex-column">
-            <div class="o_ipai_pulser_chat_messages flex-grow-1 overflow-auto px-3 py-2"
+
+            <!-- Bootstrapping spinner: shown until first server round-trip completes. -->
+            <div t-if="state.isBootstrapping"
+                 class="o_ipai_pulser_chat_bootstrapping flex-grow-1 d-flex align-items-center justify-content-center text-muted small">
+                <i class="fa fa-spinner fa-spin me-2"/> Loading…
+            </div>
+
+            <!-- Main message list: shown once bootstrap completes. -->
+            <div t-if="!state.isBootstrapping"
+                 class="o_ipai_pulser_chat_messages flex-grow-1 overflow-auto px-3 py-2"
                  t-ref="messageList">
+
+                <!-- Empty-state hint -->
                 <div t-if="!state.messages.length"
                      class="o_ipai_pulser_chat_empty text-muted small">
-                    <p class="mb-1">Pulser chat shell</p>
+                    <p class="mb-1 fw-semibold">Pulser chat shell</p>
                     <p class="mb-1">Company: <t t-esc="state.companyName or 'Unknown'"/></p>
-                    <p class="mb-0">Odoo provides the UI and context. The external Pulser runtime owns orchestration and model/tool execution.</p>
+                    <p class="mb-0">
+                        Odoo provides the UI and context. The external Pulser runtime
+                        owns orchestration, model routing, and tool execution.
+                    </p>
                 </div>
 
+                <!-- Message bubbles -->
                 <t t-foreach="state.messages" t-as="msg" t-key="msg.id">
                     <div t-att-class="'o_ipai_pulser_chat_message o_role_' + msg.role">
                         <div class="o_ipai_pulser_chat_bubble">
@@ -19,28 +34,43 @@
                         </div>
                     </div>
                 </t>
+
+                <!-- Typing indicator while waiting for upstream -->
+                <div t-if="state.isLoading"
+                     class="o_ipai_pulser_chat_message o_role_assistant">
+                    <div class="o_ipai_pulser_chat_bubble o_ipai_pulser_typing text-muted">
+                        <i class="fa fa-ellipsis-h"/>
+                    </div>
+                </div>
             </div>
 
+            <!-- Inline error banner (non-fatal; dismissed on next send) -->
             <div t-if="state.error"
                  class="o_ipai_pulser_chat_error px-3 py-2 border-top text-danger small">
+                <i class="fa fa-exclamation-triangle me-1"/>
                 <t t-esc="state.error"/>
             </div>
 
-            <div t-if="state.ready and !state.enabled"
+            <!-- Disabled notice -->
+            <div t-if="!state.isBootstrapping and state.ready and !state.enabled"
                  class="o_ipai_pulser_chat_notice px-3 py-2 border-top text-muted small">
-                Pulser chat is disabled in Settings.
+                <i class="fa fa-info-circle me-1"/>
+                Pulser chat is disabled. Enable it in Settings > Pulser Chat Shell.
             </div>
 
-            <div t-if="state.ready and state.enabled and !state.backendConfigured"
+            <!-- Misconfigured notice -->
+            <div t-if="!state.isBootstrapping and state.ready and state.enabled and !state.backendConfigured"
                  class="o_ipai_pulser_chat_notice px-3 py-2 border-top text-muted small">
+                <i class="fa fa-info-circle me-1"/>
                 Configure the external Pulser backend URL in Settings to enable chat.
             </div>
 
+            <!-- Input area -->
             <div class="o_ipai_pulser_chat_input border-top px-3 py-2">
                 <div class="d-flex gap-2">
                     <textarea t-ref="chatInput"
                               class="form-control form-control-sm"
-                              placeholder="Ask Pulser..."
+                              placeholder="Ask Pulser…"
                               rows="1"
                               t-att-value="state.inputValue"
                               t-on-input="(ev) => this.state.inputValue = ev.target.value"
@@ -48,11 +78,19 @@
                               t-att-disabled="state.isLoading or !state.enabled or !state.backendConfigured"/>
                     <button class="btn btn-primary btn-sm px-3"
                             t-on-click="sendMessage"
+                            title="Send"
                             t-att-disabled="state.isLoading or !state.enabled or !state.backendConfigured or !state.inputValue.trim()">
                         <i t-att-class="state.isLoading ? 'fa fa-spinner fa-spin' : 'fa fa-paper-plane'"/>
                     </button>
                 </div>
+                <!-- Clear conversation link: only shown when there are messages -->
+                <div t-if="state.messages.length"
+                     class="text-end mt-1">
+                    <a href="#" class="o_ipai_pulser_clear text-muted small"
+                       t-on-click.prevent="clearConversation">Clear conversation</a>
+                </div>
             </div>
+
         </div>
     </t>
 

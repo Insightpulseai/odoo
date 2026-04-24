@@ -1,14 +1,21 @@
 # -*- coding: utf-8 -*-
 {
     "name": "Pulser Chat Shell",
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.1.0",
     "summary": "Thin Owl systray shell for the external Pulser runtime",
+    "description": """
+        Provides a systray chat panel in the Odoo backend that proxies messages to an
+        external Pulser runtime. Odoo owns the UI and authenticated context handoff;
+        the external runtime owns orchestration, model routing, and tool execution.
+    """,
     "category": "Productivity",
     "license": "LGPL-3",
     "author": "InsightPulse AI",
+    "maintainers": ["InsightPulse AI"],
     "website": "https://insightpulseai.com",
     "depends": ["base", "web"],
     "data": [
+        "security/ir.model.access.csv",
         "data/ir_config_parameter.xml",
         "views/res_config_settings_views.xml",
     ],
@@ -23,4 +30,5 @@
     },
     "installable": True,
     "application": False,
+    "auto_install": False,
 }
