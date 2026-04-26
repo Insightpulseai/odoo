@@ -1,9 +1,18 @@
 # =============================================================================
-# Web Landing Deploy Pipeline
+# Web Landing Deploy Pipeline — revision-safe (B-prime)
 # =============================================================================
-# Build -> Deploy -> Smoke -> Evidence for the public landing page.
-# Surface: ipai-website-dev ACA, https://www.insightpulseai.com
+# Build -> Deploy new revision @ 0% traffic -> Smoke revision FQDN ->
+#   ManualValidation gate -> ShiftTraffic 100% -> Smoke production -> Evidence
+#
+# Surface: ipai-website ACA in rg-ipai-dev-odoo-sea, served at
+# https://www.insightpulseai.com (single-ACA, no separate prod env).
 # ACR image: acripaiodoo.azurecr.io/ipai-website:latest
+#
+# Why revision-safe: a flat `containerapp update` flips 100% traffic to
+# the new revision immediately. With multi-revision mode + 0% initial
+# traffic + manual approval, we get a staging-style flow on a single ACA
+# without a separate staging environment. See:
+#   docs/deployment/ACA_REVISION_SAFE_DEPLOY.md
 # =============================================================================
 
 trigger:
@@ -33,6 +42,7 @@ variables:
   resourceGroup: rg-ipai-dev-odoo-sea
   serviceConnection: ipai-dev-wif
   smokeUrl: https://www.insightpulseai.com
+  revisionSuffix: build-$(Build.BuildId)
 
 stages:
   # ── Stage 1: Build ──
@@ -48,25 +58,247 @@ stages:
           acrName: $(acrName)
           serviceConnection: $(serviceConnection)
 
-  # ── Stage 2: Deploy ──
+  # ── Stage 2: Deploy new revision at 0% traffic ──
   - stage: Deploy
-    displayName: Deploy to ACA
+    displayName: Deploy New Revision (0% traffic)
     dependsOn: Build
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
     jobs:
-      - template: templates/jobs/deploy-containerapp.yml
-        parameters:
-          containerAppName: $(containerAppName)
-          resourceGroup: $(resourceGroup)
-          imageName: $(imageName)
-          imageTag: $(imageTag)
-          acrName: $(acrName)
-          serviceConnection: $(serviceConnection)
+      - job: DeployRevision
+        displayName: 'Deploy revision $(revisionSuffix) at 0% traffic'
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - task: AzureCLI@2
+            displayName: 'Ensure multi-revision mode + create revision at 0% traffic'
+            name: deployRev
+            inputs:
+              azureSubscription: $(serviceConnection)
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -euo pipefail
 
-  # ── Stage 3: Smoke ──
-  - stage: Smoke
-    displayName: Smoke Test
+                APP="$(containerAppName)"
+                RG="$(resourceGroup)"
+                IMAGE="$(acrName).azurecr.io/$(imageName):$(imageTag)"
+                SUFFIX="$(revisionSuffix)"
+                NEW_REV="${APP}--${SUFFIX}"
+
+                echo "=== Revision-safe deploy ==="
+                echo "App:           ${APP}"
+                echo "RG:            ${RG}"
+                echo "Image:         ${IMAGE}"
+                echo "New revision:  ${NEW_REV}"
+
+                # Step 1: ensure multi-revision mode (idempotent).
+                # In single-revision mode, an update flips 100% traffic to the
+                # new revision immediately. Multi-revision mode preserves
+                # existing traffic on the active revision and creates the new
+                # revision with 0% traffic by default.
+                echo "Setting revisions-mode=multiple (idempotent)..."
+                az containerapp revision set-mode \
+                  --name "${APP}" \
+                  --resource-group "${RG}" \
+                  --mode multiple \
+                  --output none
+
+                # Step 2: capture currently-active revision name (for rollback).
+                CURRENT_REV=$(az containerapp revision list \
+                  --name "${APP}" \
+                  --resource-group "${RG}" \
+                  --query "[?properties.active && properties.trafficWeight>\`0\`] | [0].name" \
+                  -o tsv)
+                echo "Current active revision: ${CURRENT_REV:-<none>}"
+
+                # Step 3: update with new image and named revision suffix.
+                # In multi-revision mode this creates a new revision with 0%
+                # traffic; existing traffic continues to flow to CURRENT_REV.
+                echo "Creating new revision ${NEW_REV} ..."
+                az containerapp update \
+                  --name "${APP}" \
+                  --resource-group "${RG}" \
+                  --image "${IMAGE}" \
+                  --revision-suffix "${SUFFIX}" \
+                  --output none
+
+                # Step 4: wait briefly for revision to provision.
+                sleep 30
+
+                # Step 5: verify new revision exists and capture its FQDN.
+                NEW_FQDN=$(az containerapp revision show \
+                  --name "${APP}" \
+                  --resource-group "${RG}" \
+                  --revision "${NEW_REV}" \
+                  --query "properties.fqdn" \
+                  -o tsv)
+
+                if [[ -z "${NEW_FQDN}" ]]; then
+                  echo "FAIL: new revision ${NEW_REV} has no FQDN"
+                  exit 1
+                fi
+
+                # Step 6: enforce 0% traffic on the new revision (defensive).
+                # In multi-revision mode the new revision *should* default to
+                # 0%, but we set it explicitly so first-deploy edge cases
+                # (e.g. transitioning from single to multi mode) are covered.
+                if [[ -n "${CURRENT_REV}" && "${CURRENT_REV}" != "${NEW_REV}" ]]; then
+                  echo "Pinning traffic: 100% -> ${CURRENT_REV}, 0% -> ${NEW_REV}"
+                  az containerapp ingress traffic set \
+                    --name "${APP}" \
+                    --resource-group "${RG}" \
+                    --revision-weight "${CURRENT_REV}=100" "${NEW_REV}=0" \
+                    --output none
+                else
+                  echo "No previous revision (or new == current); skipping defensive traffic pin."
+                fi
+
+                # Step 7: emit revision name + FQDN as pipeline outputs for
+                # downstream stages.
+                echo "##vso[task.setvariable variable=newRevisionName;isOutput=true]${NEW_REV}"
+                echo "##vso[task.setvariable variable=newRevisionFqdn;isOutput=true]${NEW_FQDN}"
+                echo "##vso[task.setvariable variable=previousRevisionName;isOutput=true]${CURRENT_REV}"
+                echo ""
+                echo "PASS"
+                echo "  New revision:        ${NEW_REV}"
+                echo "  New revision FQDN:   https://${NEW_FQDN}"
+                echo "  Previous revision:   ${CURRENT_REV:-<none>}"
+                echo "  Production traffic:  still on ${CURRENT_REV:-<previous>}"
+
+  # ── Stage 3: Smoke the new revision via its direct FQDN ──
+  - stage: SmokeNewRevision
+    displayName: Smoke new revision (direct FQDN, no production traffic)
     dependsOn: Deploy
+    condition: succeeded()
+    variables:
+      newRevisionFqdn: $[ stageDependencies.Deploy.DeployRevision.outputs['deployRev.newRevisionFqdn'] ]
+    jobs:
+      - job: SmokeRevision
+        displayName: 'Smoke https://$(newRevisionFqdn)/'
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - bash: |
+              set -euo pipefail
+              FQDN="$(newRevisionFqdn)"
+              if [[ -z "${FQDN}" ]]; then
+                echo "FAIL: newRevisionFqdn not set from Deploy stage"
+                exit 1
+              fi
+              echo "Smoking new revision FQDN: https://${FQDN}/"
+
+              FAIL=0
+
+              # Test the canonical Scope-A routes that should be live in the
+              # new revision but are not yet on production.
+              for ROUTE in "/" "/security" "/subprocessors" "/llms.txt" "/sitemap.xml" "/robots.txt"; do
+                # /security and /subprocessors are 301 redirects to /#... ;
+                # /llms.txt /sitemap.xml /robots.txt are static 200s; / is 200.
+                URL="https://${FQDN}${ROUTE}"
+                CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 -L "${URL}" || echo "000")
+                if [[ "${CODE}" == "200" ]]; then
+                  echo "  PASS  ${ROUTE}  (HTTP ${CODE})"
+                else
+                  echo "  FAIL  ${ROUTE}  (HTTP ${CODE})"
+                  FAIL=1
+                fi
+              done
+
+              # /features should now 301 to /
+              FEAT_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "https://${FQDN}/features" || echo "000")
+              if [[ "${FEAT_CODE}" == "301" || "${FEAT_CODE}" == "302" ]]; then
+                echo "  PASS  /features  (HTTP ${FEAT_CODE} redirect)"
+              else
+                echo "  WARN  /features  (HTTP ${FEAT_CODE} — expected 301/302)"
+                # Not failing the pipeline on /features alone; flag for review.
+              fi
+
+              if [[ ${FAIL} -ne 0 ]]; then
+                echo "RESULT: FAIL"
+                exit 1
+              fi
+              echo "RESULT: PASS — new revision serves Scope-A content correctly"
+            displayName: 'Smoke new revision routes'
+
+  # ── Stage 4: Manual approval before traffic shift ──
+  - stage: PromoteApproval
+    displayName: Manual approval to promote
+    dependsOn:
+      - Deploy
+      - SmokeNewRevision
+    condition: succeeded()
+    variables:
+      newRevisionName: $[ stageDependencies.Deploy.DeployRevision.outputs['deployRev.newRevisionName'] ]
+      newRevisionFqdn: $[ stageDependencies.Deploy.DeployRevision.outputs['deployRev.newRevisionFqdn'] ]
+      previousRevisionName: $[ stageDependencies.Deploy.DeployRevision.outputs['deployRev.previousRevisionName'] ]
+    jobs:
+      - job: WaitForApproval
+        displayName: 'Awaiting manual approval'
+        pool: server
+        timeoutInMinutes: 4320  # 72h max wait
+        steps:
+          - task: ManualValidation@0
+            timeoutInMinutes: 4320
+            inputs:
+              instructions: |
+                Smoke test on the new revision FQDN passed.
+
+                New revision:        $(newRevisionName)
+                New revision FQDN:   https://$(newRevisionFqdn)
+                Previous revision:   $(previousRevisionName)
+
+                APPROVE  -> shift 100% production traffic from the previous
+                            revision to the new revision. https://www.insightpulseai.com/
+                            will then serve the new revision.
+
+                REJECT   -> leave the new revision at 0% traffic. To roll
+                            back the deploy, see
+                            docs/deployment/ACA_REVISION_SAFE_DEPLOY.md
+                            (Rollback section).
+              onTimeout: 'reject'
+
+  # ── Stage 5: Shift production traffic to the new revision ──
+  - stage: PromoteShiftTraffic
+    displayName: Shift production traffic to new revision
+    dependsOn:
+      - Deploy
+      - PromoteApproval
+    condition: succeeded()
+    variables:
+      newRevisionName: $[ stageDependencies.Deploy.DeployRevision.outputs['deployRev.newRevisionName'] ]
+    jobs:
+      - job: ShiftTraffic
+        displayName: 'Shift 100% traffic to $(newRevisionName)'
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - task: AzureCLI@2
+            displayName: 'az containerapp ingress traffic set'
+            inputs:
+              azureSubscription: $(serviceConnection)
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -euo pipefail
+                NEW_REV="$(newRevisionName)"
+                APP="$(containerAppName)"
+                RG="$(resourceGroup)"
+                if [[ -z "${NEW_REV}" ]]; then
+                  echo "FAIL: newRevisionName not set"
+                  exit 1
+                fi
+                echo "Shifting 100% traffic to ${NEW_REV} on ${APP}/${RG} ..."
+                az containerapp ingress traffic set \
+                  --name "${APP}" \
+                  --resource-group "${RG}" \
+                  --revision-weight "${NEW_REV}=100" \
+                  --output none
+                echo "PASS — production traffic now on ${NEW_REV}"
+
+  # ── Stage 6: Smoke production URL post-promote ──
+  - stage: SmokeProduction
+    displayName: Smoke production URL post-promote
+    dependsOn: PromoteShiftTraffic
     condition: succeeded()
     jobs:
       - template: templates/jobs/smoke-http.yml
@@ -74,13 +306,17 @@ stages:
           url: $(smokeUrl)
           expectedStatus: '200'
           contentMatch: InsightPulse
-          retries: 3
-          retryDelaySeconds: 15
+          retries: 5
+          retryDelaySeconds: 20
 
-  # ── Stage 4: Evidence ──
+  # ── Stage 7: Evidence ──
   - stage: Evidence
     displayName: Publish Evidence
-    dependsOn: Smoke
+    dependsOn:
+      - Deploy
+      - SmokeNewRevision
+      - PromoteShiftTraffic
+      - SmokeProduction
     condition: succeededOrFailed()
     jobs:
       - template: templates/jobs/publish-evidence.yml
