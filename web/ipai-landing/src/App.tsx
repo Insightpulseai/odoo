@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { AskPulser } from './components/AskPulser';
 
 // --- Types ---
-type PageId = 'home' | 'products' | 'solutions' | 'marketing' | 'media' | 'retail' | 'finance' | 'resources' | 'pricing' | 'company' | 'docs' | 'trust' | 'contact' | 'marketing_use_cases' | 'media_reference_patterns' | 'privacy' | 'terms' | 'careers' | 'newsroom' | 'login';
+type PageId = 'home' | 'products' | 'solutions' | 'marketing' | 'media' | 'retail' | 'finance' | 'resources' | 'pricing' | 'company' | 'docs' | 'trust' | 'contact' | 'marketing_use_cases' | 'media_reference_patterns' | 'privacy' | 'terms' | 'dpa' | 'careers' | 'newsroom' | 'login';
 
 // --- External URLs ---
 const EXTERNAL_URLS = {
@@ -23,7 +23,7 @@ const EXTERNAL_URLS = {
 } as const;
 
 // Hash <-> PageId mapping for URL sync
-const VALID_PAGES: PageId[] = ['home','products','solutions','marketing','media','retail','finance','resources','pricing','company','docs','trust','contact','marketing_use_cases','media_reference_patterns','privacy','terms','careers','newsroom','login'];
+const VALID_PAGES: PageId[] = ['home','products','solutions','marketing','media','retail','finance','resources','pricing','company','docs','trust','contact','marketing_use_cases','media_reference_patterns','privacy','terms','dpa','careers','newsroom','login'];
 
 function pageIdFromHash(hash: string): PageId {
   const raw = hash.replace('#', '').replace(/^\//, '');
@@ -476,6 +476,7 @@ const Footer = ({ setPage }: { setPage: (p: PageId) => void }) => (
           <button onClick={() => setPage('trust')} className="hover:text-white transition-colors">Trust Center</button>
           <button onClick={() => setPage('privacy')} className="hover:text-white transition-colors">Privacy</button>
           <button onClick={() => setPage('terms')} className="hover:text-white transition-colors">Terms</button>
+          <button onClick={() => setPage('dpa')} className="hover:text-white transition-colors">DPA</button>
           <button onClick={() => setPage('contact')} className="hover:text-white transition-colors">Contact</button>
         </div>
       </div>
@@ -2113,6 +2114,80 @@ const TermsPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
   </motion.div>
 );
 
+const DpaPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
+  <motion.div {...PAGE_TRANSITION}>
+    <section className="pt-28 pb-24 px-6 md:px-12 max-w-7xl mx-auto">
+      <div className="mb-16">
+        <span className="text-brand-primary font-bold uppercase tracking-widest text-sm mb-6 block">Legal</span>
+        <h1 className="text-3xl md:text-4xl font-bold mb-10 tracking-tight">Data Processing Agreement</h1>
+        <p className="text-gray-600 text-lg leading-relaxed max-w-4xl mb-8">Last updated: 2026-04-26</p>
+      </div>
+      <div className="prose max-w-4xl space-y-8">
+        <div className="p-8 rounded-2xl bg-brand-light border border-gray-100">
+          <h2 className="text-xl font-bold mb-4">Scope and parties</h2>
+          <p className="text-gray-600 leading-relaxed">
+            This Data Processing Agreement (&ldquo;DPA&rdquo;) applies between InsightPulseAI (Dataverse IT Consultancy, La Fuerza Plaza, 2241 Chino Roces Ave, Makati City 1231, Philippines) acting as <strong>data processor</strong>, and the customer entity that has agreed to our Terms of Service, acting as <strong>data controller</strong>. This DPA forms part of the service agreement and governs processing of personal data within InsightPulseAI products.
+          </p>
+        </div>
+        <div className="p-8 rounded-2xl bg-brand-light border border-gray-100">
+          <h2 className="text-xl font-bold mb-4">Nature and purpose of processing</h2>
+          <p className="text-gray-600 leading-relaxed">
+            InsightPulseAI processes personal data solely to deliver the contracted services: hosting and operating Odoo on Cloud environments, providing operational intelligence via Pulser, delivering analytics dashboards, and supporting cloud operations. Processing is limited to what is strictly necessary for these purposes and is performed only on documented controller instruction.
+          </p>
+          <p className="text-gray-600 leading-relaxed mt-4">
+            <strong>Current service posture:</strong> Pulser AI features operate in internal beta / trusted-user advisory mode with read-only access to ERP data for advisory summaries. No autonomous write actions are performed on personal data by AI components. This posture will be updated when general availability is declared.
+          </p>
+        </div>
+        <div className="p-8 rounded-2xl bg-brand-light border border-gray-100">
+          <h2 className="text-xl font-bold mb-4">Technical and organisational measures</h2>
+          <p className="text-gray-600 leading-relaxed">
+            All personal data is processed within Microsoft Azure infrastructure (Southeast Asia region). Measures include: encryption in transit (TLS 1.2+) and at rest (Azure managed keys), role-based access control via Microsoft Entra ID, managed identity for service-to-service authentication, Azure Key Vault for secrets, automated backups with point-in-time recovery, and network isolation via private endpoints where applicable.
+          </p>
+        </div>
+        <div className="p-8 rounded-2xl bg-brand-light border border-gray-100">
+          <h2 className="text-xl font-bold mb-4">Sub-processors</h2>
+          <p className="text-gray-600 leading-relaxed">
+            InsightPulseAI uses sub-processors solely to deliver contracted services. The current sub-processor list includes Microsoft Azure (infrastructure and AI services) and Zoho (email and booking services). A complete and current sub-processor list is available upon written request to <a href="mailto:business@insightpulseai.com" className="text-brand-primary hover:underline">business@insightpulseai.com</a>. Controllers will be notified of material sub-processor changes with reasonable advance notice.
+          </p>
+        </div>
+        <div className="p-8 rounded-2xl bg-brand-light border border-gray-100">
+          <h2 className="text-xl font-bold mb-4">Data subject rights and controller assistance</h2>
+          <p className="text-gray-600 leading-relaxed">
+            InsightPulseAI will assist controllers in fulfilling data subject rights requests (access, correction, deletion, portability, objection) to the extent technically feasible within the service. Requests should be submitted via the support contact below. We will respond within 30 days.
+          </p>
+        </div>
+        <div className="p-8 rounded-2xl bg-brand-light border border-gray-100">
+          <h2 className="text-xl font-bold mb-4">International transfers</h2>
+          <p className="text-gray-600 leading-relaxed">
+            Primary data processing occurs in Microsoft Azure Southeast Asia. Where data is transferred to other regions for service delivery (e.g., Azure AI services in eastus2), transfers are governed by Microsoft's Data Processing Addendum and applicable Standard Contractual Clauses. InsightPulseAI does not transfer personal data to third countries outside appropriate safeguards.
+          </p>
+        </div>
+        <div className="p-8 rounded-2xl bg-brand-light border border-gray-100">
+          <h2 className="text-xl font-bold mb-4">Regulatory alignment</h2>
+          <p className="text-gray-600 leading-relaxed">
+            This DPA is designed to support compliance with the EU General Data Protection Regulation (GDPR) and the Philippine Data Privacy Act of 2012 (Republic Act 10173, &ldquo;PH DPA&rdquo;). InsightPulseAI does not claim specific certifications (e.g., ISO 27001, SOC 2) at this time. Certification roadmap inquiries can be directed to our support team.
+          </p>
+        </div>
+        <div className="p-8 rounded-2xl bg-brand-light border border-gray-100">
+          <h2 className="text-xl font-bold mb-4">Data deletion and return</h2>
+          <p className="text-gray-600 leading-relaxed">
+            Upon termination of the service agreement, InsightPulseAI will delete or return all personal data within 90 days, at the controller's election, except where retention is required by applicable law. Controllers may request a data export at any time during the contract term.
+          </p>
+        </div>
+        <div className="p-8 rounded-2xl bg-brand-light border border-gray-100">
+          <h2 className="text-xl font-bold mb-4">Contact</h2>
+          <p className="text-gray-600 leading-relaxed">
+            For DPA-related questions, sub-processor list requests, or data subject rights assistance, contact us at{' '}
+            <a href={EXTERNAL_URLS.email} className="text-brand-primary hover:underline">business@insightpulseai.com</a>
+            {' '}or visit our{' '}
+            <button onClick={() => setPage('contact')} className="text-brand-primary hover:underline">contact page</button>.
+          </p>
+        </div>
+      </div>
+    </section>
+  </motion.div>
+);
+
 const CareersPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
   <motion.div {...PAGE_TRANSITION}>
     <section className="pt-28 pb-24 px-6 md:px-12 bg-brand-dark text-white">
@@ -2259,6 +2334,7 @@ export default function App() {
       case 'media_reference_patterns': return <MediaReferencePatternsPage setPage={sp} />;
       case 'privacy': return <PrivacyPage setPage={sp} />;
       case 'terms': return <TermsPage setPage={sp} />;
+      case 'dpa': return <DpaPage setPage={sp} />;
       case 'careers': return <CareersPage setPage={sp} />;
       case 'newsroom': return <NewsroomPage setPage={sp} />;
       case 'login': return <LoginPage />;
