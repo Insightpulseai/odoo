@@ -386,6 +386,27 @@ async function startServer() {
     }
   }
 
+  // --- Legal page and support redirects (server-side, for direct URL access) ---
+  // These routes must be registered BEFORE the SPA wildcard and static middleware.
+  // Pattern mirrors the deployed image behavior for /privacy and /terms.
+  // /support → /contact (canonical support entry point)
+  app.get('/support', (_req, res) => {
+    res.redirect(301, '/contact');
+  });
+  // Path-based access to SPA pages — redirect to hash routes so the SPA renders correctly
+  app.get('/privacy', (_req, res) => {
+    res.redirect(301, '/#privacy');
+  });
+  app.get('/terms', (_req, res) => {
+    res.redirect(301, '/#terms');
+  });
+  app.get('/contact', (_req, res) => {
+    res.redirect(301, '/#contact');
+  });
+  app.get('/dpa', (_req, res) => {
+    res.redirect(301, '/#dpa');
+  });
+
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
