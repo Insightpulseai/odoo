@@ -29,8 +29,8 @@ variables:
   acrName: acripaiodoo
   imageName: ipai-website
   imageTag: latest
-  containerAppName: ipai-website-dev
-  resourceGroup: rg-ipai-dev-odoo-runtime
+  containerAppName: ipai-website
+  resourceGroup: rg-ipai-dev-odoo-sea
   serviceConnection: ipai-dev-wif
   smokeUrl: https://www.insightpulseai.com
 
