@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { AskPulser } from './components/AskPulser';
 
 // --- Types ---
-type PageId = 'home' | 'products' | 'solutions' | 'marketing' | 'media' | 'retail' | 'finance' | 'resources' | 'pricing' | 'company' | 'docs' | 'trust' | 'contact' | 'marketing_use_cases' | 'media_reference_patterns' | 'privacy' | 'terms' | 'careers' | 'newsroom' | 'login';
+type PageId = 'home' | 'products' | 'solutions' | 'marketing' | 'media' | 'retail' | 'finance' | 'resources' | 'pricing' | 'company' | 'docs' | 'trust' | 'contact' | 'marketing_use_cases' | 'media_reference_patterns' | 'privacy' | 'terms' | 'security' | 'subprocessors' | 'careers' | 'newsroom' | 'login';
 
 // --- External URLs ---
 const EXTERNAL_URLS = {
@@ -23,7 +23,7 @@ const EXTERNAL_URLS = {
 } as const;
 
 // Hash <-> PageId mapping for URL sync
-const VALID_PAGES: PageId[] = ['home','products','solutions','marketing','media','retail','finance','resources','pricing','company','docs','trust','contact','marketing_use_cases','media_reference_patterns','privacy','terms','careers','newsroom','login'];
+const VALID_PAGES: PageId[] = ['home','products','solutions','marketing','media','retail','finance','resources','pricing','company','docs','trust','contact','marketing_use_cases','media_reference_patterns','privacy','terms','security','subprocessors','careers','newsroom','login'];
 
 function pageIdFromHash(hash: string): PageId {
   const raw = hash.replace('#', '').replace(/^\//, '');
@@ -476,6 +476,8 @@ const Footer = ({ setPage }: { setPage: (p: PageId) => void }) => (
           <button onClick={() => setPage('trust')} className="hover:text-white transition-colors">Trust Center</button>
           <button onClick={() => setPage('privacy')} className="hover:text-white transition-colors">Privacy</button>
           <button onClick={() => setPage('terms')} className="hover:text-white transition-colors">Terms</button>
+          <button onClick={() => setPage('security')} className="hover:text-white transition-colors">Security</button>
+          <button onClick={() => setPage('subprocessors')} className="hover:text-white transition-colors">Subprocessors</button>
           <button onClick={() => setPage('contact')} className="hover:text-white transition-colors">Contact</button>
         </div>
       </div>
@@ -2113,6 +2115,174 @@ const TermsPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
   </motion.div>
 );
 
+const SecurityPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
+  <motion.div {...PAGE_TRANSITION}>
+    <section className="pt-28 pb-24 px-6 md:px-12 max-w-7xl mx-auto">
+      <div className="mb-16">
+        <span className="text-brand-primary font-bold uppercase tracking-widest text-sm mb-6 block">Trust</span>
+        <h1 className="text-3xl md:text-4xl font-bold mb-10 tracking-tight">Security posture</h1>
+        <p className="text-gray-600 text-lg leading-relaxed max-w-4xl mb-8">Last updated: 2026-04-26</p>
+      </div>
+      <div className="prose max-w-4xl space-y-8">
+        <div className="p-8 rounded-2xl bg-brand-light border border-gray-100">
+          <h2 className="text-xl font-bold mb-4">Overview</h2>
+          <p className="text-gray-600 leading-relaxed">
+            InsightPulseAI runs on Microsoft Azure (Southeast Asia) with security controls aligned to the Microsoft Cloud Adoption Framework. This page summarises our current public-facing security posture. Specific certifications are not claimed unless explicitly stated; see &ldquo;What we do not claim&rdquo; below.
+          </p>
+        </div>
+        <div className="p-8 rounded-2xl bg-brand-light border border-gray-100">
+          <h2 className="text-xl font-bold mb-4">Data boundary</h2>
+          <p className="text-gray-600 leading-relaxed">
+            <strong>Public website assistant (Pulser Product Assistant):</strong> answers from approved public sources only. It does not access ERP records, customer/tenant data, private repositories, Azure control plane, Partner Center, or perform actions from this website.
+          </p>
+          <p className="text-gray-600 leading-relaxed mt-4">
+            <strong>In-product Pulser assistants for paying customers:</strong> operate in internal beta / read-only advisory mode. AI components do not perform autonomous filing, posting, reconciliation, payment, or messaging. Any state-changing action is gated by an approval-required card and a human reviewer.
+          </p>
+        </div>
+        <div className="p-8 rounded-2xl bg-brand-light border border-gray-100">
+          <h2 className="text-xl font-bold mb-4">Identity and access</h2>
+          <p className="text-gray-600 leading-relaxed">
+            Authentication is performed against Microsoft Entra ID with multi-factor authentication required for administrative access. Service-to-service authentication uses Azure managed identities. Privileged actions follow least-privilege role assignment. Break-glass admin accounts are provisioned and tested per Microsoft&rsquo;s guidance for tenant-recovery posture.
+          </p>
+        </div>
+        <div className="p-8 rounded-2xl bg-brand-light border border-gray-100">
+          <h2 className="text-xl font-bold mb-4">Encryption</h2>
+          <p className="text-gray-600 leading-relaxed">
+            Encryption in transit uses TLS 1.2 or higher across all customer-facing endpoints, terminated by Azure Front Door / Azure Container Apps ingress. Encryption at rest is provided by Azure managed keys for PostgreSQL Flexible Server, Azure Storage, and Container Registry. Customer-managed keys are available on request for enterprise tiers.
+          </p>
+        </div>
+        <div className="p-8 rounded-2xl bg-brand-light border border-gray-100">
+          <h2 className="text-xl font-bold mb-4">Secrets management</h2>
+          <p className="text-gray-600 leading-relaxed">
+            Application secrets are stored in Azure Key Vault and referenced via managed identity at runtime. Secrets are not committed to source repositories and are not embedded in container images. Rotation policy follows Azure Key Vault guidance; CI/CD secret scanning is enforced on every pull request.
+          </p>
+        </div>
+        <div className="p-8 rounded-2xl bg-brand-light border border-gray-100">
+          <h2 className="text-xl font-bold mb-4">Responsible AI and human-in-the-loop</h2>
+          <p className="text-gray-600 leading-relaxed">
+            Pulser AI features are scoped to advisory and HITL workflows. The AI does not autonomously file regulatory returns, post journal entries, reconcile accounts, send payments, or send customer/vendor messages. Every state-changing action is staged as a draft and approved by a human reviewer. AI inputs are not used to train shared base models; tenant data stays inside the customer&rsquo;s contracted Azure resources.
+          </p>
+        </div>
+        <div className="p-8 rounded-2xl bg-brand-light border border-gray-100">
+          <h2 className="text-xl font-bold mb-4">Data residency</h2>
+          <p className="text-gray-600 leading-relaxed">
+            Primary processing region is Microsoft Azure Southeast Asia. Where Azure AI services are required (e.g., model deployments not yet available in Southeast Asia), inference may transit to other Microsoft Azure regions under Microsoft&rsquo;s Data Processing Addendum and applicable Standard Contractual Clauses.
+          </p>
+        </div>
+        <div className="p-8 rounded-2xl bg-brand-light border border-gray-100">
+          <h2 className="text-xl font-bold mb-4">Sub-processors</h2>
+          <p className="text-gray-600 leading-relaxed">
+            See the <button onClick={() => setPage('subprocessors')} className="text-brand-primary hover:underline">Subprocessors</button> page for the current list. Subprocessor changes are notified to controllers with reasonable advance notice.
+          </p>
+        </div>
+        <div className="p-8 rounded-2xl bg-brand-light border border-gray-100">
+          <h2 className="text-xl font-bold mb-4">Vulnerability disclosure</h2>
+          <p className="text-gray-600 leading-relaxed">
+            Security issues should be reported to <a href="mailto:business@insightpulseai.com" className="text-brand-primary hover:underline">business@insightpulseai.com</a> with a clear description, reproduction steps, and impact. Please do not disclose publicly until we have confirmed and remediated.
+          </p>
+        </div>
+        <div className="p-8 rounded-2xl bg-brand-light border border-gray-100">
+          <h2 className="text-xl font-bold mb-4">What we do not claim</h2>
+          <p className="text-gray-600 leading-relaxed">
+            InsightPulseAI does not currently claim ISO 27001, SOC 2 Type II, or HIPAA certification. We do not claim Microsoft 365 Certified, Publisher Attested, AppSource listed, or Azure Marketplace transactable status unless those are publicly verifiable on the relevant Microsoft surface. Certification roadmap inquiries can be directed to <a href="mailto:business@insightpulseai.com" className="text-brand-primary hover:underline">business@insightpulseai.com</a>.
+          </p>
+        </div>
+        <div className="p-8 rounded-2xl bg-brand-light border border-gray-100">
+          <h2 className="text-xl font-bold mb-4">Contact</h2>
+          <p className="text-gray-600 leading-relaxed">
+            For security or compliance inquiries, contact{' '}
+            <a href="mailto:business@insightpulseai.com" className="text-brand-primary hover:underline">business@insightpulseai.com</a>{' '}
+            or visit our{' '}
+            <button onClick={() => setPage('contact')} className="text-brand-primary hover:underline">contact page</button>.
+          </p>
+        </div>
+      </div>
+    </section>
+  </motion.div>
+);
+
+const SubprocessorsPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
+  <motion.div {...PAGE_TRANSITION}>
+    <section className="pt-28 pb-24 px-6 md:px-12 max-w-7xl mx-auto">
+      <div className="mb-16">
+        <span className="text-brand-primary font-bold uppercase tracking-widest text-sm mb-6 block">Trust</span>
+        <h1 className="text-3xl md:text-4xl font-bold mb-10 tracking-tight">Subprocessors</h1>
+        <p className="text-gray-600 text-lg leading-relaxed max-w-4xl mb-8">Last updated: 2026-04-26</p>
+      </div>
+      <div className="prose max-w-4xl space-y-8">
+        <div className="p-8 rounded-2xl bg-brand-light border border-gray-100">
+          <h2 className="text-xl font-bold mb-4">About this list</h2>
+          <p className="text-gray-600 leading-relaxed">
+            InsightPulseAI engages the subprocessors below to deliver the contracted services. This list is published for transparency. Subprocessor changes are notified to controllers with reasonable advance notice.
+          </p>
+        </div>
+        <div className="overflow-x-auto rounded-2xl border border-gray-100">
+          <table className="w-full text-left">
+            <thead className="bg-brand-light">
+              <tr>
+                <th className="p-4 text-sm font-bold uppercase tracking-widest text-gray-700">Subprocessor</th>
+                <th className="p-4 text-sm font-bold uppercase tracking-widest text-gray-700">Purpose</th>
+                <th className="p-4 text-sm font-bold uppercase tracking-widest text-gray-700">Region</th>
+                <th className="p-4 text-sm font-bold uppercase tracking-widest text-gray-700">Data category</th>
+              </tr>
+            </thead>
+            <tbody className="text-gray-600 text-sm">
+              <tr className="border-t border-gray-100">
+                <td className="p-4 font-medium">Microsoft Azure</td>
+                <td className="p-4">Compute, hosting (Container Apps), managed PostgreSQL, storage, network, identity (Microsoft Entra ID), Key Vault</td>
+                <td className="p-4">Southeast Asia (primary)</td>
+                <td className="p-4">Customer configuration, application data, audit logs</td>
+              </tr>
+              <tr className="border-t border-gray-100">
+                <td className="p-4 font-medium">Microsoft Azure AI / Azure OpenAI</td>
+                <td className="p-4">AI inference for Pulser advisory and grounding; Azure AI Foundry for hosted-agent runtime</td>
+                <td className="p-4">East US 2 (where required by model availability)</td>
+                <td className="p-4">Prompts and grounding context &mdash; not used to train shared base models</td>
+              </tr>
+              <tr className="border-t border-gray-100">
+                <td className="p-4 font-medium">GitHub</td>
+                <td className="p-4">Source control and CI/CD for InsightPulseAI engineering</td>
+                <td className="p-4">Microsoft global (controller&rsquo;s data is not stored here)</td>
+                <td className="p-4">Source code only &mdash; no customer ERP or tenant data</td>
+              </tr>
+              <tr className="border-t border-gray-100">
+                <td className="p-4 font-medium">Zoho</td>
+                <td className="p-4">Email (SMTP) and booking/scheduling</td>
+                <td className="p-4">Per Zoho region of customer choice</td>
+                <td className="p-4">Email metadata for outbound notifications and booking confirmations</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div className="p-8 rounded-2xl bg-brand-light border border-gray-100">
+          <h2 className="text-xl font-bold mb-4">Not on this list</h2>
+          <p className="text-gray-600 leading-relaxed">
+            InsightPulseAI does not use SAP, Salesforce, or any third-party CRM/ERP as a subprocessor. References to those vendors in our documentation are benchmark references only; they are not integration targets and do not receive customer data.
+          </p>
+          <p className="text-gray-600 leading-relaxed mt-4">
+            Customer data is not shared with advertising networks, analytics aggregators, or third-party AI training programmes.
+          </p>
+        </div>
+        <div className="p-8 rounded-2xl bg-brand-light border border-gray-100">
+          <h2 className="text-xl font-bold mb-4">Onboarding-time disclosure</h2>
+          <p className="text-gray-600 leading-relaxed">
+            For enterprise customers, the subprocessor list is reviewed during onboarding and re-confirmed at each annual DPA renewal. Customers may subscribe to material change notifications via their account contact.
+          </p>
+        </div>
+        <div className="p-8 rounded-2xl bg-brand-light border border-gray-100">
+          <h2 className="text-xl font-bold mb-4">Contact</h2>
+          <p className="text-gray-600 leading-relaxed">
+            For subprocessor-related questions, contact{' '}
+            <a href="mailto:business@insightpulseai.com" className="text-brand-primary hover:underline">business@insightpulseai.com</a>{' '}
+            or visit our{' '}
+            <button onClick={() => setPage('contact')} className="text-brand-primary hover:underline">contact page</button>.
+          </p>
+        </div>
+      </div>
+    </section>
+  </motion.div>
+);
+
 const CareersPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
   <motion.div {...PAGE_TRANSITION}>
     <section className="pt-28 pb-24 px-6 md:px-12 bg-brand-dark text-white">
@@ -2259,6 +2429,8 @@ export default function App() {
       case 'media_reference_patterns': return <MediaReferencePatternsPage setPage={sp} />;
       case 'privacy': return <PrivacyPage setPage={sp} />;
       case 'terms': return <TermsPage setPage={sp} />;
+      case 'security': return <SecurityPage setPage={sp} />;
+      case 'subprocessors': return <SubprocessorsPage setPage={sp} />;
       case 'careers': return <CareersPage setPage={sp} />;
       case 'newsroom': return <NewsroomPage setPage={sp} />;
       case 'login': return <LoginPage />;

@@ -386,6 +386,23 @@ async function startServer() {
     }
   }
 
+  // --- Trust / SEO route redirects (Scope A) ---
+  // These routes must be registered BEFORE the SPA wildcard / static
+  // middleware so direct URL access redirects to the canonical SPA hash
+  // route. Pattern mirrors the deployed image behavior for legal pages.
+  app.get('/security', (_req, res) => {
+    res.redirect(301, '/#security');
+  });
+  app.get('/subprocessors', (_req, res) => {
+    res.redirect(301, '/#subprocessors');
+  });
+  // /features had no real route; the SPA wildcard previously served the
+  // homepage at the /features URL, creating a stale-indexed page.
+  // Redirect to the canonical homepage so / owns that content.
+  app.get('/features', (_req, res) => {
+    res.redirect(301, '/');
+  });
+
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({

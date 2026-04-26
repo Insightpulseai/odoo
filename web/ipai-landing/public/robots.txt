@@ -1,0 +1,33 @@
+# InsightPulseAI — robots.txt
+# Allow public product, legal, and trust pages for search and LLM crawlers.
+
+User-agent: *
+Allow: /
+Allow: /privacy
+Allow: /terms
+Allow: /contact
+Allow: /support
+Allow: /dpa
+Allow: /security
+Allow: /subprocessors
+Allow: /llms.txt
+Disallow: /api/
+
+# AI / LLM crawlers — explicit allow for the public Product Assistant grounding.
+User-agent: GPTBot
+Allow: /
+Disallow: /api/
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /api/
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /api/
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /api/
+
+Sitemap: https://www.insightpulseai.com/sitemap.xml
