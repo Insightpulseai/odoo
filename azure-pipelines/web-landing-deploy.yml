@@ -40,7 +40,7 @@ variables:
   imageTag: latest
   containerAppName: ipai-website
   resourceGroup: rg-ipai-dev-odoo-sea
-  serviceConnection: ipai-dev-wif
+  serviceConnection: azure-ipai
   smokeUrl: https://www.insightpulseai.com
   revisionSuffix: build-$(Build.BuildId)
 
