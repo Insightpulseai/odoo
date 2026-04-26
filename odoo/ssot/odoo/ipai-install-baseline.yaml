@@ -1,0 +1,233 @@
+# IPAI Module Install Groups — Phase 0 Baseline
+# Used by CI smoke-install validation
+# DO NOT mutate in production; this defines the ephemeral CI database install contract only.
+
+version: 1
+date_created: "2026-04-27"
+odoo_version: "18.0"
+environment: "ci_only"
+
+# Install groups define module combinations to validate in ephemeral CI databases.
+# Each group tests a specific runtime surface or feature set.
+# Groups are independent; failures in one do not block others.
+
+install_groups:
+  core_minimal:
+    description: "Minimal IPAI runtime substrate; blocks all other groups"
+    required: true
+    order: 1
+    modules:
+      - ipai_finops_compliance_core  # Authority for policy, approval, evidence
+      - ipai_environment_guard       # Namespace/tenant boundary enforcement
+    dependencies_closure: true
+    ci_required: true
+    evidence_required: true
+
+  pulser_chat:
+    description: "Pulser chat right-rail ERP interface (UI-only, no behavior changes)"
+    required: false
+    order: 2
+    modules:
+      - ipai_finops_compliance_core  # Required by pulser_chat
+      - ipai_pulser_chat             # User-facing agentic ERP interface
+    dependencies_closure: true
+    ci_required: true
+    evidence_required: true
+
+  bir_tax_compliance:
+    description: "Philippine BIR tax compliance (evidence, extraction, filing)"
+    required: false
+    order: 3
+    modules:
+      - ipai_finops_compliance_core  # Authority for evidence/policy
+      - ipai_l10n_ph_bir             # Localization: Philippine chart of accounts, BIR defaults
+      - ipai_bir_compliance          # BIR compliance framework (2307, 2550M, 2550Q, SAWT, QAP, SLSP)
+      - ipai_tax_review              # Tax evidence review and approval workflow
+      - ipai_tax_intelligence        # Tax insights and analysis (Phase 2)
+    dependencies_closure: true
+    ci_required: true
+    evidence_required: true
+    notes: "Validates evidence authority without runtime behavior changes"
+
+  finance_close:
+    description: "Financial close (FY lock, GL close, reconciliation)"
+    required: false
+    order: 4
+    modules:
+      - ipai_finops_compliance_core  # Authority
+      - ipai_finance_close           # GL/FY close automation and control
+    dependencies_closure: true
+    ci_required: false
+    evidence_required: false
+
+  expense_liquidation:
+    description: "Expense liquidation and advance clearing"
+    required: false
+    order: 5
+    modules:
+      - ipai_finops_compliance_core  # Authority
+      - ipai_hr_expense_liquidation  # Expense/advance lifecycle
+    dependencies_closure: true
+    ci_required: false
+    evidence_required: false
+
+  demo_seed:
+    description: "Demo data seed (for manual testing, not CI)"
+    required: false
+    order: 6
+    modules:
+      - ipai_demo_finops             # Demo data only
+    dependencies_closure: false
+    ci_required: false
+    evidence_required: false
+    notes: "Manual dispatch or label-triggered only; not part of default CI runs"
+
+  full_dev_smoke:
+    description: "Full IPAI module install (all approved, non-deprecated modules)"
+    required: false
+    order: 99
+    modules:
+      # Includes all modules from other groups + any additional approved IPAI modules
+      # Dynamically computed from addons/ipai/*/__manifest__.py at runtime
+      # See validation script for logic
+    dependencies_closure: true
+    ci_required: false
+    evidence_required: false
+    notes: "Manual dispatch or label-triggered only; comprehensive smoke test"
+
+# Module metadata and deprecation status
+modules:
+  ipai_finops_compliance_core:
+    description: "Financial operations compliance core — policy authority, action registry"
+    status: "active"
+    required: true
+    since: "18.0"
+    depends_on: []
+
+  ipai_environment_guard:
+    description: "Environment and namespace boundary enforcement"
+    status: "active"
+    required: false
+    since: "18.0"
+    depends_on: []
+
+  ipai_pulser_chat:
+    description: "Pulser chat right-rail interface (UI-only)"
+    status: "active"
+    required: false
+    since: "18.0"
+    depends_on:
+      - ipai_finops_compliance_core
+
+  ipai_l10n_ph_bir:
+    description: "Philippine localization (chart of accounts, BIR defaults)"
+    status: "active"
+    required: false
+    since: "18.0"
+    depends_on:
+      - ipai_finops_compliance_core
+
+  ipai_bir_compliance:
+    description: "BIR compliance framework (forms, filing, evidence)"
+    status: "active"
+    required: false
+    since: "18.0"
+    depends_on:
+      - ipai_finops_compliance_core
+      - ipai_l10n_ph_bir
+
+  ipai_tax_review:
+    description: "Tax evidence review and approval workflow"
+    status: "active"
+    required: false
+    since: "18.0"
+    depends_on:
+      - ipai_finops_compliance_core
+      - ipai_bir_compliance
+
+  ipai_tax_intelligence:
+    description: "Tax insights and analysis (Phase 2+)"
+    status: "active"
+    required: false
+    since: "18.0"
+    depends_on:
+      - ipai_finops_compliance_core
+      - ipai_tax_review
+
+  ipai_finance_close:
+    description: "Financial close automation and control"
+    status: "active"
+    required: false
+    since: "18.0"
+    depends_on:
+      - ipai_finops_compliance_core
+
+  ipai_hr_expense_liquidation:
+    description: "Expense and advance liquidation lifecycle"
+    status: "active"
+    required: false
+    since: "18.0"
+    depends_on:
+      - ipai_finops_compliance_core
+
+  ipai_bir_tax_compliance:
+    description: "DEPRECATED: Use ipai_bir_compliance + ipai_tax_review + ipai_l10n_ph_bir instead"
+    status: "deprecated"
+    required: false
+    since: "18.0"
+    removed_in: null
+    depends_on: []
+
+  ipai_demo_finops:
+    description: "Demo data (manual testing only)"
+    status: "active"
+    required: false
+    since: "18.0"
+    depends_on:
+      - ipai_finops_compliance_core
+
+# CI Database Name Allowlist
+# Install validation must ONLY target databases matching these patterns.
+# Production/staging/default names are REJECTED unconditionally.
+
+allowed_db_name_patterns:
+  - "^ci_odoo_[a-z0-9_]{3,30}$"          # ci_odoo_pr123, ci_odoo_test_finops
+  - "^odoo_test_[a-z0-9_]{3,30}$"        # odoo_test_core, odoo_test_bir
+
+forbidden_db_names:
+  - "odoo"
+  - "odoo_prod"
+  - "odoo_production"
+  - "odoo_staging"
+  - "odoo_stage"
+  - "defaultdb"
+  - "postgres"
+
+# Evidence output configuration
+evidence:
+  output_dir: "evidence/ci/ipai-install"
+  formats:
+    - "json"      # Machine-readable, parseable by CI gates
+    - "md"        # Human-readable summary
+  files:
+    - "hydration-report.json"
+    - "install-report.json"
+    - "module-dependency-graph.json"
+
+# Constraints and guardrails
+constraints:
+  hard:
+    - "No production database access"
+    - "No staging database access"
+    - "No database mutations outside ephemeral CI targets"
+    - "No deployment"
+    - "No tenant changes"
+    - "No Foundry resource changes"
+    - "No Partner Center changes"
+    - "No SDK installation"
+    - "No PulserOdooMCPServer implementation or testing"
+    - "No runtime behavior changes outside CI scripts/workflow"
+    - "All install commands use --no-deps or explicit dependency closure only"
+  soft:
+    - "Evidence should be committed to PR for audit"
+    - "Failed dependency detection should be clear and actionable"

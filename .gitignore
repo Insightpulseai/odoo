@@ -1,5 +1,23 @@
 # Nested git repos (managed as separate repo boundaries)
 /odoo/
+# Exception: Allow CI infrastructure directories for IPAI Phase 0
+!odoo/
+!odoo/.github/
+!odoo/.github/workflows/
+!odoo/.github/workflows/ipai-odoo-install-smoke.yml
+!odoo/ssot/
+!odoo/ssot/odoo/
+!odoo/ssot/odoo/ipai-install-baseline.yaml
+!odoo/scripts/
+!odoo/scripts/ci/
+!odoo/scripts/ci/validate_odoo_addons_hydration.py
+!odoo/scripts/ci/install_ipai_modules.py
+!odoo/docs/
+!odoo/docs/ci/
+!odoo/docs/ci/IPAI_INSTALL_SMOKE.md
+!odoo/tests/
+!odoo/tests/ci/
+!odoo/tests/ci/test_ipai_hydration.py
 /data-intelligence/
 /documentaion/
 /web-site/

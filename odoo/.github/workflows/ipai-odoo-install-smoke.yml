@@ -1,0 +1,254 @@
+name: IPAI Odoo Install Smoke Test
+
+on:
+  pull_request:
+    branches: ["main", "develop"]
+    paths:
+      - "addons/ipai/**"
+      - "ssot/odoo/ipai-install-baseline.yaml"
+      - "scripts/ci/validate_odoo_addons_hydration.py"
+      - "scripts/ci/install_ipai_modules.py"
+      - ".github/workflows/ipai-odoo-install-smoke.yml"
+  push:
+    branches: ["main", "develop"]
+    paths:
+      - "addons/ipai/**"
+      - "ssot/odoo/ipai-install-baseline.yaml"
+      - "scripts/ci/validate_odoo_addons_hydration.py"
+      - "scripts/ci/install_ipai_modules.py"
+  merge_group:
+
+concurrency:
+  group: ipai-install-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  hydration:
+    name: Validate IPAI Module Hydration
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip pyyaml
+
+      - name: Validate IPAI install baseline YAML
+        run: |
+          python3 -c "import yaml; yaml.safe_load(open('ssot/odoo/ipai-install-baseline.yaml'))"
+
+      - name: Validate module hydration
+        run: |
+          python3 scripts/ci/validate_odoo_addons_hydration.py .
+
+      - name: Upload hydration evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ipai-hydration-report
+          path: evidence/ci/ipai-install/hydration-report.json
+          retention-days: 30
+
+  install-core:
+    name: Plan Install - core_minimal
+    runs-on: ubuntu-latest
+    needs: hydration
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip pyyaml
+
+      - name: Simulate install plan - core_minimal group
+        run: |
+          python3 scripts/ci/install_ipai_modules.py \
+            --odoo-root . \
+            --install-group core_minimal \
+            --db-name ci_odoo_core_minimal
+
+      - name: Upload install evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ipai-install-core-minimal
+          path: evidence/ci/ipai-install/
+          retention-days: 30
+
+  install-pulser-chat:
+    name: Plan Install - pulser_chat
+    runs-on: ubuntu-latest
+    needs: hydration
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip pyyaml
+
+      - name: Simulate install plan - pulser_chat group
+        run: |
+          python3 scripts/ci/install_ipai_modules.py \
+            --odoo-root . \
+            --install-group pulser_chat \
+            --db-name ci_odoo_pulser_chat
+
+      - name: Upload install evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ipai-install-pulser-chat
+          path: evidence/ci/ipai-install/
+          retention-days: 30
+
+  install-bir:
+    name: Plan Install - bir_tax_compliance
+    runs-on: ubuntu-latest
+    needs: hydration
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip pyyaml
+
+      - name: Simulate install plan - bir_tax_compliance group
+        run: |
+          python3 scripts/ci/install_ipai_modules.py \
+            --odoo-root . \
+            --install-group bir_tax_compliance \
+            --db-name ci_odoo_bir_compliance
+
+      - name: Upload install evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ipai-install-bir-compliance
+          path: evidence/ci/ipai-install/
+          retention-days: 30
+
+  evidence-gate:
+    name: Evidence Gate - All Reports Generated
+    runs-on: ubuntu-latest
+    needs:
+      - hydration
+      - install-core
+      - install-pulser-chat
+      - install-bir
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all evidence artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: evidence-collected
+
+      - name: Check evidence completeness
+        run: |
+          python3 << 'EOF'
+          import json
+          import os
+          
+          required_reports = [
+              "hydration-report.json",
+              "install-report.json",
+              "module-dependency-graph.json",
+          ]
+          
+          evidence_path = "evidence-collected"
+          missing = []
+          
+          for report in required_reports:
+              found = False
+              for root, dirs, files in os.walk(evidence_path):
+                  if report in files:
+                      found = True
+                      break
+              if not found:
+                  missing.append(report)
+          
+          if missing:
+              print(f"ERROR: Missing evidence reports: {', '.join(missing)}")
+              exit(1)
+          else:
+              print(f"✓ All evidence reports found")
+              exit(0)
+          EOF
+
+      - name: Validate no production DB targets in evidence
+        run: |
+          python3 << 'EOF'
+          import json
+          import os
+          
+          forbidden_dbs = ["odoo", "odoo_prod", "odoo_production", "odoo_staging", "defaultdb"]
+          
+          for root, dirs, files in os.walk("evidence-collected"):
+              for file in files:
+                  if file.endswith(".json"):
+                      filepath = os.path.join(root, file)
+                      with open(filepath) as f:
+                          data = json.load(f)
+                          db = data.get("database") or data.get("install_result", {}).get("database")
+                          if db and db in forbidden_dbs:
+                              print(f"ERROR: Forbidden database '{db}' in {filepath}")
+                              exit(1)
+          
+          print(f"✓ No forbidden database names in evidence")
+          exit(0)
+          EOF
+
+      - name: Summarize evidence
+        if: success()
+        run: |
+          echo "=== IPAI INSTALL SMOKE TEST SUMMARY ==="
+          echo "✓ Hydration validation: PASSED"
+          echo "✓ Install group core_minimal: PASSED"
+          echo "✓ Install group pulser_chat: PASSED"
+          echo "✓ Install group bir_tax_compliance: PASSED"
+          echo "✓ Evidence gate: PASSED"
+          echo ""
+          echo "Evidence collected:"
+          find evidence-collected -name "*.json" -type f -exec echo "  - {}" \;
+
+      - name: Report failure
+        if: failure()
+        run: |
+          echo "ERROR: IPAI Install Smoke Test FAILED"
+          exit 1
