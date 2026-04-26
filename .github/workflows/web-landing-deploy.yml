@@ -1,0 +1,349 @@
+# =============================================================================
+# Web Landing Deploy — GitHub Actions (B-prime, revision-safe)
+# =============================================================================
+# Build -> Push to ACR -> Deploy new revision @ 0% traffic -> Smoke revision FQDN
+#   -> Manual approval (GitHub Environments) -> Shift 100% traffic
+#   -> Smoke production -> Publish evidence
+#
+# Surface: ipai-website ACA in rg-ipai-dev-odoo-sea, served at
+# https://www.insightpulseai.com (single-ACA, no separate prod env).
+# ACR image: acripaiodoo.azurecr.io/ipai-website:latest
+#
+# Why this workflow exists:
+#   IPAI canonical doctrine (per Insightpulse-ai/.github project README +
+#   ADO project README) places GitHub as the CI/release authority. The
+#   parallel ADO pipeline (`azure-pipelines/web-landing-deploy.yml`) is
+#   blocked on Microsoft-hosted parallel-job quota and cannot ship the
+#   current main-branch web-landing copy. Repo is public, so GitHub
+#   Actions has unlimited free runner minutes.
+#
+# Why revision-safe:
+#   A flat `containerapp update` flips 100% traffic to the new revision
+#   immediately. With multi-revision mode + 0% initial traffic + a
+#   GitHub Environments manual approval gate, we get a staging-style
+#   flow on a single ACA without a separate staging environment.
+#
+# Prerequisites (configured ONCE before first run):
+#   1. Entra app registration with federated credentials trusting:
+#        repo:Insightpulseai/odoo:ref:refs/heads/main
+#        repo:Insightpulseai/odoo:environment:web-landing-production
+#   2. Azure RBAC on the SP:
+#        - AcrPush on `acripaiodoo`
+#        - Container Apps Contributor on `rg-ipai-dev-odoo-sea`
+#   3. GitHub repo secrets (NOT the SP password — only the IDs):
+#        AZURE_CLIENT_ID
+#        AZURE_TENANT_ID
+#        AZURE_SUBSCRIPTION_ID
+#   4. GitHub Environment named `web-landing-production` with `jgtolentino`
+#      (or designated approver) listed in `Required reviewers`.
+#
+# These prerequisites are documented but NOT created by this PR.
+# =============================================================================
+
+name: web-landing-deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "web/ipai-landing/**"
+      - ".github/workflows/web-landing-deploy.yml"
+  workflow_dispatch: {}
+
+permissions:
+  id-token: write       # required for OIDC to Azure
+  contents: read
+
+env:
+  ACR_NAME: acripaiodoo
+  IMAGE_NAME: ipai-website
+  IMAGE_TAG: latest
+  CONTAINER_APP: ipai-website
+  RESOURCE_GROUP: rg-ipai-dev-odoo-sea
+  SMOKE_URL: https://www.insightpulseai.com
+
+jobs:
+  # ── Job 1: Build + push image to ACR ──
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      image_uri: ${{ steps.build_image.outputs.image_uri }}
+      revision_suffix: ${{ steps.suffix.outputs.suffix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Compute revision suffix
+        id: suffix
+        run: |
+          # Suffix used for the new ACA revision. Lowercase + alphanumeric +
+          # hyphen, max 64 chars. We use build-<run_number>-<short_sha>.
+          SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
+          SUFFIX="build-${GITHUB_RUN_NUMBER}-${SHORT_SHA}"
+          echo "suffix=${SUFFIX}" >> "$GITHUB_OUTPUT"
+          echo "Revision suffix: ${SUFFIX}"
+
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Build + push image via ACR Tasks
+        id: build_image
+        run: |
+          set -euo pipefail
+          # ACR Tasks (`az acr build`) builds remotely on Azure infrastructure
+          # and pushes directly to ACR — no need for local docker daemon
+          # or ACR creds in the runner.
+          az acr build \
+            --registry "${ACR_NAME}" \
+            --image "${IMAGE_NAME}:${IMAGE_TAG}" \
+            --file web/ipai-landing/Dockerfile \
+            web/ipai-landing
+          IMAGE_URI="${ACR_NAME}.azurecr.io/${IMAGE_NAME}:${IMAGE_TAG}"
+          echo "image_uri=${IMAGE_URI}" >> "$GITHUB_OUTPUT"
+          echo "Pushed: ${IMAGE_URI}"
+
+  # ── Job 2: Deploy new revision @ 0% traffic ──
+  deploy_revision:
+    needs: build
+    runs-on: ubuntu-latest
+    outputs:
+      new_revision: ${{ steps.deploy.outputs.new_revision }}
+      new_revision_fqdn: ${{ steps.deploy.outputs.new_revision_fqdn }}
+      previous_revision: ${{ steps.deploy.outputs.previous_revision }}
+    steps:
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy new revision at 0% traffic
+        id: deploy
+        env:
+          IMAGE_URI: ${{ needs.build.outputs.image_uri }}
+          SUFFIX: ${{ needs.build.outputs.revision_suffix }}
+        run: |
+          set -euo pipefail
+          NEW_REV="${CONTAINER_APP}--${SUFFIX}"
+
+          echo "=== Revision-safe deploy ==="
+          echo "App:           ${CONTAINER_APP}"
+          echo "RG:            ${RESOURCE_GROUP}"
+          echo "Image:         ${IMAGE_URI}"
+          echo "New revision:  ${NEW_REV}"
+
+          # Step 1: ensure multi-revision mode (idempotent).
+          echo "Setting revisions-mode=multiple (idempotent)..."
+          az containerapp revision set-mode \
+            --name "${CONTAINER_APP}" \
+            --resource-group "${RESOURCE_GROUP}" \
+            --mode multiple \
+            --output none
+
+          # Step 2: capture currently-active revision for rollback.
+          CURRENT_REV=$(az containerapp revision list \
+            --name "${CONTAINER_APP}" \
+            --resource-group "${RESOURCE_GROUP}" \
+            --query "[?properties.active && properties.trafficWeight>\`0\`] | [0].name" \
+            -o tsv)
+          echo "Current active revision: ${CURRENT_REV:-<none>}"
+
+          # Step 3: update with new image + named revision suffix.
+          echo "Creating new revision ${NEW_REV} ..."
+          az containerapp update \
+            --name "${CONTAINER_APP}" \
+            --resource-group "${RESOURCE_GROUP}" \
+            --image "${IMAGE_URI}" \
+            --revision-suffix "${SUFFIX}" \
+            --output none
+
+          # Step 4: wait for revision to provision.
+          sleep 30
+
+          # Step 5: verify new revision exists + capture its FQDN.
+          NEW_FQDN=$(az containerapp revision show \
+            --name "${CONTAINER_APP}" \
+            --resource-group "${RESOURCE_GROUP}" \
+            --revision "${NEW_REV}" \
+            --query "properties.fqdn" \
+            -o tsv)
+
+          if [[ -z "${NEW_FQDN}" ]]; then
+            echo "FAIL: new revision ${NEW_REV} has no FQDN"
+            exit 1
+          fi
+
+          # Step 6: enforce 0% traffic on the new revision (defensive).
+          if [[ -n "${CURRENT_REV}" && "${CURRENT_REV}" != "${NEW_REV}" ]]; then
+            echo "Pinning traffic: 100% -> ${CURRENT_REV}, 0% -> ${NEW_REV}"
+            az containerapp ingress traffic set \
+              --name "${CONTAINER_APP}" \
+              --resource-group "${RESOURCE_GROUP}" \
+              --revision-weight "${CURRENT_REV}=100" "${NEW_REV}=0" \
+              --output none
+          else
+            echo "No previous revision (or new == current); skipping defensive traffic pin."
+          fi
+
+          # Step 7: emit outputs for downstream jobs.
+          {
+            echo "new_revision=${NEW_REV}"
+            echo "new_revision_fqdn=${NEW_FQDN}"
+            echo "previous_revision=${CURRENT_REV}"
+          } >> "$GITHUB_OUTPUT"
+
+          echo ""
+          echo "PASS"
+          echo "  New revision:        ${NEW_REV}"
+          echo "  New revision FQDN:   https://${NEW_FQDN}"
+          echo "  Previous revision:   ${CURRENT_REV:-<none>}"
+          echo "  Production traffic:  still on ${CURRENT_REV:-<previous>}"
+
+  # ── Job 3: Smoke the new revision via its direct FQDN ──
+  smoke_new_revision:
+    needs: deploy_revision
+    runs-on: ubuntu-latest
+    steps:
+      - name: Smoke new revision routes
+        env:
+          FQDN: ${{ needs.deploy_revision.outputs.new_revision_fqdn }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${FQDN}" ]]; then
+            echo "FAIL: new_revision_fqdn not set"
+            exit 1
+          fi
+          echo "Smoking new revision FQDN: https://${FQDN}/"
+
+          FAIL=0
+          for ROUTE in "/" "/security" "/subprocessors" "/llms.txt" "/sitemap.xml" "/robots.txt" "/privacy" "/terms"; do
+            URL="https://${FQDN}${ROUTE}"
+            CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 -L "${URL}" || echo "000")
+            if [[ "${CODE}" == "200" ]]; then
+              echo "  PASS  ${ROUTE}  (HTTP ${CODE})"
+            else
+              echo "  FAIL  ${ROUTE}  (HTTP ${CODE})"
+              FAIL=1
+            fi
+          done
+
+          # /features should redirect (301/302) to /
+          FEAT_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "https://${FQDN}/features" || echo "000")
+          if [[ "${FEAT_CODE}" == "301" || "${FEAT_CODE}" == "302" || "${FEAT_CODE}" == "200" ]]; then
+            echo "  PASS  /features  (HTTP ${FEAT_CODE})"
+          else
+            echo "  WARN  /features  (HTTP ${FEAT_CODE})"
+          fi
+
+          if [[ ${FAIL} -ne 0 ]]; then
+            echo "RESULT: FAIL"
+            exit 1
+          fi
+          echo "RESULT: PASS — new revision serves Scope-A content correctly"
+
+  # ── Job 4: Manual approval gate (GitHub Environments) ──
+  promote_approval:
+    needs: [deploy_revision, smoke_new_revision]
+    runs-on: ubuntu-latest
+    environment:
+      name: web-landing-production
+      url: ${{ env.SMOKE_URL }}
+    steps:
+      - name: Approval recorded
+        env:
+          NEW_REV: ${{ needs.deploy_revision.outputs.new_revision }}
+          PREV_REV: ${{ needs.deploy_revision.outputs.previous_revision }}
+          NEW_FQDN: ${{ needs.deploy_revision.outputs.new_revision_fqdn }}
+        run: |
+          echo "Approval received."
+          echo "  New revision:        ${NEW_REV}"
+          echo "  New revision FQDN:   https://${NEW_FQDN}"
+          echo "  Previous revision:   ${PREV_REV:-<none>}"
+          echo ""
+          echo "Proceeding to traffic shift."
+
+  # ── Job 5: Shift production traffic to the new revision ──
+  shift_traffic:
+    needs: [deploy_revision, promote_approval]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Shift 100% traffic to new revision
+        env:
+          NEW_REV: ${{ needs.deploy_revision.outputs.new_revision }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${NEW_REV}" ]]; then
+            echo "FAIL: new_revision not set"
+            exit 1
+          fi
+          echo "Shifting 100% traffic to ${NEW_REV} on ${CONTAINER_APP}/${RESOURCE_GROUP} ..."
+          az containerapp ingress traffic set \
+            --name "${CONTAINER_APP}" \
+            --resource-group "${RESOURCE_GROUP}" \
+            --revision-weight "${NEW_REV}=100" \
+            --output none
+          echo "PASS — production traffic now on ${NEW_REV}"
+
+  # ── Job 6: Smoke production URL post-promote ──
+  smoke_production:
+    needs: shift_traffic
+    runs-on: ubuntu-latest
+    steps:
+      - name: Smoke production URL
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3 4 5; do
+            CODE=$(curl -s -o /tmp/body.html -w "%{http_code}" --max-time 30 "${SMOKE_URL}/" || echo "000")
+            if [[ "${CODE}" == "200" ]] && grep -q "InsightPulse" /tmp/body.html; then
+              echo "PASS attempt ${attempt}: ${SMOKE_URL}/ → HTTP ${CODE} (content match)"
+              exit 0
+            fi
+            echo "  attempt ${attempt}: HTTP ${CODE} (content match: $(grep -c InsightPulse /tmp/body.html || echo 0))"
+            sleep 20
+          done
+          echo "FAIL: production smoke did not pass within 5 attempts"
+          exit 1
+
+  # ── Job 7: Evidence ──
+  evidence:
+    needs: [build, deploy_revision, smoke_new_revision, shift_traffic, smoke_production]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print evidence summary
+        env:
+          IMAGE_URI: ${{ needs.build.outputs.image_uri }}
+          NEW_REV: ${{ needs.deploy_revision.outputs.new_revision }}
+          PREV_REV: ${{ needs.deploy_revision.outputs.previous_revision }}
+          NEW_FQDN: ${{ needs.deploy_revision.outputs.new_revision_fqdn }}
+        run: |
+          echo "=== web-landing-deploy evidence ==="
+          echo "  Run ID:              ${GITHUB_RUN_ID}"
+          echo "  Run number:          ${GITHUB_RUN_NUMBER}"
+          echo "  Source SHA:          ${GITHUB_SHA}"
+          echo "  Image:               ${IMAGE_URI:-<none>}"
+          echo "  New revision:        ${NEW_REV:-<none>}"
+          echo "  New revision FQDN:   https://${NEW_FQDN:-<none>}"
+          echo "  Previous revision:   ${PREV_REV:-<none>}"
+          echo "  Production URL:      ${SMOKE_URL}"
+          echo ""
+          echo "Job results:"
+          echo "  build:                  ${{ needs.build.result }}"
+          echo "  deploy_revision:        ${{ needs.deploy_revision.result }}"
+          echo "  smoke_new_revision:     ${{ needs.smoke_new_revision.result }}"
+          echo "  shift_traffic:          ${{ needs.shift_traffic.result }}"
+          echo "  smoke_production:       ${{ needs.smoke_production.result }}"
