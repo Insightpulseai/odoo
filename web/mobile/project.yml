@@ -18,14 +18,72 @@ targets:
     type: application
     platform: iOS
     sources:
-      - Sources
+      - path: Sources
+        excludes:
+          - "PrivacyInfo.xcprivacy"
+          - "Info.plist"
+          - "OdooWrapper.entitlements"
+      - path: Sources/PrivacyInfo.xcprivacy
+        buildPhase: resources
     info:
       path: Sources/Info.plist
+      properties:
+        CFBundleDevelopmentRegion: $(DEVELOPMENT_LANGUAGE)
+        CFBundleExecutable: $(EXECUTABLE_NAME)
+        CFBundleIdentifier: $(PRODUCT_BUNDLE_IDENTIFIER)
+        CFBundleInfoDictionaryVersion: "6.0"
+        CFBundleName: $(PRODUCT_NAME)
+        CFBundleDisplayName: InsightPulse Expense
+        CFBundlePackageType: APPL
+        CFBundleShortVersionString: "1.0"
+        CFBundleVersion: "1"
+        LSRequiresIPhoneOS: true
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        NSCameraUsageDescription: Capture receipts to extract expense data.
+        NSPhotoLibraryUsageDescription: Select existing receipt photos for your expense reports.
+        NSPhotoLibraryAddUsageDescription: Save processed receipts to your photo library.
+        NSFaceIDUsageDescription: Unlock your account and approve expense submissions.
+        NSLocationWhenInUseUsageDescription: Track mileage automatically during business trips.
+        NSLocationAlwaysAndWhenInUseUsageDescription: Track mileage in the background during business trips.
+        UIBackgroundModes:
+          - remote-notification
+          - fetch
+          - processing
+        BGTaskSchedulerPermittedIdentifiers:
+          - com.insightpulseai.odoo.receipt-sync
+          - com.insightpulseai.odoo.background-refresh
+        CFBundleURLTypes:
+          - CFBundleURLName: com.insightpulseai.odoo.universal
+            CFBundleURLSchemes:
+              - insightpulse
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+          UISceneConfigurations:
+            UIWindowSceneSessionRoleApplication:
+              - UISceneConfigurationName: Default Configuration
+                UISceneDelegateClassName: $(PRODUCT_MODULE_NAME).SceneDelegate
+        NSAppTransportSecurity:
+          NSAllowsArbitraryLoads: false
+    entitlements:
+      path: Sources/OdooWrapper.entitlements
+      properties:
+        aps-environment: development
+        com.apple.developer.associated-domains:
+          - applinks:expense.insightpulseai.com
+          - applinks:ipai-expense-pwa.delightfuldesert-2840ce02.southeastasia.azurecontainerapps.io
+          - webcredentials:expense.insightpulseai.com
+        com.apple.security.application-groups:
+          - group.com.insightpulseai.odoo
+        keychain-access-groups:
+          - $(AppIdentifierPrefix)com.insightpulseai.odoo
+        com.apple.developer.applesignin:
+          - Default
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.insightpulseai.odoo
-        INFOPLIST_FILE: Sources/Info.plist
         CODE_SIGN_STYLE: Automatic
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
-    entitlements:
-      path: Sources/OdooWrapper.entitlements
+        INFOPLIST_KEY_UILaunchStoryboardName: LaunchScreen

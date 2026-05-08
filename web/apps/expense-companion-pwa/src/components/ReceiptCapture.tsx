@@ -18,6 +18,12 @@ import {
   enqueueDraft,
   type ExpenseDraftPayload,
 } from '@/lib/offline/draft-queue';
+import {
+  base64ToFile,
+  haptic,
+  isNative,
+  nativeBridge,
+} from '@/lib/native-bridge';
 
 interface OcrResponse {
   ok: boolean;
@@ -93,10 +99,7 @@ export default function ReceiptCapture() {
     if (fileInputRef.current) fileInputRef.current.value = '';
   }, []);
 
-  const handleFile = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
+  const processFile = useCallback(async (file: File) => {
     setPreviewUrl((prev) => {
       if (prev) URL.revokeObjectURL(prev);
       return URL.createObjectURL(file);
@@ -128,6 +131,7 @@ export default function ReceiptCapture() {
         payment_mode: 'own_account',
       });
       setStatus({ kind: 'review' });
+      haptic('light');
     } catch (err) {
       setStatus({
         kind: 'error',
@@ -135,6 +139,33 @@ export default function ReceiptCapture() {
       });
     }
   }, []);
+
+  const handleFile = useCallback(
+    async (event: ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      await processFile(file);
+    },
+    [processFile],
+  );
+
+  /** Native iOS path — bypass the file input, call the WKWebView bridge. */
+  const handleNativeCapture = useCallback(async () => {
+    const bridge = nativeBridge();
+    if (!bridge) return;
+    try {
+      const { imageBase64 } = await bridge.captureReceipt();
+      const file = base64ToFile(imageBase64);
+      await processFile(file);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Capture failed.';
+      if (message === 'capture_cancelled') {
+        // User backed out — stay on idle screen, no error toast.
+        return;
+      }
+      setStatus({ kind: 'error', message });
+    }
+  }, [processFile]);
 
   const handleConfirm = useCallback(async () => {
     const totalAmount = Number(form.total_amount);
@@ -173,6 +204,7 @@ export default function ReceiptCapture() {
 
       if (response.ok && json.ok && typeof json.id === 'number') {
         setStatus({ kind: 'saved', id: json.id, url: json.url });
+        haptic('heavy');
         return;
       }
 
@@ -215,20 +247,33 @@ export default function ReceiptCapture() {
       </div>
 
       {status.kind === 'idle' ? (
-        <label className="mt-4 block cursor-pointer rounded-[28px] bg-ink px-4 py-5 text-white">
-          <span className="block text-sm font-semibold">Open camera</span>
-          <span className="mt-1 block text-xs text-white/70">
-            JPEG, PNG, HEIC, or PDF. Max 10 MB.
-          </span>
-          <input
-            ref={fileInputRef}
-            className="sr-only"
-            type="file"
-            accept="image/*,application/pdf"
-            capture="environment"
-            onChange={handleFile}
-          />
-        </label>
+        isNative() ? (
+          <button
+            type="button"
+            onClick={() => void handleNativeCapture()}
+            className="mt-4 block w-full cursor-pointer rounded-[28px] bg-ink px-4 py-5 text-left text-white"
+          >
+            <span className="block text-sm font-semibold">Open camera</span>
+            <span className="mt-1 block text-xs text-white/70">
+              Native iOS camera. Receipts are queued offline if needed.
+            </span>
+          </button>
+        ) : (
+          <label className="mt-4 block cursor-pointer rounded-[28px] bg-ink px-4 py-5 text-white">
+            <span className="block text-sm font-semibold">Open camera</span>
+            <span className="mt-1 block text-xs text-white/70">
+              JPEG, PNG, HEIC, or PDF. Max 10 MB.
+            </span>
+            <input
+              ref={fileInputRef}
+              className="sr-only"
+              type="file"
+              accept="image/*,application/pdf"
+              capture="environment"
+              onChange={handleFile}
+            />
+          </label>
+        )
       ) : null}
 
       {previewUrl ? (

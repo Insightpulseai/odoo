@@ -7,40 +7,48 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		29D7704FC9B1636ED31C17DA /* ReceiptQueueManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C432A3016B4B20CAB10E4777 /* ReceiptQueueManager.swift */; };
+		2B8EEC5B3D278C45707509C9 /* JSBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B4C13721984C898EEDA36DD /* JSBridge.swift */; };
+		486B43A54092232E7A9C6664 /* CameraCaptureBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = C37CC3A8338D85876EE19FED /* CameraCaptureBridge.swift */; };
 		4ACF47440E0B5EC5C9309181 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69B1B0503BB404387E3DF604 /* Environment.swift */; };
+		53B3CE973D0998BB8AD52FAA /* Shortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE72DF94BB768A60D84AC7EF /* Shortcuts.swift */; };
+		56A3BE67FE507B263A608BB2 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F59F4D770FFB929111A365F /* KeychainService.swift */; };
 		67E616987E36BAAD66124F46 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3E1D3597F3B4DDF295A97749 /* LaunchScreen.storyboard */; };
 		6990E8636318FCA5055A3179 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F94726E340C80E0F660F9486 /* SceneDelegate.swift */; };
+		6E4A89C7C052D47C68B3F17C /* GlassEffectComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 011AFB5F793B6B419814769C /* GlassEffectComponents.swift */; };
+		80C740EDB529195B478EED77 /* BackgroundSyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26849073A537211E05EBB2F8 /* BackgroundSyncService.swift */; };
+		9B7C7F0D15DD103FD6A84883 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDECDD98A0D89FB12D9ECC7 /* Theme.swift */; };
+		B96DB4A0C44A4AA24F6A6DEE /* OCRService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9FBBA626827755472951C9 /* OCRService.swift */; };
+		BFF8D687DC705470C3FDE3A0 /* MileageTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98244BCA7B51B6C037522EED /* MileageTracker.swift */; };
+		CDCCC2F8AD6E587533F6E410 /* LiquidGlassTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48F6C6E547326F2C61A7AABC /* LiquidGlassTabView.swift */; };
+		D48D958C29AC6C614DED2B33 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = D425CFED95013D70818EB581 /* PrivacyInfo.xcprivacy */; };
 		DFC31791A8557AAC48398C9A /* WrapperViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C40FE285D9C84225C2953E0 /* WrapperViewController.swift */; };
 		EE1CA1D6D34CC232F48F6685 /* BiometricAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BBA037EA78310E5D526C391 /* BiometricAuth.swift */; };
 		F11980839DC4BAC58778D7F2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 218418DBE9DABC7AC200EB55 /* AppDelegate.swift */; };
-		A1B2C3D4E5F60001A0000001 /* CameraCaptureBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002A0000001 /* CameraCaptureBridge.swift */; };
-		A1B2C3D4E5F60001A0000002 /* GlassEffectComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002A0000002 /* GlassEffectComponents.swift */; };
-		A1B2C3D4E5F60001A0000003 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002A0000003 /* KeychainService.swift */; };
-		A1B2C3D4E5F60001A0000004 /* LiquidGlassTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002A0000004 /* LiquidGlassTabView.swift */; };
-		A1B2C3D4E5F60001A0000005 /* MileageTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002A0000005 /* MileageTracker.swift */; };
-		A1B2C3D4E5F60001A0000006 /* OCRService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002A0000006 /* OCRService.swift */; };
-		A1B2C3D4E5F60001A0000007 /* ReceiptQueueManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002A0000007 /* ReceiptQueueManager.swift */; };
-		A1B2C3D4E5F60001A0000008 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002A0000008 /* Theme.swift */; };
+		F4DCD7471EB115700875E2EC /* AppleSignInService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D6FD12547889B93291593FF /* AppleSignInService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		011AFB5F793B6B419814769C /* GlassEffectComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassEffectComponents.swift; sourceTree = "<group>"; };
+		0F59F4D770FFB929111A365F /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
 		1BBA037EA78310E5D526C391 /* BiometricAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricAuth.swift; sourceTree = "<group>"; };
 		1C40FE285D9C84225C2953E0 /* WrapperViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrapperViewController.swift; sourceTree = "<group>"; };
-		2068B0B55D31EBE4BBB965D9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		1D6FD12547889B93291593FF /* AppleSignInService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSignInService.swift; sourceTree = "<group>"; };
 		218418DBE9DABC7AC200EB55 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		26849073A537211E05EBB2F8 /* BackgroundSyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundSyncService.swift; sourceTree = "<group>"; };
 		3E1D3597F3B4DDF295A97749 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		48F6C6E547326F2C61A7AABC /* LiquidGlassTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiquidGlassTabView.swift; sourceTree = "<group>"; };
 		5A61BFCF3A85382D7887A0C6 /* OdooWrapper.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = OdooWrapper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		69B1B0503BB404387E3DF604 /* Environment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Environment.swift; sourceTree = "<group>"; };
-		7DBC9EE5570544D03F89498C /* OdooWrapper.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OdooWrapper.entitlements; sourceTree = "<group>"; };
+		6EDECDD98A0D89FB12D9ECC7 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		7B4C13721984C898EEDA36DD /* JSBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSBridge.swift; sourceTree = "<group>"; };
+		98244BCA7B51B6C037522EED /* MileageTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MileageTracker.swift; sourceTree = "<group>"; };
+		BF9FBBA626827755472951C9 /* OCRService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRService.swift; sourceTree = "<group>"; };
+		C37CC3A8338D85876EE19FED /* CameraCaptureBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraCaptureBridge.swift; sourceTree = "<group>"; };
+		C432A3016B4B20CAB10E4777 /* ReceiptQueueManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptQueueManager.swift; sourceTree = "<group>"; };
+		D425CFED95013D70818EB581 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		F94726E340C80E0F660F9486 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60002A0000001 /* CameraCaptureBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraCaptureBridge.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60002A0000002 /* GlassEffectComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassEffectComponents.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60002A0000003 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60002A0000004 /* LiquidGlassTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiquidGlassTabView.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60002A0000005 /* MileageTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MileageTracker.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60002A0000006 /* OCRService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRService.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60002A0000007 /* ReceiptQueueManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptQueueManager.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60002A0000008 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		FE72DF94BB768A60D84AC7EF /* Shortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shortcuts.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -64,20 +72,23 @@
 			isa = PBXGroup;
 			children = (
 				218418DBE9DABC7AC200EB55 /* AppDelegate.swift */,
+				1D6FD12547889B93291593FF /* AppleSignInService.swift */,
+				26849073A537211E05EBB2F8 /* BackgroundSyncService.swift */,
 				1BBA037EA78310E5D526C391 /* BiometricAuth.swift */,
-				A1B2C3D4E5F60002A0000001 /* CameraCaptureBridge.swift */,
+				C37CC3A8338D85876EE19FED /* CameraCaptureBridge.swift */,
 				69B1B0503BB404387E3DF604 /* Environment.swift */,
-				A1B2C3D4E5F60002A0000002 /* GlassEffectComponents.swift */,
-				2068B0B55D31EBE4BBB965D9 /* Info.plist */,
-				A1B2C3D4E5F60002A0000003 /* KeychainService.swift */,
+				011AFB5F793B6B419814769C /* GlassEffectComponents.swift */,
+				7B4C13721984C898EEDA36DD /* JSBridge.swift */,
+				0F59F4D770FFB929111A365F /* KeychainService.swift */,
 				3E1D3597F3B4DDF295A97749 /* LaunchScreen.storyboard */,
-				A1B2C3D4E5F60002A0000004 /* LiquidGlassTabView.swift */,
-				A1B2C3D4E5F60002A0000005 /* MileageTracker.swift */,
-				A1B2C3D4E5F60002A0000006 /* OCRService.swift */,
-				7DBC9EE5570544D03F89498C /* OdooWrapper.entitlements */,
-				A1B2C3D4E5F60002A0000007 /* ReceiptQueueManager.swift */,
+				48F6C6E547326F2C61A7AABC /* LiquidGlassTabView.swift */,
+				98244BCA7B51B6C037522EED /* MileageTracker.swift */,
+				BF9FBBA626827755472951C9 /* OCRService.swift */,
+				D425CFED95013D70818EB581 /* PrivacyInfo.xcprivacy */,
+				C432A3016B4B20CAB10E4777 /* ReceiptQueueManager.swift */,
 				F94726E340C80E0F660F9486 /* SceneDelegate.swift */,
-				A1B2C3D4E5F60002A0000008 /* Theme.swift */,
+				FE72DF94BB768A60D84AC7EF /* Shortcuts.swift */,
+				6EDECDD98A0D89FB12D9ECC7 /* Theme.swift */,
 				1C40FE285D9C84225C2953E0 /* WrapperViewController.swift */,
 			);
 			path = Sources;
@@ -143,6 +154,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				67E616987E36BAAD66124F46 /* LaunchScreen.storyboard in Resources */,
+				D48D958C29AC6C614DED2B33 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -154,17 +166,21 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11980839DC4BAC58778D7F2 /* AppDelegate.swift in Sources */,
+				F4DCD7471EB115700875E2EC /* AppleSignInService.swift in Sources */,
+				80C740EDB529195B478EED77 /* BackgroundSyncService.swift in Sources */,
 				EE1CA1D6D34CC232F48F6685 /* BiometricAuth.swift in Sources */,
-				A1B2C3D4E5F60001A0000001 /* CameraCaptureBridge.swift in Sources */,
+				486B43A54092232E7A9C6664 /* CameraCaptureBridge.swift in Sources */,
 				4ACF47440E0B5EC5C9309181 /* Environment.swift in Sources */,
-				A1B2C3D4E5F60001A0000002 /* GlassEffectComponents.swift in Sources */,
-				A1B2C3D4E5F60001A0000003 /* KeychainService.swift in Sources */,
-				A1B2C3D4E5F60001A0000004 /* LiquidGlassTabView.swift in Sources */,
-				A1B2C3D4E5F60001A0000005 /* MileageTracker.swift in Sources */,
-				A1B2C3D4E5F60001A0000006 /* OCRService.swift in Sources */,
-				A1B2C3D4E5F60001A0000007 /* ReceiptQueueManager.swift in Sources */,
+				6E4A89C7C052D47C68B3F17C /* GlassEffectComponents.swift in Sources */,
+				2B8EEC5B3D278C45707509C9 /* JSBridge.swift in Sources */,
+				56A3BE67FE507B263A608BB2 /* KeychainService.swift in Sources */,
+				CDCCC2F8AD6E587533F6E410 /* LiquidGlassTabView.swift in Sources */,
+				BFF8D687DC705470C3FDE3A0 /* MileageTracker.swift in Sources */,
+				B96DB4A0C44A4AA24F6A6DEE /* OCRService.swift in Sources */,
+				29D7704FC9B1636ED31C17DA /* ReceiptQueueManager.swift in Sources */,
 				6990E8636318FCA5055A3179 /* SceneDelegate.swift in Sources */,
-				A1B2C3D4E5F60001A0000008 /* Theme.swift in Sources */,
+				53B3CE973D0998BB8AD52FAA /* Shortcuts.swift in Sources */,
+				9B7C7F0D15DD103FD6A84883 /* Theme.swift in Sources */,
 				DFC31791A8557AAC48398C9A /* WrapperViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -180,6 +196,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = Sources/Info.plist;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -323,6 +340,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = Sources/Info.plist;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

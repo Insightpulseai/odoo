@@ -2,8 +2,15 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>com.insightpulseai.odoo.receipt-sync</string>
+		<string>com.insightpulseai.odoo.background-refresh</string>
+	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>InsightPulse Expense</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -12,50 +19,10 @@
 	<string>6.0</string>
 	<key>CFBundleName</key>
 	<string>$(PRODUCT_NAME)</string>
-	<key>CFBundleDisplayName</key>
-	<string>InsightPulse Expense</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
-	<key>CFBundleVersion</key>
-	<string>1</string>
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
-	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-
-	<key>NSCameraUsageDescription</key>
-	<string>Capture receipts to extract expense data.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Select existing receipt photos for your expense reports.</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Save processed receipts to your photo library.</string>
-	<key>NSFaceIDUsageDescription</key>
-	<string>Unlock your account and approve expense submissions.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Track mileage automatically during business trips.</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Track mileage in the background during business trips.</string>
-
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>remote-notification</string>
-		<string>fetch</string>
-		<string>processing</string>
-	</array>
-	<key>BGTaskSchedulerPermittedIdentifiers</key>
-	<array>
-		<string>com.insightpulseai.odoo.receipt-sync</string>
-		<string>com.insightpulseai.odoo.background-refresh</string>
-	</array>
-
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -67,7 +34,27 @@
 			</array>
 		</dict>
 	</array>
-
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<false/>
+	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Capture receipts to extract expense data.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Unlock your account and approve expense submissions.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Track mileage in the background during business trips.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Track mileage automatically during business trips.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Save processed receipts to your photo library.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Select existing receipt photos for your expense reports.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -85,11 +72,17 @@
 			</array>
 		</dict>
 	</dict>
-
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<false/>
-	</dict>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+		<string>fetch</string>
+		<string>processing</string>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
 </dict>
 </plist>
