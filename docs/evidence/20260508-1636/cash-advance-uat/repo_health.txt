@@ -1,0 +1,26 @@
+=== Repo Health Check ===
+Repo: /Users/tbwa/Documents/GitHub/Insightpulseai
+
+--- Directory Structure ---
+  PASS  addons/ipai/
+  PASS  .devcontainer/
+  PASS  scripts/
+  PASS  docs/
+  PASS  spec/
+  PASS  ssot/
+
+--- Required Files ---
+  PASS  CLAUDE.md
+  PASS  .gitignore
+
+--- Secrets Check (staged files) ---
+  PASS  No secrets detected in staged changes
+
+--- Deprecated System Check (staged files) ---
+  PASS  No deprecated system references
+
+--- Module Completeness (staged ipai_* modules) ---
+  SKIP  No ipai modules in staged files
+
+===========================
+PASS: Repo health OK

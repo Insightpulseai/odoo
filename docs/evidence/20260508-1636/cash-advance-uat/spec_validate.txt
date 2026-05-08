@@ -1,0 +1,76 @@
+=== Spec Bundle Validation ===
+Spec dir: /Users/tbwa/Documents/GitHub/Insightpulseai/spec
+
+--- Bundle Completeness ---
+  WARN  _templates: no PRD or constitution found
+  PASS  adls-etl-reverse-etl
+  PASS  agent-deployments-hardening
+  PASS  agent-factory
+  PASS  agent-platform
+  PASS  agentic-global-compliance-cloud
+  PASS  ap-invoice-agent
+  WARN  archive: no PRD or constitution found
+  PASS  azure-devops-pipeline-baseline
+  PASS  bank-reconciliation-agent
+  PASS  commercial-controls-rate-card
+  PASS  copilot-target-state
+  PASS  databricks-bundles-foundation
+  PASS  diva-goals
+  PASS  docs-platform
+  PASS  entra-identity-migration
+  PASS  eval-engine-hardening
+  PASS  expense-liquidation-agent
+  PASS  expense-parity-odoo
+  PASS  fabric-power-bi-serving
+  PASS  finance-domain-intelligence
+  PASS  finance-unified
+  PASS  finops-hub
+  PASS  fluent-designer-agent
+  PASS  gmail-inbox-addon
+  PASS  gmail-mail-plugin
+  WARN  ipai-workload-center: no PRD or constitution found
+  PASS  m365-declarative-agent
+  PASS  marketing-agency-stack
+  PASS  meta-integration-bridge
+  PASS  microsoft-marketplace-gtm
+  PASS  odoo-chatgpt-connector
+  PASS  odoo-cloud-platform
+  PASS  odoo-foundry-vscode-extension
+  PASS  odoo-ios-mobile
+  PASS  odoo-on-azure-operations
+  PASS  odoo-on-azure
+  PASS  odoo-seed-import
+  PASS  odoo-sh-azure-equivalent
+  PASS  odoo-sh-equivalent-staging
+  PASS  plane-unified-docs
+  WARN  power-platform-identity-poc: no PRD or constitution found
+  PASS  ppm-clarity-plane-odoo
+  PASS  pulser-agents
+  PASS  pulser-entra-agent-id
+  PASS  pulser-inline-viz
+  PASS  pulser-odoo-ph
+  PASS  pulser-odoo
+  PASS  pulser-platform
+  PASS  pulser-web
+  PASS  pulsetax-agentic-control-plane
+  PASS  release-gates-hardening
+  PASS  reverse-avatax-odoo18-pulser
+  PASS  reverse-sap-concur
+  PASS  sap-joule-concur-odoo-azure
+  WARN  seed-dedup-remediation: no PRD or constitution found
+  PASS  target-platform-architecture
+  PASS  task-router-hardening
+  PASS  tax-pulse-sub-agent
+  PASS  taxpulse-bir-integration
+  PASS  taxpulse-ph
+  PASS  unified-api-gateway
+  PASS  w9-studio-copilot
+  PASS  wholesale-saas-erp-azure
+
+--- Staged Spec References ---
+  Staged spec files:
+    spec/expense-liquidation-agent/uat/agent-prompt.md
+
+===========================
+Checked: 64 bundles
+PASS with 5 warning(s)
