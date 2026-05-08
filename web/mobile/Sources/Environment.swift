@@ -16,11 +16,11 @@ enum AppEnvironment {
     var baseURL: URL {
         switch self {
         case .dev:
-            return URL(string: "https://erp.insightpulseai.com/web")!
+            return URL(string: "https://ipai-expense-pwa.delightfuldesert-2840ce02.southeastasia.azurecontainerapps.io/")!
         case .staging:
-            return URL(string: "https://erp.insightpulseai.com/web")!
+            return URL(string: "https://ipai-expense-pwa.delightfuldesert-2840ce02.southeastasia.azurecontainerapps.io/")!
         case .production:
-            return URL(string: "https://erp.insightpulseai.com/web")!
+            return URL(string: "https://ipai-expense-pwa.delightfuldesert-2840ce02.southeastasia.azurecontainerapps.io/")!
         }
     }
 }
