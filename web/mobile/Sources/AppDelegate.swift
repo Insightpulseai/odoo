@@ -5,12 +5,22 @@ import UserNotifications
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        print("Starting Odoo iOS Wrapper in environment: \(AppEnvironment.current)")
-        
+        print("Starting InsightPulse iOS Wrapper in environment: \(AppEnvironment.current)")
+
         // Register for APNs
         registerForPushNotifications()
-        
+
+        // Register background-task handlers BEFORE this method returns —
+        // BGTaskScheduler requires registration during launch.
+        BackgroundSyncService.shared.registerHandlers()
+
         return true
+    }
+
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        // Schedule offline-receipt sync + periodic refresh.
+        BackgroundSyncService.shared.scheduleReceiptSync()
+        BackgroundSyncService.shared.scheduleAppRefresh()
     }
     
     private func registerForPushNotifications() {
