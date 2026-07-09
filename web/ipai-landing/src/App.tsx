@@ -15,7 +15,8 @@ type PageId = 'home' | 'products' | 'solutions' | 'marketing' | 'media' | 'retai
 // --- External URLs ---
 const EXTERNAL_URLS = {
   demo: 'https://insightpulseai.zohobookings.com/',  // Zoho Bookings — set up at bookings.zoho.com
-  login: 'https://erp.insightpulseai.com/web/login',
+  // Auth: Odoo (erp.insightpulseai.com) replaced by Dataverse — Power Pages customer portal (Entra ID OIDC).
+  login: 'https://customerselfservice-aq9gr.powerappsportals.com/',
   github: 'https://github.com/InsightPulseAI',
   email: 'mailto:business@insightpulseai.com',
   mail: 'mailto:business@insightpulseai.com',
@@ -2368,14 +2369,14 @@ const LoginPage = () => (
       <div className="max-w-md mx-auto">
         <h1 className="text-3xl font-bold mb-8 tracking-tight">Log In</h1>
         <p className="text-gray-600 mb-12">
-          Access your InsightPulseAI workspace through our ERP portal.
+          Access your InsightPulseAI workspace through our secure customer portal.
         </p>
         <a href={EXTERNAL_URLS.login} target="_blank" rel="noopener noreferrer"
           className="px-10 py-4 bg-brand-primary text-black font-bold rounded-lg hover:bg-cyan-400 transition-all inline-flex items-center gap-2" style={{ boxShadow: SHADOW.shadow8 }}>
-          Go to Odoo Login <ExternalLink size={16} />
+          Sign in with Microsoft <ExternalLink size={16} />
         </a>
         <p className="text-sm text-gray-400 mt-8">
-          You will be redirected to <code className="bg-gray-100 px-2 py-1 rounded text-xs">erp.insightpulseai.com</code>
+          You will be redirected to the InsightPulseAI customer portal (Microsoft Entra ID sign-in).
         </p>
       </div>
     </section>
