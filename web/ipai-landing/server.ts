@@ -29,8 +29,8 @@ interface PulserResponse {
 const DEMO_URL = 'https://insightpulseai.zohobookings.com/';
 
 const DEFAULT_FOLLOWUP_CTAS: ChatCtaAction[] = [
-  { type: 'send_prompt', label: 'Show me the core modules', prompt: 'Show me the core modules in Odoo on Cloud.', analytics_id: 'chat_core_modules' },
-  { type: 'send_prompt', label: 'How does Odoo on Cloud work?', prompt: 'How does Odoo on Cloud work?', analytics_id: 'chat_odoo_on_cloud' },
+  { type: 'send_prompt', label: 'Show me the core modules', prompt: 'Show me the core modules in Dynamics 365.', analytics_id: 'chat_core_modules' },
+  { type: 'send_prompt', label: 'How does Dynamics 365 work?', prompt: 'How does Dynamics 365 work?', analytics_id: 'chat_dynamics365' },
   { type: 'open_scheduler', label: 'Book a demo', href: DEMO_URL, analytics_id: 'chat_book_demo' },
 ];
 
@@ -57,15 +57,15 @@ Rules:
 - You CANNOT access any ERP data, tenant data, company data, or user records.
 - You CANNOT perform any actions, create records, or modify anything.
 - You are in public advisory mode only.
-- Use canonical naming: InsightPulseAI (one word), Pulser (not Copilot), Odoo on Cloud, Cloud Operations, Analytics & Dashboards.
-- Never say "Odoo Copilot", "IPAI Copilot", or "Copilot" as your name.
+- Use canonical naming: InsightPulseAI (one word), Pulser (not Copilot), Dynamics 365, Cloud Operations, Analytics & Dashboards.
+- Never say "Dynamics 365 Copilot", "IPAI Copilot", or "Copilot" as your name.
 - Keep answers concise (2-4 sentences).
 - If asked about pricing, say plans are custom and suggest booking a demo.
 - If asked about implementation, suggest talking to a specialist.
 
 Product stack:
-- Odoo on Cloud: modular ERP (Finance, CRM, Sales, Inventory, Projects, HR) hosted on Azure
-- Pulser: AI-native intelligence layer for Odoo workflows (operational guidance, context summaries, exception detection)
+- Dynamics 365: modular ERP (Finance, CRM, Sales, Inventory, Projects, HR) hosted on Azure
+- Pulser: AI-native intelligence layer for Dynamics 365 workflows (operational guidance, context summaries, exception detection)
 - Cloud Operations: managed delivery, security, backups, governance
 - Analytics & Dashboards: real-time KPIs, drill-down reporting, AI-assisted insights (Databricks + Power BI)
 - Architecture: Azure Container Apps, Entra ID (auth), Azure AI Foundry (agent runtime), Document Intelligence (OCR)
@@ -199,7 +199,7 @@ async function buildMockResponse(message: string): Promise<PulserResponse> {
 
   if (lowerMsg.includes("what is pulser")) {
     return {
-      reply: "Pulser is the intelligent assistant family by InsightPulseAI. It helps teams navigate ERP workflows, summarize records, and make faster operational decisions — all built on Odoo CE and Azure.",
+      reply: "Pulser is the intelligent assistant family by InsightPulseAI. It helps teams navigate ERP workflows, summarize records, and make faster operational decisions — all built on Dynamics 365 and Azure.",
       sourceLabel: "Product Docs",
       ctas: inferCtas(message, "pulser intelligence"),
       activities,
@@ -207,17 +207,17 @@ async function buildMockResponse(message: string): Promise<PulserResponse> {
   }
   if (lowerMsg.includes("core modules") || lowerMsg.includes("what modules")) {
     return {
-      reply: "Odoo on Cloud includes Finance & Accounting, CRM & Sales, Inventory & Purchasing, Project Management, and HR & Operations. Each module runs in a secure Azure environment with Pulser assistance available across workflows.",
+      reply: "Dynamics 365 includes Finance & Accounting, CRM & Sales, Inventory & Purchasing, Project Management, and HR & Operations. Each module runs in a secure Azure environment with Pulser assistance available across workflows.",
       sourceLabel: "Product Docs",
       ctas: inferCtas(message, "modules finance crm"),
       activities,
     };
   }
-  if (lowerMsg.includes("odoo") && lowerMsg.includes("cloud")) {
+  if ((lowerMsg.includes("dynamics") || lowerMsg.includes("erp")) && lowerMsg.includes("cloud")) {
     return {
-      reply: "Odoo on Cloud is a modern, modular ERP platform hosted in a secure Azure environment. It allows you to run finance, CRM, inventory, and more without managing your own servers. Pulser adds operational intelligence on top.",
+      reply: "Dynamics 365 is a modern, modular ERP platform hosted in a secure Azure environment. It allows you to run finance, CRM, inventory, and more without managing your own servers. Pulser adds operational intelligence on top.",
       sourceLabel: "Product Docs",
-      ctas: inferCtas(message, "odoo cloud modules"),
+      ctas: inferCtas(message, "dynamics 365 modules"),
       activities,
     };
   }
@@ -252,7 +252,7 @@ async function buildMockResponse(message: string): Promise<PulserResponse> {
   }
   if (lowerMsg.includes("architecture") || lowerMsg.includes("how does it work")) {
     return {
-      reply: "InsightPulseAI runs on Azure Container Apps with Odoo CE 19 as the ERP backbone, Databricks for analytics, and Azure AI Foundry for the Pulser agent runtime. All services use managed identity and Key Vault for secrets.",
+      reply: "InsightPulseAI runs on Azure Container Apps with Dynamics 365 as the ERP backbone, Databricks for analytics, and Azure AI Foundry for the Pulser agent runtime. All services use managed identity and Key Vault for secrets.",
       sourceLabel: "Architecture",
       ctas: inferCtas(message, "architecture azure security"),
       activities,

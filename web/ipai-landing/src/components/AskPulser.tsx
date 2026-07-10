@@ -62,7 +62,7 @@ function trackCtaClick(action: ChatCtaAction, messageId: string) {
 
 const INITIAL_CTAS: ChatCtaAction[] = [
   { type: 'send_prompt', label: 'What is Pulser?', prompt: 'What is Pulser?', analytics_id: 'chat_what_is_pulser' },
-  { type: 'send_prompt', label: 'How does Odoo on Cloud work?', prompt: 'How does Odoo on Cloud work?', analytics_id: 'chat_odoo_on_cloud' },
+  { type: 'send_prompt', label: 'How does Dynamics 365 work?', prompt: 'How does Dynamics 365 work?', analytics_id: 'chat_dynamics365_on_cloud' },
   { type: 'send_prompt', label: 'Which industries do you support?', prompt: 'Which industries do you support?', analytics_id: 'chat_industries' },
   { type: 'open_scheduler', label: 'Book a demo', href: 'https://insightpulseai.zohobookings.com/', analytics_id: 'chat_book_demo' },
 ];
