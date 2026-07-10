@@ -13,8 +13,8 @@ interface Message {
 }
 
 const INITIAL_PROMPTS = [
-  "What is Odoo Copilot?",
-  "How does Odoo on Cloud work?",
+  "What is Pulser?",
+  "How does Dynamics 365 work?",
   "Which industries do you support?",
   "Show me how finance close works"
 ];
@@ -26,7 +26,7 @@ export const AIChatCopilot = () => {
   const [messages, setMessages] = useState<Message[]>([
     { 
       role: 'assistant', 
-      content: "Hi! I'm your Odoo Copilot. I can help you understand how InsightPulseAI modernizes operations for marketing, media, retail, and finance. What would you like to explore?",
+      content: "Hi! I'm your Pulser. I can help you understand how InsightPulseAI modernizes operations for marketing, media, retail, and finance. What would you like to explore?",
       suggestedPrompts: INITIAL_PROMPTS
     }
   ]);
@@ -82,7 +82,7 @@ export const AIChatCopilot = () => {
       console.error("Chat error:", error);
       setMessages(prev => [...prev, { 
         role: 'assistant', 
-        content: "I'm sorry, I'm having trouble connecting to the Odoo Copilot service. Please try again or contact our team." 
+        content: "I'm sorry, I'm having trouble connecting to the Pulser service. Please try again or contact our team." 
       }]);
     } finally {
       setIsLoading(false);
@@ -109,7 +109,7 @@ export const AIChatCopilot = () => {
                 </div>
                 <div>
                   <h3 className="text-white font-bold text-base leading-none flex items-center gap-2">
-                    Odoo Copilot <Sparkles size={14} className="text-brand-primary animate-pulse" />
+                    Pulser <Sparkles size={14} className="text-brand-primary animate-pulse" />
                   </h3>
                   <div className="flex items-center gap-1.5 mt-1.5">
                     <div className="w-1.5 h-1.5 bg-brand-primary rounded-full animate-pulse"></div>
@@ -187,7 +187,7 @@ export const AIChatCopilot = () => {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                  placeholder="Ask Odoo Copilot..."
+                  placeholder="Ask Pulser..."
                   className="w-full pl-5 pr-14 py-4 bg-gray-100 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/50 transition-all font-medium"
                 />
                 <button 
@@ -199,7 +199,7 @@ export const AIChatCopilot = () => {
                 </button>
               </div>
               <p className="text-[10px] text-gray-400 mt-4 text-center font-medium">
-                InsightPulseAI Odoo Copilot can make mistakes. Check important info.
+                InsightPulseAI Pulser can make mistakes. Check important info.
               </p>
             </div>
           </motion.div>
@@ -221,7 +221,7 @@ export const AIChatCopilot = () => {
             <motion.div key="open" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col items-center">
               <MessageSquare size={28} />
               <span className="absolute -top-12 right-0 bg-brand-dark text-white text-[10px] font-bold px-3 py-1.5 rounded-full whitespace-nowrap shadow-xl border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity">
-                Ask Odoo Copilot
+                Ask Pulser
               </span>
             </motion.div>
           )}

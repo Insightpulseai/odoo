@@ -15,7 +15,7 @@ type PageId = 'home' | 'products' | 'solutions' | 'marketing' | 'media' | 'retai
 // --- External URLs ---
 const EXTERNAL_URLS = {
   demo: 'https://insightpulseai.zohobookings.com/',  // Zoho Bookings — set up at bookings.zoho.com
-  // Auth: Odoo (erp.insightpulseai.com) replaced by Dataverse — Power Pages customer portal (Entra ID OIDC).
+  // Auth: Dynamics 365 (erp.insightpulseai.com) replaced by Dataverse — Power Pages customer portal (Entra ID OIDC).
   login: 'https://customerselfservice-aq9gr.powerappsportals.com/',
   github: 'https://github.com/InsightPulseAI',
   email: 'mailto:business@insightpulseai.com',
@@ -155,7 +155,7 @@ const Navbar = ({ currentPage, setPage }: { currentPage: PageId, setPage: (p: Pa
               <div className="w-[560px] p-6" onMouseEnter={cancelClose} onMouseLeave={scheduleClose}>
                 <div className="grid grid-cols-2 gap-2">
                   {[
-                    { icon: <Cloud size={20} />, title: "Odoo on Cloud", desc: "Hosted ERP, CRM, finance, inventory", page: 'products' as PageId },
+                    { icon: <Cloud size={20} />, title: "Dynamics 365", desc: "Hosted ERP, CRM, finance, inventory", page: 'products' as PageId },
                     { icon: <Cpu size={20} />, title: "Pulser", desc: "AI guidance inside your workflows", page: 'products' as PageId },
                     { icon: <ShieldCheck size={20} />, title: "Cloud Operations", desc: "Deploy, govern, monitor, evolve", page: 'products' as PageId },
                     { icon: <BarChart size={20} />, title: "Analytics & Dashboards", desc: "Operational dashboards & reporting", page: 'products' as PageId },
@@ -325,7 +325,7 @@ const Navbar = ({ currentPage, setPage }: { currentPage: PageId, setPage: (p: Pa
               </button>
               {mobileSection === 'products' && (
                 <div className="pl-4 pb-3 space-y-1">
-                  <button onClick={() => mobilNav('products')} className="block w-full text-left py-2 text-sm text-gray-600 hover:text-brand-primary">Odoo on Cloud</button>
+                  <button onClick={() => mobilNav('products')} className="block w-full text-left py-2 text-sm text-gray-600 hover:text-brand-primary">Dynamics 365</button>
                   <button onClick={() => mobilNav('products')} className="block w-full text-left py-2 text-sm text-gray-600 hover:text-brand-primary">Pulser</button>
                   <button onClick={() => mobilNav('products')} className="block w-full text-left py-2 text-sm text-gray-600 hover:text-brand-primary">Analytics</button>
                   <button onClick={() => mobilNav('products')} className="block w-full text-left py-2 text-sm text-gray-600 hover:text-brand-primary">Cloud Operations</button>
@@ -409,7 +409,7 @@ const Footer = ({ setPage }: { setPage: (p: PageId) => void }) => (
             </button>
           </div>
           <p className="text-gray-400 text-sm leading-relaxed mb-8">
-            Modern operations that put you in control. Run Odoo in the cloud with operational intelligence, analytics, and scalable workflows built for growth.
+            Modern operations that put you in control. Run Dynamics 365 in the cloud with operational intelligence, analytics, and scalable workflows built for growth.
           </p>
           <div className="flex gap-4">
             <a href={EXTERNAL_URLS.github} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-brand-primary hover:text-black transition-all" aria-label="GitHub">
@@ -424,7 +424,7 @@ const Footer = ({ setPage }: { setPage: (p: PageId) => void }) => (
         <div>
           <h4 className="font-bold mb-6 text-sm uppercase tracking-widest text-brand-primary">Products</h4>
           <ul className="space-y-5 text-gray-400 text-sm">
-            <li><button onClick={() => setPage('products')} className="hover:text-white transition-colors">Odoo on Cloud</button></li>
+            <li><button onClick={() => setPage('products')} className="hover:text-white transition-colors">Dynamics 365</button></li>
             <li><button onClick={() => setPage('products')} className="hover:text-white transition-colors">Pulser</button></li>
             <li><button onClick={() => setPage('products')} className="hover:text-white transition-colors">Analytics</button></li>
             <li><button onClick={() => setPage('products')} className="hover:text-white transition-colors">Cloud Operations</button></li>
@@ -492,7 +492,7 @@ const GlobalCTA = ({ setPage }: { setPage: (p: PageId) => void }) => (
       <div className="absolute inset-0 grid-pattern opacity-20"></div>
       <div className="relative z-10">
         <h2 className="text-4xl md:text-4xl font-bold text-black mb-8 tracking-tight">
-          Ready to run Odoo in the cloud with intelligence built in?
+          Ready to run Dynamics 365 in the cloud with intelligence built in?
         </h2>
         <p className="text-xl text-black/80 mb-12 max-w-3xl mx-auto font-medium">
           Move from fragmented tools and manual work to one connected operating model with InsightPulseAI.
@@ -532,7 +532,7 @@ const HomePage = ({ setPage }: { setPage: (p: PageId) => void }) => (
             AI-native operations for marketing, media, retail, financial, and health services
           </h1>
           <p className="text-xl text-gray-400 leading-relaxed mb-12 max-w-3xl">
-            InsightPulseAI combines Odoo on Cloud, Pulser, and modern data workflows to help teams unify operations, automate execution, and scale with stronger control.
+            InsightPulseAI combines Dynamics 365, Pulser, and modern data workflows to help teams unify operations, automate execution, and scale with stronger control.
           </p>
           <div className="flex flex-wrap gap-4">
             <a href={EXTERNAL_URLS.demo} target="_blank" rel="noopener noreferrer" className="px-10 py-5 bg-brand-primary text-black font-extrabold rounded-full hover:bg-cyan-400 transition-all inline-block">Book Demo</a>
@@ -618,9 +618,9 @@ const HomePage = ({ setPage }: { setPage: (p: PageId) => void }) => (
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
           {[
-            { icon: <Cloud size={32} />, title: "Odoo on Cloud", desc: "Run ERP, CRM, sales, inventory, projects, HR, finance, and operations from one hosted platform." },
+            { icon: <Cloud size={32} />, title: "Dynamics 365", desc: "Run ERP, CRM, sales, inventory, projects, HR, finance, and operations from one hosted platform." },
             { icon: <Cpu size={32} />, title: "Pulser", desc: "Operational intelligence that surfaces what matters, summarizes context, and accelerates action across workflows." },
-            { icon: <ShieldCheck size={32} />, title: "Cloud Operations", desc: "Deploy, govern, monitor, and evolve Odoo with a more reliable cloud delivery model." },
+            { icon: <ShieldCheck size={32} />, title: "Cloud Operations", desc: "Deploy, govern, monitor, and evolve Dynamics 365 with a more reliable cloud delivery model." },
             { icon: <BarChart size={32} />, title: "Analytics & Dashboards", desc: "Turn operational data into real-time executive and team-level visibility." },
             { icon: <BookOpen size={32} />, title: "PrismaLab", desc: "PRISMA-aligned systematic reviews and meta-analysis support for research teams.", href: "https://prismalab.insightpulseai.com" }
           ].map((p, i) => (
@@ -655,7 +655,7 @@ const HomePage = ({ setPage }: { setPage: (p: PageId) => void }) => (
         {[
           {
             icon: <Cloud size={40} className="text-brand-primary" />,
-            title: "Run the core in Odoo on Cloud",
+            title: "Run the core in Dynamics 365",
             desc: "Centralize finance, CRM, inventory, projects, approvals, and operational workflows in one hosted environment."
           },
           {
@@ -709,7 +709,6 @@ const HomePage = ({ setPage }: { setPage: (p: PageId) => void }) => (
                 { name: "Microsoft Azure", src: "/logos/azure.svg" },
                 { name: "GitHub", src: "/logos/github.svg" },
                 { name: "Databricks", src: "/logos/databricks.svg" },
-                { name: "Odoo", src: "/logos/odoo.svg" },
                 { name: "Zoho Mail", src: "/logos/zoho.svg" },
                 { name: "Slack", src: "/logos/slack.svg" },
                 { name: "Power BI", src: "/logos/powerbi.svg" },
@@ -778,7 +777,7 @@ const HomePage = ({ setPage }: { setPage: (p: PageId) => void }) => (
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {[
-            { icon: <Cloud size={32} />, title: "Odoo on Cloud", desc: "Business workflows and system of record" },
+            { icon: <Cloud size={32} />, title: "Dynamics 365", desc: "Business workflows and system of record" },
             { icon: <Cpu size={32} />, title: "Pulser", desc: "Operational intelligence, guided workflows, and safe handoff paths" },
             { icon: <BarChart3 size={32} />, title: "Analytics & Dashboards", desc: "Performance visibility and executive reporting" },
             { icon: <Settings size={32} />, title: "Cloud Operations", desc: "Deployment, reliability, upgrades, and governance" }
@@ -832,7 +831,7 @@ const HomePage = ({ setPage }: { setPage: (p: PageId) => void }) => (
         </div>
         <div className="space-y-6">
           {[
-            { q: "What is Odoo on Cloud?", a: "A hosted operating platform built around Odoo, modern cloud delivery, and operational support." },
+            { q: "What is Dynamics 365?", a: "A hosted operating platform built around Dynamics 365, modern cloud delivery, and operational support." },
             { q: "What is Pulser?", a: "An AI-assisted workflow layer that helps users understand, navigate, and accelerate work inside the platform." },
             { q: "Can the website assistant access my ERP?", a: "No. The landing-page assistant is public and documentation-grounded only." },
             { q: "Is Pulser generally available?", a: "Not yet. Current launch posture is internal beta for trusted users with read-only advisory behavior." },
@@ -863,11 +862,11 @@ const ProductsPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
     <div className="space-y-20">
       {[
         {
-          title: "Odoo on Cloud",
-          desc: "Run your entire business from one secure, hosted environment. Odoo on Cloud gives growing companies a flexible platform with anywhere access, centralized data, and faster rollout across teams.",
+          title: "Dynamics 365",
+          desc: "Run your entire business from one secure, hosted environment. Dynamics 365 gives growing companies a flexible platform with anywhere access, centralized data, and faster rollout across teams.",
           features: ["Finance & Accounting", "CRM & Sales", "Inventory & Purchasing", "Project Management", "HR & Operations"],
           icon: <Cloud size={48} className="text-brand-primary" />,
-          image: "/images/product-odoo-cloud.png"
+          image: "/images/product-dynamics365.png"
         },
         {
           title: "Pulser",
@@ -878,7 +877,7 @@ const ProductsPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
         },
         {
           title: "Cloud Operations",
-          desc: "Deploy, govern, and evolve Odoo with a reliable cloud delivery model. We handle the technical complexity so you can focus on business outcomes.",
+          desc: "Deploy, govern, and evolve Dynamics 365 with a reliable cloud delivery model. We handle the technical complexity so you can focus on business outcomes.",
           features: ["Automated Backups", "Security Monitoring", "Performance Optimization", "Governance Controls", "Scalable Infrastructure"],
           icon: <ShieldCheck size={48} className="text-brand-primary" />,
           image: "/images/product-cloud-ops.png"
@@ -932,7 +931,7 @@ const SolutionsPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
           Solutions built on one operational core
         </h1>
         <p className="text-xl text-gray-600 max-w-4xl leading-relaxed">
-          Each InsightPulseAI solution starts from the same foundation: Odoo on Cloud, AI-assisted workflows, governed operations, and analytics that turn business activity into decisions. Choose the vertical entry point that fits your operating model today, then expand without rebuilding the stack.
+          Each InsightPulseAI solution starts from the same foundation: Dynamics 365, AI-assisted workflows, governed operations, and analytics that turn business activity into decisions. Choose the vertical entry point that fits your operating model today, then expand without rebuilding the stack.
         </p>
       </div>
 
@@ -988,7 +987,7 @@ const SolutionsPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
         <h2 className="text-3xl font-bold mb-12 tracking-tight">Shared platform capabilities</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {[
-            "Odoo on Cloud deployment and lifecycle management",
+            "Dynamics 365 deployment and lifecycle management",
             "AI-assisted guidance through Pulser",
             "Dashboards, reporting, and executive visibility",
             "Approvals, controls, and audit-ready workflows",
@@ -1025,7 +1024,7 @@ const DocsPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
           Documentation for operators, evaluators, and implementation teams
         </h1>
         <p className="text-xl text-gray-600 max-w-4xl leading-relaxed">
-          Explore product documentation, architecture guidance, implementation patterns, and operational runbooks for InsightPulseAI, Odoo on Cloud, and Pulser.
+          Explore product documentation, architecture guidance, implementation patterns, and operational runbooks for InsightPulseAI, Dynamics 365, and Pulser.
         </p>
       </div>
 
@@ -1041,7 +1040,7 @@ const DocsPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
         {[
           {
             icon: <Cloud size={32} className="text-brand-primary" />,
-            title: "Odoo on Cloud Overview",
+            title: "Dynamics 365 Overview",
             desc: "What is included, how deployment works, and how teams scale from launch to enterprise operations.",
             page: 'products' as PageId
           },
@@ -1060,7 +1059,7 @@ const DocsPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
           {
             icon: <BookOpen size={32} className="text-brand-primary" />,
             title: "Implementation Guide",
-            desc: "How teams move from fragmented tools to a governed Odoo operating model.",
+            desc: "How teams move from fragmented tools to a governed Dynamics 365 operating model.",
             page: 'contact' as PageId
           }
         ].map((card, i) => (
@@ -1186,7 +1185,7 @@ const ContactPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
           Talk to the team behind InsightPulseAI
         </h1>
         <p className="text-xl text-gray-600 max-w-4xl leading-relaxed">
-          Whether you are evaluating Odoo on Cloud, planning an AI-assisted operating model, or looking for implementation support, we can help you map the right entry point.
+          Whether you are evaluating Dynamics 365, planning an AI-assisted operating model, or looking for implementation support, we can help you map the right entry point.
         </p>
       </div>
 
@@ -1410,7 +1409,7 @@ const MediaPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
             Media organizations generate audience, engagement, campaign, subscription, advertising, and content data across both structured and unstructured systems. The lakehouse pattern brings those sources together so teams can move faster across quality of experience, churn reduction, recommendation, personalization, attribution, pricing, and inventory planning.
           </p>
           <p className="text-gray-600 text-lg leading-relaxed mb-10">
-            InsightPulseAI uses that intelligence layer to power downstream operational execution in Odoo and downstream creative finishing in Pulser — so audience and monetization signals do not stop at dashboards, but become briefs, workflows, approvals, and publish-ready outputs.
+            InsightPulseAI uses that intelligence layer to power downstream operational execution in Dynamics 365 and downstream creative finishing in Pulser — so audience and monetization signals do not stop at dashboards, but become briefs, workflows, approvals, and publish-ready outputs.
           </p>
           <div className="grid grid-cols-2 gap-4">
             {["Quality of Experience", "Churn / Survivorship", "Next Best Offer", "Content Recommendations", "Yield & Pricing", "Inventory Forecasting"].map((item, i) => (
@@ -1426,7 +1425,7 @@ const MediaPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
           {[
             { role: "Diva", verb: "Decide / Analyze / Route", desc: "Media intelligence shell over the governed lakehouse. Audience, campaign, monetization, and content intelligence.", color: "bg-brand-primary/10 border-brand-primary/20" },
             { role: "Studio", verb: "Create / Polish / Export", desc: "Creative finishing surface. Briefs, content packages, platform variants, brand-formatted outputs.", color: "bg-purple-50 border-purple-200" },
-            { role: "Odoo", verb: "Execute / Govern / Track", desc: "Operational execution layer. Workflows, approvals, finance, asset lifecycle, fulfillment.", color: "bg-gray-50 border-gray-200" }
+            { role: "Dynamics 365", verb: "Execute / Govern / Track", desc: "Operational execution layer. Workflows, approvals, finance, asset lifecycle, fulfillment.", color: "bg-gray-50 border-gray-200" }
           ].map((layer, i) => (
             <div key={i} className={`p-6 rounded-xl border ${layer.color}`}>
               <div className="flex items-center gap-3 mb-2">
@@ -1501,7 +1500,7 @@ const RetailPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
             Retail organizations generate data continuously across e-commerce, point of sale, clickstream, delivery, loyalty, logistics, and in-store operations. Real-time retail decisions require more than reporting — they require a governed data foundation that can ingest, refine, and operationalize those signals fast enough to affect today's outcomes, not tomorrow's.
           </p>
           <p className="text-gray-600 text-lg leading-relaxed mb-8">
-            InsightPulseAI uses that intelligence layer to power downstream operational execution in Odoo and downstream creative or campaign activation where needed — so demand, availability, and customer signals become workflows, approvals, recommendations, and actions.
+            InsightPulseAI uses that intelligence layer to power downstream operational execution in Dynamics 365 and downstream creative or campaign activation where needed — so demand, availability, and customer signals become workflows, approvals, recommendations, and actions.
           </p>
           <div className="grid grid-cols-2 gap-4">
             {["Real-Time Supply Chain Data", "Inventory Allocation", "POS and Clickstream", "On-Shelf Availability", "Recommendation Engines", "Automated Replenishments"].map((item, i) => (
@@ -1579,7 +1578,7 @@ const FinancePage = ({ setPage }: { setPage: (p: PageId) => void }) => (
             Financial institutions operate across customer, transaction, fraud, compliance, market, and operational data domains — all under high regulatory scrutiny. A governed data-intelligence platform brings these sources together so organizations can drive growth, protect the firm, and improve efficiency without fragmenting analytics, AI, and governance across disconnected systems.
           </p>
           <p className="text-gray-600 text-lg leading-relaxed mb-8">
-            InsightPulseAI uses that intelligence layer to power downstream execution in Odoo and downstream specialist workflows where needed — so fraud signals, pricing insights, compliance findings, and customer engagement signals become tasks, approvals, workflows, and operational action.
+            InsightPulseAI uses that intelligence layer to power downstream execution in Dynamics 365 and downstream specialist workflows where needed — so fraud signals, pricing insights, compliance findings, and customer engagement signals become tasks, approvals, workflows, and operational action.
           </p>
           <div className="grid grid-cols-2 gap-4">
             {["Customer Engagement & Personalization", "Fraud Detection", "Risk & Compliance", "Pricing & Underwriting", "Operational Efficiency", "Audit Trails & Governance"].map((item, i) => (
@@ -1760,7 +1759,7 @@ const MarketingUseCasesPage = ({ setPage }: { setPage: (p: PageId) => void }) =>
 
         <div className="p-6 rounded-xl bg-cyan-50 border border-cyan-200 mb-16">
           <p className="text-sm text-cyan-800 leading-relaxed">
-            <strong>Public educational resource.</strong> These use cases show how AI can support marketing workflows. They do not imply tenant data access or authenticated product actions from this page. For in-product assistance, sign in to your Odoo workspace.
+            <strong>Public educational resource.</strong> These use cases show how AI can support marketing workflows. They do not imply tenant data access or authenticated product actions from this page. For in-product assistance, sign in to your Dynamics 365 workspace.
           </p>
         </div>
 
@@ -1793,7 +1792,7 @@ const ResourcesPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
     <div className="mb-16">
       <h1 className="text-3xl md:text-4xl font-bold mb-8 tracking-tight">Resource Hub</h1>
       <p className="text-xl text-gray-600 max-w-3xl leading-relaxed">
-        Your one place for guides, insights, case studies, implementation advice, and the latest thinking on Odoo, Pulser, and cloud operations.
+        Your one place for guides, insights, case studies, implementation advice, and the latest thinking on Dynamics 365, Pulser, and cloud operations.
       </p>
     </div>
 
@@ -1801,7 +1800,7 @@ const ResourcesPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
       {[
         { icon: <Target />, title: "Marketing Use Cases", desc: "Prompt packs and AI workflows for campaign strategy, market research, content creation, analysis, and brand communication.", link: "Explore Use Cases", page: 'marketing_use_cases' as PageId },
         { icon: <Newspaper />, title: "Blog", desc: "The latest ideas, lessons, and best practices for modern ERP and AI.", link: "Read the Blog", page: 'resources' as PageId },
-        { icon: <BookOpen />, title: "Learning Center", desc: "Explore deeper guides on Odoo, automation, and implementation.", link: "Go to the Learning Center", page: 'docs' as PageId },
+        { icon: <BookOpen />, title: "Learning Center", desc: "Explore deeper guides on Dynamics 365, automation, and implementation.", link: "Go to the Learning Center", page: 'docs' as PageId },
         { icon: <Users />, title: "Customer Stories", desc: "See how teams modernize operations with InsightPulseAI.", link: "Read Customer Stories", page: 'company' as PageId },
         { icon: <PlayCircle />, title: "Webinars", desc: "Practical sessions on ERP modernization and AI-assisted operations.", link: "Explore Webinars", page: 'resources' as PageId },
         { icon: <HelpCircle />, title: "Support and FAQs", desc: "Need implementation help or product guidance?", link: "Get Support", page: 'contact' as PageId },
@@ -1825,7 +1824,7 @@ const ResourcesPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
         <button onClick={() => setPage('docs')} className="bg-brand-dark text-white rounded-2xl p-8 flex flex-col justify-between min-h-[400px] text-left">
           <div>
             <span className="text-brand-primary font-bold uppercase tracking-widest text-xs mb-6 block">Learning Center</span>
-            <h3 className="text-3xl font-bold mb-6 tracking-tight">Odoo on Cloud: Architecture, modules, and implementation guide</h3>
+            <h3 className="text-3xl font-bold mb-6 tracking-tight">Dynamics 365: Architecture, modules, and implementation guide</h3>
             <p className="text-gray-400 text-lg leading-relaxed mb-8">A practical guide to choosing modules, structuring deployment, and scaling with confidence.</p>
           </div>
           <span className="flex items-center gap-2 font-bold text-brand-primary hover:text-white transition-colors">
@@ -1835,7 +1834,7 @@ const ResourcesPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
         <button onClick={() => setPage('company')} className="bg-brand-primary text-black rounded-2xl p-8 flex flex-col justify-between min-h-[400px] text-left">
           <div>
             <span className="text-black/60 font-bold uppercase tracking-widest text-xs mb-6 block">Customer Story</span>
-            <h3 className="text-3xl font-bold mb-6 tracking-tight">How fast-growing teams use Odoo on Cloud to reduce friction</h3>
+            <h3 className="text-3xl font-bold mb-6 tracking-tight">How fast-growing teams use Dynamics 365 to reduce friction</h3>
             <p className="text-black/70 text-lg leading-relaxed mb-8">See how a modern cloud operating model improves visibility, consistency, and execution.</p>
           </div>
           <span className="flex items-center gap-2 font-bold text-black hover:text-white transition-colors">
@@ -1861,8 +1860,8 @@ const PricingPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
         {
           title: "Launch",
           price: "Starting from",
-          subtitle: "For teams starting with a focused cloud Odoo rollout.",
-          features: ["Odoo on Cloud foundation", "Core workflow setup", "Standard environment configuration", "Baseline reporting", "Guided rollout support", "Upgrade-ready foundation"],
+          subtitle: "For teams starting with a focused cloud Dynamics 365 rollout.",
+          features: ["Dynamics 365 foundation", "Core workflow setup", "Standard environment configuration", "Baseline reporting", "Guided rollout support", "Upgrade-ready foundation"],
           cta: "Book Demo",
           highlight: false
         },
@@ -1916,7 +1915,7 @@ const PricingPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
     <div className="bg-brand-light rounded-2xl p-8 md:p-16 text-center">
       <h2 className="text-4xl font-bold mb-8 tracking-tight">Automation pays</h2>
       <p className="text-gray-600 text-xl max-w-3xl mx-auto leading-relaxed mb-12">
-        Manual work, disconnected systems, and weak visibility create avoidable cost and risk. Odoo on Cloud with InsightPulseAI helps teams improve execution and scale with confidence.
+        Manual work, disconnected systems, and weak visibility create avoidable cost and risk. Dynamics 365 with InsightPulseAI helps teams improve execution and scale with confidence.
       </p>
       <div className="flex flex-wrap justify-center gap-8">
         {["Workflow acceleration", "Better visibility", "Stronger controls", "Scalable model"].map((v, i) => (
@@ -1945,7 +1944,7 @@ const CompanyPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
           We build modern operating models for ambitious businesses
         </h1>
         <p className="text-xl md:text-2xl text-gray-400 leading-relaxed mb-12 max-w-3xl">
-          InsightPulseAI helps growing companies modernize operations with Odoo on Cloud, Pulser, analytics, and automation. We combine architecture, implementation, and operational support into one scalable operating model.
+          InsightPulseAI helps growing companies modernize operations with Dynamics 365, Pulser, analytics, and automation. We combine architecture, implementation, and operational support into one scalable operating model.
         </p>
         <div className="flex flex-wrap gap-4">
           <a href={EXTERNAL_URLS.demo} target="_blank" rel="noopener noreferrer" className="px-10 py-5 bg-brand-primary text-black font-extrabold rounded-full hover:bg-cyan-400 transition-all inline-block">Book Demo</a>
@@ -1958,7 +1957,7 @@ const CompanyPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
     <section className="py-32 px-6 md:px-12 max-w-7xl mx-auto">
       <h2 className="text-4xl md:text-5xl font-bold mb-10 tracking-tight">Why InsightPulseAI exists</h2>
       <p className="text-gray-600 text-lg md:text-xl leading-relaxed max-w-4xl">
-        InsightPulseAI was built around a simple problem: operations often move faster than systems can adapt. Teams outgrow fragmented tools, manual workflows, and ERP environments that are too rigid to evolve with the business. We built InsightPulseAI to close that gap with a more adaptive operating model powered by Odoo, cloud delivery, operational intelligence, and automation.
+        InsightPulseAI was built around a simple problem: operations often move faster than systems can adapt. Teams outgrow fragmented tools, manual workflows, and ERP environments that are too rigid to evolve with the business. We built InsightPulseAI to close that gap with a more adaptive operating model powered by Dynamics 365, cloud delivery, operational intelligence, and automation.
       </p>
     </section>
 
@@ -1967,7 +1966,7 @@ const CompanyPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
       <h2 className="text-4xl md:text-5xl font-bold mb-16 tracking-tight">What we do</h2>
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
         {[
-          { icon: <Cloud size={32} className="text-brand-primary" />, title: "Odoo on Cloud", desc: "We design, deploy, and evolve cloud-based Odoo environments that give teams a stronger operational core." },
+          { icon: <Cloud size={32} className="text-brand-primary" />, title: "Dynamics 365", desc: "We design, deploy, and evolve cloud-based Dynamics 365 environments that give teams a stronger operational core." },
           { icon: <Cpu size={32} className="text-brand-primary" />, title: "Pulser", desc: "We add an intelligence layer where work slows down — helping teams surface context, detect exceptions, reduce friction, and accelerate execution." },
           { icon: <BarChart3 size={32} className="text-brand-primary" />, title: "Analytics & Visibility", desc: "We connect data, reporting, and operational insight so leaders can see what is happening and what should happen next." },
           { icon: <Settings size={32} className="text-brand-primary" />, title: "Cloud Operations", desc: "We support environments over time with practical operating discipline, not just one-time implementation." },
@@ -2014,7 +2013,7 @@ const CompanyPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
       <div className="grid md:grid-cols-3 gap-8">
         {[
           { step: "01", title: "Assess the operating model", desc: "Understand the current state, pain points, and growth trajectory." },
-          { step: "02", title: "Design the cloud and workflow foundation", desc: "Architect the Odoo environment, integrations, and delivery model." },
+          { step: "02", title: "Design the cloud and workflow foundation", desc: "Architect the Dynamics 365 environment, integrations, and delivery model." },
           { step: "03", title: "Evolve with AI, analytics, and automation", desc: "Add Pulser, dashboards, and workflows that compound over time." },
         ].map((item, i) => (
           <div key={i} className="p-8 rounded-2xl bg-brand-dark text-white">
@@ -2097,7 +2096,7 @@ const TermsPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
         </div>
         <div className="p-8 rounded-2xl bg-brand-light border border-gray-100">
           <h2 className="text-xl font-bold mb-4">Services</h2>
-          <p className="text-gray-600 leading-relaxed">InsightPulseAI provides cloud-hosted Odoo ERP environments, Pulser operational intelligence, analytics dashboards, and cloud operations services. Service availability and features may vary by plan.</p>
+          <p className="text-gray-600 leading-relaxed">InsightPulseAI provides cloud-hosted Dynamics 365 ERP environments, Pulser operational intelligence, analytics dashboards, and cloud operations services. Service availability and features may vary by plan.</p>
         </div>
         <div className="p-8 rounded-2xl bg-brand-light border border-gray-100">
           <h2 className="text-xl font-bold mb-4">User responsibilities</h2>
@@ -2342,7 +2341,7 @@ const NewsroomPage = ({ setPage }: { setPage: (p: PageId) => void }) => (
       </div>
       <div className="grid md:grid-cols-2 gap-8 mb-24">
         {[
-          { date: "March 2026", title: "InsightPulseAI launches Odoo on Cloud with Pulser", desc: "Our platform combines hosted Odoo ERP, AI-assisted workflows, and cloud operations into one governed operating model for marketing, media, retail, and financial services." },
+          { date: "March 2026", title: "InsightPulseAI launches Dynamics 365 with Pulser", desc: "Our platform combines hosted Dynamics 365 ERP, AI-assisted workflows, and cloud operations into one governed operating model for marketing, media, retail, and financial services." },
           { date: "March 2026", title: "Media & Entertainment solution goes live", desc: "Audience intelligence, content operations, and monetization workflows now available as a dedicated vertical solution." },
           { date: "February 2026", title: "Azure infrastructure migration complete", desc: "Full migration from DigitalOcean to Azure Container Apps with Front Door edge, managed PostgreSQL, and enterprise identity readiness." },
           { date: "January 2026", title: "Retail Operations solution announced", desc: "Real-time inventory, supply chain intelligence, and omnichannel customer visibility for retail organizations." },

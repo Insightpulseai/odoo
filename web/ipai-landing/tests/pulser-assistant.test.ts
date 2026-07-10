@@ -84,7 +84,7 @@ describe('API Contract', () => {
 describe('Topic Coverage', () => {
   const topics = [
     { input: 'What is Pulser?', expectInReply: 'Pulser', expectSource: 'Product Docs' },
-    { input: 'How does Odoo on Cloud work?', expectInReply: 'Odoo on Cloud', expectSource: 'Product Docs' },
+    { input: 'How does Dynamics 365 work?', expectInReply: 'Dynamics 365', expectSource: 'Product Docs' },
     { input: 'What are the core modules?', expectInReply: 'Finance', expectSource: 'Product Docs' },
     { input: 'Which industries do you support?', expectInReply: 'Marketing', expectSource: 'Product Docs' },
     { input: 'Tell me about analytics and dashboards', expectInReply: 'dashboard', expectSource: 'Product Docs' },
@@ -178,16 +178,16 @@ describe('CTA System', () => {
 
 describe('Branding Compliance', () => {
   const forbidden = [
-    /\bOdoo Copilot\b/i,
+    /\bPulser\b/i,
     /\bIPAI Copilot\b/i,
     /\bInsightPulse Copilot\b/i,
-    /\bAsk Odoo Copilot\b/i,
-    /\bOdoo AI\b/i,
+    /\bAsk Pulser\b/i,
+    /\bDynamics 365 AI\b/i,
   ];
 
   const queries = [
     'What is Pulser?',
-    'Tell me about Odoo on Cloud',
+    'Tell me about Dynamics 365',
     'How does the AI work?',
     'What can the assistant do?',
     'Who built this?',

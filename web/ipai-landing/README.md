@@ -83,7 +83,7 @@ curl -s -X POST https://www.insightpulseai.com/api/pulser/chat \
 - [ ] No `Request a Demo` (canonical: `Book Demo`)
 - [ ] No `Trust & Readiness` (canonical: `Trust Center`)
 - [ ] No `Analytics` alone (canonical: `Analytics & Dashboards`)
-- [ ] No `Odoo Copilot` remaining
+- [x] No `Odoo Copilot` remaining (stripped 2026-07-10 -> Pulser / Dynamics 365)
 - [ ] Marquee rail animates continuously
 
 ## Architecture
